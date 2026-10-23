@@ -97,6 +97,7 @@ ScopeBasis = Annotated[str, _in("scope_basis")]
 ServiceKind = Annotated[str, _in("service_kind")]
 SourceKind = Annotated[str, _in("source_kind")]
 TriggerEvent = Annotated[str, _in("trigger_event")]
+TypeClass = Annotated[str, _in("type_class")]
 
 
 class Strict(BaseModel):
@@ -150,6 +151,7 @@ class ModelConfig(Strict):
     title: Text | None = None
     framework_version: Annotated[str, StringConstraints(pattern=r"^[0-9]+\.[0-9]+\.[0-9]+$")]
     profile: Slug
+    anchor_entity: Slug
     adapters: Slugs | None = None
     consumers: Slugs | None = None
     environments: Slugs | None = None
@@ -164,7 +166,12 @@ class Source(Strict):
     source_kind: SourceKind
     access_mode: AccessMode
     rank: Annotated[int, Field(ge=0)] | None = None
+    adapter: Slug | None = None
     engine: Slug | None = None
+    dialect: Slug | None = None
+    dsn_env: Annotated[str, StringConstraints(pattern=r"^[A-Z_][A-Z0-9_]*$")] | None = None
+    revision: Text | None = None
+    include: Annotated[list[Text], Field(min_length=1), Unique] | None = None
     location: Text | None = None
     current_pin: Pin | None = None
     access: Text | None = None
@@ -449,7 +456,7 @@ class Profile(Strict):
     kind: Literal["profile"]
     id: Slug
     meaning: Text | None = None
-    anchor_entity: Slug
+    subject: Text
     labels: Annotated[list[Slug], Field(min_length=1), Unique, AfterValidator(_no_withheld)]
     vocabularies: dict[Slug, Annotated[list[Slug], Field(min_length=1), Unique]] | None = None
     rules: Annotated[list[Rule], Field(min_length=1)]
@@ -598,6 +605,7 @@ class SnapshotField(Strict):
     name: FieldName
     path: FieldPath | None = None
     type: Text
+    type_class: TypeClass | None = None
     nullable: bool
     repeated: bool | None = None
     description: Text | None = None
@@ -630,6 +638,7 @@ class Partitioning(Strict):
 class SnapshotObject(Strict):
     name: Text
     object_type: ObjectType
+    pin: Pin | None = None
     description: Text | None = None
     fields: list[SnapshotField]
     constraints: list[Constraint] | None = None
@@ -644,6 +653,7 @@ class Snapshot(Strict):
     engine: Slug
     target: Text
     taken_on: Date
+    pin: Pin | None = None
     objects: list[SnapshotObject]
     extensions: Extensions | None = None
 

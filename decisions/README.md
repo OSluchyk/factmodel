@@ -34,3 +34,6 @@ Platform that forced it: none | <example or engine>
 | [D-008](D-008-agent-commits.md) | The agent commits per round | accepted | 2026-10-23 |
 | [D-009](D-009-review-status.md) | One review status for entities and layers | accepted | 2026-10-23 |
 | [D-010](D-010-name-factmodel.md) | Name: FactModel | accepted | 2026-10-23 |
+| [D-011](D-011-engine-blind-core.md) | Engine-blind core, universal adapters, local reference engines | accepted | 2026-10-23 |
+| [D-012](D-012-model-binds-anchor.md) | The model binds the anchor, the profile names the subject | accepted | 2026-10-23 |
+| [D-013](D-013-type-class.md) | Neutral type class on snapshot fields | accepted | 2026-10-23 |

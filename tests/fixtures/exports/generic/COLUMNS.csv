@@ -1,0 +1,13 @@
+table_schema,table_name,column_name,ordinal_position,is_nullable,data_type
+shop,customers,customer_id,1,NO,integer
+shop,customers,email_hash,2,YES,character varying
+shop,customers,created_at,3,NO,timestamp without time zone
+shop,orders,order_id,1,NO,integer
+shop,orders,customer_id,2,YES,integer
+shop,orders,total,3,NO,numeric
+shop,order_lines,order_id,1,NO,integer
+shop,order_lines,line_no,2,NO,integer
+shop,order_lines,amount,3,NO,numeric
+shop,customer_totals,customer_id,1,YES,integer
+shop,customer_totals,total,2,YES,numeric
+other,ignored,id,1,NO,integer

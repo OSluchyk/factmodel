@@ -29,6 +29,10 @@
     "taken_on": {
       "$ref": "#/$defs/date"
     },
+    "pin": {
+      "description": "The version read; drafts cite it unless an object has its own pin.",
+      "$ref": "#/$defs/pin"
+    },
     "objects": {
       "type": "array",
       "items": {
@@ -148,6 +152,10 @@
             "external"
           ]
         },
+        "pin": {
+          "description": "Where this object was read, when it differs per object (a DDL file at a commit).",
+          "$ref": "#/$defs/pin"
+        },
         "description": {
           "$ref": "#/$defs/text"
         },
@@ -198,6 +206,11 @@
         }
       }
     },
+    "pin": {
+      "description": "The exact version read; the format depends on the source kind.",
+      "type": "string",
+      "pattern": "^\\S.*@\\S+$"
+    },
     "slug": {
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
@@ -219,6 +232,25 @@
         },
         "type": {
           "$ref": "#/$defs/text"
+        },
+        "type_class": {
+          "enum": [
+            "integer",
+            "decimal",
+            "float",
+            "boolean",
+            "text",
+            "date",
+            "time",
+            "timestamp",
+            "interval",
+            "binary",
+            "json",
+            "array",
+            "struct",
+            "geography",
+            "other"
+          ]
         },
         "nullable": {
           "type": "boolean"

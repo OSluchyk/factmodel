@@ -19,7 +19,7 @@ Companion to `spec/SPEC.md`. Where the two disagree, the spec wins and this plan
 4. **Deterministic core.** The core package does no network or database I/O. Adapters do I/O and write files; the core reads files.
 5. **Schemas are normative.** JSON Schema files in `schemas/` define every file kind. Python models are checked against them in tests, never the other way round.
 6. **Every gate stage has a failing fixture.** A check that has never failed is not trusted.
-7. **Agents never push or run queries against real platforms.** The owner does. On this repository the agent commits once per round (D-008).
+7. **Agents never push or run queries against real platforms.** The owner does. On this repository the agent commits once per round (D-008). A local engine seeded with synthetic rows is a test fixture, not a platform.
 8. **Every write command is idempotent.** A second run of `fact sync`, `fact project`, `fact probe intake` or any migration produces zero diff. Tests check it.
 9. **Services are authored by hand in 1.0**, with evidence from code read through the git adapter. Automatic extraction of services from pipeline configuration is platform-specific and out of scope.
 
@@ -34,8 +34,8 @@ Companion to `spec/SPEC.md`. Where the two disagree, the spec wins and this plan
 | Schema validation | jsonschema (Draft 2020-12) | Standard, language-neutral |
 | Typed models | pydantic v2 | Fast typed access in Python; parity-tested against JSON Schema |
 | SQL generation and parsing | sqlglot | One AST, many dialects; transpile probes per engine |
-| BigQuery access | google-cloud-bigquery (optional extra) | Only in the adapter, only in live mode |
-| PostgreSQL access | psycopg 3 (optional extra) | Only in the adapter, only in live mode |
+| Generic SQL access | SQLAlchemy 2 (extra `sql`); drivers as extras (`postgres`: psycopg 3) | One adapter for any engine with a SQLAlchemy dialect (D-011) |
+| Reference engines | SQLite (standard library), PostgreSQL (Docker, locally and in CI) | Local, free, no credentials; synthetic rows only (D-011) |
 | Tests | pytest, hypothesis for projection rules | Unit, golden-file, property tests |
 | Quality | ruff (lint and format), mypy (strict on core) | Same rules for agents and people |
 | CI | GitHub Actions | Lint, types, tests, gate on every example model |
@@ -47,8 +47,8 @@ Companion to `spec/SPEC.md`. Where the two disagree, the spec wins and this plan
 | Milestone | Outcome | Gate to pass | Rounds (rough) |
 | --- | --- | --- | --- |
 | M0 - Specification | Repository bootstrapped; every file kind specified with JSON Schema and worked examples; algorithms written as pseudo-code with test vectors | Spec review; schema test suite green | 3-4 |
-| M1 - Core on BigQuery | Core package, gate, CLI, BigQuery and git adapters, probe generator v1, hard-case fixtures, retail profile, `examples/thelook` | Gate green on `examples/thelook` and on every hard-case fixture; expected scopes hold; residue 0 | 10-12 |
-| M2 - Second engine | PostgreSQL adapter, second domain profile, `examples/pagila`; core frozen at schema 1.0.0 | No core change, or each change has a decision record | 4-5 |
+| M1 - Core, engine-neutral | Core package, gate, CLI, adapter protocol and registry, `export`, `sql` and `git` adapters, sync, probe generator v1 rendered per dialect, hard-case fixtures, retail profile, `examples/chinook` on SQLite and PostgreSQL | Gate green on `examples/chinook` and on every hard-case fixture; expected scopes hold; residue 0; the same probes give the same counts on SQLite and PostgreSQL | 12-14 |
+| M2 - Cloud engines by adopters and a second domain | BigQuery `export` and `sql` paths verified by an adopter on their own project; third-party adapter packaging guide; second domain profile with a dataset chosen then; core frozen at schema 1.0.0 | No core change, or each change has a decision record naming the platform that forced it | 4-5 |
 | M3 - Semantic layers | Layer contract, consumer equivalence harness, reference consumer, exports (OSI, dbt), release projection | One consumer meets its threshold on a corpus | 6-8 |
 | M4 - Release 1.0 | Packaging, docs site, tutorial, upgrade policy, external pilot | Someone else sets up a model from scratch using only the docs | 3-4 |
 
@@ -120,7 +120,7 @@ tests/test_smoke.py
 # physical/entities/orders.yaml
 kind: entity
 id: orders
-physical_name: thelook_ecommerce.orders
+physical_name: sales.orders
 grain: one row per order
 class: data
 status: draft
@@ -153,13 +153,13 @@ relationships:
 records:                     # inline evidence records; `evidence` keys hold IDs only
   - id: ev-orders-ddl
     source: bq-public
-    pin: bigquery:bigquery-public-data.thelook_ecommerce@2026-11-01
+    pin: postgres:sales@2026-11-01
     quote: INFORMATION_SCHEMA.COLUMNS for orders
     status: confirmed
     read_on: 2026-11-01
   - id: ev-orders-users-match
     source: bq-public
-    pin: bigquery:bigquery-public-data.thelook_ecommerce@2026-11-02
+    pin: postgres:sales@2026-11-02
     measurement: {match_rate: 1.0, orphans_left: 0}
     status: confirmed
     read_on: 2026-11-02
@@ -217,21 +217,20 @@ Update `spec/SPEC.md` with links to the vocabulary, schemas and algorithms; reco
 
 ---
 
-## 6. M1 - Core on BigQuery
+## 6. M1 - Core, engine-neutral
 
-Target: `examples/thelook/` models the public dataset `bigquery-public-data.thelook_ecommerce` end to end. Verify the dataset exists and list its tables before WP1.6.
+Target (D-011): the core never names an engine; adapters are plugins behind one snapshot contract. `examples/chinook/` models the Chinook schema end to end on two local reference engines, SQLite and PostgreSQL, with synthetic rows generated at test time. Cloud engines are reached through the `export` and `sql` adapters by adopters with their own credentials (M2).
 
 Expected model (to be confirmed by evidence, not assumed):
 
 | Table | Class | Scope | Note |
 | --- | --- | --- | --- |
-| users | data | anchor | |
-| orders | data | direct | `user_id` |
-| order_items | data | direct or transitive | carries `user_id` and `order_id`; tests which basis wins |
-| events | data | direct, partial coverage | `user_id` nullable (anonymous sessions) |
-| products | reference | none | never propagates scope |
-| distribution_centers | reference | none | |
-| inventory_items | data | none | stock, not about a customer |
+| Customer | data | anchor | `anchor_entity: customer` in `factmodel.yaml` (D-012) |
+| Invoice | data | direct | `CustomerId` |
+| InvoiceLine | data | transitive | through Invoice; tests which basis wins |
+| Employee | administrative | none | `SupportRepId` on Customer; `ReportsTo` self-reference |
+| Artist, Album, Track, Genre, MediaType | reference | none | Track to Album to Artist is a reference chain |
+| Playlist, PlaylistTrack | reference | none | PlaylistTrack bridges two reference entities |
 
 ### WP1.1 Model loader and strict YAML (1 round)
 
@@ -288,29 +287,28 @@ Expected model (to be confirmed by evidence, not assumed):
 
 **Acceptance.** End-to-end test: `init` → add a source → `check` passes on the empty model.
 
-### WP1.5 BigQuery adapter (1-2 rounds)
+### WP1.5 Adapter protocol, `export` and `sql` adapters (1-2 rounds)
 
-**Deliverables.** `src/factmodel/adapters/base.py` (adapter protocol), `src/factmodel/adapters/bigquery/`.
+**Deliverables.** `src/factmodel/adapters/base.py` (protocol), `src/factmodel/adapters/registry.py` (entry-point group `factmodel.adapters`), `src/factmodel/adapters/export/` (with flavours `bigquery`, `postgres`, `generic`), `src/factmodel/adapters/sql/`, `fact adapters`, `fact export-sql`, `fact snapshot`, `fact draft`.
 
 **Adapter protocol.**
 
 ```python
 class Adapter(Protocol):
-    engine: str
-    def snapshot(self, target: str) -> MetadataSnapshot: ...      # live read
-    def load_snapshot(self, path: Path) -> MetadataSnapshot: ...   # offline, from exported JSON
-    def to_facts(self, snap: MetadataSnapshot) -> list[FactDraft]: ...
-    def dialect(self) -> str: ...                                  # sqlglot dialect name
+    name: str                                            # adapter id, for example "sql"
+    def engines(self) -> list[str]: ...                  # engines it can read, or ["*"]
+    def snapshot(self, source: Source, model_root: Path) -> Snapshot: ...
+    def default_dialect(self, engine: str) -> str: ...   # sqlglot dialect name
 ```
 
 **Tasks.**
 
-- Live mode reads `INFORMATION_SCHEMA.TABLES`, `COLUMNS`, `COLUMN_FIELD_PATHS`, `TABLE_CONSTRAINTS`, `KEY_COLUMN_USAGE`, `TABLE_OPTIONS` (partitioning, clustering).
-- Offline mode reads the same as exported JSON; `fact snapshot --source <id>` writes that export to `sources/snapshots/` so tests and agents never need credentials. The snapshot format is engine-neutral and has its own schema (`schemas/snapshot.schema.json`): objects, fields with paths and types, declared constraints, partitioning, options.
-- `to_facts` produces drafts with evidence pins; declared keys become `declared_fk`; nothing else is guessed.
-- Note in docs: BigQuery constraints are `NOT ENFORCED`; a declared key needs a probe before it is `confirmed`.
+- `to_facts(snapshot)` is one core function, not an adapter method: declared constraints become `declared_fk` relationships, `confirmed` when the engine enforces them and `inferred` otherwise; nothing else is guessed.
+- `export` reads owner-exported standard `INFORMATION_SCHEMA` views (CSV or JSON); `fact export-sql` prints the SQL the owner runs ("agents read, people run").
+- `sql` reflects any engine with a SQLAlchemy dialect; the connection string comes from the environment variable the source names in `dsn_env`, never from a file.
+- Engine knowledge (default dialect, which engines enforce foreign keys) lives in the vocabulary, not in code.
 
-**Acceptance.** Offline tests on a committed metadata snapshot of `thelook_ecommerce` (metadata only, no rows); live test behind `FACT_LIVE_BQ=1`.
+**Acceptance.** `export` tests on committed synthetic exports for every flavour; `sql` tests on SQLite in memory; a PostgreSQL test behind `FACT_PG_DSN` that agrees with SQLite on the neutral parts; registry test with a fake third-party entry point.
 
 ### WP1.5b Git source adapter (1 round)
 
@@ -336,28 +334,29 @@ class Adapter(Protocol):
 
 **Deliverables.** `src/factmodel/probes/` (`spec.py`, `generate.py`, `intake.py`), `fact probe generate`, `fact probe intake`.
 
-**Probe kinds in M1:** key duplicates, join match rate and orphans (both directions), fan-out per source row to anchor, null rate per field, row count per object.
+**Probe kinds in M1:** key duplicates, join match rate and orphans (both directions), fan-out per source row, null rate per field, row count per object, ties after a current-row rule, count of distinct values (never the values).
 
 **Tasks.**
 
-- Each probe has a stable ID, the fact it tests, expected range, and SQL built with sqlglot and rendered in the adapter dialect.
+- Each probe has a stable ID, the fact it tests, expected range, and a neutral sqlglot AST rendered per dialect with quoted identifiers; a construct a dialect lacks is marked `unsupported_on_dialect`, never rendered wrong.
+- `fact probe run --source <id>` executes through the `sql` adapter when the source has a `dsn_env` (counts only); a local engine with synthetic rows is a test fixture.
 - Output is a shell script per run: `set -uo pipefail`, defaults via `${PROJECT:-...}`, each query prints `QUERY FAILED` and continues on error, results saved as JSON with a pin. No identifiers or values are ever selected; only counts and rates.
 - Intake reads results, writes `evidence/probes/<probe-id>@<date>.yaml`, updates fact status (inferred → confirmed when in range), opens a finding when out of range, strips anything that looks like an email or personal identifier.
 
-**Acceptance.** Snapshot tests of generated SQL per probe kind; intake tests with in-range, out-of-range and malformed results.
+**Acceptance.** Rendering snapshots per kind for `bigquery`, `postgres`, `sqlite`, `snowflake`, `duckdb`, `tsql`, `mysql`; execution on SQLite for every kind and on PostgreSQL behind `FACT_PG_DSN`; intake tests with in-range, out-of-range and malformed results.
 
-### WP1.8 Retail profile and the thelook example (2 rounds)
+### WP1.8 Retail profile and the Chinook example (1-2 rounds)
 
-**Deliverables.** `profiles/retail/`, `examples/thelook/` (full model repository), `examples/thelook/probes/` (generated), owner-run probe results committed as evidence.
+**Deliverables.** `profiles/retail/`, `examples/chinook/` (full model repository with sources `chinook-sqlite`, `chinook-pg`, `chinook-ddl`), the Chinook DDL for SQLite and PostgreSQL, a deterministic synthetic seed, probes, and probe results from SQLite committed as evidence; a CI job with a `postgres:16` service.
 
 **Tasks.**
 
-1. Agent: snapshot metadata (owner exports if needed), run sync, draft entities.
-2. Agent: classify every table with evidence; write relationships; write probe scripts.
-3. Owner: run probes on the public dataset, return output.
+1. Agent: snapshot metadata (SQLite catalog and DDL), draft entities.
+2. Agent: classify every table with evidence; write relationships; generate probes.
+3. Agent: run probes on the local SQLite engine (a test fixture, D-011); CI runs the same probes on PostgreSQL and compares counts.
 4. Agent: intake; resolve residue; record decisions.
 
-**Acceptance (M1 gate).** `fact check` green on `examples/thelook`; projection residue 0; scopes match the table above or differ with a decision record; every relationship confirmed by a probe or explicitly inferred with a reason.
+**Acceptance (M1 gate).** `fact check` green on `examples/chinook`; projection residue 0; scopes match the table above or differ with a decision record; every relationship confirmed by a probe or explicitly inferred with a reason; the PostgreSQL job green in CI.
 
 ### WP1.8b Hard-case fixtures (1 round)
 
@@ -391,25 +390,23 @@ class Adapter(Protocol):
 - Each skill: when to use it, inputs, steps, which `fact` commands to run, acceptance checks, what to put in the report.
 - Report template ends with the exact `git add` list by name.
 
-**Acceptance.** A fresh agent session, given only the repository and the brief "onboard thelook", reproduces WP1.8 step 1-2 without extra instructions. Record the session transcript summary in `docs/dogfood/`.
+**Acceptance.** Following only the skill text, an agent reproduces WP1.8 steps 1 and 2 for `examples/chinook` and gets the committed drafts. Record the result in `docs/dogfood/`. A fresh-session run stays with the owner.
 
 ---
 
-## 7. M2 - Second engine and domain
+## 7. M2 - Cloud engines by adopters and a second domain
 
-Target: `examples/pagila/` on PostgreSQL. Pagila is the PostgreSQL port of the Sakila DVD-rental sample; check its license and availability before WP2.2. Fallback: Chinook.
+Target: show that the universal adapters reach cloud engines without core changes, verified by adopters on their own projects (the repository holds no cloud credentials, D-011), and that a second domain fits the core.
 
-Expected shape: anchor `customer`; direct `rental`, `payment`; reference `film`, `category`, `language`; configuration `store`, `staff`-related tables to be classified by evidence; unanchored `inventory`.
+### WP2.1 Cloud engines through `export` and `sql` (1-2 rounds)
 
-### WP2.1 PostgreSQL adapter (1-2 rounds)
+**Tasks.** An adopter runs the `export` path (`fact export-sql`, then `fact snapshot --from-export`) and the `sql` path on BigQuery with their own project and reports back; differences become findings or decision records naming the platform. Write a guide for packaging a third-party adapter as an entry point in `factmodel.adapters`.
 
-**Tasks.** Read `information_schema.tables`, `columns`, `table_constraints`, `key_column_usage`, `referential_constraints`, plus `pg_catalog` for enforced foreign keys and indexes. Enforced FKs become `declared_fk` with `confirmed` status (enforced by the engine) - unlike BigQuery. Offline snapshot format identical to BigQuery's.
+**Acceptance.** An adopter report for BigQuery with snapshots that validate; the packaging guide followed once by a test package.
 
-**Acceptance.** Offline tests on a committed Pagila metadata snapshot; live test behind `FACT_LIVE_PG=1` against a local Docker database (`docker compose` file in `examples/pagila/`).
+### WP2.2 Second domain profile and example (1-2 rounds)
 
-### WP2.2 Second domain profile and the Pagila example (1-2 rounds)
-
-**Deliverables.** `profiles/rental/` (or reuse `retail` if it fits without change - that is the preferred outcome), `examples/pagila/`.
+**Deliverables.** A second domain profile (or `retail` reused if it fits without change - the preferred outcome) and an example on a dataset chosen then.
 
 **Acceptance.** `fact check` green; residue 0.
 
@@ -449,11 +446,11 @@ Expected shape: anchor `customer`; direct `rental`, `payment`; reference `film`,
 
 **Acceptance.** Harness tests with a toy consumer that is right, wrong and partially right.
 
-### WP3.3 Reference consumer for thelook (1-2 rounds)
+### WP3.3 Reference consumer for the Chinook example (1-2 rounds)
 
 **Goal.** Prove the loop end to end with a real consumer.
 
-**Deliverables.** `examples/thelook/consumers/filter-sql/`: a small generator that turns a filter request ("customers who ordered in category X in the last 90 days") into SQL using only the semantic layer; a corpus of at least 30 requests with hand-written reference SQL.
+**Deliverables.** `examples/chinook/consumers/filter-sql/`: a small generator that turns a filter request ("customers who bought tracks of genre X in the last 90 days") into SQL using only the semantic layer; a corpus of at least 30 requests with hand-written reference SQL.
 
 **Acceptance (M3 gate).** Equivalence at or above the threshold chosen in the open question (record it as a decision); every failure explained as a finding.
 
@@ -463,7 +460,7 @@ Expected shape: anchor `customer`; direct `rental`, `payment`; reference `film`,
 
 **Tasks.** Complete partition (export / project / refuse); per-kind key allowlist; fail-closed on undeclared keys; internal notes marked with explicit markers; release notes are an append-only log, one section per version, never edited. The release carries a `VERSION` file with the release version, the source commit and the schema version, so consumers can pin.
 
-**Acceptance.** Tests for partition residue, undeclared key, marker stripping; release of `examples/thelook` reads cleanly with no derived-key leaks.
+**Acceptance.** Tests for partition residue, undeclared key, marker stripping; release of `examples/chinook` reads cleanly with no derived-key leaks.
 
 ### WP3.5 Exporters (1-2 rounds)
 
@@ -483,11 +480,11 @@ Expected shape: anchor `customer`; direct `rental`, `payment`; reference `film`,
 
 ### WP4.1 Packaging (1 round)
 
-Re-check the name (D-010); publish `factmodel` with extras `[bigquery]`, `[postgres]`, `[duckdb]`; `fact --version` shows package and schema versions.
+Re-check the name (D-010); publish `factmodel` with extras `[sql]`, `[postgres]` and further drivers; `fact --version` shows package and schema versions.
 
 ### WP4.2 Documentation site and tutorial (1-2 rounds)
 
-MkDocs Material site from `docs/`: concepts, quickstart, "model a platform in a day" tutorial on thelook, CLI reference (generated from Typer), schema reference (generated from JSON Schema), skills reference, FAQ.
+MkDocs Material site from `docs/`: concepts, quickstart, "model a platform in a day" tutorial on Chinook, CLI reference (generated from Typer), schema reference (generated from JSON Schema), skills reference, FAQ.
 
 ### WP4.3 External pilot (1 round, mostly waiting)
 
@@ -540,7 +537,7 @@ Coverage target for `src/factmodel/core` and `gate`: 90 % lines. Adapters and CL
 | Name: FactModel, package `factmodel`, command `fact` (D-010); GitHub and trademark check still open | WP0.1 |
 | Relationship identity: key only (D-002) | WP0.2 |
 | Fact format: YAML only, or YAML plus generated graph (JSON-LD) | WP0.3 |
-| Second domain dataset (Pagila or Chinook) | WP2.2 |
+| Second domain dataset (chosen in M2) | WP2.2 |
 | Equivalence threshold: global or per layer | WP3.2 |
 | Export priority: OSI first or dbt first | WP3.5 |
 

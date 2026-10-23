@@ -1,0 +1,17 @@
+[
+ {
+  "table_name": "orders",
+  "option_name": "description",
+  "option_value": "\"Orders placed in the shop\""
+ },
+ {
+  "table_name": "orders",
+  "option_name": "partition_expiration_days",
+  "option_value": "30.0"
+ },
+ {
+  "table_name": "orders",
+  "option_name": "require_partition_filter",
+  "option_value": "true"
+ }
+]

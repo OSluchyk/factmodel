@@ -57,8 +57,8 @@ def test_file_and_relationship_order_does_not_matter(case: tuple[str, str], seed
 def test_unrelated_entity_changes_nothing(
     case: tuple[str, str], entity_class: str, with_anchor_reference: bool
 ) -> None:
-    entities, evidence, profile = h.typed_inputs(_files(case))
-    before = derive(entities, evidence, profile)
+    entities, evidence, profile, anchor = h.typed_inputs(_files(case))
+    before = derive(entities, evidence, profile, anchor)
     extra: dict[str, Any] = {
         "kind": "entity",
         "id": "zz_unrelated",
@@ -75,7 +75,8 @@ def test_unrelated_entity_changes_nothing(
             {"name": "user_id", "type": "INT64", "nullable": True, "meaning": "U."}
         )
         extra["anchor_reference"] = {"field": "user_id", "evidence": ["ev-confirmed"]}
-    after = derive({**entities, "zz_unrelated": Entity.model_validate(extra)}, evidence, profile)
+    extended = {**entities, "zz_unrelated": Entity.model_validate(extra)}
+    after = derive(extended, evidence, profile, anchor)
     assert after.projection == before.projection
     assert {k: v for k, v in after.scope.rows.items() if k != "zz_unrelated"} == dict(
         before.scope.rows

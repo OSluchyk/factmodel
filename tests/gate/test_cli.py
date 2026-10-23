@@ -55,6 +55,7 @@ def test_init_writes_the_layout(tmp_path: Path) -> None:
         "id": "shop-model",
         "framework_version": "0.0.1",
         "profile": "retail",
+        "anchor_entity": "customer",
     }
     for rel in (
         "AGENTS.md",

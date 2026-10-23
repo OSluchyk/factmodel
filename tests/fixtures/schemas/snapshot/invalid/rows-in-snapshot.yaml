@@ -11,6 +11,7 @@ objects:
   fields:
   - name: order_id
     type: INT64
+    type_class: integer
     nullable: false
   - name: user_id
     type: INT64

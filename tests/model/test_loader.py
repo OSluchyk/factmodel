@@ -102,7 +102,7 @@ def test_duplicate_relationship_key(tmp_path: Path) -> None:
 
 def test_unregistered_source(tmp_path: Path) -> None:
     files = _base()
-    files[1]["records"][0]["source"] = "crm"
+    next(f for f in files if f["kind"] == "evidence")["records"][0]["source"] = "crm"
     issue = _only(write_model(tmp_path, files), "unregistered_source")
     assert issue.file == "evidence/shared.yaml"
 
@@ -127,8 +127,14 @@ def test_unknown_rule_label(tmp_path: Path) -> None:
 
 
 def test_missing_profile(tmp_path: Path) -> None:
-    files = [f for f in _base() if f["kind"] != "profile"]
-    config = {"kind": "model-config", "id": "t", "framework_version": "0.0.1", "profile": "nope"}
+    files = [f for f in _base() if f["kind"] not in ("profile", "model-config")]
+    config = {
+        "kind": "model-config",
+        "id": "t",
+        "framework_version": "0.0.1",
+        "profile": "nope",
+        "anchor_entity": "users",
+    }
     root = write_model(
         tmp_path, {"factmodel.yaml": config, **{f"f{i}.yaml": f for i, f in enumerate(files)}}
     )

@@ -1,0 +1,7 @@
+table_schema,table_name,constraint_name,constraint_type
+shop,customers,customers_pkey,PRIMARY KEY
+shop,customers,customers_email_uq,UNIQUE
+shop,orders,orders_pkey,PRIMARY KEY
+shop,orders,orders_customer_fk,FOREIGN KEY
+shop,order_lines,order_lines_pkey,PRIMARY KEY
+shop,order_lines,order_lines_order_fk,FOREIGN KEY

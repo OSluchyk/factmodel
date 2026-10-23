@@ -11,6 +11,9 @@ properties:
     description: What was read, for example a project and dataset.
     $ref: "#/$defs/text"
   taken_on: {$ref: "#/$defs/date"}
+  pin:
+    description: The version read; drafts cite it unless an object has its own pin.
+    $ref: "#/$defs/pin"
   objects:
     type: array
     items: {$ref: "#/$defs/object"}
@@ -23,6 +26,9 @@ $defs:
     properties:
       name: {$ref: "#/$defs/text"}
       object_type: {$vocab: object_type}
+      pin:
+        description: Where this object was read, when it differs per object (a DDL file at a commit).
+        $ref: "#/$defs/pin"
       description: {$ref: "#/$defs/text"}
       fields:
         type: array
@@ -53,6 +59,7 @@ $defs:
       name: {$ref: "#/$defs/field_name"}
       path: {$ref: "#/$defs/field_path"}
       type: {$ref: "#/$defs/text"}
+      type_class: {$vocab: type_class}
       nullable: {type: boolean}
       repeated: {type: boolean}
       description: {$ref: "#/$defs/text"}

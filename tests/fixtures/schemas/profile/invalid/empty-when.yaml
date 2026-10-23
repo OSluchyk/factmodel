@@ -2,7 +2,7 @@
 # expect: $.rules[0].when
 kind: profile
 id: retail
-anchor_entity: users
+subject: customer
 labels:
 - customer_scoped
 - configuration

@@ -2,7 +2,7 @@
 kind: profile
 id: retail
 meaning: Retail and e-commerce platforms, where the subject is the customer.
-anchor_entity: users
+subject: customer
 labels: [customer_scoped, configuration, administrative, lineage, representation, unresolved]
 rules:
   - when: {evidence_status: unresolved}

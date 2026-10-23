@@ -4,6 +4,11 @@ case: tie
 description: A derivation from an administrative entity matches rules 2 and 4; the first wins.
 input:
   files:
+  - kind: model-config
+    id: vector
+    framework_version: 0.0.1
+    profile: retail
+    anchor_entity: users
   - kind: source
     id: shop-db
     title: Shop database
@@ -40,7 +45,7 @@ input:
       superseded_by: ev-confirmed
   - kind: profile
     id: retail
-    anchor_entity: users
+    subject: customer
     labels:
     - customer_scoped
     - configuration

@@ -1,0 +1,22 @@
+[
+ {
+  "table_schema": "shop",
+  "table_name": "customers",
+  "table_type": "BASE TABLE"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "orders",
+  "table_type": "BASE TABLE"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "order_lines",
+  "table_type": "BASE TABLE"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "customer_totals",
+  "table_type": "VIEW"
+ }
+]

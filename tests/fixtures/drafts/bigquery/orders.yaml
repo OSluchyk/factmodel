@@ -1,0 +1,85 @@
+kind: entity
+id: orders
+physical_name: orders
+source: shop
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - order_id
+evidence:
+- ev-orders-catalog
+fields:
+- name: order_id
+  type: INT64
+  nullable: false
+  meaning: Not written yet.
+- name: customer_id
+  type: INT64
+  nullable: true
+  meaning: Not written yet.
+- name: total
+  type: NUMERIC
+  nullable: false
+  meaning: Not written yet.
+- name: ordered_on
+  type: DATE
+  nullable: false
+  meaning: Day the order was placed
+- name: context
+  type: STRUCT
+  nullable: true
+  meaning: Not written yet.
+- name: tags
+  type: STRING
+  nullable: false
+  repeated: true
+  meaning: Not written yet.
+- name: device
+  path: context.device
+  type: STRING
+  nullable: true
+  meaning: Not written yet.
+- name: region
+  path: context.region
+  type: STRING
+  nullable: true
+  meaning: Not written yet.
+meaning: Orders placed in the shop
+relationships:
+- key: to-customers
+  to: customers
+  join: orders.customer_id = customers.customer_id
+  meaning: Declared foreign key to customers; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-orders-to-customers
+records:
+- id: ev-orders-catalog
+  source: shop
+  pin: bigquery:my-project.shop@2026-10-23
+  quote: table orders in my-project.shop
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-orders-to-customers
+  source: shop
+  pin: bigquery:my-project.shop@2026-10-23
+  quote: foreign key customer_id to customers (not enforced)
+  status: inferred
+  read_on: '2026-10-23'
+extensions:
+  draft:
+    from: bigquery:my-project.shop@2026-10-23
+    placeholders:
+    - grain
+    - class
+    - fields.order_id.meaning
+    - fields.customer_id.meaning
+    - fields.total.meaning
+    - fields.context.meaning
+    - fields.tags.meaning
+    - fields.context.device.meaning
+    - fields.context.region.meaning
+    - relationships.to-customers.meaning

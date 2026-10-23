@@ -13,7 +13,7 @@ Agents never push. Rules for agents are in [AGENTS.md](AGENTS.md).
 ## Rules
 
 - English only, plain and short. Use a hyphen, not an em dash.
-- Clean room: write from the spec and general knowledge only. Examples use public datasets (`thelook_ecommerce`, Pagila).
+- Clean room: write from the spec and general knowledge only. Examples use Chinook on SQLite and PostgreSQL.
 - No data and no secrets in the repository.
 - Every change has a `CHANGELOG.md` entry that says why.
 - A decision that shapes the framework gets a record in `decisions/` (see [decisions/README.md](decisions/README.md)).

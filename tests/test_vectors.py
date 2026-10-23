@@ -73,6 +73,7 @@ def test_vector_header(path: Path) -> None:
 def test_model_vector_inputs_match_schemas(path: Path) -> None:
     files = load(path).data["input"]["files"]
     assert [f["kind"] for f in files].count("profile") == 1
+    assert [f["kind"] for f in files].count("model-config") == 1
     errors = [error for f in files for error in _errors(f)]
     assert errors == []
 

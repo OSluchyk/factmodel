@@ -1,0 +1,44 @@
+[
+ {
+  "table_name": "customers",
+  "constraint_name": "customers_pkey",
+  "column_name": "customer_id",
+  "ordinal_position": "1",
+  "position_in_unique_constraint": null
+ },
+ {
+  "table_name": "orders",
+  "constraint_name": "orders_pkey",
+  "column_name": "order_id",
+  "ordinal_position": "1",
+  "position_in_unique_constraint": null
+ },
+ {
+  "table_name": "orders",
+  "constraint_name": "orders_customer_fk",
+  "column_name": "customer_id",
+  "ordinal_position": "1",
+  "position_in_unique_constraint": "1"
+ },
+ {
+  "table_name": "order_lines",
+  "constraint_name": "order_lines_pkey",
+  "column_name": "order_id",
+  "ordinal_position": "1",
+  "position_in_unique_constraint": null
+ },
+ {
+  "table_name": "order_lines",
+  "constraint_name": "order_lines_pkey",
+  "column_name": "line_no",
+  "ordinal_position": "2",
+  "position_in_unique_constraint": null
+ },
+ {
+  "table_name": "order_lines",
+  "constraint_name": "order_lines_order_fk",
+  "column_name": "order_id",
+  "ordinal_position": "1",
+  "position_in_unique_constraint": "1"
+ }
+]

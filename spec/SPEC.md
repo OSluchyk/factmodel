@@ -34,6 +34,7 @@ Semantic-layer tools (dbt MetricFlow, Cube, warehouse semantic views) and the Op
 6. **Agents propose, code decides.** Agents gather evidence and draft changes; scripts validate and compute; a person approves what cannot be undone.
 7. **Mistakes stay visible.** Retractions are named and kept. Nothing is silently deleted from the record.
 8. **No data in the repository.** Probes return counts and shapes, never rows.
+9. **The core never names an engine; adapters are plugins behind one snapshot contract.** Any data source an adapter can describe as a snapshot can be modelled (D-011).
 
 ## Scope
 
@@ -107,16 +108,16 @@ flowchart TD
 | Component | Job | Ships as |
 | --- | --- | --- |
 | Core schemas | JSON Schema for every file kind: entity, relationship, source, evidence, register entry, profile, layer | `schemas/` |
-| Adapters | Read engine metadata (`INFORMATION_SCHEMA`, catalogs, DDL in git) and emit facts with pins | Python plugins, one per engine |
+| Adapters | Read a source's metadata (`INFORMATION_SCHEMA` exports, live reflection, DDL in git) into an engine-neutral snapshot | Python plugins in the entry-point group `factmodel.adapters` |
 | Projection library | Computes labels, subject scope, current-row reads, residue | Python package, no I/O |
-| Profiles | Domain anchor, vocabularies, rule tables | YAML |
+| Profiles | Subject role, vocabularies, rule tables; the model binds the anchor entity (D-012) | YAML |
 | Gate | Runs every check; one command, one verdict | `fact check` |
 | Probe generator | Writes data probes from the model (see Validation) | `fact probe` |
 | Release projection | Allowlist per file kind; fail-closed on unknown keys | `fact release` |
 | Exporters | OSI / Apache Ossie, dbt semantic models, Cube | `fact export` |
 | Agent layer | `AGENTS.md`, skills, prompt templates | Markdown |
 
-First adapters: BigQuery, PostgreSQL. Next: Snowflake, Databricks.
+Built-in adapters (D-011): `export` (owner-exported standard `INFORMATION_SCHEMA` views, any engine that has them), `sql` (live reflection through SQLAlchemy, any engine with a SQLAlchemy dialect) and `git` (DDL and text in a repository, any dialect sqlglot parses). The reference engines are SQLite and PostgreSQL; cloud engines are reached through `export` or `sql` by adopters with their own credentials.
 
 ## Validation
 
@@ -197,9 +198,13 @@ One command, `fact`, with a few verbs. It is a small Python package run through 
 | --- | --- |
 | `fact init --profile <name>` | Create a model repository with the layout, schemas and agent files |
 | `fact source add` | Register a source: kind, access mode, rank, pin format |
-| `fact snapshot --source <id>` | Export a source's metadata to a file, so agents and tests work without credentials |
+| `fact adapters` | List the installed adapters, the engines they read and their default dialects |
+| `fact export-sql --source <id>` | Print the SQL the owner runs to export a source's metadata |
+| `fact snapshot --source <id>` | Write a source's metadata to a snapshot file, so agents and tests work without credentials |
+| `fact draft --source <id>` | Turn the latest snapshot into entity drafts in `drafts/` |
 | `fact sync [--source <id>]` | Run adapters, write new facts, produce a drift report |
 | `fact probe generate` | Write probe scripts for the facts that need data proof |
+| `fact probe run --source <id>` | Run probes through the `sql` adapter where the source names a `dsn_env` (counts only) |
 | `fact probe intake <file>` | Turn probe output into evidence and findings |
 | `fact check` | Run the gate; exit 0 only when every stage passes |
 | `fact project` | Recompute derived values (labels, scope, generated tables) |
@@ -220,7 +225,7 @@ factmodel/                  framework
   src/factmodel/            Python package: core, projection, gate, probe, release, export, adapters
   profiles/                 retail/, healthcare-payer/, ... (examples)
   agent/                    AGENTS.md template, skills/, prompt templates
-  examples/thelook/         a full model of a public dataset
+  examples/chinook/         a full model of the Chinook schema on SQLite and PostgreSQL
   decisions/, rounds/       decision records; briefs and reports
 
 <platform>-model/           one per platform
@@ -256,19 +261,20 @@ Each milestone ends at a gate. The core schema is frozen only after M2, when a s
 | Milestone | Builds | Gate |
 | --- | --- | --- |
 | M0 - Specification | spec, JSON Schemas, profile contract, projection algorithm | spec reviewed; every rule has a worked example |
-| M1 - Core on one engine (BigQuery) | core package, gate, BigQuery adapter, retail profile, model of a public dataset | residue 0; expected scopes hold (orders direct, order items transitive, products reference) |
-| **M2 - Second engine (PostgreSQL)** | PostgreSQL adapter, model of an open-source application schema | no core change, or each change has a decision record naming the platform that forced it |
+| M1 - Core, engine-neutral | core package, gate, adapter protocol, `export`, `sql` and `git` adapters, probes rendered per dialect, retail profile, Chinook example on SQLite and PostgreSQL | residue 0; expected scopes hold (Invoice direct, InvoiceLine transitive, catalog tables reference); the same probes give the same counts on both engines |
+| **M2 - Cloud engines by adopters and a second domain** | BigQuery verified through `export` and `sql` by an adopter on their own project; third-party adapter guide; second domain profile | no core change, or each change has a decision record naming the platform that forced it |
 | M3 - Semantic layers | layer contract, probe generator, equivalence harness, OSI and dbt export | one real consumer meets its equivalence threshold on a real corpus |
 | M4 - Release 1.0 | packaging, guides, examples, upgrade notes | someone else sets up a model repository from scratch using only the docs |
 
-The first public dataset is `bigquery-public-data.thelook_ecommerce` (check availability before M1): it has a clear anchor (`users`), a direct link (`orders`), a transitive one (`order_items`), reference data (`products`) and data with no anchor (`inventory_items`).
+The reference dataset is Chinook, schema only, with synthetic rows generated at test time (D-011): it has a clear anchor (`Customer`), a direct link (`Invoice`), a transitive one (`InvoiceLine`), administrative data (`Employee`), a reference chain (`Track` to `Album` to `Artist`) and a bridge between reference entities (`PlaylistTrack`).
 
 ## Later, not in 1.0
 
 - `fact serve`: an MCP server over a release, so consumer agents query the model instead of reading files.
 - Writer-attribution probes from warehouse job history: who wrote or deleted rows, when, and by which statement.
 - Cross-model links between platforms.
-- Snowflake and Databricks adapters.
+- Snowflake and Databricks verified through the `export` and `sql` adapters by adopters.
+- Candidate adapter plugins: dbt manifest, OpenMetadata, DataHub.
 
 ## Open questions
 

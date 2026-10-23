@@ -1,0 +1,8 @@
+table_schema,table_name,constraint_name,column_name,ordinal_position,position_in_unique_constraint
+shop,customers,customers_pkey,customer_id,1,
+shop,customers,customers_email_uq,email_hash,1,
+shop,orders,orders_pkey,order_id,1,
+shop,orders,orders_customer_fk,customer_id,1,1
+shop,order_lines,order_lines_pkey,order_id,1,
+shop,order_lines,order_lines_pkey,line_no,2,
+shop,order_lines,order_lines_order_fk,order_id,1,1

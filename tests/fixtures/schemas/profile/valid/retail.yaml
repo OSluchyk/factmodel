@@ -1,6 +1,6 @@
 kind: profile
 id: retail
-anchor_entity: users
+subject: customer
 labels: [customer_scoped, configuration, administrative, lineage, representation, unresolved]
 rules:
   - when: {evidence_status: unresolved}

@@ -7,7 +7,7 @@ objects:
   - name: orders
     object_type: table
     fields:
-      - {name: order_id, type: INT64, nullable: false}
+      - {name: order_id, type: INT64, type_class: integer, nullable: false}
       - {name: user_id, type: INT64, nullable: true}
       - {name: created_at, type: TIMESTAMP, nullable: true}
     constraints:

@@ -49,6 +49,18 @@ def test_load_returns_tuples() -> None:
     assert loaded["data_quality"] == ("representative", "synthetic", "unknown")
 
 
+def test_mapping_blocks() -> None:
+    maps = vocabulary.load_maps()
+    assert maps["engine_dialect"]["mssql"] == "tsql"
+    assert set(vocabulary.load()["engine_enforces_foreign_keys"]) <= set(maps["engine_dialect"])
+    assert "type_class" in vocabulary.load()
+
+
+def test_mapping_block_must_be_a_mapping() -> None:
+    with pytest.raises(vocabulary.VocabularyError, match="mapping of strings"):
+        vocabulary.parse_maps("```yaml vocabulary-map:a\n- x\n```\n")
+
+
 def test_duplicate_block_name_fails() -> None:
     text = "```yaml vocabulary:a\n- x\n```\n\n```yaml vocabulary:a\n- y\n```\n"
     with pytest.raises(vocabulary.VocabularyError, match="duplicate vocabulary block"):

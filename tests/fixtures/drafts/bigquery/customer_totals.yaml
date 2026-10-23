@@ -1,0 +1,35 @@
+kind: entity
+id: customer_totals
+physical_name: customer_totals
+source: shop
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary: []
+evidence:
+- ev-customer_totals-catalog
+fields:
+- name: customer_id
+  type: INT64
+  nullable: true
+  meaning: Not written yet.
+- name: total
+  type: NUMERIC
+  nullable: true
+  meaning: Not written yet.
+records:
+- id: ev-customer_totals-catalog
+  source: shop
+  pin: bigquery:my-project.shop@2026-10-23
+  quote: view customer_totals in my-project.shop
+  status: confirmed
+  read_on: '2026-10-23'
+extensions:
+  draft:
+    from: bigquery:my-project.shop@2026-10-23
+    placeholders:
+    - grain
+    - class
+    - fields.customer_id.meaning
+    - fields.total.meaning

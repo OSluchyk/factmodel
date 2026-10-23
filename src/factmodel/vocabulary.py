@@ -1,7 +1,8 @@
 """Load the machine-readable enumerations from `spec/VOCABULARY.md`.
 
 Every enumeration in the vocabulary is written as a fenced block that opens with
-``yaml vocabulary:<name>`` and holds a YAML list of slugs. This module is the one
+``yaml vocabulary:<name>`` and holds a YAML list of slugs. A lookup table opens with
+``yaml vocabulary-map:<name>`` and holds a mapping of slug to slug. This module is the one
 place that turns those blocks into Python data, so later schemas share one source.
 """
 
@@ -16,6 +17,11 @@ SLUG = re.compile(r"^[a-z0-9][a-z0-9_-]{0,63}$")
 
 _BLOCK = re.compile(
     r"^```yaml vocabulary:(?P<name>\S+)[ \t]*\n(?P<body>.*?)^```[ \t]*$",
+    re.MULTILINE | re.DOTALL,
+)
+
+_MAP_BLOCK = re.compile(
+    r"^```yaml vocabulary-map:(?P<name>\S+)[ \t]*\n(?P<body>.*?)^```[ \t]*$",
     re.MULTILINE | re.DOTALL,
 )
 
@@ -68,6 +74,39 @@ def validate(blocks: dict[str, list[str]]) -> list[str]:
                 problems.append(f"{name}: duplicate value: {value}")
             seen.add(value)
     return problems
+
+
+def parse_maps(text: str) -> dict[str, dict[str, str]]:
+    """Parse every ``yaml vocabulary-map:<name>`` block: a mapping of slug to slug."""
+    yaml = YAML(typ="safe", pure=True)
+    yaml.allow_duplicate_keys = False
+    maps: dict[str, dict[str, str]] = {}
+    for match in _MAP_BLOCK.finditer(text):
+        name = match.group("name")
+        if name in maps:
+            raise VocabularyError(f"duplicate vocabulary block: {name}")
+        values = yaml.load(match.group("body"))
+        if not isinstance(values, dict) or not all(
+            isinstance(k, str) and isinstance(v, str) for k, v in values.items()
+        ):
+            raise VocabularyError(f"block {name} must be a YAML mapping of strings")
+        maps[name] = dict(values)
+    return maps
+
+
+@cache
+def load_maps() -> dict[str, dict[str, str]]:
+    """Return every mapping block. Keys and values are slugs; names do not clash with lists."""
+    maps = parse_maps(vocabulary_text())
+    problems = [f"block name clashes with a list block: {n}" for n in maps if n in load()]
+    for name, values in maps.items():
+        problems += validate({f"{name}-keys": list(values), f"{name}-values": []})
+        problems += [
+            f"{name}: value is not a slug: {v!r}" for v in values.values() if not SLUG.match(v)
+        ]
+    if problems:
+        raise VocabularyError("; ".join(problems))
+    return maps
 
 
 @cache

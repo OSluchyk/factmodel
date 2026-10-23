@@ -10,7 +10,13 @@ from factmodel.io.yaml_strict import load
 
 VECTORS = Path(__file__).resolve().parents[1] / "vectors"
 
-CONFIG = {"kind": "model-config", "id": "test", "framework_version": "0.0.1", "profile": "retail"}
+CONFIG = {
+    "kind": "model-config",
+    "id": "test",
+    "framework_version": "0.0.1",
+    "profile": "retail",
+    "anchor_entity": "users",
+}
 
 
 def dump(doc: Any) -> str:

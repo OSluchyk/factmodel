@@ -1,0 +1,38 @@
+[
+ {
+  "table_schema": "shop",
+  "table_name": "customers",
+  "constraint_name": "customers_pkey",
+  "constraint_type": "PRIMARY KEY"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "customers",
+  "constraint_name": "customers_email_uq",
+  "constraint_type": "UNIQUE"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "orders",
+  "constraint_name": "orders_pkey",
+  "constraint_type": "PRIMARY KEY"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "orders",
+  "constraint_name": "orders_customer_fk",
+  "constraint_type": "FOREIGN KEY"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "order_lines",
+  "constraint_name": "order_lines_pkey",
+  "constraint_type": "PRIMARY KEY"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "order_lines",
+  "constraint_name": "order_lines_order_fk",
+  "constraint_type": "FOREIGN KEY"
+ }
+]

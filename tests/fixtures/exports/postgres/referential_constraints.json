@@ -1,0 +1,10 @@
+[
+ {
+  "constraint_name": "orders_customer_fk",
+  "unique_constraint_name": "customers_pkey"
+ },
+ {
+  "constraint_name": "order_lines_order_fk",
+  "unique_constraint_name": "orders_pkey"
+ }
+]

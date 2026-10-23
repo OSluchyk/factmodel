@@ -3,3 +3,4 @@
 kind: model-config
 id: thelook
 framework_version: 0.0.1
+anchor_entity: users

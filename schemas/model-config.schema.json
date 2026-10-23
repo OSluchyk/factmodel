@@ -9,7 +9,8 @@
     "kind",
     "id",
     "framework_version",
-    "profile"
+    "profile",
+    "anchor_entity"
   ],
   "properties": {
     "kind": {
@@ -26,6 +27,10 @@
       "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
     },
     "profile": {
+      "$ref": "#/$defs/slug"
+    },
+    "anchor_entity": {
+      "description": "The entity that holds the profile's subjects (D-012).",
       "$ref": "#/$defs/slug"
     },
     "adapters": {

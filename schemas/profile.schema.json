@@ -8,7 +8,7 @@
   "required": [
     "kind",
     "id",
-    "anchor_entity",
+    "subject",
     "labels",
     "rules"
   ],
@@ -22,8 +22,9 @@
     "meaning": {
       "$ref": "#/$defs/text"
     },
-    "anchor_entity": {
-      "$ref": "#/$defs/slug"
+    "subject": {
+      "description": "The role of the rows this domain is about, for example customer (D-012).",
+      "$ref": "#/$defs/text"
     },
     "labels": {
       "description": "The labels rules may assign. The core reserves withheld.",

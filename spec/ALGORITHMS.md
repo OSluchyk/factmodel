@@ -79,7 +79,7 @@ Other cases:
 
 Scope is derived, never authored (D-007). Projection (algorithm 1) reads its result, so the core runs this algorithm first.
 
-**Input.** Entities, relationships, evidence records, and the profile's `anchor_entity`.
+**Input.** Entities, relationships, evidence records, and the model's `anchor_entity` from `factmodel.yaml` (D-012).
 
 **Admitted step.** A relationship `r` on entity `S` with target `T` is an admitted step when all of these hold. If `r` has a `scope_admission` but one of them fails, the admission is rejected with the reason in brackets (`vocabulary:admission_rejection`):
 

@@ -1,0 +1,119 @@
+[
+ {
+  "table_schema": "shop",
+  "table_name": "customers",
+  "column_name": "customer_id",
+  "ordinal_position": 1,
+  "is_nullable": "NO",
+  "data_type": "integer",
+  "udt_name": "int4"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "customers",
+  "column_name": "email_hash",
+  "ordinal_position": 2,
+  "is_nullable": "YES",
+  "data_type": "character varying",
+  "udt_name": "varchar"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "customers",
+  "column_name": "created_at",
+  "ordinal_position": 3,
+  "is_nullable": "NO",
+  "data_type": "timestamp without time zone",
+  "udt_name": "timestamp"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "orders",
+  "column_name": "order_id",
+  "ordinal_position": 1,
+  "is_nullable": "NO",
+  "data_type": "integer",
+  "udt_name": "int4"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "orders",
+  "column_name": "customer_id",
+  "ordinal_position": 2,
+  "is_nullable": "YES",
+  "data_type": "integer",
+  "udt_name": "int4"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "orders",
+  "column_name": "total",
+  "ordinal_position": 3,
+  "is_nullable": "NO",
+  "data_type": "numeric",
+  "udt_name": "numeric"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "order_lines",
+  "column_name": "order_id",
+  "ordinal_position": 1,
+  "is_nullable": "NO",
+  "data_type": "integer",
+  "udt_name": "int4"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "order_lines",
+  "column_name": "line_no",
+  "ordinal_position": 2,
+  "is_nullable": "NO",
+  "data_type": "integer",
+  "udt_name": "int4"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "order_lines",
+  "column_name": "amount",
+  "ordinal_position": 3,
+  "is_nullable": "NO",
+  "data_type": "numeric",
+  "udt_name": "numeric"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "customer_totals",
+  "column_name": "customer_id",
+  "ordinal_position": 1,
+  "is_nullable": "YES",
+  "data_type": "integer",
+  "udt_name": "int4"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "customer_totals",
+  "column_name": "total",
+  "ordinal_position": 2,
+  "is_nullable": "YES",
+  "data_type": "numeric",
+  "udt_name": "numeric"
+ },
+ {
+  "table_schema": "other",
+  "table_name": "ignored",
+  "column_name": "id",
+  "ordinal_position": 1,
+  "is_nullable": "NO",
+  "data_type": "integer",
+  "udt_name": "int4"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "customers",
+  "column_name": "tags",
+  "ordinal_position": 4,
+  "is_nullable": "YES",
+  "data_type": "ARRAY",
+  "udt_name": "_text"
+ }
+]

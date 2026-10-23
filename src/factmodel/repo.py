@@ -11,7 +11,10 @@ from ruamel.yaml import YAML
 
 from factmodel import __version__
 from factmodel.core import derived
-from factmodel.model.loader import CONFIG_FILE, bundled_profile, load_model
+from factmodel.core.drafts import EntityDraft
+from factmodel.io.yaml_strict import loads
+from factmodel.model.loader import CONFIG_FILE, bundled_profile, inspect_model, load_model
+from factmodel.model.types import Snapshot, Source
 from factmodel.resources import framework_file, framework_text
 from factmodel.schemas.build import pattern, schema_for
 
@@ -61,17 +64,25 @@ def _check(kind: str, doc: dict[str, Any]) -> None:
         raise RepoError("; ".join(errors))
 
 
-def init(target: Path, profile: str, model_id: str | None = None) -> list[Path]:
-    """Create a model repository in ``target`` and return the files written."""
+def init(
+    target: Path, profile: str, model_id: str | None = None, anchor: str | None = None
+) -> list[Path]:
+    """Create a model repository in ``target`` and return the files written.
+
+    The anchor entity defaults to the slug of the profile's subject (D-012).
+    """
     if (target / CONFIG_FILE).exists():
         raise RepoError(f"{target / CONFIG_FILE} already exists")
-    if bundled_profile(profile) is None:
+    profile_text = bundled_profile(profile)
+    if profile_text is None:
         raise RepoError(f"unknown profile {profile!r}; see profiles/ in the framework")
+    subject = str(loads(profile_text, profile).data.get("subject", "subject"))
     config = {
         "kind": "model-config",
         "id": model_id or _slug(target.resolve().name),
         "framework_version": __version__,
         "profile": profile,
+        "anchor_entity": anchor or _slug(subject),
     }
     _check("model-config", config)
     target.mkdir(parents=True, exist_ok=True)
@@ -108,12 +119,9 @@ def init(target: Path, profile: str, model_id: str | None = None) -> list[Path]:
         for entry in sorted(skills.iterdir(), key=lambda e: e.name):
             if entry.is_file():
                 put(f".claude/skills/{entry.name}", entry.read_text(encoding="utf-8"))
-    model = load_model(target)
-    assert model.profile is not None
-    for path in derived.write(
-        model.root, derived.render(derived.derive(model.entities, model.evidence, model.profile))
-    ):
-        written.append(path)
+    values = derived.derive_model(load_model(target))
+    assert values is not None
+    written += derived.write(target.resolve(), derived.render(values))
     return written
 
 
@@ -129,3 +137,66 @@ def add_source(root: Path, source: dict[str, Any]) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(dump_yaml(doc), encoding="utf-8")
     return path
+
+
+def source_of(root: Path, source_id: str) -> Source:
+    """The registered source with this ID, as loaded."""
+    model = inspect_model(root).model
+    source = model.sources.get(source_id)
+    if source is None:
+        raise RepoError(f"source {source_id!r} is not registered (or its file is invalid)")
+    return source
+
+
+def _source_path(root: Path, source_id: str) -> Path:
+    for f in inspect_model(root).model.files:
+        if isinstance(f.obj, Source) and f.obj.id == source_id:
+            return root / f.path
+    raise RepoError(f"source {source_id!r} is not registered")
+
+
+def set_current_pin(root: Path, source_id: str, pin: str) -> None:
+    """Record the version last read on the source file, keeping its layout and comments."""
+    path = _source_path(root, source_id)
+    yaml = YAML(typ="rt")
+    doc = yaml.load(path.read_text(encoding="utf-8"))
+    if doc.get("current_pin") == pin:
+        return
+    doc["current_pin"] = pin
+    buf = io.StringIO()
+    yaml.dump(doc, buf)
+    path.write_text(buf.getvalue(), encoding="utf-8")
+
+
+def _write_if_changed(path: Path, text: str) -> bool:
+    if path.is_file() and path.read_text(encoding="utf-8") == text:
+        return False
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+    return True
+
+
+def write_snapshot(root: Path, snap: Snapshot) -> tuple[Path, bool]:
+    """Write ``sources/snapshots/<source-id>@<date>.yaml``; return it and whether it changed."""
+    path = root / "sources" / "snapshots" / f"{snap.source}@{snap.taken_on}.yaml"
+    text = dump_yaml(snap.model_dump(mode="json", exclude_none=True, by_alias=True))
+    return path, _write_if_changed(path, text)
+
+
+def latest_snapshot(root: Path, source_id: str) -> Path:
+    found = sorted((root / "sources" / "snapshots").glob(f"{source_id}@*.yaml"))
+    if not found:
+        raise RepoError(f"no snapshot for source {source_id!r}; run fact snapshot first")
+    return found[-1]
+
+
+def write_drafts(root: Path, drafts: list[EntityDraft]) -> list[Path]:
+    """Write drafts under ``drafts/``; return the files that changed."""
+    changed = []
+    for draft in drafts:
+        if not draft.path.startswith("drafts/"):
+            raise RepoError(f"drafts go to drafts/, never to {draft.path}")
+        path = root / draft.path
+        if _write_if_changed(path, dump_yaml(draft.document)):
+            changed.append(path)
+    return changed

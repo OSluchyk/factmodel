@@ -22,13 +22,14 @@ def cases(algorithm: str) -> list[str]:
 
 def typed_inputs(
     files: list[dict[str, Any]],
-) -> tuple[dict[str, Entity], dict[str, EvidenceRecord], Profile]:
+) -> tuple[dict[str, Entity], dict[str, EvidenceRecord], Profile, str]:
     entities = {f["id"]: Entity.model_validate(f) for f in files if f["kind"] == "entity"}
     evidence = {
         r["id"]: EvidenceRecord.model_validate(r) for f in files for r in f.get("records", [])
     }
     profile = Profile.model_validate(next(f for f in files if f["kind"] == "profile"))
-    return entities, evidence, profile
+    anchor = next(f for f in files if f["kind"] == "model-config")["anchor_entity"]
+    return entities, evidence, profile, anchor
 
 
 def scope_rows(derived: Derived) -> list[dict[str, Any]]:

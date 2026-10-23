@@ -4,7 +4,7 @@ Rules for agents working on this repository (the FactModel framework). Invariant
 
 ## Invariants
 
-1. **Clean room.** Write from `spec/` and general knowledge only. Never copy code, names, tickets, data or documents from any employer, client or other private project. Examples use public datasets (`thelook_ecommerce`, Pagila).
+1. **Clean room.** Write from `spec/` and general knowledge only. Never copy code, names, tickets, data or documents from any employer, client or other private project. Examples use Chinook on SQLite and PostgreSQL.
 2. **English only**, plain and short, in code, comments, docs and reports. Use a hyphen, never an em dash.
 3. **No data, no secrets** in the repository.
 4. **One commit per round, never push** (D-008). At the end of a round, commit once on the branch the brief names. Never push, never amend or rewrite history, never add attribution lines (no co-author or tool trailers). The owner reviews the log and pushes.
@@ -14,6 +14,7 @@ Rules for agents working on this repository (the FactModel framework). Invariant
 8. **Checks pass before a round is reported done:**
    `uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy src`, `uv run pytest -q`.
 9. **Stop and ask** only for the stop conditions in the brief. Otherwise finish the work and record questions in the report.
+10. **The agent never drafts or records a decision that widens its own access** (credentials, remote platforms, network). Such requests go in the report's questions.
 
 ## Report
 

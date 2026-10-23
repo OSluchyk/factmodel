@@ -4,4 +4,5 @@ kind: model-config
 id: thelook
 framework_version: 0.0.1
 profile: retail
+anchor_entity: users
 owner: someone

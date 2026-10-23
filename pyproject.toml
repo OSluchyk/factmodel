@@ -19,10 +19,23 @@ dependencies = [
     "ruamel.yaml>=0.18",
     "jsonschema>=4.23",
     "pydantic>=2",
+    "sqlglot>=30.24.0",
 ]
 
 [project.scripts]
 fact = "factmodel.cli:app"
+
+[project.entry-points."factmodel.adapters"]
+export = "factmodel.adapters.export:ExportAdapter"
+sql = "factmodel.adapters.sql:SqlAdapter"
+
+[project.optional-dependencies]
+sql = [
+    "sqlalchemy>=2.0",
+]
+postgres = [
+    "psycopg[binary]>=3",
+]
 
 [dependency-groups]
 dev = [
@@ -32,6 +45,8 @@ dev = [
     "mypy>=1.11",
     "pre-commit>=3.8",
     "types-jsonschema>=4.26.0.20261006",
+    "sqlalchemy>=2.0",
+    "psycopg[binary]>=3",
 ]
 
 [build-system]

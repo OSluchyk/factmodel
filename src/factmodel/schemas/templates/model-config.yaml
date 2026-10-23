@@ -2,7 +2,7 @@ title: Model config
 description: The root file of a model repository (factmodel.yaml).
 type: object
 additionalProperties: false
-required: [kind, id, framework_version, profile]
+required: [kind, id, framework_version, profile, anchor_entity]
 properties:
   kind: {$const: "file_kind:model-config"}
   id: {$ref: "#/$defs/slug"}
@@ -11,6 +11,9 @@ properties:
     type: string
     pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
   profile: {$ref: "#/$defs/slug"}
+  anchor_entity:
+    description: The entity that holds the profile's subjects (D-012).
+    $ref: "#/$defs/slug"
   adapters: {$ref: "#/$defs/slugs"}
   consumers: {$ref: "#/$defs/slugs"}
   environments: {$ref: "#/$defs/slugs"}

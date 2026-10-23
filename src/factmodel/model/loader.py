@@ -44,6 +44,8 @@ HINTS = {
     "missing_profile": "add profiles/<id>/profile.yaml or fix profile in factmodel.yaml",
     "missing_register": "add the register entry or fix the ID",
     "unknown_label": "add the label to the profile's labels",
+    "anchor_class": "bind anchor_entity to the entity of class data that holds the subjects",
+    "missing_dialect": "set dialect on the source to a sqlglot dialect name",
     "bad_join": "write <source>.<field> = <target>.<field> with fields of both entities",
 }
 
@@ -309,6 +311,10 @@ class _Checker:
             self._sources(name, doc)
             self._registers(name, doc)
             kind = data.get("kind")
+            if kind == "model-config":
+                self._anchor(name, doc)
+            elif kind == "source":
+                self._dialect(name, doc)
             if kind == "entity":
                 self._entity(name, doc)
             elif kind == "service":
@@ -485,18 +491,30 @@ class _Checker:
                         if self._need_entity(name, doc, [key, i, fkey], entity):
                             self._need_field(name, doc, [key, i, fkey], entity, address)
 
+    def _anchor(self, name: str, doc: Document) -> None:
+        """The model's anchor names an existing data entity (D-012), once there are entities."""
+        anchor = doc.data.get("anchor_entity")
+        if not self.entities or not isinstance(anchor, str):
+            return
+        if anchor not in self.entities:
+            self.add("missing_entity", name, doc, ["anchor_entity"], f"anchor {anchor!r} not found")
+            return
+        entity_class = self.entities[anchor][1].data.get("class")
+        if entity_class != "data":
+            message = f"anchor {anchor!r} has class {entity_class!r}; it must be data"
+            self.add("anchor_class", name, doc, ["anchor_entity"], message)
+
+    def _dialect(self, name: str, doc: Document) -> None:
+        """An engine without a default dialect needs an explicit one."""
+        engine = doc.data.get("engine")
+        known = vocabulary.load_maps()["engine_dialect"]
+        if isinstance(engine, str) and engine not in known and not doc.data.get("dialect"):
+            message = f"engine {engine!r} has no default dialect"
+            self.add("missing_dialect", name, doc, ["engine"], message)
+
     def _profile(self, profile: dict[str, Any]) -> None:
         name, doc = profile["file"], profile["doc"]
         data = doc.data
-        anchor = data.get("anchor_entity")
-        if self.entities and anchor not in self.entities:
-            self.add(
-                "missing_entity",
-                name,
-                doc,
-                ["anchor_entity"],
-                f"anchor entity {anchor!r} not found",
-            )
         labels = set(data.get("labels", []))
         for i, rule in enumerate(data.get("rules", [])):
             if rule.get("label") not in labels:

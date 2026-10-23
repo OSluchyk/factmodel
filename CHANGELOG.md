@@ -2,6 +2,16 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-23 - Round 8: WP1.5 Adapter protocol, export and sql adapters
+
+**Why.** FactModel must work with any data source. Tying M1 to one cloud engine meant credentials the agent must not have and a core shaped by one platform. The core now reads only snapshots and model files; engines arrive as plugins.
+
+- Record D-011 (engine-blind core, universal adapters, local reference engines), D-012 (the model binds the anchor, the profile names the subject) and D-013 (neutral type class), and apply them to the spec, plan, vocabulary, schemas, fixtures and code.
+- Add the adapter protocol, the entry-point registry (`factmodel.adapters`), the `export` adapter (generic, PostgreSQL and BigQuery flavours) and the `sql` adapter (SQLAlchemy reflection, DSN only from the environment).
+- Add core `to_facts`, and `fact adapters`, `fact export-sql`, `fact snapshot`, `fact draft`.
+- A literal connection string in a model file fails the privacy stage.
+- AGENTS.md rule 10: the agent never widens its own access.
+
 ## Unreleased - 2026-10-23 - Round 7: WP1.8b Hard-case fixtures
 
 **Why.** Public datasets are too clean to show what the framework exists for: soft deletes, keys that repeat, polymorphic links, per-tenant targets, nullable anchors, reference chains, nested fields, stale and retracted evidence. Small synthetic models make each one a regression test.

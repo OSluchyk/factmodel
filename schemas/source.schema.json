@@ -44,9 +44,35 @@
       "type": "integer",
       "minimum": 0
     },
-    "engine": {
-      "description": "For a warehouse, the engine slug used in pins.",
+    "adapter": {
+      "description": "The adapter that reads this source (entry point group factmodel.adapters).",
       "$ref": "#/$defs/slug"
+    },
+    "engine": {
+      "description": "For a warehouse, the engine slug used in pins (free slug).",
+      "$ref": "#/$defs/slug"
+    },
+    "dialect": {
+      "description": "The sqlglot dialect; required when the engine has no default dialect.",
+      "$ref": "#/$defs/slug"
+    },
+    "dsn_env": {
+      "description": "The environment variable that holds the connection string. Never the string.",
+      "type": "string",
+      "pattern": "^[A-Z_][A-Z0-9_]*$"
+    },
+    "revision": {
+      "description": "For a git source, the commit, branch or tag to read; worktree reads files as they are.",
+      "$ref": "#/$defs/text"
+    },
+    "include": {
+      "description": "For a git source, path globs of the files to parse (for example DDL).",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/text"
+      },
+      "minItems": 1,
+      "uniqueItems": true
     },
     "location": {
       "$ref": "#/$defs/text"

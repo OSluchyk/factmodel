@@ -7,7 +7,7 @@ from functools import cached_property
 from importlib import resources
 from pathlib import Path
 
-from factmodel.core.derived import Derived, derive, render
+from factmodel.core.derived import Derived, derive_model, render
 from factmodel.io.yaml_strict import Document, loads
 from factmodel.model.loader import LoadIssue, LoadResult, Model, inspect_model
 from factmodel.model.types import Entity
@@ -71,10 +71,9 @@ class GateContext:
 
     @cached_property
     def derived(self) -> Derived | None:
-        model = self.result.model
-        if self.blocked or model.profile is None:
+        if self.blocked:
             return None
-        return derive(model.entities, model.evidence, model.profile)
+        return derive_model(self.result.model)
 
     @cached_property
     def generated(self) -> dict[str, str] | None:

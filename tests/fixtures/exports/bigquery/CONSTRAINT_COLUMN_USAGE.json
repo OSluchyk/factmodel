@@ -1,0 +1,12 @@
+[
+ {
+  "table_name": "customers",
+  "column_name": "customer_id",
+  "constraint_name": "orders_customer_fk"
+ },
+ {
+  "table_name": "orders",
+  "column_name": "order_id",
+  "constraint_name": "order_lines_order_fk"
+ }
+]

@@ -1,0 +1,142 @@
+[
+ {
+  "table_schema": "shop",
+  "table_name": "customers",
+  "column_name": "customer_id",
+  "ordinal_position": "1",
+  "is_nullable": "NO",
+  "data_type": "INT64",
+  "is_partitioning_column": "NO",
+  "clustering_ordinal_position": null
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "customers",
+  "column_name": "email_hash",
+  "ordinal_position": "2",
+  "is_nullable": "YES",
+  "data_type": "STRING",
+  "is_partitioning_column": "NO",
+  "clustering_ordinal_position": null
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "customers",
+  "column_name": "created_at",
+  "ordinal_position": "3",
+  "is_nullable": "NO",
+  "data_type": "TIMESTAMP",
+  "is_partitioning_column": "NO",
+  "clustering_ordinal_position": null
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "orders",
+  "column_name": "order_id",
+  "ordinal_position": "1",
+  "is_nullable": "NO",
+  "data_type": "INT64",
+  "is_partitioning_column": "NO",
+  "clustering_ordinal_position": null
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "orders",
+  "column_name": "customer_id",
+  "ordinal_position": "2",
+  "is_nullable": "YES",
+  "data_type": "INT64",
+  "is_partitioning_column": "NO",
+  "clustering_ordinal_position": "1"
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "orders",
+  "column_name": "total",
+  "ordinal_position": "3",
+  "is_nullable": "NO",
+  "data_type": "NUMERIC",
+  "is_partitioning_column": "NO",
+  "clustering_ordinal_position": null
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "order_lines",
+  "column_name": "order_id",
+  "ordinal_position": "1",
+  "is_nullable": "NO",
+  "data_type": "INT64",
+  "is_partitioning_column": "NO",
+  "clustering_ordinal_position": null
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "order_lines",
+  "column_name": "line_no",
+  "ordinal_position": "2",
+  "is_nullable": "NO",
+  "data_type": "INT64",
+  "is_partitioning_column": "NO",
+  "clustering_ordinal_position": null
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "order_lines",
+  "column_name": "amount",
+  "ordinal_position": "3",
+  "is_nullable": "NO",
+  "data_type": "NUMERIC",
+  "is_partitioning_column": "NO",
+  "clustering_ordinal_position": null
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "customer_totals",
+  "column_name": "customer_id",
+  "ordinal_position": "1",
+  "is_nullable": "YES",
+  "data_type": "INT64",
+  "is_partitioning_column": "NO",
+  "clustering_ordinal_position": null
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "customer_totals",
+  "column_name": "total",
+  "ordinal_position": "2",
+  "is_nullable": "YES",
+  "data_type": "NUMERIC",
+  "is_partitioning_column": "NO",
+  "clustering_ordinal_position": null
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "orders",
+  "column_name": "ordered_on",
+  "ordinal_position": "4",
+  "is_nullable": "NO",
+  "data_type": "DATE",
+  "is_partitioning_column": "YES",
+  "clustering_ordinal_position": null
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "orders",
+  "column_name": "context",
+  "ordinal_position": "5",
+  "is_nullable": "YES",
+  "data_type": "STRUCT<device STRING, region STRING>",
+  "is_partitioning_column": "NO",
+  "clustering_ordinal_position": null
+ },
+ {
+  "table_schema": "shop",
+  "table_name": "orders",
+  "column_name": "tags",
+  "ordinal_position": "6",
+  "is_nullable": "NO",
+  "data_type": "ARRAY<STRING>",
+  "is_partitioning_column": "NO",
+  "clustering_ordinal_position": null
+ }
+]

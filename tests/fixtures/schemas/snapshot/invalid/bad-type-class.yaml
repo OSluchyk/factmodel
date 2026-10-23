@@ -1,0 +1,56 @@
+# reason: bad type class
+# expect: $.objects[0].fields[0].type_class
+kind: snapshot
+source: bq-public
+engine: bigquery
+target: bigquery-public-data.thelook_ecommerce
+taken_on: '2026-11-01'
+objects:
+- name: orders
+  object_type: table
+  fields:
+  - name: order_id
+    type: INT64
+    type_class: number
+    nullable: false
+  - name: user_id
+    type: INT64
+    nullable: true
+  - name: created_at
+    type: TIMESTAMP
+    nullable: true
+  constraints:
+  - constraint_type: primary_key
+    fields:
+    - order_id
+    enforced: false
+  - constraint_type: foreign_key
+    fields:
+    - user_id
+    references:
+      object: users
+      fields:
+      - id
+    enforced: false
+  partitioning:
+    field: created_at
+    granularity: DAY
+  clustering:
+  - user_id
+  options:
+    description: null
+    require_partition_filter: false
+- name: events
+  object_type: table
+  fields:
+  - name: processing
+    type: STRUCT
+    nullable: true
+  - name: request_id
+    path: processing.request_id
+    type: STRING
+    nullable: true
+  - name: tags
+    type: STRING
+    nullable: false
+    repeated: true

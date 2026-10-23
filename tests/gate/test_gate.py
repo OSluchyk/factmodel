@@ -38,11 +38,9 @@ def _write(root: Path, rel: str, doc: dict[str, Any]) -> None:
 
 
 def _project(root: Path) -> None:
-    model = load_model(root)
-    assert model.profile is not None
-    derived.write(
-        root, derived.render(derived.derive(model.entities, model.evidence, model.profile))
-    )
+    values = derived.derive_model(load_model(root))
+    assert values is not None
+    derived.write(root, derived.render(values))
 
 
 def test_stage_list_matches_the_plan_without_triggers() -> None:

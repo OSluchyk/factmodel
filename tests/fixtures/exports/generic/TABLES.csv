@@ -1,0 +1,6 @@
+table_schema,table_name,table_type
+shop,customers,BASE TABLE
+shop,orders,BASE TABLE
+shop,order_lines,BASE TABLE
+shop,customer_totals,VIEW
+other,ignored,BASE TABLE

@@ -25,4 +25,4 @@ def test_retail_profile_rules_match_the_vectors() -> None:
     files = vector("projection", "rule-lineage")["input"]["files"]
     in_vector = Profile.model_validate(next(f for f in files if f["kind"] == "profile"))
     assert [(r.when, r.label) for r in retail.rules] == [(r.when, r.label) for r in in_vector.rules]
-    assert retail.anchor_entity == in_vector.anchor_entity
+    assert retail.subject == in_vector.subject == "customer"

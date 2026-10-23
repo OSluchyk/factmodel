@@ -2,12 +2,14 @@ title: Profile
 description: The domain layer over the core - anchor entity, labels and ordered projection rules.
 type: object
 additionalProperties: false
-required: [kind, id, anchor_entity, labels, rules]
+required: [kind, id, subject, labels, rules]
 properties:
   kind: {$const: "file_kind:profile"}
   id: {$ref: "#/$defs/slug"}
   meaning: {$ref: "#/$defs/text"}
-  anchor_entity: {$ref: "#/$defs/slug"}
+  subject:
+    description: The role of the rows this domain is about, for example customer (D-012).
+    $ref: "#/$defs/text"
   labels:
     description: The labels rules may assign. The core reserves withheld.
     type: array

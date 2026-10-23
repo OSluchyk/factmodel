@@ -1,5 +1,6 @@
 """Gate stage `privacy`: evidence or a probe result holds something that looks like personal
-data or a row sample. Evidence holds quotes and counts; it never holds values about people."""
+data or a row sample, or any model file holds a literal connection string. Evidence holds
+quotes and counts; credentials are named through `dsn_env`, never written."""
 
 import re
 from collections.abc import Iterator
@@ -16,6 +17,20 @@ PATTERNS = {
     "row_sample": re.compile(r"(?:[^\t\n]*\t){2,}|(?:[^|\n]*\|){3,}"),
 }
 RECORD_TEXT = ("quote", "note", "named_error")
+# A connection string written into a model file instead of named through dsn_env.
+LITERAL_DSN = re.compile(r"[A-Za-z][A-Za-z0-9+.-]*://[^\s]*@|password\s*=", re.IGNORECASE)
+DSN_HINT = "remove the connection string; name the environment variable that holds it in dsn_env"
+
+
+def _strings(node: Any, location: list[str | int]) -> Iterator[tuple[list[str | int], str]]:
+    if isinstance(node, dict):
+        for key, value in node.items():
+            yield from _strings(value, [*location, key])
+    elif isinstance(node, list):
+        for i, item in enumerate(node):
+            yield from _strings(item, [*location, i])
+    elif isinstance(node, str):
+        yield location, node
 
 
 def _texts(kind: str, data: dict[str, Any]) -> Iterator[tuple[list[str | int], str]]:
@@ -34,6 +49,10 @@ def run(ctx: GateContext) -> list[LoadIssue]:
         data = f.document.data
         if not isinstance(data, dict):
             continue
+        for location, text in _strings(data, []):
+            if LITERAL_DSN.search(text):
+                message = "a connection string is written in a model file"
+                issues.append(ctx.issue(STAGE, "literal_dsn", f.path, location, message, DSN_HINT))
         for location, text in _texts(f.kind, data):
             for code, pattern in PATTERNS.items():
                 if pattern.search(text):

@@ -3,7 +3,8 @@ id: thelook
 title: thelook_ecommerce public dataset
 framework_version: 0.0.1
 profile: retail
-adapters: [bigquery, git]
+anchor_entity: users
+adapters: [export, git]
 consumers: [filter-sql]
 environments: [prod]
 ranks:

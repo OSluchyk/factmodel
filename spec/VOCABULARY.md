@@ -8,7 +8,7 @@ Companion to `spec/SPEC.md`. Every term the schemas use is defined here once.
 - Each term has a one-sentence meaning, its allowed values when it is an enumeration, and one example.
 - Every enumeration is also given as a fenced block that opens with `yaml vocabulary:<name>`. The code loads these blocks (`src/factmodel/vocabulary.py`), and later schemas import them, so the list here is the only source. Change a value here, and the code follows.
 - All values are slugs (see Identifiers). Where the spec used two words for one thing, one is chosen and the other is listed under "Not used".
-- Examples use the public dataset `bigquery-public-data.thelook_ecommerce`.
+- Examples use a small shop schema (`users`, `orders`, `order_items`, `products`); the reference example of the framework is Chinook on SQLite and PostgreSQL (D-011).
 
 ## General terms
 
@@ -78,7 +78,7 @@ Example: `kind: entity` at the top of `physical/entities/orders.yaml`.
 
 **Slug.** Every authored ID is a slug: lowercase letters, digits, hyphen and underscore, starting with a letter or digit, at most 64 characters. Pattern: `^[a-z0-9][a-z0-9_-]{0,63}$`. Example: `order-items`.
 
-**Entity `id` and `physical_name`.** The `id` is the slug the model uses everywhere; `physical_name` is the name the engine uses, kept exactly as the engine writes it. Example: `id: orders`, `physical_name: thelook_ecommerce.orders`.
+**Entity `id` and `physical_name`.** The `id` is the slug the model uses everywhere; `physical_name` is the name the engine uses, kept exactly as the engine writes it. Example: `id: orders`, `physical_name: sales.orders`; for Chinook, `id: invoice_line`, `physical_name: InvoiceLine`.
 
 **Relationship key.** A slug the author sets, unique within its source entity (D-002). The position of a relationship in a list is never its identity, because lists get reordered. Example: `key: placed-by`.
 
@@ -98,7 +98,7 @@ Not used: positional relationship identity such as `orders#1`.
 | --- | --- | --- |
 | `id` | Slug, unique within the model. | `ev-orders-ddl` |
 | `source` | ID of a registered source. | `bq-public` |
-| `pin` | The exact version read, in the pin format of the source kind (see Sources). | `bigquery:bigquery-public-data.thelook_ecommerce@2026-11-01` |
+| `pin` | The exact version read, in the pin format of the source kind (see Sources). | `postgres:chinook@2026-10-23` |
 | `quote` | A verbatim quote from the source, at most 40 words. | `INFORMATION_SCHEMA.COLUMNS for orders` |
 | `measurement` | A map of counts or rates, never values or identifiers. | `{match_rate: 1.0, orphans_left: 0}` |
 | `status` | See below. | `confirmed` |
@@ -159,8 +159,8 @@ A **source** is one place facts come from. The source registry records how to ob
 
 | Kind | Meaning | Pin format | Example pin |
 | --- | --- | --- | --- |
-| `git` | A git repository: DDL, configuration, pipeline code. | `<repo>@<sha>:<path>[:<line>]` | `etl-config@3f2a9c1:loaders/orders.yaml:12` |
-| `warehouse` | An engine's catalog or data, read through an adapter or a probe. | `<engine>:<project>.<dataset>@<YYYY-MM-DD>` | `bigquery:bigquery-public-data.thelook_ecommerce@2026-11-01` |
+| `git` | A git repository: DDL, configuration, pipeline code. | `<repo>@<sha>:<path>[:<line>]`; the sha is a commit, or the file's blob hash for a read of the working tree | `etl-config@3f2a9c1:loaders/orders.yaml:12` |
+| `warehouse` | An engine's catalog or data, read through an adapter or a probe. | `<engine>:<target>@<YYYY-MM-DD>`, where the target is what was read (a database, a schema, `<project>.<dataset>`) | `postgres:chinook@2026-10-23`, `bigquery:my-project.sales@2026-10-23` |
 | `api` | An HTTP API that describes or serves platform objects. | `<host><path>@<YYYY-MM-DD>` | `api.example.com/v2/objects@2026-11-01` |
 | `document` | A vendor or internal document with a version or date. | `<title>@<version or YYYY-MM-DD>` | `Loader guide@4.2` |
 | `ticket` | An issue or change ticket. | `<system>:<key>@<YYYY-MM-DD>` | `tracker:DATA-12@2026-11-01` |
@@ -186,6 +186,38 @@ A person pin names a role, never a person's name.
 | `export_file` | The owner exports the source to a file (for example a metadata snapshot), and the agent reads the file. |
 
 Example: a production warehouse is `owner_read`; its metadata snapshot in `sources/snapshots/` is read as `export_file`.
+
+**Adapter and access fields.** A source that an adapter reads names it:
+
+| Field | Meaning | Example |
+| --- | --- | --- |
+| `adapter` | The adapter that reads the source (an entry point in the group `factmodel.adapters`). | `sql` |
+| `engine` | A free slug for the engine. Engines in `engine_dialect` below have a default SQL dialect. | `postgres` |
+| `dialect` | The sqlglot dialect, required when the engine is not in `engine_dialect`. | `tsql` |
+| `dsn_env` | The name of the environment variable that holds the connection string. The string itself is never written in a model file; the `privacy` gate stage fails on one. | `FACT_PG_DSN` |
+
+```yaml vocabulary-map:engine_dialect
+bigquery: bigquery
+postgres: postgres
+sqlite: sqlite
+mysql: mysql
+mssql: tsql
+snowflake: snowflake
+databricks: databricks
+duckdb: duckdb
+trino: trino
+redshift: redshift
+oracle: oracle
+```
+
+**Engines that enforce foreign keys.** A declared foreign key read from one of these engines is `enforced: true` and its draft evidence is `confirmed`; from any other engine (SQLite by default, BigQuery, Snowflake, Databricks) it is `enforced: false` and `inferred` until a probe confirms it.
+
+```yaml vocabulary:engine_enforces_foreign_keys
+- postgres
+- mysql
+- mssql
+- oracle
+```
 
 **Current pin.** A source may record `current_pin`, the version of the source as last read (`fact sync` will update it). Evidence from that source pinned to another version is stale: `fact status` lists it, and the gate does not fail on it.
 
@@ -446,7 +478,8 @@ Example: `orders.placed-by	customer_scoped` is a row in `generated/labels.tsv`.
 
 A **profile** is the domain layer over the core.
 
-- **Anchor entity**: the entity whose rows are the subjects. Example: `anchor_entity: users`.
+- **Subject**: the role of the rows the domain is about, in plain words. Example: `subject: customer`.
+- **Anchor entity**: the entity that holds the subjects. A model binds it in `factmodel.yaml`, not in the profile, so one profile fits many platforms (D-012). Example: `anchor_entity: customer`.
 - **Label vocabulary**: the labels the profile may assign. Example: `[customer_scoped, configuration, administrative, lineage, representation, unresolved]`. `withheld` is reserved by the core and is never in a label vocabulary.
 - **Facet**: a property of a relationship or its ends that a rule can test: evidence status, mechanism, the class of each end, whether each end is subject-scoped.
 - **Rules**: an ordered list of `when` (facets) and `label`. Rules are evaluated in order; the first match wins.
@@ -599,7 +632,9 @@ Example: `source_pin_moved` on the loader repository requires the evidence pinne
 
 ## 12. Metadata snapshots
 
-A **snapshot** is an engine-neutral export of a source's metadata (`fact snapshot --source <id>`), stored in `sources/snapshots/`, so adapters, agents and tests work without credentials. It holds objects, fields with paths and types, declared constraints, partitioning and options - never rows. It is not a model file kind: the gate does not read it, adapters do. Its schema is `schemas/snapshot.schema.json`.
+A **snapshot** is an engine-neutral export of a source's metadata (`fact snapshot --source <id>`), stored in `sources/snapshots/`, so adapters, agents and tests work without credentials. It holds objects, fields with paths and types, declared constraints, partitioning and options - never rows. It is not a model file kind: the gate does not read it. It is the only contract between an adapter and the core (D-011): `fact draft` and `fact sync` read snapshots, and the core never reads `options` or `extensions`, where engine-specific facts go. Its schema is `schemas/snapshot.schema.json`.
+
+A snapshot may carry a `pin` (the version read) and each object may carry its own `pin` (for example a DDL file at a commit); drafts cite the object's pin, else the snapshot's.
 
 **Object type.**
 
@@ -619,3 +654,25 @@ A **snapshot** is an engine-neutral export of a source's metadata (`fact snapsho
 ```
 
 Example: a BigQuery primary key on `orders.order_id` is `{constraint_type: primary_key, fields: [order_id], enforced: false}`.
+
+**Type class.** A neutral class for a field's type (D-013). `type` keeps the engine's own text; `type_class` lets snapshots from different engines, or reads before and after a cosmetic change, be compared. Each adapter maps engine types; an unknown type is `other`.
+
+```yaml vocabulary:type_class
+- integer
+- decimal
+- float
+- boolean
+- text
+- date
+- time
+- timestamp
+- interval
+- binary
+- json
+- array
+- struct
+- geography
+- other
+```
+
+Example: `INT64` (BigQuery), `integer` (PostgreSQL) and `INTEGER` (SQLite) are all `integer`.

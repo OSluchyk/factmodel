@@ -1,0 +1,114 @@
+[
+ {
+  "table_name": "customers",
+  "column_name": "customer_id",
+  "field_path": "customer_id",
+  "data_type": "INT64",
+  "description": null
+ },
+ {
+  "table_name": "customers",
+  "column_name": "email_hash",
+  "field_path": "email_hash",
+  "data_type": "STRING",
+  "description": null
+ },
+ {
+  "table_name": "customers",
+  "column_name": "created_at",
+  "field_path": "created_at",
+  "data_type": "TIMESTAMP",
+  "description": null
+ },
+ {
+  "table_name": "orders",
+  "column_name": "order_id",
+  "field_path": "order_id",
+  "data_type": "INT64",
+  "description": null
+ },
+ {
+  "table_name": "orders",
+  "column_name": "customer_id",
+  "field_path": "customer_id",
+  "data_type": "INT64",
+  "description": null
+ },
+ {
+  "table_name": "orders",
+  "column_name": "total",
+  "field_path": "total",
+  "data_type": "NUMERIC",
+  "description": null
+ },
+ {
+  "table_name": "order_lines",
+  "column_name": "order_id",
+  "field_path": "order_id",
+  "data_type": "INT64",
+  "description": null
+ },
+ {
+  "table_name": "order_lines",
+  "column_name": "line_no",
+  "field_path": "line_no",
+  "data_type": "INT64",
+  "description": null
+ },
+ {
+  "table_name": "order_lines",
+  "column_name": "amount",
+  "field_path": "amount",
+  "data_type": "NUMERIC",
+  "description": null
+ },
+ {
+  "table_name": "customer_totals",
+  "column_name": "customer_id",
+  "field_path": "customer_id",
+  "data_type": "INT64",
+  "description": null
+ },
+ {
+  "table_name": "customer_totals",
+  "column_name": "total",
+  "field_path": "total",
+  "data_type": "NUMERIC",
+  "description": null
+ },
+ {
+  "table_name": "orders",
+  "column_name": "ordered_on",
+  "field_path": "ordered_on",
+  "data_type": "DATE",
+  "description": "Day the order was placed"
+ },
+ {
+  "table_name": "orders",
+  "column_name": "context",
+  "field_path": "context",
+  "data_type": "STRUCT<device STRING, region STRING>",
+  "description": null
+ },
+ {
+  "table_name": "orders",
+  "column_name": "context",
+  "field_path": "context.device",
+  "data_type": "STRING",
+  "description": null
+ },
+ {
+  "table_name": "orders",
+  "column_name": "context",
+  "field_path": "context.region",
+  "data_type": "STRING",
+  "description": null
+ },
+ {
+  "table_name": "orders",
+  "column_name": "tags",
+  "field_path": "tags",
+  "data_type": "ARRAY<STRING>",
+  "description": null
+ }
+]

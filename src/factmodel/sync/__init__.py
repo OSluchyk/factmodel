@@ -129,6 +129,7 @@ def _fire(
             continue
         path = root / f.path
         yaml = YAML(typ="rt")
+        yaml.width = 4096  # keep the author's line breaks; never re-wrap text
         doc = yaml.load(path.read_text(encoding="utf-8"))
         doc.setdefault("fired", []).append({"on": day, "detail": detail})
         buf = io.StringIO()

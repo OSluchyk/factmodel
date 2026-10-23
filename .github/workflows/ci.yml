@@ -35,3 +35,7 @@ jobs:
         run: uv run mypy src
       - name: Tests
         run: uv run pytest -q
+      - name: Chinook gate (M1)
+        run: uv run fact check --root examples/chinook
+      - name: Chinook on PostgreSQL (same snapshot parts and probe counts as SQLite)
+        run: uv run pytest -q tests/examples

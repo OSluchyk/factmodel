@@ -1,0 +1,87 @@
+kind: entity
+id: invoice
+physical_name: Invoice
+source: chinook-sqlite
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - InvoiceId
+evidence:
+- ev-invoice-catalog
+fields:
+- name: InvoiceId
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: CustomerId
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: InvoiceDate
+  type: DATETIME
+  nullable: false
+  meaning: Not written yet.
+- name: BillingAddress
+  type: NVARCHAR(70)
+  nullable: true
+  meaning: Not written yet.
+- name: BillingCity
+  type: NVARCHAR(40)
+  nullable: true
+  meaning: Not written yet.
+- name: BillingState
+  type: NVARCHAR(40)
+  nullable: true
+  meaning: Not written yet.
+- name: BillingCountry
+  type: NVARCHAR(40)
+  nullable: true
+  meaning: Not written yet.
+- name: BillingPostalCode
+  type: NVARCHAR(10)
+  nullable: true
+  meaning: Not written yet.
+- name: Total
+  type: NUMERIC(10, 2)
+  nullable: false
+  meaning: Not written yet.
+relationships:
+- key: to-customer
+  to: customer
+  join: invoice.CustomerId = customer.CustomerId
+  meaning: Declared foreign key to Customer; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-invoice-to-customer
+records:
+- id: ev-invoice-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table Invoice in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-invoice-to-customer
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key CustomerId to Customer (not enforced)
+  status: inferred
+  read_on: '2026-10-23'
+extensions:
+  draft:
+    from: sqlite:chinook@2026-10-23
+    placeholders:
+    - grain
+    - class
+    - fields.InvoiceId.meaning
+    - fields.CustomerId.meaning
+    - fields.InvoiceDate.meaning
+    - fields.BillingAddress.meaning
+    - fields.BillingCity.meaning
+    - fields.BillingState.meaning
+    - fields.BillingCountry.meaning
+    - fields.BillingPostalCode.meaning
+    - fields.Total.meaning
+    - relationships.to-customer.meaning

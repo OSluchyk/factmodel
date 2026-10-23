@@ -1,0 +1,82 @@
+kind: entity
+id: invoice
+physical_name: Invoice
+source: chinook-sqlite
+grain: one row per invoice (one purchase)
+class: data
+status: draft
+meaning: Purchases; each belongs to one customer.
+keys:
+  primary:
+  - InvoiceId
+anchor_reference:
+  field: CustomerId
+  evidence:
+  - ev-invoice-to-customer
+evidence:
+- ev-invoice-catalog
+- ev-key-duplicates-invoice-2026-10-23
+- ev-row-count-invoice-2026-10-23
+fields:
+- name: InvoiceId
+  type: INTEGER
+  nullable: false
+  meaning: Invoice identifier.
+- name: CustomerId
+  type: INTEGER
+  nullable: false
+  meaning: Customer identifier.
+  evidence:
+  - ev-null-rate-invoice-customer-id-2026-10-23
+- name: InvoiceDate
+  type: DATETIME
+  nullable: false
+  meaning: When the purchase was made.
+- name: BillingAddress
+  type: NVARCHAR(70)
+  nullable: true
+  meaning: Billing street address.
+- name: BillingCity
+  type: NVARCHAR(40)
+  nullable: true
+  meaning: Billing city.
+- name: BillingState
+  type: NVARCHAR(40)
+  nullable: true
+  meaning: Billing state or region.
+- name: BillingCountry
+  type: NVARCHAR(40)
+  nullable: true
+  meaning: Billing country.
+- name: BillingPostalCode
+  type: NVARCHAR(10)
+  nullable: true
+  meaning: Billing postal code.
+- name: Total
+  type: NUMERIC(10, 2)
+  nullable: false
+  meaning: Invoice total, the sum of its lines.
+relationships:
+- key: to-customer
+  to: customer
+  join: invoice.CustomerId = customer.CustomerId
+  meaning: The customer who made the purchase.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-invoice-to-customer
+  - ev-fan-out-invoice-to-customer-2026-10-23
+  - ev-join-match-invoice-to-customer-2026-10-23
+records:
+- id: ev-invoice-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table Invoice in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-invoice-to-customer
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key CustomerId to Customer (not enforced)
+  status: inferred
+  read_on: '2026-10-23'

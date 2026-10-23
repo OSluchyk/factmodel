@@ -1,0 +1,36 @@
+kind: entity
+id: artist
+physical_name: Artist
+source: chinook-sqlite
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - ArtistId
+evidence:
+- ev-artist-catalog
+fields:
+- name: ArtistId
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: Name
+  type: NVARCHAR(120)
+  nullable: true
+  meaning: Not written yet.
+records:
+- id: ev-artist-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table Artist in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+extensions:
+  draft:
+    from: sqlite:chinook@2026-10-23
+    placeholders:
+    - grain
+    - class
+    - fields.ArtistId.meaning
+    - fields.Name.meaning

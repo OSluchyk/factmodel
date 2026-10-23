@@ -1,0 +1,80 @@
+kind: entity
+id: invoice_line
+physical_name: InvoiceLine
+source: chinook-sqlite
+grain: one row per track bought on an invoice
+class: data
+status: draft
+meaning: Tracks bought on an invoice, with the price paid.
+keys:
+  primary:
+  - InvoiceLineId
+evidence:
+- ev-invoice_line-catalog
+- ev-key-duplicates-invoice-line-2026-10-23
+- ev-row-count-invoice-line-2026-10-23
+fields:
+- name: InvoiceLineId
+  type: INTEGER
+  nullable: false
+  meaning: Invoice line identifier.
+- name: InvoiceId
+  type: INTEGER
+  nullable: false
+  meaning: Invoice identifier.
+- name: TrackId
+  type: INTEGER
+  nullable: false
+  meaning: Track identifier.
+- name: UnitPrice
+  type: NUMERIC(10, 2)
+  nullable: false
+  meaning: Price of one unit.
+- name: Quantity
+  type: INTEGER
+  nullable: false
+  meaning: Units bought on the line.
+relationships:
+- key: to-invoice
+  to: invoice
+  join: invoice_line.InvoiceId = invoice.InvoiceId
+  meaning: The invoice the line belongs to.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-invoice_line-to-invoice
+  - ev-fan-out-invoice-line-to-invoice-2026-10-23
+  - ev-join-match-invoice-line-to-invoice-2026-10-23
+  scope_admission:
+    basis: unique_target
+    evidence:
+    - ev-invoice-catalog
+- key: to-track
+  to: track
+  join: invoice_line.TrackId = track.TrackId
+  meaning: The track bought on the line.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-invoice_line-to-track
+  - ev-fan-out-invoice-line-to-track-2026-10-23
+  - ev-join-match-invoice-line-to-track-2026-10-23
+records:
+- id: ev-invoice_line-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table InvoiceLine in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-invoice_line-to-invoice
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key InvoiceId to Invoice (not enforced)
+  status: inferred
+  read_on: '2026-10-23'
+- id: ev-invoice_line-to-track
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key TrackId to Track (not enforced)
+  status: inferred
+  read_on: '2026-10-23'

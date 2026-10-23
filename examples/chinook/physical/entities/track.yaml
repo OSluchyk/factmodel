@@ -1,0 +1,108 @@
+kind: entity
+id: track
+physical_name: Track
+source: chinook-sqlite
+grain: one row per track for sale
+class: reference
+status: draft
+meaning: Tracks the store sells, with their album, genre, format and price.
+keys:
+  primary:
+  - TrackId
+evidence:
+- ev-track-catalog
+- ev-key-duplicates-track-2026-10-23
+- ev-row-count-track-2026-10-23
+fields:
+- name: TrackId
+  type: INTEGER
+  nullable: false
+  meaning: Track identifier.
+- name: Name
+  type: NVARCHAR(200)
+  nullable: false
+  meaning: Display name.
+- name: AlbumId
+  type: INTEGER
+  nullable: true
+  meaning: Album identifier.
+- name: MediaTypeId
+  type: INTEGER
+  nullable: false
+  meaning: Media type identifier.
+- name: GenreId
+  type: INTEGER
+  nullable: true
+  meaning: Genre identifier.
+- name: Composer
+  type: NVARCHAR(220)
+  nullable: true
+  meaning: Composer credited on the track.
+- name: Milliseconds
+  type: INTEGER
+  nullable: false
+  meaning: Track length in milliseconds.
+- name: Bytes
+  type: INTEGER
+  nullable: true
+  meaning: File size in bytes.
+- name: UnitPrice
+  type: NUMERIC(10, 2)
+  nullable: false
+  meaning: Price of one unit.
+relationships:
+- key: to-album
+  to: album
+  join: track.AlbumId = album.AlbumId
+  meaning: The album the track is on.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-track-to-album
+  - ev-fan-out-track-to-album-2026-10-23
+  - ev-join-match-track-to-album-2026-10-23
+- key: to-genre
+  to: genre
+  join: track.GenreId = genre.GenreId
+  meaning: The genre of the track.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-track-to-genre
+  - ev-fan-out-track-to-genre-2026-10-23
+  - ev-join-match-track-to-genre-2026-10-23
+- key: to-media-type
+  to: media_type
+  join: track.MediaTypeId = media_type.MediaTypeId
+  meaning: The file format of the track.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-track-to-media-type
+  - ev-fan-out-track-to-media-type-2026-10-23
+  - ev-join-match-track-to-media-type-2026-10-23
+records:
+- id: ev-track-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table Track in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-track-to-album
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key AlbumId to Album (not enforced)
+  status: inferred
+  read_on: '2026-10-23'
+- id: ev-track-to-genre
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key GenreId to Genre (not enforced)
+  status: inferred
+  read_on: '2026-10-23'
+- id: ev-track-to-media-type
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key MediaTypeId to MediaType (not enforced)
+  status: inferred
+  read_on: '2026-10-23'

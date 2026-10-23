@@ -1,0 +1,31 @@
+kind: entity
+id: playlist
+physical_name: Playlist
+source: chinook-sqlite
+grain: one row per playlist
+class: reference
+status: draft
+meaning: Curated playlists of tracks.
+keys:
+  primary:
+  - PlaylistId
+evidence:
+- ev-playlist-catalog
+- ev-key-duplicates-playlist-2026-10-23
+- ev-row-count-playlist-2026-10-23
+fields:
+- name: PlaylistId
+  type: INTEGER
+  nullable: false
+  meaning: Playlist identifier.
+- name: Name
+  type: NVARCHAR(120)
+  nullable: true
+  meaning: Display name.
+records:
+- id: ev-playlist-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table Playlist in chinook
+  status: confirmed
+  read_on: '2026-10-23'

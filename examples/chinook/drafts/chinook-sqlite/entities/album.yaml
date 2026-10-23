@@ -1,0 +1,57 @@
+kind: entity
+id: album
+physical_name: Album
+source: chinook-sqlite
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - AlbumId
+evidence:
+- ev-album-catalog
+fields:
+- name: AlbumId
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: Title
+  type: NVARCHAR(160)
+  nullable: false
+  meaning: Not written yet.
+- name: ArtistId
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+relationships:
+- key: to-artist
+  to: artist
+  join: album.ArtistId = artist.ArtistId
+  meaning: Declared foreign key to Artist; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-album-to-artist
+records:
+- id: ev-album-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table Album in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-album-to-artist
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key ArtistId to Artist (not enforced)
+  status: inferred
+  read_on: '2026-10-23'
+extensions:
+  draft:
+    from: sqlite:chinook@2026-10-23
+    placeholders:
+    - grain
+    - class
+    - fields.AlbumId.meaning
+    - fields.Title.meaning
+    - fields.ArtistId.meaning
+    - relationships.to-artist.meaning

@@ -24,6 +24,7 @@ REQUIRED = {
         "rule-representation",
         "rule-administrative",
         "rule-configuration",
+        "rule-reference-data",
         "rule-customer-scoped",
         "tie",
         "residue",

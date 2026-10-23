@@ -1,0 +1,462 @@
+kind: snapshot
+source: chinook-sqlite
+engine: sqlite
+target: chinook
+taken_on: '2026-10-23'
+pin: sqlite:chinook@2026-10-23
+objects:
+- name: Album
+  object_type: table
+  fields:
+  - name: AlbumId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: Title
+    type: NVARCHAR(160)
+    type_class: text
+    nullable: false
+  - name: ArtistId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  constraints:
+  - constraint_type: foreign_key
+    name: FK_AlbumArtistId
+    fields:
+    - ArtistId
+    references:
+      object: Artist
+      fields:
+      - ArtistId
+    enforced: false
+  - constraint_type: primary_key
+    name: PK_Album
+    fields:
+    - AlbumId
+    enforced: false
+- name: Artist
+  object_type: table
+  fields:
+  - name: ArtistId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: Name
+    type: NVARCHAR(120)
+    type_class: text
+    nullable: true
+  constraints:
+  - constraint_type: primary_key
+    name: PK_Artist
+    fields:
+    - ArtistId
+    enforced: false
+- name: Customer
+  object_type: table
+  fields:
+  - name: CustomerId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: FirstName
+    type: NVARCHAR(40)
+    type_class: text
+    nullable: false
+  - name: LastName
+    type: NVARCHAR(20)
+    type_class: text
+    nullable: false
+  - name: Company
+    type: NVARCHAR(80)
+    type_class: text
+    nullable: true
+  - name: Address
+    type: NVARCHAR(70)
+    type_class: text
+    nullable: true
+  - name: City
+    type: NVARCHAR(40)
+    type_class: text
+    nullable: true
+  - name: State
+    type: NVARCHAR(40)
+    type_class: text
+    nullable: true
+  - name: Country
+    type: NVARCHAR(40)
+    type_class: text
+    nullable: true
+  - name: PostalCode
+    type: NVARCHAR(10)
+    type_class: text
+    nullable: true
+  - name: Phone
+    type: NVARCHAR(24)
+    type_class: text
+    nullable: true
+  - name: Fax
+    type: NVARCHAR(24)
+    type_class: text
+    nullable: true
+  - name: Email
+    type: NVARCHAR(60)
+    type_class: text
+    nullable: false
+  - name: SupportRepId
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  constraints:
+  - constraint_type: foreign_key
+    name: FK_CustomerSupportRepId
+    fields:
+    - SupportRepId
+    references:
+      object: Employee
+      fields:
+      - EmployeeId
+    enforced: false
+  - constraint_type: primary_key
+    name: PK_Customer
+    fields:
+    - CustomerId
+    enforced: false
+- name: Employee
+  object_type: table
+  fields:
+  - name: EmployeeId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: LastName
+    type: NVARCHAR(20)
+    type_class: text
+    nullable: false
+  - name: FirstName
+    type: NVARCHAR(20)
+    type_class: text
+    nullable: false
+  - name: Title
+    type: NVARCHAR(30)
+    type_class: text
+    nullable: true
+  - name: ReportsTo
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: BirthDate
+    type: DATETIME
+    type_class: timestamp
+    nullable: true
+  - name: HireDate
+    type: DATETIME
+    type_class: timestamp
+    nullable: true
+  - name: Address
+    type: NVARCHAR(70)
+    type_class: text
+    nullable: true
+  - name: City
+    type: NVARCHAR(40)
+    type_class: text
+    nullable: true
+  - name: State
+    type: NVARCHAR(40)
+    type_class: text
+    nullable: true
+  - name: Country
+    type: NVARCHAR(40)
+    type_class: text
+    nullable: true
+  - name: PostalCode
+    type: NVARCHAR(10)
+    type_class: text
+    nullable: true
+  - name: Phone
+    type: NVARCHAR(24)
+    type_class: text
+    nullable: true
+  - name: Fax
+    type: NVARCHAR(24)
+    type_class: text
+    nullable: true
+  - name: Email
+    type: NVARCHAR(60)
+    type_class: text
+    nullable: true
+  constraints:
+  - constraint_type: foreign_key
+    name: FK_EmployeeReportsTo
+    fields:
+    - ReportsTo
+    references:
+      object: Employee
+      fields:
+      - EmployeeId
+    enforced: false
+  - constraint_type: primary_key
+    name: PK_Employee
+    fields:
+    - EmployeeId
+    enforced: false
+- name: Genre
+  object_type: table
+  fields:
+  - name: GenreId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: Name
+    type: NVARCHAR(120)
+    type_class: text
+    nullable: true
+  constraints:
+  - constraint_type: primary_key
+    name: PK_Genre
+    fields:
+    - GenreId
+    enforced: false
+- name: Invoice
+  object_type: table
+  fields:
+  - name: InvoiceId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: CustomerId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: InvoiceDate
+    type: DATETIME
+    type_class: timestamp
+    nullable: false
+  - name: BillingAddress
+    type: NVARCHAR(70)
+    type_class: text
+    nullable: true
+  - name: BillingCity
+    type: NVARCHAR(40)
+    type_class: text
+    nullable: true
+  - name: BillingState
+    type: NVARCHAR(40)
+    type_class: text
+    nullable: true
+  - name: BillingCountry
+    type: NVARCHAR(40)
+    type_class: text
+    nullable: true
+  - name: BillingPostalCode
+    type: NVARCHAR(10)
+    type_class: text
+    nullable: true
+  - name: Total
+    type: NUMERIC(10, 2)
+    type_class: decimal
+    nullable: false
+  constraints:
+  - constraint_type: foreign_key
+    name: FK_InvoiceCustomerId
+    fields:
+    - CustomerId
+    references:
+      object: Customer
+      fields:
+      - CustomerId
+    enforced: false
+  - constraint_type: primary_key
+    name: PK_Invoice
+    fields:
+    - InvoiceId
+    enforced: false
+- name: InvoiceLine
+  object_type: table
+  fields:
+  - name: InvoiceLineId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: InvoiceId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: TrackId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: UnitPrice
+    type: NUMERIC(10, 2)
+    type_class: decimal
+    nullable: false
+  - name: Quantity
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  constraints:
+  - constraint_type: foreign_key
+    name: FK_InvoiceLineInvoiceId
+    fields:
+    - InvoiceId
+    references:
+      object: Invoice
+      fields:
+      - InvoiceId
+    enforced: false
+  - constraint_type: foreign_key
+    name: FK_InvoiceLineTrackId
+    fields:
+    - TrackId
+    references:
+      object: Track
+      fields:
+      - TrackId
+    enforced: false
+  - constraint_type: primary_key
+    name: PK_InvoiceLine
+    fields:
+    - InvoiceLineId
+    enforced: false
+- name: MediaType
+  object_type: table
+  fields:
+  - name: MediaTypeId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: Name
+    type: NVARCHAR(120)
+    type_class: text
+    nullable: true
+  constraints:
+  - constraint_type: primary_key
+    name: PK_MediaType
+    fields:
+    - MediaTypeId
+    enforced: false
+- name: Playlist
+  object_type: table
+  fields:
+  - name: PlaylistId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: Name
+    type: NVARCHAR(120)
+    type_class: text
+    nullable: true
+  constraints:
+  - constraint_type: primary_key
+    name: PK_Playlist
+    fields:
+    - PlaylistId
+    enforced: false
+- name: PlaylistTrack
+  object_type: table
+  fields:
+  - name: PlaylistId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: TrackId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  constraints:
+  - constraint_type: foreign_key
+    name: FK_PlaylistTrackPlaylistId
+    fields:
+    - PlaylistId
+    references:
+      object: Playlist
+      fields:
+      - PlaylistId
+    enforced: false
+  - constraint_type: foreign_key
+    name: FK_PlaylistTrackTrackId
+    fields:
+    - TrackId
+    references:
+      object: Track
+      fields:
+      - TrackId
+    enforced: false
+  - constraint_type: primary_key
+    name: PK_PlaylistTrack
+    fields:
+    - PlaylistId
+    - TrackId
+    enforced: false
+- name: Track
+  object_type: table
+  fields:
+  - name: TrackId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: Name
+    type: NVARCHAR(200)
+    type_class: text
+    nullable: false
+  - name: AlbumId
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: MediaTypeId
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: GenreId
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: Composer
+    type: NVARCHAR(220)
+    type_class: text
+    nullable: true
+  - name: Milliseconds
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: Bytes
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: UnitPrice
+    type: NUMERIC(10, 2)
+    type_class: decimal
+    nullable: false
+  constraints:
+  - constraint_type: foreign_key
+    name: FK_TrackAlbumId
+    fields:
+    - AlbumId
+    references:
+      object: Album
+      fields:
+      - AlbumId
+    enforced: false
+  - constraint_type: foreign_key
+    name: FK_TrackGenreId
+    fields:
+    - GenreId
+    references:
+      object: Genre
+      fields:
+      - GenreId
+    enforced: false
+  - constraint_type: foreign_key
+    name: FK_TrackMediaTypeId
+    fields:
+    - MediaTypeId
+    references:
+      object: MediaType
+      fields:
+      - MediaTypeId
+    enforced: false
+  - constraint_type: primary_key
+    name: PK_Track
+    fields:
+    - TrackId
+    enforced: false

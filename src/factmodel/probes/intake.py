@@ -96,6 +96,7 @@ def in_range(probe: Probe, measurement: dict[str, float | int]) -> bool | None:
 def _yaml_rt() -> YAML:
     yaml = YAML(typ="rt")
     yaml.preserve_quotes = True
+    yaml.width = 4096  # keep the author's line breaks; never re-wrap text
     return yaml
 
 

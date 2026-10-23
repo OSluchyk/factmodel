@@ -1,0 +1,117 @@
+kind: entity
+id: track
+physical_name: Track
+source: chinook-sqlite
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - TrackId
+evidence:
+- ev-track-catalog
+fields:
+- name: TrackId
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: Name
+  type: NVARCHAR(200)
+  nullable: false
+  meaning: Not written yet.
+- name: AlbumId
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: MediaTypeId
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: GenreId
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: Composer
+  type: NVARCHAR(220)
+  nullable: true
+  meaning: Not written yet.
+- name: Milliseconds
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: Bytes
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: UnitPrice
+  type: NUMERIC(10, 2)
+  nullable: false
+  meaning: Not written yet.
+relationships:
+- key: to-album
+  to: album
+  join: track.AlbumId = album.AlbumId
+  meaning: Declared foreign key to Album; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-track-to-album
+- key: to-genre
+  to: genre
+  join: track.GenreId = genre.GenreId
+  meaning: Declared foreign key to Genre; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-track-to-genre
+- key: to-media-type
+  to: media_type
+  join: track.MediaTypeId = media_type.MediaTypeId
+  meaning: Declared foreign key to MediaType; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-track-to-media-type
+records:
+- id: ev-track-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table Track in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-track-to-album
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key AlbumId to Album (not enforced)
+  status: inferred
+  read_on: '2026-10-23'
+- id: ev-track-to-genre
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key GenreId to Genre (not enforced)
+  status: inferred
+  read_on: '2026-10-23'
+- id: ev-track-to-media-type
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key MediaTypeId to MediaType (not enforced)
+  status: inferred
+  read_on: '2026-10-23'
+extensions:
+  draft:
+    from: sqlite:chinook@2026-10-23
+    placeholders:
+    - grain
+    - class
+    - fields.TrackId.meaning
+    - fields.Name.meaning
+    - fields.AlbumId.meaning
+    - fields.MediaTypeId.meaning
+    - fields.GenreId.meaning
+    - fields.Composer.meaning
+    - fields.Milliseconds.meaning
+    - fields.Bytes.meaning
+    - fields.UnitPrice.meaning
+    - relationships.to-album.meaning
+    - relationships.to-genre.meaning
+    - relationships.to-media-type.meaning

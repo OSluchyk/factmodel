@@ -2,6 +2,15 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-23 - Round 12: WP1.8 Chinook example (M1 gate)
+
+**Why.** The core has to prove itself end to end on a real schema, on more than one engine, without credentials. Chinook on SQLite and PostgreSQL with synthetic rows does that locally and in CI.
+
+- Add `examples/chinook/`: hand-written DDL for SQLite and PostgreSQL (the upstream license is not a recognised permissive one, so nothing was copied), a deterministic synthetic seed, three sources (`sql` on SQLite and PostgreSQL, `git` on the DDL), snapshots, drafts, the reviewed model, 45 probes with their evidence, and generated tables.
+- M1 gate: `fact check` green, residue 0, scopes as expected (Invoice direct, InvoiceLine transitive, catalog reference), every relationship confirmed by a probe; PostgreSQL gives the same snapshot parts and probe counts.
+- Retail profile: label `reference_data` for links between reference entities.
+- CI runs the Chinook gate and the PostgreSQL comparison.
+
 ## Unreleased - 2026-10-23 - Round 11: WP1.7 Probes
 
 **Why.** An inferred join or key is a claim until data confirms it. Probes generated from the model, rendered for whichever engine holds the data and returning counts only, turn those claims into evidence without moving a single row into the repository.

@@ -1,0 +1,12 @@
+kind: source
+id: chinook-pg
+title: Chinook on a local PostgreSQL 16
+source_kind: warehouse
+access_mode: agent_read
+adapter: sql
+engine: postgres
+location: chinook
+dsn_env: FACT_PG_DSN
+access: >-
+  PostgreSQL 16 from compose.yaml at the framework root, seeded by seed/seed.py (synthetic
+  rows); a test fixture, not a platform (D-011). CI runs it as a service.

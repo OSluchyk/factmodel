@@ -63,7 +63,8 @@ So a fact with one confirmed and one inferred record is `confirmed`; a fact whos
 | 3 | `mechanism: representation` | `orders_export.copy-of` (an export of orders) | mechanism is `representation` | `rule-representation` |
 | 4 | `any_end_class: administrative` | `load_jobs.loaded` to `orders` | `load_jobs` is administrative | `rule-administrative` |
 | 5 | `any_end_class: configuration` | `orders.in-channel` to `channels` (configuration) | `channels` is configuration | `rule-configuration` |
-| 6 | `all_ends_match: [{class: data, subject_scoped: true}, {class: reference}]` and `any_end_subject_scoped: true` | `orders.placed-by` to `users`; `order_items.sells` to `products` | both ends are scoped data, or one is scoped data and the other reference | `rule-customer-scoped` |
+| 6 | `all_ends_class: reference` | `albums.by-artist` (Chinook: `album.to-artist`) | both ends are reference data | `rule-reference-data` |
+| 7 | `all_ends_match: [{class: data, subject_scoped: true}, {class: reference}]` and `any_end_subject_scoped: true` | `orders.placed-by` to `users`; `order_items.sells` to `products` | both ends are scoped data, or one is scoped data and the other reference | `rule-customer-scoped` |
 
 Other cases:
 

@@ -1,0 +1,92 @@
+kind: entity
+id: customer
+physical_name: Customer
+source: chinook-sqlite
+grain: one row per customer
+class: data
+status: draft
+meaning: People who buy from the store; the subjects of the retail profile.
+keys:
+  primary:
+  - CustomerId
+evidence:
+- ev-customer-catalog
+- ev-key-duplicates-customer-2026-10-23
+- ev-row-count-customer-2026-10-23
+fields:
+- name: CustomerId
+  type: INTEGER
+  nullable: false
+  meaning: Customer identifier.
+- name: FirstName
+  type: NVARCHAR(40)
+  nullable: false
+  meaning: Given name.
+- name: LastName
+  type: NVARCHAR(20)
+  nullable: false
+  meaning: Family name.
+- name: Company
+  type: NVARCHAR(80)
+  nullable: true
+  meaning: Company the customer buys for, if any.
+- name: Address
+  type: NVARCHAR(70)
+  nullable: true
+  meaning: Street address.
+- name: City
+  type: NVARCHAR(40)
+  nullable: true
+  meaning: City.
+- name: State
+  type: NVARCHAR(40)
+  nullable: true
+  meaning: State or region.
+- name: Country
+  type: NVARCHAR(40)
+  nullable: true
+  meaning: Country.
+- name: PostalCode
+  type: NVARCHAR(10)
+  nullable: true
+  meaning: Postal code.
+- name: Phone
+  type: NVARCHAR(24)
+  nullable: true
+  meaning: Phone number.
+- name: Fax
+  type: NVARCHAR(24)
+  nullable: true
+  meaning: Fax number.
+- name: Email
+  type: NVARCHAR(60)
+  nullable: false
+  meaning: Email address.
+- name: SupportRepId
+  type: INTEGER
+  nullable: true
+  meaning: The employee who supports this customer.
+relationships:
+- key: to-employee
+  to: employee
+  join: customer.SupportRepId = employee.EmployeeId
+  meaning: The customer's support representative.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-customer-to-employee
+  - ev-fan-out-customer-to-employee-2026-10-23
+  - ev-join-match-customer-to-employee-2026-10-23
+records:
+- id: ev-customer-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table Customer in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-customer-to-employee
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key SupportRepId to Employee (not enforced)
+  status: inferred
+  read_on: '2026-10-23'

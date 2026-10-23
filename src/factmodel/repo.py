@@ -159,6 +159,7 @@ def set_current_pin(root: Path, source_id: str, pin: str) -> None:
     """Record the version last read on the source file, keeping its layout and comments."""
     path = _source_path(root, source_id)
     yaml = YAML(typ="rt")
+    yaml.width = 4096  # keep the author's line breaks; never re-wrap text
     doc = yaml.load(path.read_text(encoding="utf-8"))
     if doc.get("current_pin") == pin:
         return

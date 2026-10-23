@@ -1,0 +1,15 @@
+kind: evidence
+records:
+- id: ev-join-match-track-to-genre-2026-10-23
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  measurement:
+    source_rows: 296
+    orphans_left: 0
+    orphans_right: 0
+    match_rate: 1.0
+  status: confirmed
+  read_on: '2026-10-23'
+  probe: join-match-track-to-genre
+  environment: local
+  data_quality: synthetic

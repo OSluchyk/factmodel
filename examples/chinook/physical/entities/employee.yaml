@@ -1,0 +1,100 @@
+kind: entity
+id: employee
+physical_name: Employee
+source: chinook-sqlite
+grain: one row per employee of the store
+class: administrative
+status: draft
+meaning: Store staff; a customer's support representative is an employee.
+keys:
+  primary:
+  - EmployeeId
+evidence:
+- ev-employee-catalog
+- ev-key-duplicates-employee-2026-10-23
+- ev-row-count-employee-2026-10-23
+fields:
+- name: EmployeeId
+  type: INTEGER
+  nullable: false
+  meaning: Employee identifier.
+- name: LastName
+  type: NVARCHAR(20)
+  nullable: false
+  meaning: Family name.
+- name: FirstName
+  type: NVARCHAR(20)
+  nullable: false
+  meaning: Given name.
+- name: Title
+  type: NVARCHAR(30)
+  nullable: true
+  meaning: Title.
+- name: ReportsTo
+  type: INTEGER
+  nullable: true
+  meaning: The employee this employee reports to.
+- name: BirthDate
+  type: DATETIME
+  nullable: true
+  meaning: Date of birth.
+- name: HireDate
+  type: DATETIME
+  nullable: true
+  meaning: Date of hire.
+- name: Address
+  type: NVARCHAR(70)
+  nullable: true
+  meaning: Street address.
+- name: City
+  type: NVARCHAR(40)
+  nullable: true
+  meaning: City.
+- name: State
+  type: NVARCHAR(40)
+  nullable: true
+  meaning: State or region.
+- name: Country
+  type: NVARCHAR(40)
+  nullable: true
+  meaning: Country.
+- name: PostalCode
+  type: NVARCHAR(10)
+  nullable: true
+  meaning: Postal code.
+- name: Phone
+  type: NVARCHAR(24)
+  nullable: true
+  meaning: Phone number.
+- name: Fax
+  type: NVARCHAR(24)
+  nullable: true
+  meaning: Fax number.
+- name: Email
+  type: NVARCHAR(60)
+  nullable: true
+  meaning: Email address.
+relationships:
+- key: to-employee
+  to: employee
+  join: employee.ReportsTo = employee.EmployeeId
+  meaning: The manager the employee reports to.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-employee-to-employee
+  - ev-fan-out-employee-to-employee-2026-10-23
+  - ev-join-match-employee-to-employee-2026-10-23
+records:
+- id: ev-employee-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table Employee in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-employee-to-employee
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key ReportsTo to Employee (not enforced)
+  status: inferred
+  read_on: '2026-10-23'

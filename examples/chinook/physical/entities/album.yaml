@@ -1,0 +1,52 @@
+kind: entity
+id: album
+physical_name: Album
+source: chinook-sqlite
+grain: one row per album
+class: reference
+status: draft
+meaning: Albums in the catalog, each by one artist.
+keys:
+  primary:
+  - AlbumId
+evidence:
+- ev-album-catalog
+- ev-key-duplicates-album-2026-10-23
+- ev-row-count-album-2026-10-23
+fields:
+- name: AlbumId
+  type: INTEGER
+  nullable: false
+  meaning: Album identifier.
+- name: Title
+  type: NVARCHAR(160)
+  nullable: false
+  meaning: Title.
+- name: ArtistId
+  type: INTEGER
+  nullable: false
+  meaning: Artist identifier.
+relationships:
+- key: to-artist
+  to: artist
+  join: album.ArtistId = artist.ArtistId
+  meaning: The artist who recorded the album.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-album-to-artist
+  - ev-fan-out-album-to-artist-2026-10-23
+  - ev-join-match-album-to-artist-2026-10-23
+records:
+- id: ev-album-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table Album in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-album-to-artist
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key ArtistId to Artist (not enforced)
+  status: inferred
+  read_on: '2026-10-23'

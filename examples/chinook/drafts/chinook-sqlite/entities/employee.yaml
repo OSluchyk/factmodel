@@ -1,0 +1,117 @@
+kind: entity
+id: employee
+physical_name: Employee
+source: chinook-sqlite
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - EmployeeId
+evidence:
+- ev-employee-catalog
+fields:
+- name: EmployeeId
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: LastName
+  type: NVARCHAR(20)
+  nullable: false
+  meaning: Not written yet.
+- name: FirstName
+  type: NVARCHAR(20)
+  nullable: false
+  meaning: Not written yet.
+- name: Title
+  type: NVARCHAR(30)
+  nullable: true
+  meaning: Not written yet.
+- name: ReportsTo
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: BirthDate
+  type: DATETIME
+  nullable: true
+  meaning: Not written yet.
+- name: HireDate
+  type: DATETIME
+  nullable: true
+  meaning: Not written yet.
+- name: Address
+  type: NVARCHAR(70)
+  nullable: true
+  meaning: Not written yet.
+- name: City
+  type: NVARCHAR(40)
+  nullable: true
+  meaning: Not written yet.
+- name: State
+  type: NVARCHAR(40)
+  nullable: true
+  meaning: Not written yet.
+- name: Country
+  type: NVARCHAR(40)
+  nullable: true
+  meaning: Not written yet.
+- name: PostalCode
+  type: NVARCHAR(10)
+  nullable: true
+  meaning: Not written yet.
+- name: Phone
+  type: NVARCHAR(24)
+  nullable: true
+  meaning: Not written yet.
+- name: Fax
+  type: NVARCHAR(24)
+  nullable: true
+  meaning: Not written yet.
+- name: Email
+  type: NVARCHAR(60)
+  nullable: true
+  meaning: Not written yet.
+relationships:
+- key: to-employee
+  to: employee
+  join: employee.ReportsTo = employee.EmployeeId
+  meaning: Declared foreign key to Employee; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-employee-to-employee
+records:
+- id: ev-employee-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table Employee in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-employee-to-employee
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key ReportsTo to Employee (not enforced)
+  status: inferred
+  read_on: '2026-10-23'
+extensions:
+  draft:
+    from: sqlite:chinook@2026-10-23
+    placeholders:
+    - grain
+    - class
+    - fields.EmployeeId.meaning
+    - fields.LastName.meaning
+    - fields.FirstName.meaning
+    - fields.Title.meaning
+    - fields.ReportsTo.meaning
+    - fields.BirthDate.meaning
+    - fields.HireDate.meaning
+    - fields.Address.meaning
+    - fields.City.meaning
+    - fields.State.meaning
+    - fields.Country.meaning
+    - fields.PostalCode.meaning
+    - fields.Phone.meaning
+    - fields.Fax.meaning
+    - fields.Email.meaning
+    - relationships.to-employee.meaning

@@ -1,0 +1,36 @@
+kind: entity
+id: genre
+physical_name: Genre
+source: chinook-sqlite
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - GenreId
+evidence:
+- ev-genre-catalog
+fields:
+- name: GenreId
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: Name
+  type: NVARCHAR(120)
+  nullable: true
+  meaning: Not written yet.
+records:
+- id: ev-genre-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table Genre in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+extensions:
+  draft:
+    from: sqlite:chinook@2026-10-23
+    placeholders:
+    - grain
+    - class
+    - fields.GenreId.meaning
+    - fields.Name.meaning

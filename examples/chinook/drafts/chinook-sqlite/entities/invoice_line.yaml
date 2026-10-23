@@ -1,0 +1,82 @@
+kind: entity
+id: invoice_line
+physical_name: InvoiceLine
+source: chinook-sqlite
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - InvoiceLineId
+evidence:
+- ev-invoice_line-catalog
+fields:
+- name: InvoiceLineId
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: InvoiceId
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: TrackId
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: UnitPrice
+  type: NUMERIC(10, 2)
+  nullable: false
+  meaning: Not written yet.
+- name: Quantity
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+relationships:
+- key: to-invoice
+  to: invoice
+  join: invoice_line.InvoiceId = invoice.InvoiceId
+  meaning: Declared foreign key to Invoice; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-invoice_line-to-invoice
+- key: to-track
+  to: track
+  join: invoice_line.TrackId = track.TrackId
+  meaning: Declared foreign key to Track; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-invoice_line-to-track
+records:
+- id: ev-invoice_line-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table InvoiceLine in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-invoice_line-to-invoice
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key InvoiceId to Invoice (not enforced)
+  status: inferred
+  read_on: '2026-10-23'
+- id: ev-invoice_line-to-track
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key TrackId to Track (not enforced)
+  status: inferred
+  read_on: '2026-10-23'
+extensions:
+  draft:
+    from: sqlite:chinook@2026-10-23
+    placeholders:
+    - grain
+    - class
+    - fields.InvoiceLineId.meaning
+    - fields.InvoiceId.meaning
+    - fields.TrackId.meaning
+    - fields.UnitPrice.meaning
+    - fields.Quantity.meaning
+    - relationships.to-invoice.meaning
+    - relationships.to-track.meaning

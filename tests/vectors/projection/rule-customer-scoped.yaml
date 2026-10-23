@@ -1,7 +1,7 @@
 # Test vector - spec/ALGORITHMS.md, projection.
 algorithm: projection
 case: rule-customer-scoped
-description: 'Rule 6: scoped data to scoped data, and scoped data to reference, are customer_scoped.'
+description: 'Rule 7: scoped data to scoped data, and scoped data to reference, are customer_scoped.'
 input:
   files:
   - kind: model-config
@@ -52,6 +52,7 @@ input:
     - administrative
     - lineage
     - representation
+    - reference_data
     - unresolved
     rules:
     - when:
@@ -69,6 +70,9 @@ input:
     - when:
         any_end_class: configuration
       label: configuration
+    - when:
+        all_ends_class: reference
+      label: reference_data
     - when:
         all_ends_match:
         - class: data

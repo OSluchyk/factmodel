@@ -1,0 +1,12 @@
+kind: evidence
+records:
+- id: ev-row-count-playlist-2026-10-23
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  measurement:
+    row_count: 8
+  status: confirmed
+  read_on: '2026-10-23'
+  probe: row-count-playlist
+  environment: local
+  data_quality: synthetic

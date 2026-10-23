@@ -52,6 +52,7 @@ input:
     - administrative
     - lineage
     - representation
+    - reference_data
     - unresolved
     rules:
     - when:
@@ -69,6 +70,9 @@ input:
     - when:
         any_end_class: configuration
       label: configuration
+    - when:
+        all_ends_class: reference
+      label: reference_data
     - when:
         all_ends_match:
         - class: data

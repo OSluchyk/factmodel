@@ -1,0 +1,13 @@
+kind: source
+id: chinook-sqlite
+title: Chinook on a local SQLite file
+source_kind: warehouse
+access_mode: agent_read
+adapter: sql
+engine: sqlite
+location: chinook
+dsn_env: FACT_DSN_CHINOOK_SQLITE
+access: >-
+  A local SQLite file created by seed/seed.py (synthetic rows); a test fixture, not a
+  platform (D-011). Set FACT_DSN_CHINOOK_SQLITE to sqlite:///<path to the file>.
+current_pin: sqlite:chinook@2026-10-23

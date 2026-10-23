@@ -1,0 +1,65 @@
+kind: entity
+id: playlist_track
+physical_name: PlaylistTrack
+source: chinook-sqlite
+grain: one row per track on a playlist
+class: reference
+status: draft
+meaning: Bridge between playlists and tracks; both ends are catalog data.
+keys:
+  primary:
+  - PlaylistId
+  - TrackId
+evidence:
+- ev-playlist_track-catalog
+- ev-key-duplicates-playlist-track-2026-10-23
+- ev-row-count-playlist-track-2026-10-23
+fields:
+- name: PlaylistId
+  type: INTEGER
+  nullable: false
+  meaning: Playlist identifier.
+- name: TrackId
+  type: INTEGER
+  nullable: false
+  meaning: Track identifier.
+relationships:
+- key: to-playlist
+  to: playlist
+  join: playlist_track.PlaylistId = playlist.PlaylistId
+  meaning: The playlist that lists the track.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-playlist_track-to-playlist
+  - ev-fan-out-playlist-track-to-playlist-2026-10-23
+  - ev-join-match-playlist-track-to-playlist-2026-10-23
+- key: to-track
+  to: track
+  join: playlist_track.TrackId = track.TrackId
+  meaning: The track on the playlist.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-playlist_track-to-track
+  - ev-fan-out-playlist-track-to-track-2026-10-23
+  - ev-join-match-playlist-track-to-track-2026-10-23
+records:
+- id: ev-playlist_track-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table PlaylistTrack in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-playlist_track-to-playlist
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key PlaylistId to Playlist (not enforced)
+  status: inferred
+  read_on: '2026-10-23'
+- id: ev-playlist_track-to-track
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key TrackId to Track (not enforced)
+  status: inferred
+  read_on: '2026-10-23'

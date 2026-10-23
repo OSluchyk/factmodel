@@ -1,0 +1,12 @@
+kind: source
+id: chinook-ddl
+title: Chinook DDL in this repository
+source_kind: git
+access_mode: agent_read
+adapter: git
+engine: sqlite
+location: ../..
+revision: worktree
+include:
+  - examples/chinook/sources/ddl/sqlite.sql
+access: The framework repository itself; the DDL was written by hand (sources/ddl/SOURCES.md).

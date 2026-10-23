@@ -1,0 +1,14 @@
+kind: evidence
+records:
+- id: ev-null-rate-invoice-customer-id-2026-10-23
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  measurement:
+    row_count: 630
+    non_null: 630
+    null_rate: 0.0
+  status: confirmed
+  read_on: '2026-10-23'
+  probe: null-rate-invoice-customer-id
+  environment: local
+  data_quality: synthetic

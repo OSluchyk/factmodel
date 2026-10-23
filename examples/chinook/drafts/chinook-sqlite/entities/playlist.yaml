@@ -1,0 +1,36 @@
+kind: entity
+id: playlist
+physical_name: Playlist
+source: chinook-sqlite
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - PlaylistId
+evidence:
+- ev-playlist-catalog
+fields:
+- name: PlaylistId
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: Name
+  type: NVARCHAR(120)
+  nullable: true
+  meaning: Not written yet.
+records:
+- id: ev-playlist-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table Playlist in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+extensions:
+  draft:
+    from: sqlite:chinook@2026-10-23
+    placeholders:
+    - grain
+    - class
+    - fields.PlaylistId.meaning
+    - fields.Name.meaning

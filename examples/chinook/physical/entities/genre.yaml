@@ -1,0 +1,31 @@
+kind: entity
+id: genre
+physical_name: Genre
+source: chinook-sqlite
+grain: one row per music genre
+class: reference
+status: draft
+meaning: Music genres used to classify tracks.
+keys:
+  primary:
+  - GenreId
+evidence:
+- ev-genre-catalog
+- ev-key-duplicates-genre-2026-10-23
+- ev-row-count-genre-2026-10-23
+fields:
+- name: GenreId
+  type: INTEGER
+  nullable: false
+  meaning: Genre identifier.
+- name: Name
+  type: NVARCHAR(120)
+  nullable: true
+  meaning: Display name.
+records:
+- id: ev-genre-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table Genre in chinook
+  status: confirmed
+  read_on: '2026-10-23'

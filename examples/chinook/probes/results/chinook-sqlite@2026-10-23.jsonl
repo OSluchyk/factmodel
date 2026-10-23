@@ -1,0 +1,46 @@
+{"source": "chinook-sqlite", "pin": "sqlite:chinook@2026-10-23", "environment": "local", "data_quality": "synthetic", "ran_on": "2026-10-23"}
+{"probe": "fan-out-album-to-artist", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-customer-to-employee", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-employee-to-employee", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-invoice-line-to-invoice", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-invoice-line-to-track", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-invoice-to-customer", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-playlist-track-to-playlist", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-playlist-track-to-track", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-track-to-album", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-track-to-genre", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-track-to-media-type", "measurement": {"max_fan_out": 1}}
+{"probe": "join-match-album-to-artist", "measurement": {"source_rows": 60, "orphans_left": 0, "orphans_right": 3}}
+{"probe": "join-match-customer-to-employee", "measurement": {"source_rows": 270, "orphans_left": 0, "orphans_right": 3}}
+{"probe": "join-match-employee-to-employee", "measurement": {"source_rows": 5, "orphans_left": 0, "orphans_right": 4}}
+{"probe": "join-match-invoice-line-to-invoice", "measurement": {"source_rows": 1893, "orphans_left": 0, "orphans_right": 0}}
+{"probe": "join-match-invoice-line-to-track", "measurement": {"source_rows": 1893, "orphans_left": 0, "orphans_right": 1}}
+{"probe": "join-match-invoice-to-customer", "measurement": {"source_rows": 630, "orphans_left": 0, "orphans_right": 48}}
+{"probe": "join-match-playlist-track-to-playlist", "measurement": {"source_rows": 407, "orphans_left": 0, "orphans_right": 0}}
+{"probe": "join-match-playlist-track-to-track", "measurement": {"source_rows": 407, "orphans_left": 0, "orphans_right": 60}}
+{"probe": "join-match-track-to-album", "measurement": {"source_rows": 297, "orphans_left": 0, "orphans_right": 0}}
+{"probe": "join-match-track-to-genre", "measurement": {"source_rows": 296, "orphans_left": 0, "orphans_right": 0}}
+{"probe": "join-match-track-to-media-type", "measurement": {"source_rows": 300, "orphans_left": 0, "orphans_right": 0}}
+{"probe": "key-duplicates-album", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-artist", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-customer", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-employee", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-genre", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-invoice", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-invoice-line", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-media-type", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-playlist", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-playlist-track", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-track", "measurement": {"duplicate_keys": 0}}
+{"probe": "null-rate-invoice-customer-id", "measurement": {"row_count": 630, "non_null": 630}}
+{"probe": "row-count-album", "measurement": {"row_count": 60}}
+{"probe": "row-count-artist", "measurement": {"row_count": 25}}
+{"probe": "row-count-customer", "measurement": {"row_count": 300}}
+{"probe": "row-count-employee", "measurement": {"row_count": 6}}
+{"probe": "row-count-genre", "measurement": {"row_count": 8}}
+{"probe": "row-count-invoice", "measurement": {"row_count": 630}}
+{"probe": "row-count-invoice-line", "measurement": {"row_count": 1893}}
+{"probe": "row-count-media-type", "measurement": {"row_count": 4}}
+{"probe": "row-count-playlist", "measurement": {"row_count": 8}}
+{"probe": "row-count-playlist-track", "measurement": {"row_count": 407}}
+{"probe": "row-count-track", "measurement": {"row_count": 300}}

@@ -1,0 +1,31 @@
+kind: entity
+id: media_type
+physical_name: MediaType
+source: chinook-sqlite
+grain: one row per media type (file format)
+class: reference
+status: draft
+meaning: File formats a track is sold in.
+keys:
+  primary:
+  - MediaTypeId
+evidence:
+- ev-media_type-catalog
+- ev-key-duplicates-media-type-2026-10-23
+- ev-row-count-media-type-2026-10-23
+fields:
+- name: MediaTypeId
+  type: INTEGER
+  nullable: false
+  meaning: Media type identifier.
+- name: Name
+  type: NVARCHAR(120)
+  nullable: true
+  meaning: Display name.
+records:
+- id: ev-media_type-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table MediaType in chinook
+  status: confirmed
+  read_on: '2026-10-23'

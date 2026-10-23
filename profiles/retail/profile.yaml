@@ -3,7 +3,7 @@ kind: profile
 id: retail
 meaning: Retail and e-commerce platforms, where the subject is the customer.
 subject: customer
-labels: [customer_scoped, configuration, administrative, lineage, representation, unresolved]
+labels: [customer_scoped, configuration, administrative, lineage, representation, reference_data, unresolved]
 rules:
   - when: {evidence_status: unresolved}
     label: unresolved
@@ -16,6 +16,9 @@ rules:
     label: administrative
   - when: {any_end_class: configuration}
     label: configuration
+  - when: {all_ends_class: reference}
+    label: reference_data
+    note: Shared catalog data joined to catalog data; about no customer.
   - when:
       all_ends_match: [{class: data, subject_scoped: true}, {class: reference}]
       any_end_subject_scoped: true

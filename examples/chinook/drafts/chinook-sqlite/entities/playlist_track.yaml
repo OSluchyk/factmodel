@@ -1,0 +1,68 @@
+kind: entity
+id: playlist_track
+physical_name: PlaylistTrack
+source: chinook-sqlite
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - PlaylistId
+  - TrackId
+evidence:
+- ev-playlist_track-catalog
+fields:
+- name: PlaylistId
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: TrackId
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+relationships:
+- key: to-playlist
+  to: playlist
+  join: playlist_track.PlaylistId = playlist.PlaylistId
+  meaning: Declared foreign key to Playlist; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-playlist_track-to-playlist
+- key: to-track
+  to: track
+  join: playlist_track.TrackId = track.TrackId
+  meaning: Declared foreign key to Track; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-playlist_track-to-track
+records:
+- id: ev-playlist_track-catalog
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: table PlaylistTrack in chinook
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-playlist_track-to-playlist
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key PlaylistId to Playlist (not enforced)
+  status: inferred
+  read_on: '2026-10-23'
+- id: ev-playlist_track-to-track
+  source: chinook-sqlite
+  pin: sqlite:chinook@2026-10-23
+  quote: foreign key TrackId to Track (not enforced)
+  status: inferred
+  read_on: '2026-10-23'
+extensions:
+  draft:
+    from: sqlite:chinook@2026-10-23
+    placeholders:
+    - grain
+    - class
+    - fields.PlaylistId.meaning
+    - fields.TrackId.meaning
+    - relationships.to-playlist.meaning
+    - relationships.to-track.meaning

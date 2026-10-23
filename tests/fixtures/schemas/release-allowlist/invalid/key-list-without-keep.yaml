@@ -1,0 +1,18 @@
+# reason: key list without keep
+# expect: $.keys.entity
+kind: release-allowlist
+files:
+- pattern: physical/entities/*.yaml
+  disposition: project
+- pattern: registers/hazards/*.yaml
+  disposition: export
+- pattern: drafts/**
+  disposition: refuse
+  reason: Drafts are not reviewed.
+keys:
+  entity:
+    drop:
+    - source
+    - evidence
+    - records
+    - extensions

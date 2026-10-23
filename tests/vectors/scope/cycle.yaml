@@ -1,0 +1,300 @@
+# Test vector - spec/ALGORITHMS.md, scope.
+algorithm: scope
+case: cycle
+description: A cycle attached to a direct entity resolves; a detached cycle stays none.
+input:
+  files:
+  - kind: source
+    id: shop-db
+    title: Shop database
+    source_kind: warehouse
+    access_mode: export_file
+    engine: postgres
+  - kind: evidence
+    records:
+    - id: ev-confirmed
+      source: shop-db
+      pin: postgres:shop.public@2026-11-01
+      quote: catalog read
+      status: confirmed
+      read_on: '2026-11-01'
+    - id: ev-inferred
+      source: shop-db
+      pin: postgres:shop.public@2026-11-01
+      quote: column names match
+      status: inferred
+      read_on: '2026-11-01'
+    - id: ev-unresolved
+      source: shop-db
+      pin: postgres:shop.public@2026-11-01
+      quote: not checked yet
+      status: unresolved
+      read_on: '2026-11-01'
+    - id: ev-retracted
+      source: shop-db
+      pin: postgres:shop.public@2026-10-01
+      quote: joined on email
+      status: retracted
+      read_on: '2026-10-01'
+      named_error: The join used email, which is not unique.
+      superseded_by: ev-confirmed
+  - kind: profile
+    id: retail
+    anchor_entity: users
+    labels:
+    - customer_scoped
+    - configuration
+    - administrative
+    - lineage
+    - representation
+    - unresolved
+    rules:
+    - when:
+        evidence_status: unresolved
+      label: unresolved
+    - when:
+        mechanism: derivation
+      label: lineage
+    - when:
+        mechanism: representation
+      label: representation
+    - when:
+        any_end_class: administrative
+      label: administrative
+    - when:
+        any_end_class: configuration
+      label: configuration
+    - when:
+        all_ends_match:
+        - class: data
+          subject_scoped: true
+        - class: reference
+        any_end_subject_scoped: true
+      label: customer_scoped
+  - kind: entity
+    id: users
+    physical_name: shop.users
+    grain: one row per users row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+  - kind: entity
+    id: orders
+    physical_name: shop.orders
+    grain: one row per orders row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    anchor_reference:
+      field: user_id
+      evidence:
+      - ev-confirmed
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+    - name: user_id
+      type: INT64
+      nullable: true
+      meaning: The user this row belongs to.
+  - kind: entity
+    id: carts
+    physical_name: shop.carts
+    grain: one row per carts row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+    - name: orders_id
+      type: INT64
+      nullable: true
+      meaning: The orders row this row points to.
+    - name: wishlists_id
+      type: INT64
+      nullable: true
+      meaning: The wishlists row this row points to.
+    relationships:
+    - key: for-order
+      to: orders
+      join: carts.orders_id = orders.id
+      meaning: Link from carts to orders.
+      mechanism: inferred_join
+      cardinality: many_to_one
+      scope_admission:
+        basis: unique_target
+        evidence:
+        - ev-confirmed
+      evidence:
+      - ev-confirmed
+    - key: saved-in
+      to: wishlists
+      join: carts.wishlists_id = wishlists.id
+      meaning: Link from carts to wishlists.
+      mechanism: inferred_join
+      cardinality: many_to_one
+      scope_admission:
+        basis: unique_target
+        evidence:
+        - ev-confirmed
+      evidence:
+      - ev-confirmed
+  - kind: entity
+    id: wishlists
+    physical_name: shop.wishlists
+    grain: one row per wishlists row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+    - name: carts_id
+      type: INT64
+      nullable: true
+      meaning: The carts row this row points to.
+    relationships:
+    - key: of-cart
+      to: carts
+      join: wishlists.carts_id = carts.id
+      meaning: Link from wishlists to carts.
+      mechanism: inferred_join
+      cardinality: many_to_one
+      scope_admission:
+        basis: unique_target
+        evidence:
+        - ev-confirmed
+      evidence:
+      - ev-confirmed
+  - kind: entity
+    id: tags
+    physical_name: shop.tags
+    grain: one row per tags row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+    - name: tag_groups_id
+      type: INT64
+      nullable: true
+      meaning: The tag_groups row this row points to.
+    relationships:
+    - key: in-group
+      to: tag_groups
+      join: tags.tag_groups_id = tag_groups.id
+      meaning: Link from tags to tag_groups.
+      mechanism: inferred_join
+      cardinality: many_to_one
+      scope_admission:
+        basis: unique_target
+        evidence:
+        - ev-confirmed
+      evidence:
+      - ev-confirmed
+  - kind: entity
+    id: tag_groups
+    physical_name: shop.tag_groups
+    grain: one row per tag_groups row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+    - name: tags_id
+      type: INT64
+      nullable: true
+      meaning: The tags row this row points to.
+    relationships:
+    - key: top-tag
+      to: tags
+      join: tag_groups.tags_id = tags.id
+      meaning: Link from tag_groups to tags.
+      mechanism: inferred_join
+      cardinality: many_to_one
+      scope_admission:
+        basis: unique_target
+        evidence:
+        - ev-confirmed
+      evidence:
+      - ev-confirmed
+expected:
+  scope:
+  - entity: carts
+    subject_scope: transitive
+    basis: unique_target
+    via: carts.for-order
+    reachable: true
+  - entity: orders
+    subject_scope: direct
+    basis: '-'
+    via: '-'
+    reachable: true
+  - entity: tag_groups
+    subject_scope: none
+    basis: '-'
+    via: '-'
+    reachable: false
+  - entity: tags
+    subject_scope: none
+    basis: '-'
+    via: '-'
+    reachable: false
+  - entity: users
+    subject_scope: direct
+    basis: '-'
+    via: '-'
+    reachable: true
+  - entity: wishlists
+    subject_scope: transitive
+    basis: unique_target
+    via: wishlists.of-cart > carts.for-order
+    reachable: true
+  rejections: []

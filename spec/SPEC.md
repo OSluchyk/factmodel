@@ -1,12 +1,20 @@
 # FactModel - Product Specification
 
-Author: Oleksandr Sluchyk · Version 0.1 (draft) · 2026-10-23
+Author: Oleksandr Sluchyk · Version 0.1 · 2026-10-23
 
 ## Summary
 
 FactModel is a framework that lets AI agents build, check and keep current a semantic model of any data platform. It ships schemas, a specification, agent instructions and skills, and a small command-line toolset. Every fact in a model carries its evidence, and every derived value is computed, never typed by hand.
 
 The model has two kinds of layers. One **physical layer** describes what exists: sources, tables, fields, keys, relationships, services. Any number of **semantic layers** sit on top, one per use case, each proven correct by the consumer that uses it.
+
+**Companion documents.** This specification is version 0.1 (`spec-v0.1`). It is completed by:
+
+- [`VOCABULARY.md`](VOCABULARY.md) - every term and enumeration, defined once; the code and schemas load its lists.
+- [`ALGORITHMS.md`](ALGORITHMS.md) - projection, subject scope closure and release partition, with test vectors in `tests/vectors/`.
+- [`../schemas/`](../schemas/README.md) - one JSON Schema per file kind; the valid fixtures in `tests/fixtures/schemas/` are the normative examples.
+- [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md) - milestones and work packages.
+- [`../decisions/`](../decisions/README.md) - why the framework is the way it is.
 
 **Why the name.** FactModel is a model made of facts about a data platform, each with its evidence: where it came from, which version was read, and how sure it is. Semantic layers stand on those facts instead of on what someone remembers.
 

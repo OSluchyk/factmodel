@@ -1,0 +1,116 @@
+# Test vector - spec/ALGORITHMS.md, release.
+algorithm: release
+case: residue-file
+description: Without a catch-all pattern, an unlisted file fails with unmatched.
+input:
+  files:
+  - path: notes/internal.md
+    document: null
+  - path: physical/entities/orders.yaml
+    document:
+      kind: entity
+      id: orders
+      physical_name: shop.orders
+      grain: one row per orders row
+      class: data
+      status: draft
+      keys:
+        primary:
+        - id
+        current_row_rule: null
+      anchor_reference:
+        field: user_id
+        evidence:
+        - ev-confirmed
+      evidence:
+      - ev-confirmed
+      fields:
+      - name: id
+        type: INT64
+        nullable: false
+        meaning: Identifier.
+      - name: user_id
+        type: INT64
+        nullable: true
+        meaning: The user this row belongs to.
+      - name: users_id
+        type: INT64
+        nullable: true
+        meaning: The users row this row points to.
+      relationships:
+      - key: placed-by
+        to: users
+        join: orders.users_id = users.id
+        meaning: Link from orders to users.
+        mechanism: inferred_join
+        cardinality: many_to_one
+        evidence:
+        - ev-confirmed
+      records:
+      - id: ev-confirmed
+        source: shop-db
+        pin: postgres:shop.public@2026-11-01
+        quote: catalog read
+        status: confirmed
+        read_on: '2026-11-01'
+  - path: registers/hazards/H-0001.yaml
+    document:
+      kind: hazard
+      id: H-0001
+      title: Returned orders still count
+      status: active
+      description: Returned orders stay in the table.
+      applies_to:
+      - orders
+      evidence:
+      - ev-confirmed
+  - path: release/allowlist.yaml
+    document:
+      kind: release-allowlist
+      files:
+      - pattern: physical/entities/*.yaml
+        disposition: project
+      - pattern: registers/**
+        disposition: export
+      - pattern: release/allowlist.yaml
+        disposition: refuse
+      keys:
+        entity:
+          keep:
+          - kind
+          - id
+          - physical_name
+          - grain
+          - class
+          - status
+          - keys
+          - fields
+          - relationships
+          drop:
+          - source
+          - anchor_reference
+          - evidence
+          - records
+          - hazards
+          - meaning
+expected:
+  files:
+  - path: physical/entities/orders.yaml
+    disposition: project
+    keep:
+    - kind
+    - id
+    - physical_name
+    - grain
+    - class
+    - status
+    - keys
+    - fields
+    - relationships
+  - path: registers/hazards/H-0001.yaml
+    disposition: export
+  - path: release/allowlist.yaml
+    disposition: refuse
+  failures:
+  - path: notes/internal.md
+    reason: unmatched

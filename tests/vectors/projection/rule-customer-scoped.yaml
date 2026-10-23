@@ -1,0 +1,203 @@
+# Test vector - spec/ALGORITHMS.md, projection.
+algorithm: projection
+case: rule-customer-scoped
+description: 'Rule 6: scoped data to scoped data, and scoped data to reference, are customer_scoped.'
+input:
+  files:
+  - kind: source
+    id: shop-db
+    title: Shop database
+    source_kind: warehouse
+    access_mode: export_file
+    engine: postgres
+  - kind: evidence
+    records:
+    - id: ev-confirmed
+      source: shop-db
+      pin: postgres:shop.public@2026-11-01
+      quote: catalog read
+      status: confirmed
+      read_on: '2026-11-01'
+    - id: ev-inferred
+      source: shop-db
+      pin: postgres:shop.public@2026-11-01
+      quote: column names match
+      status: inferred
+      read_on: '2026-11-01'
+    - id: ev-unresolved
+      source: shop-db
+      pin: postgres:shop.public@2026-11-01
+      quote: not checked yet
+      status: unresolved
+      read_on: '2026-11-01'
+    - id: ev-retracted
+      source: shop-db
+      pin: postgres:shop.public@2026-10-01
+      quote: joined on email
+      status: retracted
+      read_on: '2026-10-01'
+      named_error: The join used email, which is not unique.
+      superseded_by: ev-confirmed
+  - kind: profile
+    id: retail
+    anchor_entity: users
+    labels:
+    - customer_scoped
+    - configuration
+    - administrative
+    - lineage
+    - representation
+    - unresolved
+    rules:
+    - when:
+        evidence_status: unresolved
+      label: unresolved
+    - when:
+        mechanism: derivation
+      label: lineage
+    - when:
+        mechanism: representation
+      label: representation
+    - when:
+        any_end_class: administrative
+      label: administrative
+    - when:
+        any_end_class: configuration
+      label: configuration
+    - when:
+        all_ends_match:
+        - class: data
+          subject_scoped: true
+        - class: reference
+        any_end_subject_scoped: true
+      label: customer_scoped
+  - kind: entity
+    id: users
+    physical_name: shop.users
+    grain: one row per users row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+  - kind: entity
+    id: products
+    physical_name: shop.products
+    grain: one row per products row
+    class: reference
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+  - kind: entity
+    id: orders
+    physical_name: shop.orders
+    grain: one row per orders row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    anchor_reference:
+      field: user_id
+      evidence:
+      - ev-confirmed
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+    - name: user_id
+      type: INT64
+      nullable: true
+      meaning: The user this row belongs to.
+    - name: users_id
+      type: INT64
+      nullable: true
+      meaning: The users row this row points to.
+    relationships:
+    - key: placed-by
+      to: users
+      join: orders.users_id = users.id
+      meaning: Link from orders to users.
+      mechanism: inferred_join
+      cardinality: many_to_one
+      evidence:
+      - ev-inferred
+  - kind: entity
+    id: order_items
+    physical_name: shop.order_items
+    grain: one row per order_items row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+    - name: orders_id
+      type: INT64
+      nullable: true
+      meaning: The orders row this row points to.
+    - name: products_id
+      type: INT64
+      nullable: true
+      meaning: The products row this row points to.
+    relationships:
+    - key: part-of
+      to: orders
+      join: order_items.orders_id = orders.id
+      meaning: Link from order_items to orders.
+      mechanism: inferred_join
+      cardinality: many_to_one
+      scope_admission:
+        basis: unique_target
+        evidence:
+        - ev-confirmed
+      evidence:
+      - ev-confirmed
+    - key: sells
+      to: products
+      join: order_items.products_id = products.id
+      meaning: Link from order_items to products.
+      mechanism: inferred_join
+      cardinality: many_to_one
+      evidence:
+      - ev-confirmed
+expected:
+  labels:
+  - relationship: order_items.part-of
+    label: customer_scoped
+    targets: '-'
+  - relationship: order_items.sells
+    label: customer_scoped
+    targets: '-'
+  - relationship: orders.placed-by
+    label: customer_scoped
+    targets: '-'
+  residue: []

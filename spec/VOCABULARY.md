@@ -1,6 +1,6 @@
 # FactModel - Vocabulary
 
-Author: Oleksandr Sluchyk · Version 0.1 (draft) · 2026-10-23
+Author: Oleksandr Sluchyk · Version 0.1 · 2026-10-23
 Companion to `spec/SPEC.md`. Every term the schemas use is defined here once.
 
 ## How to read this file
@@ -416,6 +416,26 @@ Derived values are computed by `fact project` and written to `generated/`. Every
 - withheld
 ```
 
+The exact columns of each generated file are in `spec/ALGORITHMS.md`.
+
+**Admission rejection.** Why a `scope_admission` cannot carry scope; written to `generated/scope-rejections.tsv` (`spec/ALGORITHMS.md`, algorithm 2). Any row fails the gate's `scope` stage.
+
+| Reason | Meaning |
+| --- | --- |
+| `target_set` | The relationship has several targets; scope never passes through a target set. |
+| `wrong_mechanism` | The mechanism is not `declared_fk` or `inferred_join`. |
+| `reference_end` | One end is a `reference` entity (also used for `anchor_reference` on a reference entity). |
+| `weak_evidence` | The relationship or its admission is `unresolved` or `retracted`. |
+| `no_current_row_rule` | The basis is `current_row_rule`, but the target has no rule. |
+
+```yaml vocabulary:admission_rejection
+- target_set
+- wrong_mechanism
+- reference_end
+- weak_evidence
+- no_current_row_rule
+```
+
 Example: `orders.placed-by	customer_scoped` is a row in `generated/labels.tsv`.
 
 ## 7. Profiles
@@ -487,6 +507,22 @@ A **consumer** is the agent, SQL generator or knowledge base that reads a layer 
 - export
 - project
 - refuse
+```
+
+A `project` file keeps only the top-level keys its kind lists under `keep` in the allowlist; keys under `drop` leave the copy. A key in neither list fails the release.
+
+**Release failure.** Why a file stops a release (`spec/ALGORITHMS.md`, algorithm 3).
+
+| Reason | Meaning |
+| --- | --- |
+| `unmatched` | No pattern matches the file. |
+| `no_key_list` | The file is projected, but its kind has no key list. |
+| `undeclared_key` | A projected file has a key in neither `keep` nor `drop`. |
+
+```yaml vocabulary:release_failure
+- unmatched
+- no_key_list
+- undeclared_key
 ```
 
 **Export targets.** Other tools a layer can be exported to.

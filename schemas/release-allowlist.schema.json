@@ -42,7 +42,7 @@
       }
     },
     "keys": {
-      "description": "For projected files, the keys each file kind keeps.",
+      "description": "For projected files, the top-level keys each file kind keeps and drops. A key in neither list fails the release (fail-closed).",
       "type": "object",
       "propertyNames": {
         "enum": [
@@ -66,12 +66,28 @@
         ]
       },
       "additionalProperties": {
-        "type": "array",
-        "items": {
-          "$ref": "#/$defs/text"
-        },
-        "minItems": 1,
-        "uniqueItems": true
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "keep"
+        ],
+        "properties": {
+          "keep": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/text"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "drop": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/text"
+            },
+            "uniqueItems": true
+          }
+        }
       }
     },
     "extensions": {

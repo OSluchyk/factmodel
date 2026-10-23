@@ -8,4 +8,6 @@ files:
     disposition: refuse
     reason: Drafts are not reviewed.
 keys:
-  entity: [id, physical_name, grain, class, keys, fields, relationships]
+  entity:
+    keep: [kind, id, physical_name, grain, class, status, keys, fields, relationships]
+    drop: [source, evidence, records, extensions]

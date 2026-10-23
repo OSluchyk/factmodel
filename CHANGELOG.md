@@ -2,6 +2,16 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-23 - Round 3: WP0.4 Algorithms, WP0.5 spec-v0.1
+
+**Why.** The core's three algorithms must be exact before code exists, so that the code is checked against the spec and not the other way round. The test vectors are that check, written by hand from the text.
+
+- Add `spec/ALGORITHMS.md`: projection with rule 0, subject scope closure (D-007) with admission rejections and reachability, release partition.
+- Add 21 test vectors in `tests/vectors/` and a test that every vector input is valid and every expected output covers its input.
+- Release key lists are `keep` and `drop` per kind, so an undeclared key fails closed.
+- New vocabulary blocks `admission_rejection` and `release_failure`.
+- **spec-v0.1**: `spec/SPEC.md` and `spec/VOCABULARY.md` are version 0.1, with links to the vocabulary, algorithms and schemas. The owner creates the git tag.
+
 ## Unreleased - 2026-10-23 - Round 2: WP0.3 JSON Schemas
 
 **Why.** Every later piece (loader, gate, adapters) needs a normative shape for each file kind, and the shapes must not drift from the vocabulary. Three round-1 choices would have made the schemas awkward: a boolean-or-string field, an authored scope checked against a computed one, and a status block named for entities only.

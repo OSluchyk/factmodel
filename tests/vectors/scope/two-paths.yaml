@@ -1,0 +1,269 @@
+# Test vector - spec/ALGORITHMS.md, scope.
+algorithm: scope
+case: two-paths
+description: 'Two admitted steps at one level: the lower relationship reference wins; a target at a lower
+  level beats a lower reference.'
+input:
+  files:
+  - kind: source
+    id: shop-db
+    title: Shop database
+    source_kind: warehouse
+    access_mode: export_file
+    engine: postgres
+  - kind: evidence
+    records:
+    - id: ev-confirmed
+      source: shop-db
+      pin: postgres:shop.public@2026-11-01
+      quote: catalog read
+      status: confirmed
+      read_on: '2026-11-01'
+    - id: ev-inferred
+      source: shop-db
+      pin: postgres:shop.public@2026-11-01
+      quote: column names match
+      status: inferred
+      read_on: '2026-11-01'
+    - id: ev-unresolved
+      source: shop-db
+      pin: postgres:shop.public@2026-11-01
+      quote: not checked yet
+      status: unresolved
+      read_on: '2026-11-01'
+    - id: ev-retracted
+      source: shop-db
+      pin: postgres:shop.public@2026-10-01
+      quote: joined on email
+      status: retracted
+      read_on: '2026-10-01'
+      named_error: The join used email, which is not unique.
+      superseded_by: ev-confirmed
+  - kind: profile
+    id: retail
+    anchor_entity: users
+    labels:
+    - customer_scoped
+    - configuration
+    - administrative
+    - lineage
+    - representation
+    - unresolved
+    rules:
+    - when:
+        evidence_status: unresolved
+      label: unresolved
+    - when:
+        mechanism: derivation
+      label: lineage
+    - when:
+        mechanism: representation
+      label: representation
+    - when:
+        any_end_class: administrative
+      label: administrative
+    - when:
+        any_end_class: configuration
+      label: configuration
+    - when:
+        all_ends_match:
+        - class: data
+          subject_scoped: true
+        - class: reference
+        any_end_subject_scoped: true
+      label: customer_scoped
+  - kind: entity
+    id: users
+    physical_name: shop.users
+    grain: one row per users row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+  - kind: entity
+    id: orders
+    physical_name: shop.orders
+    grain: one row per orders row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    anchor_reference:
+      field: user_id
+      evidence:
+      - ev-confirmed
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+    - name: user_id
+      type: INT64
+      nullable: true
+      meaning: The user this row belongs to.
+  - kind: entity
+    id: invoices
+    physical_name: shop.invoices
+    grain: one row per invoices row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    anchor_reference:
+      field: user_id
+      evidence:
+      - ev-confirmed
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+    - name: user_id
+      type: INT64
+      nullable: true
+      meaning: The user this row belongs to.
+  - kind: entity
+    id: payments
+    physical_name: shop.payments
+    grain: one row per payments row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+    - name: orders_id
+      type: INT64
+      nullable: true
+      meaning: The orders row this row points to.
+    - name: invoices_id
+      type: INT64
+      nullable: true
+      meaning: The invoices row this row points to.
+    relationships:
+    - key: for-order
+      to: orders
+      join: payments.orders_id = orders.id
+      meaning: Link from payments to orders.
+      mechanism: inferred_join
+      cardinality: many_to_one
+      scope_admission:
+        basis: measured_fanout
+        evidence:
+        - ev-confirmed
+      evidence:
+      - ev-confirmed
+    - key: for-invoice
+      to: invoices
+      join: payments.invoices_id = invoices.id
+      meaning: Link from payments to invoices.
+      mechanism: inferred_join
+      cardinality: many_to_one
+      scope_admission:
+        basis: unique_target
+        evidence:
+        - ev-confirmed
+      evidence:
+      - ev-confirmed
+  - kind: entity
+    id: shipments
+    physical_name: shop.shipments
+    grain: one row per shipments row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+    - name: payments_id
+      type: INT64
+      nullable: true
+      meaning: The payments row this row points to.
+    - name: orders_id
+      type: INT64
+      nullable: true
+      meaning: The orders row this row points to.
+    relationships:
+    - key: after-payment
+      to: payments
+      join: shipments.payments_id = payments.id
+      meaning: Link from shipments to payments.
+      mechanism: inferred_join
+      cardinality: many_to_one
+      scope_admission:
+        basis: unique_target
+        evidence:
+        - ev-confirmed
+      evidence:
+      - ev-confirmed
+    - key: ships-order
+      to: orders
+      join: shipments.orders_id = orders.id
+      meaning: Link from shipments to orders.
+      mechanism: inferred_join
+      cardinality: many_to_one
+      scope_admission:
+        basis: measured_fanout
+        evidence:
+        - ev-confirmed
+      evidence:
+      - ev-confirmed
+expected:
+  scope:
+  - entity: invoices
+    subject_scope: direct
+    basis: '-'
+    via: '-'
+    reachable: true
+  - entity: orders
+    subject_scope: direct
+    basis: '-'
+    via: '-'
+    reachable: true
+  - entity: payments
+    subject_scope: transitive
+    basis: unique_target
+    via: payments.for-invoice
+    reachable: true
+  - entity: shipments
+    subject_scope: transitive
+    basis: measured_fanout
+    via: shipments.ships-order
+    reachable: true
+  - entity: users
+    subject_scope: direct
+    basis: '-'
+    via: '-'
+    reachable: true
+  rejections: []

@@ -203,7 +203,7 @@ rules:              # evaluated in order; first match wins
 
 **Goal.** The three algorithms the core runs, written precisely before code.
 
-**Deliverables.** `spec/ALGORITHMS.md` and `tests/vectors/*.yaml` (input model + expected output).
+**Deliverables.** `spec/ALGORITHMS.md` and `tests/vectors/<algorithm>/<case>.yaml` (input model files + expected output).
 
 1. **Projection.** Input: relationships, entity facts, profile. For each relationship: if it has a target set, project per target (rule 0) and keep the label if all agree, else `withheld`; otherwise apply ordered rules, first match wins; no match = residue. Output: label per relationship, residue list. Test vectors: at least one per rule, one per tie case, one residue case, one target-set agreement, one disagreement.
 2. **Subject scope closure** (D-007). Direct: the entity has `anchor_reference`. Transitive: fixed point over relationships with mechanism in `{declared_fk, inferred_join}`, evidence confirmed or inferred-with-citation, target scoped, and a `scope_admission` with its basis (`unique_target`, `current_row_rule`, `measured_fanout`). Reference entities never propagate. Direct wins. Output: scope, via-path, basis per entity. Vectors: chain of three, cycle, reference blocking, missing basis rejected.
@@ -213,7 +213,7 @@ rules:              # evaluated in order; first match wins
 
 ### WP0.5 Spec review and freeze of v0.1 (part of WP0.4 round)
 
-Update `spec/SPEC.md` with links to the vocabulary, schemas and algorithms; tag `spec-v0.1`.
+Update `spec/SPEC.md` with links to the vocabulary, schemas and algorithms; record `spec-v0.1` in `CHANGELOG.md`. The owner creates the git tag.
 
 ---
 

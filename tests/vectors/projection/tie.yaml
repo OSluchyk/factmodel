@@ -1,0 +1,143 @@
+# Test vector - spec/ALGORITHMS.md, projection.
+algorithm: projection
+case: tie
+description: A derivation from an administrative entity matches rules 2 and 4; the first wins.
+input:
+  files:
+  - kind: source
+    id: shop-db
+    title: Shop database
+    source_kind: warehouse
+    access_mode: export_file
+    engine: postgres
+  - kind: evidence
+    records:
+    - id: ev-confirmed
+      source: shop-db
+      pin: postgres:shop.public@2026-11-01
+      quote: catalog read
+      status: confirmed
+      read_on: '2026-11-01'
+    - id: ev-inferred
+      source: shop-db
+      pin: postgres:shop.public@2026-11-01
+      quote: column names match
+      status: inferred
+      read_on: '2026-11-01'
+    - id: ev-unresolved
+      source: shop-db
+      pin: postgres:shop.public@2026-11-01
+      quote: not checked yet
+      status: unresolved
+      read_on: '2026-11-01'
+    - id: ev-retracted
+      source: shop-db
+      pin: postgres:shop.public@2026-10-01
+      quote: joined on email
+      status: retracted
+      read_on: '2026-10-01'
+      named_error: The join used email, which is not unique.
+      superseded_by: ev-confirmed
+  - kind: profile
+    id: retail
+    anchor_entity: users
+    labels:
+    - customer_scoped
+    - configuration
+    - administrative
+    - lineage
+    - representation
+    - unresolved
+    rules:
+    - when:
+        evidence_status: unresolved
+      label: unresolved
+    - when:
+        mechanism: derivation
+      label: lineage
+    - when:
+        mechanism: representation
+      label: representation
+    - when:
+        any_end_class: administrative
+      label: administrative
+    - when:
+        any_end_class: configuration
+      label: configuration
+    - when:
+        all_ends_match:
+        - class: data
+          subject_scoped: true
+        - class: reference
+        any_end_subject_scoped: true
+      label: customer_scoped
+  - kind: entity
+    id: users
+    physical_name: shop.users
+    grain: one row per users row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+  - kind: entity
+    id: load_jobs
+    physical_name: shop.load_jobs
+    grain: one row per load_jobs row
+    class: administrative
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+  - kind: entity
+    id: job_stats
+    physical_name: shop.job_stats
+    grain: one row per job_stats row
+    class: data
+    status: draft
+    keys:
+      primary:
+      - id
+      current_row_rule: null
+    evidence:
+    - ev-confirmed
+    fields:
+    - name: id
+      type: INT64
+      nullable: false
+      meaning: Identifier.
+    - name: load_jobs_id
+      type: INT64
+      nullable: true
+      meaning: The load_jobs row this row points to.
+    relationships:
+    - key: from-jobs
+      to: load_jobs
+      join: job_stats.load_jobs_id = load_jobs.id
+      meaning: Link from job_stats to load_jobs.
+      mechanism: derivation
+      cardinality: one_to_many
+      evidence:
+      - ev-confirmed
+expected:
+  labels:
+  - relationship: job_stats.from-jobs
+    label: lineage
+    targets: '-'
+  residue: []

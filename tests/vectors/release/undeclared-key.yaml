@@ -1,0 +1,105 @@
+# Test vector - spec/ALGORITHMS.md, release.
+algorithm: release
+case: undeclared-key
+description: A projected file with a key in neither keep nor drop fails; a projected kind without a 
+  key list fails.
+input:
+  files:
+  - path: physical/entities/orders.yaml
+    document:
+      kind: entity
+      id: orders
+      physical_name: shop.orders
+      grain: one row per orders row
+      class: data
+      status: draft
+      keys:
+        primary:
+        - id
+        current_row_rule: null
+      anchor_reference:
+        field: user_id
+        evidence:
+        - ev-confirmed
+      evidence:
+      - ev-confirmed
+      fields:
+      - name: id
+        type: INT64
+        nullable: false
+        meaning: Identifier.
+      - name: user_id
+        type: INT64
+        nullable: true
+        meaning: The user this row belongs to.
+      - name: users_id
+        type: INT64
+        nullable: true
+        meaning: The users row this row points to.
+      relationships:
+      - key: placed-by
+        to: users
+        join: orders.users_id = users.id
+        meaning: Link from orders to users.
+        mechanism: inferred_join
+        cardinality: many_to_one
+        evidence:
+        - ev-confirmed
+      records:
+      - id: ev-confirmed
+        source: shop-db
+        pin: postgres:shop.public@2026-11-01
+        quote: catalog read
+        status: confirmed
+        read_on: '2026-11-01'
+      extensions:
+        team: sales
+  - path: physical/services/nightly-load.yaml
+    document:
+      kind: service
+      id: nightly-load
+      service_kind: pipeline
+      meaning: Loads orders.
+      writes:
+      - orders
+      evidence:
+      - ev-confirmed
+  - path: release/allowlist.yaml
+    document:
+      kind: release-allowlist
+      files:
+      - pattern: physical/entities/*.yaml
+        disposition: project
+      - pattern: physical/services/*.yaml
+        disposition: project
+      - pattern: '**'
+        disposition: refuse
+      keys:
+        entity:
+          keep:
+          - kind
+          - id
+          - physical_name
+          - grain
+          - class
+          - status
+          - keys
+          - fields
+          - relationships
+          drop:
+          - source
+          - anchor_reference
+          - evidence
+          - records
+          - hazards
+          - meaning
+expected:
+  files:
+  - path: release/allowlist.yaml
+    disposition: refuse
+  failures:
+  - path: physical/entities/orders.yaml
+    reason: undeclared_key
+    key: extensions
+  - path: physical/services/nightly-load.yaml
+    reason: no_key_list

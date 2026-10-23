@@ -132,17 +132,36 @@ def source_add(
     location: Annotated[str | None, typer.Option("--location")] = None,
     access: Annotated[str | None, typer.Option("--access", help="How access is obtained.")] = None,
     rank: Annotated[int | None, typer.Option("--rank")] = None,
+    adapter: Annotated[
+        str | None, typer.Option("--adapter", help="Adapter that reads it: export, sql, git, ...")
+    ] = None,
+    dialect: Annotated[
+        str | None, typer.Option("--dialect", help="sqlglot dialect, if the engine has none.")
+    ] = None,
+    dsn_env: Annotated[
+        str | None,
+        typer.Option("--dsn-env", help="Environment variable that holds the connection string."),
+    ] = None,
+    revision: Annotated[str | None, typer.Option("--revision", help="Git revision.")] = None,
+    include: Annotated[
+        list[str] | None, typer.Option("--include", help="Git path glob; repeat for more.")
+    ] = None,
     root: RootOption = Path("."),
 ) -> None:
-    """Register a source: kind, access mode, rank. Records how to get access, never a secret."""
+    """Register a source: kind, access mode, adapter. Records how to get access, never a secret."""
     fields = {
         "id": source_id,
         "title": title,
         "source_kind": source_kind,
         "access_mode": access_mode,
         "rank": rank,
+        "adapter": adapter,
         "engine": engine,
+        "dialect": dialect,
         "location": location,
+        "dsn_env": dsn_env,
+        "revision": revision,
+        "include": include or None,
         "access": access,
     }
     try:

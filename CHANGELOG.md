@@ -2,6 +2,14 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-23 - Round 13: WP1.9 Agent layer v1
+
+**Why.** Rules an agent cannot follow by itself do not scale. Skills turn the framework's procedures into steps an agent runs with `fact` commands only, and a dogfood run proves they are enough.
+
+- Add five skills (`model-onboard`, `entity-scaffold`, `evidence-gather`, `probe-write`, `probe-intake`), the model-repository `AGENTS.md` template, and brief and report templates; `fact init` copies the skills.
+- `fact source add` can set the adapter, dialect, `dsn_env`, revision and include globs.
+- Dogfood: following only `model-onboard`, the Chinook snapshot and drafts are reproduced exactly; a test repeats it.
+
 ## Unreleased - 2026-10-23 - Round 12: WP1.8 Chinook example (M1 gate)
 
 **Why.** The core has to prove itself end to end on a real schema, on more than one engine, without credentials. Chinook on SQLite and PostgreSQL with synthetic rows does that locally and in CI.

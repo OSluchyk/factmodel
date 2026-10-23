@@ -119,6 +119,13 @@ def init(
         for entry in sorted(skills.iterdir(), key=lambda e: e.name):
             if entry.is_file():
                 put(f".claude/skills/{entry.name}", entry.read_text(encoding="utf-8"))
+            elif entry.is_dir():
+                for item in sorted(entry.iterdir(), key=lambda e: e.name):
+                    if item.is_file():
+                        put(
+                            f".claude/skills/{entry.name}/{item.name}",
+                            item.read_text(encoding="utf-8"),
+                        )
     values = derived.derive_model(load_model(target))
     assert values is not None
     written += derived.write(target.resolve(), derived.render(values))

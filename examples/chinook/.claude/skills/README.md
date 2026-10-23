@@ -1,11 +1,13 @@
 # Skills
 
-Placeholder. The skills below are planned (spec, "Agent layer"); WP1.9 writes them.
+Procedures an agent follows in a model repository. Each skill names the `fact` commands to run and never names an engine: the source's adapter and dialect carry everything engine-specific.
 
 | Skill | Started by | Does |
 | --- | --- | --- |
-| `model-onboard` | owner | First pass on a new platform: register sources, run adapters, draft entities |
-| `entity-scaffold` | owner | One new entity with fields, keys and relationships, evidence attached |
-| `evidence-gather` | agent | Find and quote the highest-rank source for a claim |
-| `probe-write` | agent | Generate and explain probes for a set of facts |
-| `probe-intake` | owner | Read probe results, update evidence, open findings |
+| [`model-onboard`](model-onboard/SKILL.md) | owner | First pass on a new platform: register sources, snapshot, draft entities |
+| [`entity-scaffold`](entity-scaffold/SKILL.md) | owner | Turn one draft into a reviewed entity with keys, relationships and evidence |
+| [`evidence-gather`](evidence-gather/SKILL.md) | agent | Find and quote the highest-rank source for a claim |
+| [`probe-write`](probe-write/SKILL.md) | agent | Generate and render probes for a set of facts |
+| [`probe-intake`](probe-intake/SKILL.md) | owner | Read probe results, update evidence, open findings |
+
+Planned later: `drift-review`, `layer-build`, `escalation-draft`, `maintenance-pack`, `release`, `model-lookup`.

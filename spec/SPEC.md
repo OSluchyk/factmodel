@@ -1,0 +1,280 @@
+# Plumbline - Product Specification
+
+Author: Oleksandr Sluchyk · Version 0.1 (draft) · 2026-10-23
+
+## Summary
+
+Plumbline is a framework that lets AI agents build, check and keep current a semantic model of any data platform. It ships schemas, a specification, agent instructions and skills, and a small command-line toolset. Every fact in a model carries its evidence, and every derived value is computed, never typed by hand.
+
+The model has two kinds of layers. One **physical layer** describes what exists: sources, tables, fields, keys, relationships, services. Any number of **semantic layers** sit on top, one per use case, each proven correct by the consumer that uses it.
+
+**Why the name.** A plumb line is the builder's oldest tool for checking that a wall is true. Plumbline does the same for a data model: it checks every claim against the platform, not against what someone remembers.
+
+**Alternatives:** *Cairn* (stacked stones that mark a trail - layers plus waypoints), *Keel* (the part that keeps the structure steady). A quick web search found no data-tooling product named Plumbline; trademark search is still open.
+
+## Problem and principles
+
+A schema tells an agent what columns exist. It does not tell it which join is safe, which row is current, which column is stale, or which rule the platform applies silently. Agents that guess these things write SQL that runs and returns wrong answers.
+
+Semantic-layer tools (dbt MetricFlow, Cube, warehouse semantic views) and the Open Semantic Interchange standard define metrics and dimensions. They assume the facts underneath are already known. Plumbline produces and maintains those facts, with proof, and can export them to those tools.
+
+**Principles**
+
+1. **Evidence or it does not exist.** Every authored fact names its source, a pin (commit, API endpoint, dataset, document version) and a status: confirmed, inferred, unresolved or retracted.
+2. **Derived values are never authored.** Labels, scopes and summaries are computed by deterministic code from authored facts.
+3. **The core is neutral.** No domain word appears in the core schema. Domain meaning lives in a profile.
+4. **No universal semantic layer.** One semantic layer per use case. The framework gives the contract, not the meaning.
+5. **A consumer proves the model.** A layer is correct when its consumer gets the same answers as the platform does.
+6. **Agents propose, code decides.** Agents gather evidence and draft changes; scripts validate and compute; a person approves what cannot be undone.
+7. **Mistakes stay visible.** Retractions are named and kept. Nothing is silently deleted from the record.
+8. **No data in the repository.** Probes return counts and shapes, never rows.
+
+## Scope
+
+**Goals**
+
+- Build a physical layer for a new platform in days, from metadata plus evidence, with an agent doing most of the work.
+- Keep it current: detect drift, re-measure on triggers, show what changed and why.
+- Let teams add semantic layers for their own use cases on a shared, trusted base.
+- Share a clean, readable release of the model without the tooling.
+- Work on any engine through adapters, and any domain through profiles.
+
+**Non-goals**
+
+- A query engine, BI tool or metrics server. Plumbline exports to those.
+- A data catalog UI. It may generate static pages, nothing more.
+- Running probes against production by itself. People or CI with credentials run them.
+- Storing data samples, credentials or personal data.
+- Linking entities across platforms into one graph. Version 1.0 is one model per platform; cross-model links come later.
+
+**Users**
+
+| Who | What they do |
+| --- | --- |
+| Model owner | Approves decisions, runs probes, commits, publishes releases |
+| AI agent | Gathers evidence, drafts model changes, writes probes, reports |
+| Contributor | Adds a semantic layer, a profile or an adapter |
+| Consumer | An agent, SQL generator or knowledge base that reads a release |
+
+## Concepts
+
+The model is plain files (YAML and Markdown) in git. Six concepts carry it. Every term and enumeration is defined once in [`VOCABULARY.md`](VOCABULARY.md).
+
+**Source registry.** The memory of where facts come from: repositories, warehouses, APIs, documents, ticket systems. Each source has an id, a kind, an access mode (`agent_read`, `owner_read`, `export_file`), a pin format and a rank (lower wins). Ranks resolve conflicts: configuration beats a vendor document, a document beats a verbal answer. Credentials are never stored, only how to obtain them.
+
+**Physical layer.** What exists on the platform.
+
+| Element | Key attributes |
+| --- | --- |
+| Entity | id, physical name, grain, keys, class (data, configuration, administrative, reference), subject scope (direct, transitive, none) with its basis, current-row rule, status (draft, reviewed, deprecated) |
+| Field | name, path for nested fields, type, nullable, repeated, meaning, known hazards |
+| Relationship | key, from, to (one target, or a target set with a discriminator or per-tenant choice), join, mechanism (declared foreign key, inferred join, derivation, representation), cardinality, meaning |
+| Service | kind (pipeline, scheduled job, application, manual), what it reads and writes, when |
+| Tenant / environment | two separate facts: `ingest` (what the configuration accepts) and `presence` (what the data shows), measured per environment |
+
+**Semantic layer.** A named set of concepts, measures and filters for one use case, built only on physical facts. Each layer declares its consumer and the equivalence test that proves it. A consumer must apply every entity's current-row rule and default filters; the layer lists them so nothing is applied from memory.
+
+**Evidence.** Attached to every authored fact: source id, pin, quote or measurement, status, date read (`read_on`). A probe result is evidence too; it also records the environment and whether that data is representative. Shares measured on test data do not carry over to production; a zero-violation result does. Fields inherit their entity's metadata evidence unless they override it.
+
+**Registers.** Findings (problems to fix), escalations (questions for people, closed only by an answer with evidence), hazards (permanent behaviour a reader must know), decisions (why the model is the way it is, including retractions).
+
+**Profile.** The domain layer over the neutral core: the anchor entity (customer, patient, account), vocabularies, and ordered projection rules that turn facets into domain labels. Example profiles: retail, healthcare payer, banking.
+
+## Architecture
+
+Facts flow down from sources to consumers. Agents and the gate work beside that flow, never inside it.
+
+```mermaid
+flowchart TD
+  S["Sources<br/>repositories, warehouses, APIs, documents, tickets"] --> A["Adapters<br/>read metadata, write facts with evidence pins"]
+  A --> P["Physical layer (neutral core)<br/>entities, fields, relationships, services, evidence, registers"]
+  P --> PR["Profile and projection<br/>domain anchor, vocabularies, rules that compute labels and scope"]
+  PR --> SL["Semantic layers<br/>one per use case, each with its consumer and equivalence test"]
+  SL --> R["Release<br/>readable copy"]
+  SL --> E["Exports<br/>OSI, dbt, Cube"]
+  SL --> C["Consumers<br/>agents, SQL, KB"]
+  AG["Agent layer<br/>gather evidence, draft changes and probes, report"] -.-> P
+  G["Gate<br/>schema and YAML checks, residue 0, data probes, consumer equivalence"] -.-> PR
+  CLI["CLI toolset<br/>init, sync, probe, check, release"] -.-> G
+```
+
+| Component | Job | Ships as |
+| --- | --- | --- |
+| Core schemas | JSON Schema for every file kind: entity, relationship, source, evidence, register entry, profile, layer | `schemas/` |
+| Adapters | Read engine metadata (`INFORMATION_SCHEMA`, catalogs, DDL in git) and emit facts with pins | Python plugins, one per engine |
+| Projection library | Computes labels, subject scope, current-row reads, residue | Python package, no I/O |
+| Profiles | Domain anchor, vocabularies, rule tables | YAML |
+| Gate | Runs every check; one command, one verdict | `plb check` |
+| Probe generator | Writes data probes from the model (see Validation) | `plb probe` |
+| Release projection | Allowlist per file kind; fail-closed on unknown keys | `plb release` |
+| Exporters | OSI / Apache Ossie, dbt semantic models, Cube | `plb export` |
+| Agent layer | `AGENTS.md`, skills, prompt templates | Markdown |
+
+First adapters: BigQuery, PostgreSQL. Next: Snowflake, Databricks.
+
+## Validation
+
+Validation runs at three levels. Each level catches mistakes the one before cannot see.
+
+**1. Static gate (files only, runs on every change).**
+
+- Strict YAML: duplicate keys fail.
+- Every file matches its schema; unknown keys fail.
+- Every authored fact has evidence; no derived value is authored.
+- Projection residue is 0: every relationship gets a label or an explicit `withheld`.
+- Every entity a consumer declares is reachable from the anchor, or carries an owner decision.
+- Registers are consistent: no closed escalation without an answer and evidence; hazards never counted as issues.
+- The release partition is complete: every file has exactly one disposition.
+
+**2. Generated data probes (run by a person or CI with credentials).** The model writes its own tests. For each fact that data can confirm, `plb probe` generates a SQL check in the engine's dialect:
+
+| Model fact | Generated probe |
+| --- | --- |
+| Declared key | Duplicate count on the key |
+| Join | Match rate and orphan count, both directions |
+| Cardinality | Fan-out per source row |
+| Transitive scope | Source rows reaching more than one anchor |
+| Current-row rule | Rows per key after the rule; ties |
+| Field meaning | Null rate, value set vs vocabulary |
+| Environment presence | Row count per tenant and environment |
+
+Probes return counts only. Results are saved with a pin (engine, dataset, date) and become evidence. A probe that fails opens a finding automatically.
+
+**3. Consumer equivalence.** Each semantic layer names its consumer and a corpus of real requests. The test runs the consumer on the corpus and compares its output with the platform's own answer. The layer is accepted at an agreed threshold, and any drop blocks a release.
+
+## Keeping it current
+
+The model goes stale in three ways: the platform changes, a source changes, or a person answers a question. Plumbline handles each with a trigger, not a calendar alone.
+
+1. **Sync.** `plb sync` re-reads every source at its current version and diffs the facts against their pins. New tables, dropped columns, changed types and moved commits become a drift report.
+2. **Classify the drift.** Each item is one of: new fact (agent drafts it), changed fact (evidence must be renewed), lost fact (finding), no effect.
+3. **Re-probe.** Only the probes whose facts changed are regenerated and queued for the owner.
+4. **Triggers.** A maintenance file lists events and what each one requires: a new tenant, a source pin move, an escalation answered, a ticket shipped, a probe result outside its range. The gate fails when a fired trigger has no follow-up.
+5. **Maintenance pack.** A scheduled full re-measure of environment presence and the probes marked as volatile (`plb probe generate --set volatile`).
+
+Every change lands in git with a changelog entry that says *why*, not only *what*.
+
+## Agent layer
+
+The agent layer is plain Markdown that any capable coding agent can follow. It works with Claude Code skills and with any tool that reads `AGENTS.md`.
+
+**`AGENTS.md`** holds invariants only: evidence rules, what never gets authored, when to stop and ask, how to report. Procedures live in skills.
+
+**Skills**
+
+| Skill | Started by | Does |
+| --- | --- | --- |
+| `model-onboard` | owner | First pass on a new platform: register sources, run adapters, draft entities |
+| `entity-scaffold` | owner | One new entity with fields, keys and relationships, evidence attached |
+| `evidence-gather` | agent | Find and quote the highest-rank source for a claim |
+| `probe-write` | agent | Generate and explain probes for a set of facts |
+| `probe-intake` | owner | Read probe results, update evidence, open findings |
+| `drift-review` | owner | Work through a sync report |
+| `layer-build` | owner | Build a semantic layer for one consumer, with its equivalence corpus |
+| `escalation-draft` | agent | Turn an open question into a short message for the right people |
+| `maintenance-pack` | owner | Run the scheduled re-measure and take its results in |
+| `release` | owner | Run the release projection and prepare notes for readers |
+| `model-lookup` | consumer | Answer questions from a release, citing files |
+
+**Guardrails**
+
+- Stop when a measurement contradicts a documented fact, or when a change cannot be undone.
+- Never close an escalation without a named answer source.
+- Never commit, push or publish; the owner does.
+- Work in rounds: one brief in, one report out, with confirmed / inferred / unknown kept apart.
+
+## Toolset
+
+One command, `plb`, with a few verbs. It is a small Python package run through `uv`; no server, no database.
+
+| Command | Does |
+| --- | --- |
+| `plb init --profile <name>` | Create a model repository with the layout, schemas and agent files |
+| `plb source add` | Register a source: kind, access mode, rank, pin format |
+| `plb snapshot --source <id>` | Export a source's metadata to a file, so agents and tests work without credentials |
+| `plb sync [--source <id>]` | Run adapters, write new facts, produce a drift report |
+| `plb probe generate` | Write probe scripts for the facts that need data proof |
+| `plb probe intake <file>` | Turn probe output into evidence and findings |
+| `plb check` | Run the gate; exit 0 only when every stage passes |
+| `plb project` | Recompute derived values (labels, scope, generated tables) |
+| `plb release --out <dir>` | Build the readable release copy |
+| `plb export --to osi\|dbt\|cube` | Export a semantic layer to another tool |
+| `plb status` | Open findings, fired triggers, stale evidence, next actions |
+
+Probe scripts are plain shell with SQL inside, so the owner can read them before running.
+
+## Repository layout
+
+Two repositories: the framework, and one model repository per platform that uses it.
+
+```text
+plumbline/                  framework
+  spec/                     this specification, versioned
+  schemas/                  JSON Schema per file kind
+  src/plumbline/            Python package: core, projection, gate, probe, release, export, adapters
+  profiles/                 retail/, healthcare-payer/, ... (examples)
+  agent/                    AGENTS.md template, skills/, prompt templates
+  examples/thelook/         a full model of a public dataset
+  decisions/, rounds/       decision records; briefs and reports
+
+<platform>-model/           one per platform
+  plumbline.yaml            framework version, profile, adapters, consumers
+  sources/                  source registry; snapshots/ holds exported metadata
+  physical/                 entities/, services/, tenants.yaml
+  semantic/<layer>/         layer files and corpus/ (synthetic or redacted requests)
+  registers/                findings, escalations, hazards, decisions
+  evidence/                 probe results and quotes, counts only
+  probes/                   generated probe scripts, read before running
+  drafts/                   adapter and agent proposals, never read by the gate
+  maintenance/              triggers and the maintenance-pack definition
+  generated/                derived files, never edited by hand
+  release/                  allowlist, release log and authored reader docs
+  CHANGELOG.md, AGENTS.md, .claude/skills/
+```
+
+The framework version is pinned in `plumbline.yaml`. A model repository upgrades on purpose, with a migration note.
+
+## Security and privacy
+
+- **No data, no secrets.** Probes print counts, rates and lengths, never values or identifiers. The gate scans evidence files for patterns that look like personal data and fails on a match.
+- **No credentials in the repository.** Sources record how access is obtained, not the secret.
+- **People are not named in the model.** Probe output may contain user emails from job history; intake strips them before anything is written.
+- **Release is fail-closed.** Only allowlisted keys and files leave the model repository. Internal notes use explicit markers, never pattern matching on prose.
+- **Agents read, people run.** Agents never execute queries against production. They write the probe; a person with access runs it.
+- **Corpora are not data.** An equivalence corpus in the repository holds synthetic or redacted requests. A real corpus stays outside and is referenced by a pin.
+
+## Roadmap and acceptance
+
+Each milestone ends at a gate. The core schema is frozen only after M2, when a second engine and a second domain pass without changing it.
+
+| Milestone | Builds | Gate |
+| --- | --- | --- |
+| M0 - Specification | spec, JSON Schemas, profile contract, projection algorithm | spec reviewed; every rule has a worked example |
+| M1 - Core on one engine (BigQuery) | core package, gate, BigQuery adapter, retail profile, model of a public dataset | residue 0; expected scopes hold (orders direct, order items transitive, products reference) |
+| **M2 - Second engine (PostgreSQL)** | PostgreSQL adapter, model of an open-source application schema | no core change, or each change has a decision record naming the platform that forced it |
+| M3 - Semantic layers | layer contract, probe generator, equivalence harness, OSI and dbt export | one real consumer meets its equivalence threshold on a real corpus |
+| M4 - Release 1.0 | packaging, guides, examples, upgrade notes | someone else sets up a model repository from scratch using only the docs |
+
+The first public dataset is `bigquery-public-data.thelook_ecommerce` (check availability before M1): it has a clear anchor (`users`), a direct link (`orders`), a transitive one (`order_items`), reference data (`products`) and data with no anchor (`inventory_items`).
+
+## Later, not in 1.0
+
+- `plb serve`: an MCP server over a release, so consumer agents query the model instead of reading files.
+- Writer-attribution probes from warehouse job history: who wrote or deleted rows, when, and by which statement.
+- Cross-model links between platforms.
+- Snowflake and Databricks adapters.
+
+## Open questions
+
+- [x] License: Apache 2.0 (D-001). Models built with Plumbline stay private to their owners.
+- [x] Package name: `plumbline` is taken on PyPI; distribution `plumbline-model`, import `plumbline` (D-003).
+- [ ] Name: trademark check before the first public push.
+- [ ] Second domain for M2: which open-source application schema (needs a clear anchor and both reference and unanchored data).
+- [ ] Equivalence threshold: one global number or per layer.
+- [ ] Export target priority: OSI / Apache Ossie first, or dbt first.
+- [ ] Format of facts: YAML files only, or YAML plus a generated graph file (for example JSON-LD) for graph consumers.
+
+## Sources
+
+- [Thoughtworks Technology Radar: Semantic layer (Apr 2026)](https://www.thoughtworks.com/en-ec/radar/techniques/semantic-layer)
+- [Apache Ossie (formerly Open Semantic Interchange)](https://ossie.apache.org/)

@@ -1,0 +1,522 @@
+# Plumbline - Vocabulary
+
+Author: Oleksandr Sluchyk · Version 0.1 (draft) · 2026-10-23
+Companion to `spec/SPEC.md`. Every term the schemas use is defined here once.
+
+## How to read this file
+
+- Each term has a one-sentence meaning, its allowed values when it is an enumeration, and one example.
+- Every enumeration is also given as a fenced block that opens with `yaml vocabulary:<name>`. The code loads these blocks (`src/plumbline/vocabulary.py`), and later schemas import them, so the list here is the only source. Change a value here, and the code follows.
+- All values are slugs (see Identifiers). Where the spec used two words for one thing, one is chosen and the other is listed under "Not used".
+- Examples use the public dataset `bigquery-public-data.thelook_ecommerce`.
+
+## General terms
+
+| Term | Meaning |
+| --- | --- |
+| platform | The data system being modelled: its engines, pipelines, configuration and documents together. |
+| engine | One database or warehouse product that stores data on a platform, for example BigQuery or PostgreSQL. |
+| model | The set of YAML and Markdown files in a model repository that describe one platform. |
+| model repository | A git repository that holds one model (`<platform>-model/`). |
+| core | The framework schemas and code; it holds no domain word. |
+| owner | The person who approves decisions, runs probes, commits and publishes releases. |
+| agent | An AI agent that gathers evidence, drafts model changes and probes, and reports. |
+| authored | Written by a person or an agent, and therefore needing evidence. |
+| derived | Computed by deterministic code from authored facts, and never authored (see Derived values). |
+| gate | The set of checks run by `plb check`; one command, one verdict. |
+| round | One unit of agent work: one brief in, one report out, the owner commits. |
+
+Not used: "neutral core" as a name for the physical layer (the core is the framework; the physical layer is model content), "readable copy" (use release), "model owner" outside the users table (use owner).
+
+## 1. File kinds
+
+Every model file declares its kind in a top-level `kind:` key. One kind, one schema.
+
+| Kind | Meaning | Lives in (model repository) |
+| --- | --- | --- |
+| `model-config` | The root file: framework version, profile, adapters, consumers. | `plumbline.yaml` |
+| `source` | One entry in the source registry. | `sources/` |
+| `entity` | One table, view or object on the platform, with its fields and outgoing relationships. | `physical/entities/` |
+| `service` | One process that reads or writes entities. | `physical/services/` |
+| `tenants` | Tenants and environments, with ingest and presence per pair. | `physical/tenants.yaml` |
+| `evidence` | A standalone evidence record (quotes, probe measurements) referenced by ID. | `evidence/` |
+| `finding` | A register entry for a problem to fix. | `registers/` |
+| `escalation` | A register entry for a question to people. | `registers/` |
+| `hazard` | A register entry for permanent behaviour a reader must know. | `registers/` |
+| `decision` | A register entry for why the model is the way it is. | `registers/` |
+| `profile` | The domain layer: anchor entity, label vocabulary, ordered rules. | framework `profiles/<name>/` |
+| `layer` | One semantic layer for one use case. | `semantic/<layer>/` |
+| `consumer` | The agent, SQL generator or knowledge base that proves a layer. | `semantic/<layer>/` |
+| `release-allowlist` | The per-kind key allowlist and file dispositions for a release. | `release/` |
+| `probe` | One generated data check: the fact it tests, its expected range, its SQL. | `probes/` |
+| `probe-result` | The counts a probe returned, with its pin; it becomes evidence. | `evidence/probes/` |
+| `trigger` | An event and the follow-up it requires. | `maintenance/` |
+
+Example: `kind: entity` at the top of `physical/entities/orders.yaml`.
+
+```yaml vocabulary:file_kind
+- model-config
+- source
+- entity
+- service
+- tenants
+- evidence
+- finding
+- escalation
+- hazard
+- decision
+- profile
+- layer
+- consumer
+- release-allowlist
+- probe
+- probe-result
+- trigger
+```
+
+## 2. Identifiers
+
+**Slug.** Every authored ID is a slug: lowercase letters, digits, hyphen and underscore, starting with a letter or digit, at most 64 characters. Pattern: `^[a-z0-9][a-z0-9_-]{0,63}$`. Example: `order-items`.
+
+**Entity `id` and `physical_name`.** The `id` is the slug the model uses everywhere; `physical_name` is the name the engine uses, kept exactly as the engine writes it. Example: `id: orders`, `physical_name: thelook_ecommerce.orders`.
+
+**Relationship key.** A slug the author sets, unique within its source entity (D-002). The position of a relationship in a list is never its identity, because lists get reordered. Example: `key: placed-by`.
+
+**Relationship reference.** The full reference is `<entity-id>.<relationship-key>`. Example: `orders.placed-by`.
+
+**Register IDs.** Register entries use a prefix and a four-digit number: `F-0001` (finding), `E-0001` (escalation), `H-0001` (hazard), `D-0001` (decision). They are never reused and never deleted; a mistaken entry is closed or superseded, not removed. Example: `H-0003`.
+
+Register IDs are not slugs (they use uppercase), so the slug rule does not apply to them. Model register IDs (`D-0001`) are distinct from the framework's own decision records (`D-001` in `decisions/`).
+
+Not used: positional relationship identity such as `orders#1`.
+
+## 3. Evidence
+
+**Evidence** is the record that proves an authored fact. Every authored fact names at least one evidence ID, unless its status is explicitly `unresolved`.
+
+| Field | Meaning | Example |
+| --- | --- | --- |
+| `id` | Slug, unique within the model. | `ev-orders-ddl` |
+| `source` | ID of a registered source. | `bq-public` |
+| `pin` | The exact version read, in the pin format of the source kind (see Sources). | `bigquery:bigquery-public-data.thelook_ecommerce@2026-11-01` |
+| `quote` | A verbatim quote from the source, at most 40 words. | `INFORMATION_SCHEMA.COLUMNS for orders` |
+| `measurement` | A map of counts or rates, never values or identifiers. | `{match_rate: 1.0, orphans_left: 0}` |
+| `status` | See below. | `confirmed` |
+| `read_on` | The date the source was read, `YYYY-MM-DD`. | `2026-11-01` |
+| `environment` | For probe results only: the environment the probe ran in. | `prod` |
+| `representative` | For probe results only: whether the data is representative of production use. | `true` |
+
+An evidence record has a `quote` or a `measurement`, not both.
+
+### Evidence status
+
+| Status | Meaning | Who may set it |
+| --- | --- | --- |
+| `confirmed` | The fact is proven by a source that can prove it. | An adapter reading engine metadata; a probe whose result is in its expected range; the owner, for evidence the owner read. |
+| `inferred` | The fact is believed, with a cited reason, but not proven. | Anyone. Every agent-authored fact starts here. |
+| `unresolved` | The fact is not known; the record says what is missing. | Anyone. A fact with this status needs no evidence ID. |
+| `retracted` | The fact was wrong. The record stays, names the error and points to its replacement. | The owner, or an agent with owner approval in the round report. |
+
+```yaml vocabulary:evidence_status
+- confirmed
+- inferred
+- unresolved
+- retracted
+```
+
+**Retraction.** A `retracted` record requires `named_error` (one sentence that says what was wrong) and `superseded_by` (the ID of the record that replaces it). Example: `named_error: The join used users.email, which is not unique.`, `superseded_by: ev-orders-users-match-2`.
+
+**Representative.** Whether probe data stands for production use. Synthetic test data is `false`. A share measured on non-representative data does not carry over to production; a zero-violation result does.
+
+```yaml vocabulary:representative
+- "true"
+- "false"
+- unknown
+```
+
+**Inheritance.** A field without its own `evidence` inherits the entity's metadata evidence (the DDL or catalog snapshot).
+
+Not used: "date read" (use `read_on`), "probe output" for the stored result (use probe result).
+
+## 4. Sources
+
+A **source** is one place facts come from. The source registry records how to obtain access, never the secret.
+
+### Source kinds
+
+| Kind | Meaning | Pin format | Example pin |
+| --- | --- | --- | --- |
+| `git` | A git repository: DDL, configuration, pipeline code. | `<repo>@<sha>:<path>[:<line>]` | `etl-config@3f2a9c1:loaders/orders.yaml:12` |
+| `warehouse` | An engine's catalog or data, read through an adapter or a probe. | `<engine>:<project>.<dataset>@<YYYY-MM-DD>` | `bigquery:bigquery-public-data.thelook_ecommerce@2026-11-01` |
+| `api` | An HTTP API that describes or serves platform objects. | `<host><path>@<YYYY-MM-DD>` | `api.example.com/v2/objects@2026-11-01` |
+| `document` | A vendor or internal document with a version or date. | `<title>@<version or YYYY-MM-DD>` | `Loader guide@4.2` |
+| `ticket` | An issue or change ticket. | `<system>:<key>@<YYYY-MM-DD>` | `tracker:DATA-12@2026-11-01` |
+| `person` | A verbal or written answer from a person, recorded by role. | `<role>@<YYYY-MM-DD>` | `data-platform-lead@2026-11-01` |
+
+A person pin names a role, never a person's name.
+
+```yaml vocabulary:source_kind
+- git
+- warehouse
+- api
+- document
+- ticket
+- person
+```
+
+### Access modes
+
+| Mode | Meaning |
+| --- | --- |
+| `agent_read` | The agent reads the source directly with the access it is given. |
+| `owner_read` | Only the owner reads the source; the agent works from what the owner quotes or measures. |
+| `export_file` | The owner exports the source to a file (for example a metadata snapshot), and the agent reads the file. |
+
+Example: a production warehouse is `owner_read`; its metadata snapshot in `sources/snapshots/` is read as `export_file`.
+
+```yaml vocabulary:access_mode
+- agent_read
+- owner_read
+- export_file
+```
+
+### Rank
+
+**Rank** is an integer; when two sources disagree, the lower rank wins. A model may set its own ranks in `plumbline.yaml`; these are the defaults.
+
+| Kind | Default rank | Reason |
+| --- | --- | --- |
+| `git` | 10 | Configuration and DDL state what the platform is set up to do. |
+| `warehouse` | 20 | The catalog and data state what exists, but not what was meant. |
+| `api` | 30 | A live interface, but often a view over configuration. |
+| `document` | 40 | Written intent that may lag the configuration. |
+| `ticket` | 50 | A record of a change request, not of what shipped. |
+| `person` | 60 | A verbal answer is the weakest form of evidence. |
+
+Example: a loader configuration in git (rank 10) beats a vendor document (rank 40).
+
+## 5. Physical layer
+
+The **physical layer** describes what exists on the platform: entities, fields, relationships, services, tenants and environments.
+
+### Entity class
+
+What kind of rows an entity holds.
+
+| Class | Meaning | Example |
+| --- | --- | --- |
+| `data` | Rows that record events or things the platform is about. | `orders` |
+| `configuration` | Rows that control how the platform behaves. | a loader settings table |
+| `administrative` | Rows about operating the platform: users of the tool, audit, jobs. | a job run log |
+| `reference` | Shared lookup rows that are not about any one subject. | `products` |
+
+```yaml vocabulary:entity_class
+- data
+- configuration
+- administrative
+- reference
+```
+
+### Entity status
+
+| Status | Meaning |
+| --- | --- |
+| `draft` | Written, not yet reviewed by the owner. |
+| `reviewed` | The owner reviewed it in a round report. |
+| `deprecated` | Still on the platform, but no longer to be used; kept so references resolve. |
+
+Example: `status: draft` on an entity an agent just scaffolded.
+
+```yaml vocabulary:entity_status
+- draft
+- reviewed
+- deprecated
+```
+
+### Subject scope
+
+The **anchor entity** is the entity whose rows are the subjects of the domain (customers, patients, accounts); the profile names it. **Subject scope** says how an entity's rows reach the anchor. The entity declares its scope and basis; the gate checks the declaration against the computed closure (see Derived values).
+
+| Scope | Meaning | Example |
+| --- | --- | --- |
+| `direct` | Each row references the anchor key itself. | `orders` (has `user_id`) |
+| `transitive` | Each row reaches exactly one anchor through admitted relationships. | `order_items` through `orders` |
+| `none` | Rows are not about a subject. | `products` |
+
+```yaml vocabulary:subject_scope
+- direct
+- transitive
+- none
+```
+
+### Scope basis
+
+Why a scope is admitted. Every `direct` or `transitive` scope records one basis.
+
+| Basis | Meaning |
+| --- | --- |
+| `declared_reference` | The entity declares a reference to the anchor key (used for `direct`). |
+| `unique_target` | Each step of the path joins to a unique key, so a row reaches at most one anchor. |
+| `current_row_rule` | The target key repeats, and the target's current-row rule picks one row. |
+| `measured_fanout` | A probe measured that no source row reaches more than one anchor. |
+
+Example: `order_items` is `transitive` with basis `unique_target` (`order_id` is unique in `orders`).
+
+```yaml vocabulary:scope_basis
+- declared_reference
+- unique_target
+- current_row_rule
+- measured_fanout
+```
+
+### Relationship
+
+A **relationship** is an authored link from one entity (the one whose file holds it) to a target.
+
+| Attribute | Meaning | Example |
+| --- | --- | --- |
+| `key` | Slug, unique within the source entity (D-002). | `placed-by` |
+| `to` | One target entity, or a **target set**: several targets, chosen per row by a discriminator or per tenant. | `users` |
+| `discriminator` | Optional; the field that selects the target in a target set. | `owner_type` |
+| `join` | The join condition, in `<entity>.<field> = <entity>.<field>` form. | `orders.user_id = users.id` |
+| `meaning` | One sentence on what the link means. | `The customer who placed the order.` |
+| `mechanism` | How the link exists (see below). | `inferred_join` |
+| `cardinality` | Rows on each side (see below). | `many_to_one` |
+
+**Mechanism.**
+
+| Mechanism | Meaning |
+| --- | --- |
+| `declared_fk` | The engine or DDL declares a foreign key. Some engines do not enforce it; a probe confirms it. |
+| `inferred_join` | No declaration; names, types or documents suggest the join, and a probe confirms it. |
+| `derivation` | The target is computed from the source (lineage), not joined to it. |
+| `representation` | The target is another representation of the same thing (a copy, an export, a view). |
+
+```yaml vocabulary:mechanism
+- declared_fk
+- inferred_join
+- derivation
+- representation
+```
+
+**Cardinality.** Written from the source entity to the target: `many_to_one` means many source rows per target row.
+
+```yaml vocabulary:cardinality
+- one_to_one
+- many_to_one
+- one_to_many
+- many_to_many
+- unknown
+```
+
+Example: `orders.placed-by` is `many_to_one`.
+
+Not used: "declared key" for a mechanism (use `declared_fk`; "declared key" means a primary or unique key the engine or DDL declares).
+
+### Field
+
+| Attribute | Meaning | Example |
+| --- | --- | --- |
+| `name` | The engine's column name. | `user_id` |
+| `path` | Dotted path for a nested field; absent for a top-level field. | `processing.request_id` |
+| `type` | The engine's type name. | `INT64` |
+| `nullable` | Whether the engine allows null. | `true` |
+| `repeated` | `true` for an array field. | `false` |
+| `meaning` | One sentence on what the value means. | `The customer who placed the order.` |
+| `hazards` | Register IDs of hazards that apply to this field. | `[H-0002]` |
+
+### Grain and current-row rule
+
+**Grain.** One sentence that says what one row is. Example: `one row per order`.
+
+**Current-row rule.** A condition that picks the one current row per key when an entity keeps history, versions or soft-deleted rows. It is required when the key repeats (history, soft delete) and the entity is a target of a transitive admission or is read by a consumer. Every consumer applies it; a layer lists it so nothing is applied from memory. Example: `deleted_at IS NULL`. When the key does not repeat, the rule is `null`.
+
+### Service
+
+A **service** is a process that reads or writes entities, with when it runs. Services are authored by hand in 1.0, with evidence from code.
+
+| Kind | Meaning | Example |
+| --- | --- | --- |
+| `pipeline` | A data pipeline or loader that moves data in or between entities. | a nightly load of orders |
+| `scheduled_job` | A job that runs on a schedule and changes data in place. | a cleanup of expired sessions |
+| `application` | An application that writes rows as users act. | a web shop backend |
+| `manual` | A person who loads or edits data by hand. | a monthly price upload |
+
+```yaml vocabulary:service_kind
+- pipeline
+- scheduled_job
+- application
+- manual
+```
+
+## 5a. Tenants and environments
+
+**Environment.** A slug that names one copy of the platform, for example `dev`, `test`, `prod`. Any slug is allowed.
+
+**Tenant.** A slug that names one customer, brand or partition of the platform that shares the same structure. Example: `brand-a`.
+
+For each tenant and environment pair the model records two separate facts:
+
+- **`ingest`**: what the configuration accepts - which streams or objects the loader takes in. Evidence comes from configuration (git, api, document).
+- **`presence`**: what the data shows - which objects hold rows. Evidence comes from a probe in that environment.
+
+These two facts are never merged into one value. Configuration that accepts an object does not prove rows exist, and rows that exist do not prove the configuration still accepts them.
+
+Example: tenant `brand-a` in `prod` has `ingest` for `orders` (from the loader configuration) and `presence` for `orders` (row count above zero, from a probe).
+
+## 6. Derived values
+
+Derived values are computed by `plb project` and written to `generated/` with a "generated - do not edit" header. The schema rejects them in authored files.
+
+| Value | Meaning | Written to |
+| --- | --- | --- |
+| `label` | The domain label the profile assigns to a relationship. | `generated/labels.tsv` |
+| `subject_scoped` | Whether an entity reaches the anchor, with its via-path and basis. | `generated/scope.tsv` |
+| `reachable` | Whether an entity a consumer declares is reachable from the anchor. | `generated/scope.tsv` |
+| `residue` | The relationships no profile rule matched. The gate fails when it is not empty. | `generated/residue.tsv` |
+| `withheld` | The label given to a target-set relationship whose targets do not agree. | `generated/labels.tsv` |
+
+```yaml vocabulary:derived_value
+- label
+- subject_scoped
+- reachable
+- residue
+- withheld
+```
+
+Example: `orders.placed-by	customer_scoped` is a row in `generated/labels.tsv`.
+
+## 7. Profiles
+
+A **profile** is the domain layer over the core.
+
+- **Anchor entity**: the entity whose rows are the subjects. Example: `anchor_entity: users`.
+- **Label vocabulary**: the labels the profile may assign. Example: `[customer_scoped, configuration, administrative, lineage, representation, unresolved]`. `withheld` is reserved by the core and is never in a label vocabulary.
+- **Facet**: a property of a relationship or its ends that a rule can test: evidence status, mechanism, the class of each end, whether each end is subject-scoped.
+- **Rules**: an ordered list of `when` (facets) and `label`. Rules are evaluated in order; the first match wins.
+- **Target set**: each target is projected on its own. If all targets get the same label, the relationship keeps it; if not, it is `withheld`.
+- **Residue**: a relationship that no rule matches. Residue must be 0 for the gate to pass.
+
+Example: `- when: {mechanism: derivation}` then `label: lineage`.
+
+## 8. Registers
+
+Registers keep the model's history of problems, questions, permanent behaviour and reasons. Entries are never deleted.
+
+| Register | For | Statuses | What closes it |
+| --- | --- | --- | --- |
+| finding (`F-`) | A problem in the model or the platform to fix. | `open`, `resolved`, `wont_fix` | A change with evidence (`resolved`), or an owner decision (`wont_fix`). |
+| escalation (`E-`) | A question for people that the evidence cannot answer. | `open`, `answered`, `withdrawn` | An answer with a named answer source and evidence (`answered`), or an owner note that the question no longer matters (`withdrawn`). |
+| hazard (`H-`) | Permanent behaviour of the platform a reader must know. | `active`, `retired` | Evidence that the behaviour no longer exists (`retired`). |
+| decision (`D-`) | Why the model is the way it is, including retractions. | `accepted`, `superseded` | A later decision that replaces it (`superseded`). |
+
+**Hazards are not issues.** A hazard is permanent semantics, not a defect. Hazards are never counted as open issues, in `plb status` or anywhere else.
+
+```yaml vocabulary:register_kind
+- finding
+- escalation
+- hazard
+- decision
+```
+
+```yaml vocabulary:finding_status
+- open
+- resolved
+- wont_fix
+```
+
+```yaml vocabulary:escalation_status
+- open
+- answered
+- withdrawn
+```
+
+```yaml vocabulary:hazard_status
+- active
+- retired
+```
+
+```yaml vocabulary:decision_status
+- accepted
+- superseded
+```
+
+Example: `H-0001` "Order status `Returned` is set after refund, so a returned order still counts in revenue for that day."
+
+## 9. Semantic layers and consumers
+
+A **semantic layer** is a named set of concepts, measures and filters for one use case, built only on physical facts referenced by ID. It lists every current-row rule and default filter its consumer must apply, and the hazards it inherits. Details come in M3.
+
+A **consumer** is the agent, SQL generator or knowledge base that reads a layer or a release. Each layer names one consumer and an equivalence corpus of synthetic or redacted requests; the layer is correct when the consumer gives the same answers as the platform at an agreed threshold. Details come in M3.
+
+**Release.** The readable copy of a model for consumers. Every file in the model repository gets exactly one disposition; a projected file keeps only allowlisted keys, and an undeclared key fails the release.
+
+```yaml vocabulary:release_disposition
+- export
+- project
+- refuse
+```
+
+**Export targets.** Other tools a layer can be exported to.
+
+```yaml vocabulary:export_target
+- osi
+- dbt
+- cube
+```
+
+## 10. Probes
+
+A **probe** is a data check generated from the model, written as a readable script for a person or CI with credentials to run. Probes return counts and rates only, never values, identifiers or rows. A result is saved with a pin and becomes evidence; a result outside its expected range opens a finding.
+
+Probe kinds planned for M1:
+
+| Kind | Tests | Returns |
+| --- | --- | --- |
+| `key_duplicates` | A declared key. | Number of key values with more than one row. |
+| `join_match` | A join, in both directions. | Match rate and orphan count per side. |
+| `fan_out` | Cardinality and transitive scope. | Rows per source row; source rows that reach more than one anchor. |
+| `null_rate` | A field. | Share of null values. |
+| `row_count` | Presence per tenant and environment. | Number of rows. |
+
+```yaml vocabulary:probe_kind
+- key_duplicates
+- join_match
+- fan_out
+- null_rate
+- row_count
+```
+
+Planned after M1 (not yet in the block): ties after a current-row rule, and value set against a vocabulary.
+
+Example probe result: `{probe: join-orders-users, match_rate: 1.0, orphans_left: 0}`.
+
+## 11. Keeping the model current
+
+**Drift class.** Each item in a sync drift report gets one class.
+
+| Class | Meaning | What follows |
+| --- | --- | --- |
+| `new_fact` | Something the model does not have yet. | An agent drafts it in `drafts/`. |
+| `changed_fact` | A fact whose source changed. | Its evidence must be renewed. |
+| `lost_fact` | A fact the source no longer supports. | A finding opens. |
+| `no_effect` | A source change that touches no fact. | Nothing. |
+
+```yaml vocabulary:drift_class
+- new_fact
+- changed_fact
+- lost_fact
+- no_effect
+```
+
+**Trigger.** An event listed in `maintenance/` with the follow-up it requires. The gate fails when a fired trigger has no follow-up.
+
+```yaml vocabulary:trigger_event
+- new_tenant
+- source_pin_moved
+- escalation_answered
+- ticket_shipped
+- probe_out_of_range
+```
+
+Example: `source_pin_moved` on the loader repository requires the evidence pinned to the old commit to be re-read.

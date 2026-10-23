@@ -507,7 +507,7 @@ class _Checker:
     def _dialect(self, name: str, doc: Document) -> None:
         """An engine without a default dialect needs an explicit one."""
         engine = doc.data.get("engine")
-        known = vocabulary.load_maps()["engine_dialect"]
+        known = vocabulary.text_map("engine_dialect")
         if isinstance(engine, str) and engine not in known and not doc.data.get("dialect"):
             message = f"engine {engine!r} has no default dialect"
             self.add("missing_dialect", name, doc, ["engine"], message)

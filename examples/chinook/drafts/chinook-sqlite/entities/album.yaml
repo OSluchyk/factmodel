@@ -55,3 +55,5 @@ extensions:
     - fields.Title.meaning
     - fields.ArtistId.meaning
     - relationships.to-artist.meaning
+    constraint_name:
+      to-artist: FK_AlbumArtistId

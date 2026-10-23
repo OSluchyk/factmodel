@@ -119,7 +119,7 @@ An evidence record has a `quote` or a `measurement`, not both.
 
 | Status | Meaning | Who may set it |
 | --- | --- | --- |
-| `confirmed` | The fact is proven by a source that can prove it. | An adapter reading engine metadata; a probe whose result is in its expected range; the owner, for evidence the owner read. |
+| `confirmed` | The fact is proven by a source that can prove it. | An adapter reading engine metadata; a probe whose result on representative data is in its expected range (D-014); the owner, for evidence the owner read. |
 | `inferred` | The fact is believed, with a cited reason, but not proven. | Anyone. Every agent-authored fact starts here. |
 | `unresolved` | The fact is not known; the record says what is missing. | Anyone. A fact with this status needs no evidence ID. |
 | `retracted` | The fact was wrong. The record stays, names the error and points to its replacement. | The owner, or an agent with owner approval in the round report. |
@@ -133,7 +133,7 @@ An evidence record has a `quote` or a `measurement`, not both.
 
 **Retraction.** A `retracted` record requires `named_error` (one sentence that says what was wrong) and `superseded_by` (the ID of the record that replaces it). Example: `named_error: The join used users.email, which is not unique.`, `superseded_by: ev-orders-users-match-2`.
 
-**Data quality.** What kind of data a probe ran on (D-006). A share measured on data that is not `representative` does not carry over to production; a zero-violation result does.
+**Data quality.** What kind of data a probe ran on (D-006). Only a result on `representative` data confirms a fact (D-014); a result on `synthetic` or `unknown` data is recorded as `inferred` evidence and cited, so the probe stays attached and the fact stays `inferred`. Superseded by D-014: "a zero-violation result carries over to production". A model whose platform is itself synthetic (an example or test model) may set `treat_synthetic_as_representative: true` in `factmodel.yaml`; intake then treats its results as representative.
 
 | Value | Meaning |
 | --- | --- |
@@ -379,10 +379,13 @@ Not used: "declared key" for a mechanism (use `declared_fk`; "declared key" mean
 | `nullable` | Whether the engine allows null. | `true` |
 | `repeated` | `true` for an array field. | `false` |
 | `meaning` | One sentence on what the value means. | `The customer who placed the order.` |
+| `values` | Optional declared value domain (codes or categories, never personal data); a `value_set` probe counts values outside it. | `[open, shipped, returned]` |
 | `hazards` | Register IDs of hazards that apply to this field. | `[H-0002]` |
 | `evidence` | Optional evidence IDs; without them the field inherits the entity's `evidence`. | `[ev-orders-ddl]` |
 
 A nested field has both `name` (its last segment) and `path` (the full dotted path). Example: `name: request_id`, `path: processing.request_id`.
+
+**Drafts.** `fact draft` writes engine-neutral drafts: relationship keys are `to-<target>`, and the engine's own constraint names are kept under `extensions.draft.constraint_name` (key to name). A comment or description the source declares (`COMMENT ON`, an inline column comment, a description option) becomes the proposed meaning, cited by an `inferred` record that quotes it: a comment is a claim, not proof.
 
 ### Entity keys
 
@@ -587,11 +590,27 @@ Probe kinds:
 | `null_rate` | A field. | Share of null values. |
 | `row_count` | Presence per tenant and environment. | Number of rows. |
 | `current_row_ties` | A current-row rule. | Keys with more than one row after the rule. |
-| `value_set` | A field against a vocabulary. | Share and count of rows whose value is outside the vocabulary. |
+| `value_set` | A field against its declared `values`. | Count of distinct values, and of distinct values outside the declared set; never the values. |
 
 All seven are built in M1 (WP1.7). Each probe is a sqlglot AST rendered per dialect with quoted identifiers; a probe that needs a construct a dialect lacks (a nested path outside BigQuery) lists it under `unsupported_on_dialect` and is never rendered for it.
 
-**Running probes.** `fact probe generate` writes `probes/<probe-id>.yaml`. The owner runs them from `fact probe render --dialect <d>` (a plain shell script per source), or `fact probe run --source <id>` runs them through the `sql` adapter where the source names a `dsn_env`; a local engine seeded with synthetic rows is a test fixture, not a platform (D-011). Both write JSON lines: a header `{source, pin, environment, data_quality, ran_on}`, then `{probe, measurement}` or `{probe, error}` per probe. `fact probe intake <file>` keeps numbers only, writes `evidence/probes/<probe-id>@<date>.yaml`, cites an in-range result from the fact it tests (which makes the fact `confirmed`) and opens a finding for an out-of-range one. Rates (`match_rate`, `null_rate`) are computed at intake, never in SQL.
+**Dialect knowledge for probes.** Which dialects can read a nested path, how a query is wrapped to print one JSON object, and which shell command runs a statement: all of it lives here, not in code (D-011). A dialect missing from a block gets the neutral behaviour: nested-path probes are not rendered for it, the SQL is not wrapped, and the owner must set `RUN_SQL`. The code implements two wrap strategies: `json_object_pairs` (`SELECT json_object('k', "k", ...) FROM (<sql>) AS q`) and `row_to_json` (`SELECT row_to_json(q) FROM (<sql>) AS q`).
+
+```yaml vocabulary-map:dialect_nested_paths
+bigquery: true
+```
+
+```yaml vocabulary-map:dialect_json_wrap
+sqlite: json_object_pairs
+postgres: row_to_json
+```
+
+```yaml vocabulary-map:dialect_runner
+sqlite: 'sqlite3 "${SQLITE_DB:?set SQLITE_DB to the database file}"'
+postgres: 'psql "${FACT_PG_DSN:?set FACT_PG_DSN}" -At -v ON_ERROR_STOP=1'
+```
+
+**Running probes.** `fact probe generate` writes `probes/<probe-id>.yaml`. The owner runs them from `fact probe render --dialect <d>` (a plain shell script per source), or `fact probe run --source <id>` runs them through the `sql` adapter where the source names a `dsn_env`; a local engine seeded with synthetic rows is a test fixture, not a platform (D-011). Both write JSON lines: a header `{source, pin, environment, data_quality, ran_on}`, then `{probe, measurement}` or `{probe, error}` per probe. `fact probe intake <file>` keeps numbers only, writes `evidence/probes/<probe-id>@<date>.yaml`, cites an in-range result from the fact it tests and opens a finding for an out-of-range one. The record is `confirmed`, and so the fact, only on representative data; on synthetic or unknown data it is `inferred` (D-014). Rates (`match_rate`, `null_rate`) are computed at intake, never in SQL.
 
 ```yaml vocabulary:probe_kind
 - key_duplicates

@@ -10,6 +10,7 @@ keys:
   - order_id
 evidence:
 - ev-orders-catalog
+- ev-orders-comment-table
 fields:
 - name: order_id
   type: INT64
@@ -27,6 +28,9 @@ fields:
   type: DATE
   nullable: false
   meaning: Day the order was placed
+  evidence:
+  - ev-orders-catalog
+  - ev-orders-comment-ordered-on
 - name: context
   type: STRUCT
   nullable: true
@@ -63,6 +67,18 @@ records:
   quote: table orders in my-project.shop
   status: confirmed
   read_on: '2026-10-23'
+- id: ev-orders-comment-table
+  source: shop
+  pin: bigquery:my-project.shop@2026-10-23
+  quote: Orders placed in the shop
+  status: inferred
+  read_on: '2026-10-23'
+- id: ev-orders-comment-ordered-on
+  source: shop
+  pin: bigquery:my-project.shop@2026-10-23
+  quote: Day the order was placed
+  status: inferred
+  read_on: '2026-10-23'
 - id: ev-orders-to-customers
   source: shop
   pin: bigquery:my-project.shop@2026-10-23
@@ -83,3 +99,5 @@ extensions:
     - fields.context.device.meaning
     - fields.context.region.meaning
     - relationships.to-customers.meaning
+    constraint_name:
+      to-customers: orders_customer_fk

@@ -183,7 +183,7 @@ def status_command(root: RootOption = Path(".")) -> None:
 def adapters_command() -> None:
     """List installed adapters, the engines they read and their default dialects."""
     installed = registry.adapters()
-    defaults = vocabulary.load_maps()["engine_dialect"]
+    defaults = vocabulary.text_map("engine_dialect")
     for name in sorted({*installed, *registry.BUILT_IN}):
         adapter = installed.get(name)
         if adapter is None:

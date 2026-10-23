@@ -85,3 +85,5 @@ extensions:
     - fields.BillingPostalCode.meaning
     - fields.Total.meaning
     - relationships.to-customer.meaning
+    constraint_name:
+      to-customer: FK_InvoiceCustomerId

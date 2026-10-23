@@ -76,37 +76,51 @@ def validate(blocks: dict[str, list[str]]) -> list[str]:
     return problems
 
 
-def parse_maps(text: str) -> dict[str, dict[str, str]]:
-    """Parse every ``yaml vocabulary-map:<name>`` block: a mapping of slug to slug."""
+MapValue = str | bool
+
+
+def parse_maps(text: str) -> dict[str, dict[str, MapValue]]:
+    """Parse every ``yaml vocabulary-map:<name>`` block: slug keys, text or boolean values."""
     yaml = YAML(typ="safe", pure=True)
     yaml.allow_duplicate_keys = False
-    maps: dict[str, dict[str, str]] = {}
+    maps: dict[str, dict[str, MapValue]] = {}
     for match in _MAP_BLOCK.finditer(text):
         name = match.group("name")
         if name in maps:
             raise VocabularyError(f"duplicate vocabulary block: {name}")
         values = yaml.load(match.group("body"))
         if not isinstance(values, dict) or not all(
-            isinstance(k, str) and isinstance(v, str) for k, v in values.items()
+            isinstance(k, str) and isinstance(v, str | bool) and v != "" for k, v in values.items()
         ):
-            raise VocabularyError(f"block {name} must be a YAML mapping of strings")
+            raise VocabularyError(f"block {name} must map strings to text or booleans")
         maps[name] = dict(values)
     return maps
 
 
 @cache
-def load_maps() -> dict[str, dict[str, str]]:
-    """Return every mapping block. Keys and values are slugs; names do not clash with lists."""
+def load_maps() -> dict[str, dict[str, MapValue]]:
+    """Return every mapping block. Keys are slugs; names do not clash with list blocks."""
     maps = parse_maps(vocabulary_text())
     problems = [f"block name clashes with a list block: {n}" for n in maps if n in load()]
     for name, values in maps.items():
         problems += validate({f"{name}-keys": list(values), f"{name}-values": []})
-        problems += [
-            f"{name}: value is not a slug: {v!r}" for v in values.values() if not SLUG.match(v)
-        ]
     if problems:
         raise VocabularyError("; ".join(problems))
     return maps
+
+
+def text_map(name: str) -> dict[str, str]:
+    """A mapping block whose values are text, for example ``engine_dialect``."""
+    values = load_maps()[name]
+    bad = [k for k, v in values.items() if not isinstance(v, str)]
+    if bad:
+        raise VocabularyError(f"{name}: values must be text, not {bad}")
+    return {k: str(v) for k, v in values.items()}
+
+
+def flag_map(name: str) -> frozenset[str]:
+    """The keys a mapping block sets to ``true``."""
+    return frozenset(k for k, v in load_maps()[name].items() if v is True)
 
 
 @cache

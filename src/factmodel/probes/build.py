@@ -17,7 +17,7 @@ METRICS: dict[str, tuple[str, ...]] = {
     "null_rate": ("row_count", "non_null"),
     "row_count": ("row_count",),
     "current_row_ties": ("tied_keys",),
-    "value_set": ("distinct_values",),
+    "value_set": ("distinct_values", "outside_values"),
 }
 
 
@@ -124,7 +124,21 @@ def current_row_ties(physical: str, keys: Sequence[str], rule: exp.Expr) -> exp.
     return exp.select(exp.alias_(_count(), "tied_keys")).from_(inner.subquery("d"))
 
 
-def value_set(physical: str, field: str) -> exp.Select:
-    """How many distinct values a field holds: a count, never the values."""
-    distinct = exp.Count(this=exp.Distinct(expressions=[column("t", field)]))
-    return exp.select(exp.alias_(distinct, "distinct_values")).from_(table(physical, "t"))
+def _literal(value: str | float) -> exp.Expr:
+    if isinstance(value, str):
+        return exp.Literal.string(value)
+    return exp.Literal.number(int(value) if float(value).is_integer() else value)
+
+
+def value_set(physical: str, field: str, values: Sequence[str | float] | None = None) -> exp.Select:
+    """How many distinct values a field holds, and how many fall outside its declared domain:
+    counts, never the values."""
+    col = column("t", field)
+    selects = [exp.alias_(exp.Count(this=exp.Distinct(expressions=[col])), "distinct_values")]
+    if values:
+        outside = exp.Not(this=exp.In(this=col, expressions=[_literal(v) for v in values]))
+        case = exp.Case(ifs=[exp.If(this=outside, true=col)])
+        selects.append(
+            exp.alias_(exp.Count(this=exp.Distinct(expressions=[case])), "outside_values")
+        )
+    return exp.select(*selects).from_(table(physical, "t"))

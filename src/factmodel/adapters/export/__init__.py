@@ -53,9 +53,13 @@ Rows = dict[str, list[dict[str, Any]]]
 
 
 def flavour(engine: str | None) -> ModuleType:
-    """The flavour module for an engine, or ``generic``."""
-    name = engine if engine in ("bigquery", "postgres") else "generic"
-    return import_module(f"factmodel.adapters.export.flavours.{name}")
+    """The flavour module named after the engine, or ``generic`` when there is none."""
+    if engine and engine.replace("_", "").isalnum():
+        try:
+            return import_module(f"factmodel.adapters.export.flavours.{engine}")
+        except ModuleNotFoundError:
+            pass
+    return import_module("factmodel.adapters.export.flavours.generic")
 
 
 def read_rows(folder: Path, views: tuple[str, ...]) -> Rows:

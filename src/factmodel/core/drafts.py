@@ -4,7 +4,9 @@ Drafts are engine-neutral by construction: they hold what the snapshot declares 
 else. Declared foreign keys become ``declared_fk`` relationships whose evidence is ``confirmed``
 when the engine enforces them and ``inferred`` when it does not. Class is ``data`` as a
 placeholder, the entity is ``status: draft``, and every placeholder is listed under
-``extensions.draft`` so a reviewer sees what is still to be written.
+``extensions.draft`` so a reviewer sees what is still to be written, with the engine's
+constraint names under ``extensions.draft.constraint_name``. A comment or description from the
+source becomes the meaning it proposes, cited by an ``inferred`` record that quotes it.
 """
 
 import hashlib
@@ -17,6 +19,7 @@ from factmodel.schemas.build import pattern
 
 GRAIN_PLACEHOLDER = "Not written yet: one sentence on what one row is."
 MEANING_PLACEHOLDER = "Not written yet."
+QUOTE_WORDS = 40
 
 
 @dataclass(frozen=True)
@@ -70,6 +73,24 @@ def _keys(obj: SnapshotObject) -> dict[int, str]:
     return keys
 
 
+def _comment(
+    records: list[dict[str, Any]], entity_id: str, suffix: str, text: str, snap: Snapshot, pin: str
+) -> str:
+    """Add an inferred record quoting a comment from the source; a comment is a claim."""
+    record_id = _evidence_id(entity_id, "comment", suffix)
+    records.append(
+        {
+            "id": record_id,
+            "source": snap.source,
+            "pin": pin,
+            "quote": " ".join(text.split()[:QUOTE_WORDS]),
+            "status": "inferred",
+            "read_on": snap.taken_on,
+        }
+    )
+    return record_id
+
+
 def to_facts(snap: Snapshot) -> list[EntityDraft]:
     """One entity draft per snapshot object, sorted by object name."""
     if snap.source is None:
@@ -93,10 +114,17 @@ def to_facts(snap: Snapshot) -> list[EntityDraft]:
             }
         ]
         placeholders = ["grain", "class"]
+
+        entity_evidence = [catalog]
+        if obj.description:
+            entity_evidence.append(
+                _comment(records, entity_id, "table", obj.description, snap, pin)
+            )
         fields = []
         for fld in obj.fields:
+            address = fld.path or fld.name
             if fld.description is None:
-                placeholders.append(f"fields.{fld.path or fld.name}.meaning")
+                placeholders.append(f"fields.{address}.meaning")
             item: dict[str, Any] = {"name": fld.name}
             if fld.path:
                 item["path"] = fld.path
@@ -104,8 +132,13 @@ def to_facts(snap: Snapshot) -> list[EntityDraft]:
             if fld.repeated:
                 item["repeated"] = True
             item["meaning"] = fld.description or MEANING_PLACEHOLDER
+            if fld.description:
+                suffix = slug(address).replace("_", "-")
+                record = _comment(records, entity_id, suffix, fld.description, snap, pin)
+                item["evidence"] = [catalog, record]
             fields.append(item)
         relationships = []
+        constraint_names: dict[str, str] = {}
         keys = _keys(obj)
         for i, constraint in enumerate(_foreign_keys(obj)):
             ref = constraint.references
@@ -113,6 +146,8 @@ def to_facts(snap: Snapshot) -> list[EntityDraft]:
             target = slug(ref.object)
             key = keys[i]
             evidence_id = _evidence_id(entity_id, key)
+            if constraint.name:
+                constraint_names[key] = constraint.name
             enforced = "enforced" if constraint.enforced else "not enforced"
             columns = ", ".join(constraint.fields)
             records.append(
@@ -153,7 +188,7 @@ def to_facts(snap: Snapshot) -> list[EntityDraft]:
             "class": "data",
             "status": "draft",
             "keys": {"primary": _primary(obj)},
-            "evidence": [catalog],
+            "evidence": entity_evidence,
             "fields": fields,
         }
         if obj.description:
@@ -161,6 +196,10 @@ def to_facts(snap: Snapshot) -> list[EntityDraft]:
         if relationships:
             document["relationships"] = relationships
         document["records"] = records
-        document["extensions"] = {"draft": {"from": pin, "placeholders": placeholders}}
+        draft: dict[str, Any] = {"from": pin, "placeholders": placeholders}
+        if constraint_names:
+            # The engine's own names, for traceability; relationship keys stay engine-neutral.
+            draft["constraint_name"] = constraint_names
+        document["extensions"] = {"draft": draft}
         drafts.append(EntityDraft(f"drafts/{snap.source}/entities/{entity_id}.yaml", document))
     return drafts

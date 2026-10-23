@@ -32,7 +32,7 @@ def dialect_for(engine: str | None, explicit: str | None = None) -> str:
     """The sqlglot dialect: the source's own, else the vocabulary's default for the engine."""
     if explicit:
         return explicit
-    known = vocabulary.load_maps()["engine_dialect"]
+    known = vocabulary.text_map("engine_dialect")
     if engine is None or engine not in known:
         raise AdapterError(f"engine {engine!r} has no default dialect; set dialect on the source")
     return known[engine]

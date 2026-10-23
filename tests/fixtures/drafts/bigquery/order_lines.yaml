@@ -56,3 +56,5 @@ extensions:
     - fields.line_no.meaning
     - fields.amount.meaning
     - relationships.to-orders.meaning
+    constraint_name:
+      to-orders: order_lines_order_fk

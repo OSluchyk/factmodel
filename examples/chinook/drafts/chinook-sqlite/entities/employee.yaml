@@ -115,3 +115,5 @@ extensions:
     - fields.Fax.meaning
     - fields.Email.meaning
     - relationships.to-employee.meaning
+    constraint_name:
+      to-employee: FK_EmployeeReportsTo

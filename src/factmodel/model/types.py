@@ -155,6 +155,7 @@ class ModelConfig(Strict):
     adapters: Slugs | None = None
     consumers: Slugs | None = None
     environments: Slugs | None = None
+    treat_synthetic_as_representative: bool | None = None
     ranks: dict[SourceKind, Annotated[int, Field(ge=0)]] | None = None
     extensions: Extensions | None = None
 
@@ -206,6 +207,7 @@ class EntityField(Strict):
     nullable: bool
     repeated: bool | None = None
     meaning: Text
+    values: Annotated[list[Text | float], Field(min_length=1), Unique] | None = None
     hazards: HazardRefs | None = None
     evidence: EvidenceRefs | None = None
 

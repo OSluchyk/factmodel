@@ -107,6 +107,26 @@ def _type(kind: exp.DataType | None) -> tuple[str, bool]:
     return kind.sql(), False
 
 
+def _description(node: exp.Expr | None) -> str | None:
+    """A comment or description carried by a column constraint or a table property."""
+    if isinstance(node, exp.CommentColumnConstraint | exp.SchemaCommentProperty):
+        return node.this.name if node.this is not None else None
+    if isinstance(node, exp.Properties):
+        for prop in node.expressions:
+            found = _description(prop)
+            if found:
+                return found
+    if isinstance(node, exp.Property) and node.name.lower() == "description":
+        value = node.args.get("value")
+        return value.name if value is not None else None
+    return None
+
+
+def _table_description(create: exp.Create) -> str | None:
+    props = create.args.get("properties")
+    return _description(props) if isinstance(props, exp.Properties) else None
+
+
 def _table(create: exp.Create, enforced: bool) -> dict[str, Any]:
     schema = create.this
     name = _name(schema)
@@ -130,6 +150,7 @@ def _table(create: exp.Create, enforced: bool) -> dict[str, Any]:
         if isinstance(node, exp.ColumnDef):
             type_text, repeated = _type(node.args.get("kind"))
             nullable = True
+            described: str | None = None
             for constraint in node.args.get("constraints", []):
                 kind = constraint.args.get("kind")
                 if isinstance(kind, exp.NotNullColumnConstraint) and not kind.args.get(
@@ -143,6 +164,8 @@ def _table(create: exp.Create, enforced: bool) -> dict[str, Any]:
                     add("unique", [node.name], None)
                 elif isinstance(kind, exp.Reference):
                     add("foreign_key", [node.name], None, _reference(kind))
+                elif _description(kind):
+                    described = _description(kind)
             field: dict[str, Any] = {
                 "name": node.name,
                 "type": type_text,
@@ -151,6 +174,8 @@ def _table(create: exp.Create, enforced: bool) -> dict[str, Any]:
             }
             if repeated:
                 field["repeated"] = True
+            if described:
+                field["description"] = described
             fields.append(field)
             continue
         cname = _name(node.this) if isinstance(node, exp.Constraint) and node.this else None
@@ -169,6 +194,8 @@ def _table(create: exp.Create, enforced: bool) -> dict[str, Any]:
         if field["name"] in primary:
             field["nullable"] = False
     obj: dict[str, Any] = {"name": name, "object_type": "table", "fields": fields}
+    if _table_description(create):
+        obj["description"] = _table_description(create)
     if constraints:
         obj["constraints"] = sorted(constraints, key=lambda c: (c["constraint_type"], c["name"]))
     return obj
@@ -193,18 +220,45 @@ def _line(text: str, name: str) -> int:
     return text.count("\n", 0, match.start()) + 1 if match else 1
 
 
+def _apply_comment(objects: dict[str, dict[str, Any]], statement: exp.Comment) -> None:
+    """``COMMENT ON TABLE|VIEW|COLUMN ... IS '...'`` sets a description."""
+    text = statement.expression.name if statement.expression is not None else ""
+    target = statement.this
+    if not text:
+        return
+    if isinstance(target, exp.Column) and target.table in objects:
+        for field in objects[target.table]["fields"]:
+            if field["name"] == target.name and "path" not in field:
+                field["description"] = text
+    elif isinstance(target, exp.Table) and target.name in objects:
+        objects[target.name]["description"] = text
+
+
 def parse_ddl(text: str, dialect: str, enforced: bool) -> list[dict[str, Any]]:
-    """Snapshot objects for every CREATE TABLE and CREATE VIEW in ``text``."""
-    objects = []
+    """Snapshot objects for every CREATE TABLE and CREATE VIEW in ``text``.
+
+    Descriptions come from ``COMMENT ON`` statements, inline column comments and description
+    properties, where the dialect has them.
+    """
+    objects: dict[str, dict[str, Any]] = {}
+    comments = []
     for statement in sqlglot.parse(text, read=dialect):
+        if isinstance(statement, exp.Comment):
+            comments.append(statement)
+            continue
         if not isinstance(statement, exp.Create):
             continue
         kind = str(statement.args.get("kind") or "").upper()
         if kind == "TABLE" and isinstance(statement.this, exp.Schema):
-            objects.append(_table(statement, enforced))
+            obj = _table(statement, enforced)
         elif kind == "VIEW":
-            objects.append(_view(statement))
-    return objects
+            obj = _view(statement)
+        else:
+            continue
+        objects[obj["name"]] = obj
+    for comment in comments:
+        _apply_comment(objects, comment)
+    return list(objects.values())
 
 
 class GitAdapter:

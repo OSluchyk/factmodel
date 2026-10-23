@@ -112,6 +112,8 @@ def init(
         return text
 
     put("AGENTS.md", template("AGENTS.md"))
+    put("agent/brief.md", template("templates", "brief.md"))
+    put("agent/report.md", template("templates", "report.md"))
     put("CHANGELOG.md", template("templates", "CHANGELOG.md"))
     put(".github/workflows/fact-check.yml", template("templates", "fact-check.yml"))
     skills = framework_file("agent", "skills")

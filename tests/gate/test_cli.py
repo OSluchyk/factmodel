@@ -62,6 +62,8 @@ def test_init_writes_the_layout(tmp_path: Path) -> None:
         "CHANGELOG.md",
         ".github/workflows/fact-check.yml",
         ".claude/skills/README.md",
+        "agent/brief.md",
+        "agent/report.md",
         "physical/entities/.gitkeep",
         "registers/hazards/.gitkeep",
         "generated/labels.tsv",

@@ -18,6 +18,7 @@ from factmodel.model.types import Probe
 from factmodel.probes import build, render
 from factmodel.probes.intake import IntakeError, intake, read_results
 from tests.adapters.helpers import PG_DSN, needs_pg
+from tests.model.helpers import dump
 from tests.probes.helpers import DDL, EXPECTED, ROWS, build_model, create_sqlite
 
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "probes"
@@ -169,7 +170,9 @@ def test_intake_cites_in_range_and_opens_findings_out_of_range(tmp_path: Path) -
     model = load_model(root)
     rel = model.entities["order"].relationships[0]
     statuses = {model.evidence[e].status for e in rel.evidence or []}
-    assert statuses == {"inferred", "confirmed"}
+    # D-014: synthetic data attaches the probe but never confirms the fact.
+    assert statuses == {"inferred"}
+    assert any(model.evidence[e].probe for e in rel.evidence or [])
     before = {p: p.read_bytes() for p in root.rglob("*") if p.is_file()}
     assert intake(root, results).written == []
     assert {p: p.read_bytes() for p in root.rglob("*") if p.is_file()} == before
@@ -232,3 +235,62 @@ def test_rendered_sqlite_script_runs_and_feeds_intake(tmp_path: Path) -> None:
     _, rows = read_results(results)
     assert {r["probe"]: r["measurement"] for r in rows} == EXPECTED
     assert len(intake(root, results).confirmed) == 8
+
+
+def _with_domains(root: Path) -> None:
+    for name, field, values in (
+        ("customer_version", "IsCurrent", [0, 1]),
+        ("customer", "EmailHash", ["h1", "h2"]),
+    ):
+        path = root / "physical" / "entities" / f"{name}.yaml"
+        doc = load(path).data
+        next(f for f in doc["fields"] if f["name"] == field)["values"] = values
+        path.write_text(dump(doc), encoding="utf-8")
+
+
+def test_value_set_counts_values_outside_the_declared_domain(tmp_path: Path) -> None:
+    root = build_model(tmp_path)
+    _with_domains(root)
+    probes = _probes(root)
+    domain = {k: p for k, p in probes.items() if p.probe_kind == "value_set"}
+    assert sorted(domain) == [
+        "value-set-customer-email-hash",
+        "value-set-customer-version-is-current",
+    ]
+    for probe in domain.values():
+        assert probe.expected is not None and probe.expected["outside_values"].max == 0
+        assert "'h1'" not in probe.sql.split("FROM")[0].split("CASE")[0]
+    url = create_sqlite(tmp_path / "shop.db")
+    results = measure(url, [(pid, render(p, "sqlite") or "") for pid, p in domain.items()])
+    assert {r["probe"]: r["measurement"] for r in results} == {
+        "value-set-customer-email-hash": {"distinct_values": 3, "outside_values": 1},
+        "value-set-customer-version-is-current": {"distinct_values": 2, "outside_values": 0},
+    }
+
+
+@needs_pg
+def test_value_set_on_postgres(tmp_path: Path) -> None:
+    from sqlalchemy import create_engine, text
+
+    assert PG_DSN is not None
+    schema = f"v_{uuid.uuid4().hex[:8]}"
+    engine = create_engine(PG_DSN)
+    with engine.begin() as conn:
+        conn.execute(text(f'CREATE SCHEMA "{schema}"'))
+        conn.execute(text(f'SET search_path TO "{schema}"'))
+        for statement in [*filter(str.strip, DDL.split(";")), *ROWS]:
+            conn.execute(text(statement))
+    try:
+        root = build_model(tmp_path)
+        _with_domains(root)
+        domain = {k: p for k, p in _probes(root).items() if p.probe_kind == "value_set"}
+        url = f"{PG_DSN}?options=-csearch_path%3D{schema}"
+        results = measure(url, [(pid, render(p, "postgres") or "") for pid, p in domain.items()])
+        assert {r["probe"]: r["measurement"]["outside_values"] for r in results} == {
+            "value-set-customer-email-hash": 1,
+            "value-set-customer-version-is-current": 0,
+        }
+    finally:
+        with engine.begin() as conn:
+            conn.execute(text(f'DROP SCHEMA "{schema}" CASCADE'))
+        engine.dispose()

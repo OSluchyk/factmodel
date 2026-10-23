@@ -81,7 +81,7 @@ The model is plain files (YAML and Markdown) in git. Six concepts carry it. Ever
 
 **Semantic layer.** A named set of concepts, measures and filters for one use case, built only on physical facts. Each layer declares its consumer and the equivalence test that proves it. A consumer must apply every entity's current-row rule and default filters; the layer lists them so nothing is applied from memory.
 
-**Evidence.** Attached to every authored fact: source id, pin, quote or measurement, status, date read (`read_on`). A probe result is evidence too; it also records the probe, the environment and the quality of that data (representative, synthetic, unknown). Shares measured on test data do not carry over to production; a zero-violation result does. Fields inherit their entity's metadata evidence unless they override it.
+**Evidence.** Attached to every authored fact: source id, pin, quote or measurement, status, date read (`read_on`). A probe result is evidence too; it also records the probe, the environment and the quality of that data (representative, synthetic, unknown). Only a result on representative data confirms a fact; a result on synthetic or unknown data is kept as `inferred` evidence (D-014). Superseded: the earlier rule that a zero-violation result on test data carries over to production. Example models whose platform is itself synthetic may set `treat_synthetic_as_representative: true`. Fields inherit their entity's metadata evidence unless they override it.
 
 **Registers.** Findings (problems to fix), escalations (questions for people, closed only by an answer with evidence), hazards (permanent behaviour a reader must know), decisions (why the model is the way it is, including retractions).
 

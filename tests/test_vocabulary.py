@@ -57,7 +57,7 @@ def test_mapping_blocks() -> None:
 
 
 def test_mapping_block_must_be_a_mapping() -> None:
-    with pytest.raises(vocabulary.VocabularyError, match="mapping of strings"):
+    with pytest.raises(vocabulary.VocabularyError, match="must map strings"):
         vocabulary.parse_maps("```yaml vocabulary-map:a\n- x\n```\n")
 
 

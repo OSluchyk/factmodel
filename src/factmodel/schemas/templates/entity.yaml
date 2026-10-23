@@ -70,6 +70,17 @@ $defs:
       nullable: {type: boolean}
       repeated: {type: boolean}
       meaning: {$ref: "#/$defs/text"}
+      values:
+        description: >-
+          The field's declared value domain; a value_set probe counts values outside it.
+          Codes and categories only, never personal data.
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items:
+          oneOf:
+            - {$ref: "#/$defs/text"}
+            - {type: number}
       hazards: {$ref: "#/$defs/hazard_refs"}
       evidence: {$ref: "#/$defs/evidence_refs"}
   relationship:

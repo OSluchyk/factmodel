@@ -115,3 +115,7 @@ extensions:
     - relationships.to-album.meaning
     - relationships.to-genre.meaning
     - relationships.to-media-type.meaning
+    constraint_name:
+      to-album: FK_TrackAlbumId
+      to-genre: FK_TrackGenreId
+      to-media-type: FK_TrackMediaTypeId

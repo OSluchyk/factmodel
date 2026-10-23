@@ -80,3 +80,6 @@ extensions:
     - fields.Quantity.meaning
     - relationships.to-invoice.meaning
     - relationships.to-track.meaning
+    constraint_name:
+      to-invoice: FK_InvoiceLineInvoiceId
+      to-track: FK_InvoiceLineTrackId

@@ -66,3 +66,6 @@ extensions:
     - fields.TrackId.meaning
     - relationships.to-playlist.meaning
     - relationships.to-track.meaning
+    constraint_name:
+      to-playlist: FK_PlaylistTrackPlaylistId
+      to-track: FK_PlaylistTrackTrackId

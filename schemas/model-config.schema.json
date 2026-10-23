@@ -42,6 +42,10 @@
     "environments": {
       "$ref": "#/$defs/slugs"
     },
+    "treat_synthetic_as_representative": {
+      "description": "Example and test models only - probe results on synthetic data confirm facts as if they were representative (D-014). A model of a real platform never sets it.",
+      "type": "boolean"
+    },
     "ranks": {
       "description": "Rank overrides per source kind; lower wins.",
       "type": "object",

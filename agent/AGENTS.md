@@ -14,6 +14,6 @@ Rules for agents working on this model repository. Invariants only; procedures l
 10. **Stop and ask** when a measurement contradicts a documented fact, or when a change cannot be undone.
 11. **`fact check` passes** before you report a round done.
 
-Report each round in the shape of the framework's `agent/templates/report.md`: outcome, files changed, `fact check` output, confirmed / inferred / unknown kept apart, open questions, and the exact `git add` list.
+Report each round in the shape of `agent/report.md` (briefs follow `agent/brief.md`): outcome, files changed, `fact check` output, confirmed / inferred / unknown kept apart, open questions, and the exact `git add` list.
 
 Skills: `model-onboard`, `entity-scaffold`, `evidence-gather`, `probe-write`, `probe-intake`.

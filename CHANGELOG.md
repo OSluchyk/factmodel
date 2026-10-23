@@ -2,6 +2,14 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-23 - Round 14: M1 residue
+
+**Why.** The review of rounds 8 to 13 found dialect knowledge still hard-coded in the probes, and a probe rule that let synthetic rows confirm facts about a platform. M2 should start from a core that holds its own rules.
+
+- Probe dialect knowledge moves to vocabulary maps (`dialect_nested_paths`, `dialect_json_wrap`, `dialect_runner`); a new dialect needs a vocabulary line, not code. The export adapter picks its flavour by module name.
+- D-014: only representative data confirms a fact; synthetic results attach as `inferred` evidence. Example models may set `treat_synthetic_as_representative` (Chinook does).
+- Drafts keep engine constraint names; DDL comments become meanings with `inferred` evidence; fields may declare a value domain checked by `value_set`; `fact init` copies the brief and report templates; `fact sync` stays offline (plan).
+
 ## Unreleased - 2026-10-23 - Round 13: WP1.9 Agent layer v1
 
 **Why.** Rules an agent cannot follow by itself do not scale. Skills turn the framework's procedures into steps an agent runs with `fact` commands only, and a dogfood run proves they are enough.

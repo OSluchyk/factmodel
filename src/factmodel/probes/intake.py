@@ -4,8 +4,10 @@ A results file is JSON lines: a header ``{source, pin, environment, data_quality
 then one line per probe, ``{probe, measurement}`` or ``{probe, error}``. Intake keeps numbers
 only, drops anything that looks like an email or an identifier, and writes one evidence file
 per probe: ``evidence/probes/<probe-id>@<date>.yaml``. A result in its expected range is cited
-by the fact it tests, which moves that fact to ``confirmed``; a result out of range opens a
-finding. Running intake twice on the same file changes nothing.
+by the fact it tests; a result out of range opens a finding. Only a result on representative
+data is ``confirmed`` and so confirms the fact (D-014); on synthetic or unknown data the record is
+``inferred`` and the fact stays ``inferred``, unless the model sets
+``treat_synthetic_as_representative``. Running intake twice on the same file changes nothing.
 """
 
 import hashlib
@@ -193,6 +195,10 @@ def intake(root: Path, results: Path) -> IntakeResult:
     probes = model.probes
     out = IntakeResult()
     day = header["ran_on"]
+    # D-014: only representative data confirms a fact, unless the model says its platform is
+    # itself synthetic (an example or test model).
+    treat = bool(model.config and model.config.treat_synthetic_as_representative)
+    confirms = header["data_quality"] == "representative" or treat
     for row in rows:
         probe = probes.get(str(row.get("probe")))
         if probe is None:
@@ -212,7 +218,7 @@ def intake(root: Path, results: Path) -> IntakeResult:
             "source": header["source"],
             "pin": header["pin"],
             "measurement": measurement,
-            "status": "confirmed",
+            "status": "confirmed" if confirms else "inferred",
             "read_on": day,
             "probe": probe.id,
             "environment": header["environment"],

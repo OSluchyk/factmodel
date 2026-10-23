@@ -37,3 +37,4 @@ Platform that forced it: none | <example or engine>
 | [D-011](D-011-engine-blind-core.md) | Engine-blind core, universal adapters, local reference engines | accepted | 2026-10-23 |
 | [D-012](D-012-model-binds-anchor.md) | The model binds the anchor, the profile names the subject | accepted | 2026-10-23 |
 | [D-013](D-013-type-class.md) | Neutral type class on snapshot fields | accepted | 2026-10-23 |
+| [D-014](D-014-synthetic-never-confirms.md) | Synthetic data never confirms a fact about a platform | accepted | 2026-10-23 |

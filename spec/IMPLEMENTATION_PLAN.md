@@ -326,6 +326,8 @@ class Adapter(Protocol):
 
 **Deliverables.** `src/factmodel/sync/`, `fact sync`, `generated/drift-<source-id>.md` (one report per source, so syncing one source never overwrites another's), triggers as `kind: trigger` files in `maintenance/` (one per trigger, like register entries), gate stage `triggers` (a fired trigger has no follow-up entry).
 
+`fact sync` stays offline: it reads the latest committed snapshot; taking a new one is `fact snapshot`.
+
 **Tasks.** Compare adapter facts with the model: new table, dropped table, new column, dropped column, type change, nullability change, constraint change. Classify each as new fact / changed fact / lost fact / no effect. Write drafts for new facts into `drafts/` (never straight into `physical/`). Lost facts open findings.
 
 **Acceptance.** Golden tests with two snapshots that differ in every way listed; a trigger fixture that fires and fails the gate until a follow-up is recorded.

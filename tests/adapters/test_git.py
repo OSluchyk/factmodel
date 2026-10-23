@@ -171,3 +171,56 @@ def test_snapshot_and_quote_commands(repo: Path, tmp_path: Path) -> None:
     assert quoted.exit_code == 0 and "quote: Shop schema." in quoted.output
     listed = runner.invoke(app, ["adapters"]).output
     assert "git  engines: *" in listed
+
+
+@pytest.mark.parametrize(
+    ("dialect", "ddl"),
+    [
+        (
+            "postgres",
+            'CREATE TABLE "T" ("A" INT); '
+            'COMMENT ON TABLE "T" IS \'Table t\'; COMMENT ON COLUMN "T"."A" IS \'Column a\';',
+        ),
+        ("mysql", "CREATE TABLE T (A INT COMMENT 'Column a') COMMENT='Table t';"),
+        ("snowflake", "CREATE TABLE T (A INT COMMENT 'Column a') COMMENT='Table t';"),
+        (
+            "bigquery",
+            "CREATE TABLE T (A INT64 OPTIONS(description='Column a')) "
+            "OPTIONS(description='Table t');",
+        ),
+    ],
+)
+def test_ddl_comments_become_descriptions(dialect: str, ddl: str) -> None:
+    (table,) = parse_ddl(ddl, dialect, enforced=False)
+    assert table["description"] == "Table t"
+    assert table["fields"][0]["description"] == "Column a"
+
+
+def test_comments_become_meanings_with_inferred_evidence(repo: Path) -> None:
+    (repo / "ddl" / "postgres.sql").write_text(
+        PG_DDL + "\nCOMMENT ON TABLE customers IS 'People who buy';\n"
+        "COMMENT ON COLUMN customers.email_hash IS 'Hash of the email, never the email';\n",
+        encoding="utf-8",
+    )
+    snap = GitAdapter().snapshot(
+        _git_source(repo, "postgres.sql", "postgres", revision="worktree"), repo
+    )
+    (draft,) = [d.document for d in to_facts(snap) if d.document["id"] == "customers"]
+    assert draft["meaning"] == "People who buy"
+    field = next(f for f in draft["fields"] if f["name"] == "email_hash")
+    assert field["meaning"] == "Hash of the email, never the email"
+    records = {r["id"]: r for r in draft["records"]}
+    assert records["ev-customers-comment-table"]["status"] == "inferred"
+    assert (
+        records["ev-customers-comment-email-hash"]["quote"] == "Hash of the email, never the email"
+    )
+    assert field["evidence"] == ["ev-customers-catalog", "ev-customers-comment-email-hash"]
+    assert "ev-customers-comment-table" in draft["evidence"]
+
+
+def test_drafts_keep_the_constraint_name(repo: Path) -> None:
+    snap = GitAdapter().snapshot(_git_source(repo, "sqlite.sql", "sqlite"), repo)
+    (orders,) = [d.document for d in to_facts(snap) if d.document["id"] == "orders"]
+    assert orders["extensions"]["draft"]["constraint_name"] == {
+        "to-customers": "orders_customer_fk"
+    }

@@ -1,0 +1,55 @@
+kind: entity
+id: web_events
+physical_name: analytics.web_events
+grain: one row per event
+class: data
+status: draft
+keys:
+  primary:
+  - event_id
+anchor_reference:
+  field: context.user_id
+  evidence:
+  - ev-confirmed
+evidence:
+- ev-confirmed
+fields:
+- name: event_id
+  type: STRING
+  nullable: false
+  meaning: Event.
+- name: sessions_id
+  type: STRING
+  nullable: false
+  meaning: The session.
+- name: context
+  type: STRUCT
+  nullable: true
+  meaning: Who and where.
+- name: user_id
+  path: context.user_id
+  type: INT64
+  nullable: true
+  meaning: The signed-in user.
+- name: tags
+  type: STRING
+  nullable: false
+  repeated: true
+  meaning: Free tags.
+relationships:
+- key: in-session
+  to: sessions
+  join: web_events.sessions_id = sessions.id
+  meaning: The session.
+  mechanism: inferred_join
+  cardinality: many_to_one
+  evidence:
+  - ev-confirmed
+- key: by-user
+  to: users
+  join: web_events.context.user_id = users.id
+  meaning: The user, from the nested context.
+  mechanism: inferred_join
+  cardinality: many_to_one
+  evidence:
+  - ev-confirmed

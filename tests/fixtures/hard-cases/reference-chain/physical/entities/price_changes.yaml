@@ -1,0 +1,34 @@
+kind: entity
+id: price_changes
+physical_name: shop.price_changes
+grain: one row per price_changes row
+class: data
+status: draft
+keys:
+  primary:
+  - id
+  current_row_rule: null
+evidence:
+- ev-confirmed
+fields:
+- name: id
+  type: INT64
+  nullable: false
+  meaning: Identifier.
+- name: products_id
+  type: INT64
+  nullable: true
+  meaning: The products row this row points to.
+relationships:
+- key: of-product
+  to: products
+  join: price_changes.products_id = products.id
+  meaning: Link from price_changes to products.
+  mechanism: inferred_join
+  cardinality: many_to_one
+  scope_admission:
+    basis: unique_target
+    evidence:
+    - ev-confirmed
+  evidence:
+  - ev-confirmed

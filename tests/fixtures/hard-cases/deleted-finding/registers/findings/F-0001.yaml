@@ -1,0 +1,8 @@
+kind: finding
+id: F-0001
+title: Orders without users
+status: open
+opened_on: '2026-11-02'
+about:
+- orders
+description: Some orders have no matching user.

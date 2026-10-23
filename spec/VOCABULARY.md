@@ -254,7 +254,7 @@ Example: `status: draft` on an entity an agent just scaffolded.
 
 The **anchor entity** is the entity whose rows are the subjects of the domain (customers, patients, accounts); the profile names it. **Subject scope** says how an entity's rows reach the anchor. It is derived, never authored (D-007): `fact project` computes it from two authored facts and writes it to `generated/scope.tsv`.
 
-- **`anchor_reference`** on an entity: `{field: <field name>, evidence: [...]}` when that field holds the anchor's key. It makes the entity `direct`. Example: `anchor_reference: {field: user_id, evidence: [ev-orders-users-match]}` on `orders`.
+- **`anchor_reference`** on an entity: `{field: <field name or nested path>, evidence: [...]}` when that field holds the anchor's key. It makes the entity `direct`. Example: `anchor_reference: {field: user_id, evidence: [ev-orders-users-match]}` on `orders`.
 - **`scope_admission`** on a relationship: `{basis: <scope basis>, evidence: [...]}`. It lets scope pass from the target to the source entity. Example: `scope_admission: {basis: unique_target, evidence: [ev-orders-pk]}` on `order_items.part-of`.
 
 | Scope | Meaning | Example |
@@ -429,6 +429,7 @@ The exact columns of each generated file are in `spec/ALGORITHMS.md`.
 | `reference_end` | One end is a `reference` entity (also used for `anchor_reference` on a reference entity). |
 | `weak_evidence` | The relationship or its admission is `unresolved` or `retracted`. |
 | `no_current_row_rule` | The basis is `current_row_rule`, but the target has no rule. |
+| `non_unique_target` | The basis is `unique_target`, but the cardinality is not `many_to_one` or `one_to_one`. |
 
 ```yaml vocabulary:admission_rejection
 - target_set
@@ -436,6 +437,7 @@ The exact columns of each generated file are in `spec/ALGORITHMS.md`.
 - reference_end
 - weak_evidence
 - no_current_row_rule
+- non_unique_target
 ```
 
 Example: `orders.placed-by	customer_scoped` is a row in `generated/labels.tsv`.

@@ -89,11 +89,12 @@ Scope is derived, never authored (D-007). Projection (algorithm 1) reads its res
 4. Neither `S` nor `T` has class `reference` (`reference_end`).
 5. `r` and its `scope_admission` are both usable (`weak_evidence`).
 6. If the basis is `current_row_rule`, `T` has a `current_row_rule` that is not null (`no_current_row_rule`).
+7. If the basis is `unique_target`, the cardinality is `many_to_one` or `one_to_one`, so each source row meets at most one target row (`non_unique_target`). A target whose key repeats needs `current_row_rule` or `measured_fanout`.
 
 **Steps.**
 
 1. The anchor entity is `direct`, with no via-path and no basis.
-2. An entity with `anchor_reference` whose evidence is usable, and whose class is not `reference`, is `direct`, with no via-path and no basis. Direct wins: an entity that is direct is never transitive.
+2. An entity with `anchor_reference` (a field name, or a path when the key is nested) whose evidence is usable, and whose class is not `reference`, is `direct`, with no via-path and no basis. Direct wins: an entity that is direct is never transitive.
 3. Transitive scope is a breadth-first fixed point. Level 0 holds the direct entities. An entity that is not yet scoped joins level `k + 1` when it has an admitted step to an entity at level `k` or lower. If it has several, it takes the one whose target has the lowest level, then the lowest relationship reference. Its via-path is that relationship followed by the target's via-path; its basis is that step's basis.
 4. Repeat until a level adds nothing. Every entity not scoped by then is `none`. A cycle of admitted steps that never reaches a direct entity stays `none`; a cycle that does reach one stops at the first level where each member is scoped.
 5. An entity of class `reference` is always `none`, and an `anchor_reference` on it is reported as a rejection (`reference_end`).
@@ -123,6 +124,7 @@ Rejections are a second output (`generated/scope-rejections.tsv`: `fact`, `reaso
 | `missing-admission` | A usable join to a scoped entity without `scope_admission` carries no scope and is not a rejection; an admission on a retracted relationship is rejected (`weak_evidence`). |
 | `two-paths` | Two admitted steps at the same level: the lower relationship reference wins, with its basis; a target at a lower level beats a lower reference. |
 | `rejections` | Basis `current_row_rule` on a target without a rule (`no_current_row_rule`), an admission on a target set (`target_set`) and on a derivation (`wrong_mechanism`). |
+| `non-unique-target` | Basis `unique_target` on a `many_to_many` link is rejected; `measured_fanout` on the same link is admitted. |
 
 ## 3. Release partition
 

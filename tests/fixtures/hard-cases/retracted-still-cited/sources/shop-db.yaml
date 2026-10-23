@@ -1,0 +1,6 @@
+kind: source
+id: shop-db
+title: Shop database
+source_kind: warehouse
+access_mode: export_file
+engine: postgres

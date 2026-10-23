@@ -1,0 +1,17 @@
+kind: entity
+id: channels
+physical_name: shop.channels
+grain: one row per channels row
+class: configuration
+status: draft
+keys:
+  primary:
+  - id
+  current_row_rule: null
+evidence:
+- ev-confirmed
+fields:
+- name: id
+  type: INT64
+  nullable: false
+  meaning: Identifier.

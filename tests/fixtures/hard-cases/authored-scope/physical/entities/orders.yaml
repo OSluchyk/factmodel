@@ -1,0 +1,26 @@
+kind: entity
+id: orders
+physical_name: shop.orders
+grain: one row per orders row
+class: data
+status: draft
+keys:
+  primary:
+  - id
+  current_row_rule: null
+anchor_reference:
+  field: user_id
+  evidence:
+  - ev-confirmed
+evidence:
+- ev-confirmed
+fields:
+- name: id
+  type: INT64
+  nullable: false
+  meaning: Identifier.
+- name: user_id
+  type: INT64
+  nullable: true
+  meaning: The user this row belongs to.
+subject_scope: direct

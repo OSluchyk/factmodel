@@ -1,0 +1,25 @@
+kind: entity
+id: addresses
+physical_name: shop.addresses
+grain: one row per address version; a user has many
+class: data
+status: draft
+keys:
+  primary:
+  - id
+  current_row_rule: null
+anchor_reference:
+  field: user_id
+  evidence:
+  - ev-confirmed
+evidence:
+- ev-confirmed
+fields:
+- name: id
+  type: INT64
+  nullable: false
+  meaning: Identifier.
+- name: user_id
+  type: INT64
+  nullable: true
+  meaning: The user this row belongs to.

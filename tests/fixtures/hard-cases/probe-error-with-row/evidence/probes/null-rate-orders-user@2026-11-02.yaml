@@ -1,0 +1,8 @@
+kind: probe-result
+probe: null-rate-orders-user
+source: shop-db
+pin: postgres:shop.public@2026-11-02
+environment: prod
+data_quality: representative
+ran_on: '2026-11-02'
+error: "QUERY FAILED: invalid input 'jane.doe@example.com' in row 17"

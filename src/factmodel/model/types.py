@@ -56,6 +56,7 @@ Text = Annotated[str, StringConstraints(min_length=1)]
 Date = Annotated[str, _matches("date")]
 FieldName = Annotated[str, _matches("field_name")]
 FieldPath = Annotated[str, _matches("field_path")]
+FieldAddress = Annotated[str, _matches("field_address")]
 FieldRef = Annotated[str, _matches("field_ref")]
 RelationshipRef = Annotated[str, _matches("relationship_ref")]
 ModelRef = Annotated[str, _matches("model_ref")]
@@ -187,7 +188,7 @@ class Keys(Strict):
 
 
 class AnchorReference(Strict):
-    field: FieldName
+    field: FieldAddress
     evidence: EvidenceRefs
 
 

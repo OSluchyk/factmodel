@@ -22,6 +22,10 @@ $defs:
     description: Dotted path of a nested field, at least two segments.
     type: string
     pattern: "^[^\\s.]+(\\.[^\\s.]+)+$"
+  field_address:
+    description: A field's name, or its dotted path when nested.
+    type: string
+    pattern: "^[^\\s.]+(\\.[^\\s.]+)*$"
   field_ref:
     description: "<entity-id>.<field name or path>"
     type: string

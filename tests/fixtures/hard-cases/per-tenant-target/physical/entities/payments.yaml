@@ -1,0 +1,54 @@
+kind: entity
+id: payments
+physical_name: shop.payments
+grain: one row per payments row
+class: data
+status: draft
+keys:
+  primary:
+  - id
+  current_row_rule: null
+anchor_reference:
+  field: user_id
+  evidence:
+  - ev-confirmed
+evidence:
+- ev-confirmed
+fields:
+- name: id
+  type: INT64
+  nullable: false
+  meaning: Identifier.
+- name: user_id
+  type: INT64
+  nullable: true
+  meaning: The user this row belongs to.
+- name: owner_id
+  type: INT64
+  nullable: true
+  meaning: The object this row is about.
+relationships:
+- key: for-order
+  to:
+  - legacy_orders
+  - orders
+  join:
+    legacy_orders: payments.owner_id = legacy_orders.id
+    orders: payments.owner_id = orders.id
+  meaning: Link from payments to legacy_orders or orders.
+  mechanism: inferred_join
+  cardinality: many_to_one
+  evidence:
+  - ev-confirmed
+- key: sold-via
+  to:
+  - channels
+  - stores
+  join:
+    channels: payments.owner_id = channels.id
+    stores: payments.owner_id = stores.id
+  meaning: Link from payments to channels or stores.
+  mechanism: inferred_join
+  cardinality: many_to_one
+  evidence:
+  - ev-confirmed

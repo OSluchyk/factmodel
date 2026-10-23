@@ -41,7 +41,9 @@ properties:
     additionalProperties: false
     required: [field, evidence]
     properties:
-      field: {$ref: "#/$defs/field_name"}
+      field:
+        description: The field's name, or its path when the key sits in a nested field.
+        $ref: "#/$defs/field_address"
       evidence: {$ref: "#/$defs/evidence_refs"}
   evidence:
     description: Metadata evidence for the entity; fields without their own evidence inherit it.

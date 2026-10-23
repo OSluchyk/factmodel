@@ -1,0 +1,11 @@
+kind: entity
+id: audit_log
+physical_name: shop.audit_log
+grain: one row per audit event
+class: administrative
+class: data
+status: draft
+keys: {primary: [id]}
+evidence: [ev-confirmed]
+fields:
+  - {name: id, type: INT64, nullable: false, meaning: Audit event.}

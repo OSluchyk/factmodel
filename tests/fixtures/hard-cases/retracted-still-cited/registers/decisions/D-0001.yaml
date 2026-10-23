@@ -1,0 +1,11 @@
+kind: decision
+id: D-0001
+title: Retract the email join
+status: accepted
+date: '2026-11-03'
+context: The first join from orders to users used email.
+decision: Retract ev-retracted; join on the user id.
+retracts:
+- ev-retracted
+about:
+- orders.placed-by

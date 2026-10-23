@@ -1,0 +1,49 @@
+kind: entity
+id: comments
+physical_name: shop.comments
+grain: one row per comments row
+class: data
+status: draft
+keys:
+  primary:
+  - id
+  current_row_rule: null
+anchor_reference:
+  field: author_id
+  evidence:
+  - ev-confirmed
+evidence:
+- ev-confirmed
+fields:
+- name: id
+  type: INT64
+  nullable: false
+  meaning: Identifier.
+- name: author_id
+  type: INT64
+  nullable: true
+  meaning: The user this row belongs to.
+- name: owner_id
+  type: INT64
+  nullable: true
+  meaning: The object this row is about.
+- name: owner_type
+  type: STRING
+  nullable: false
+  meaning: The kind of object this row is about.
+relationships:
+- key: on
+  to:
+  - orders
+  - products
+  - settings
+  discriminator: owner_type
+  join:
+    orders: comments.owner_id = orders.id
+    products: comments.owner_id = products.id
+    settings: comments.owner_id = settings.id
+  meaning: Link from comments to orders or products or settings.
+  mechanism: inferred_join
+  cardinality: many_to_one
+  evidence:
+  - ev-confirmed

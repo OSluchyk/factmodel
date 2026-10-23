@@ -2,6 +2,15 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-23 - Round 7: WP1.8b Hard-case fixtures
+
+**Why.** Public datasets are too clean to show what the framework exists for: soft deletes, keys that repeat, polymorphic links, per-tenant targets, nullable anchors, reference chains, nested fields, stale and retracted evidence. Small synthetic models make each one a regression test.
+
+- Add 19 hard cases in `tests/fixtures/hard-cases/` (the nine plan cases plus variants), each with the expected generated files and gate verdict; a test runs `fact check` and `fact project` on all of them, and every gate stage fails on at least one.
+- Scope: a `unique_target` admission on a link whose target key repeats is rejected (`non_unique_target`).
+- An `anchor_reference` may name a nested field path.
+- Deferred to WP1.7: probes for ties and null rates, and per-dialect rendering of nested-path joins.
+
 ## Unreleased - 2026-10-23 - Round 6: WP1.3 Gate runner, WP1.4 CLI skeleton
 
 **Why.** Rules that only live in documents drift. The gate turns every rule into a check with one verdict, and each check is proven by a model that fails it alone. The CLI makes a new model repository in one command, so the first thing an adopter sees is a passing gate.

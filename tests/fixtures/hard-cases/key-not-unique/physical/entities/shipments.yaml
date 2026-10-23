@@ -1,0 +1,34 @@
+kind: entity
+id: shipments
+physical_name: shop.shipments
+grain: one row per shipments row
+class: data
+status: draft
+keys:
+  primary:
+  - id
+  current_row_rule: null
+evidence:
+- ev-confirmed
+fields:
+- name: id
+  type: INT64
+  nullable: false
+  meaning: Identifier.
+- name: addresses_id
+  type: INT64
+  nullable: true
+  meaning: The addresses row this row points to.
+relationships:
+- key: to-address
+  to: addresses
+  join: shipments.addresses_id = addresses.id
+  meaning: Link from shipments to addresses.
+  mechanism: inferred_join
+  cardinality: many_to_many
+  scope_admission:
+    basis: measured_fanout
+    evidence:
+    - ev-fanout
+  evidence:
+  - ev-confirmed

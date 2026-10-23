@@ -1,0 +1,9 @@
+kind: hazard
+id: H-0001
+title: Anonymous events have no user
+status: active
+description: Events from anonymous sessions have a null users_id.
+applies_to:
+- events
+evidence:
+- ev-inferred

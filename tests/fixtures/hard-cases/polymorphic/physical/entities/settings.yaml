@@ -1,0 +1,17 @@
+kind: entity
+id: settings
+physical_name: shop.settings
+grain: one row per settings row
+class: configuration
+status: draft
+keys:
+  primary:
+  - id
+  current_row_rule: null
+evidence:
+- ev-confirmed
+fields:
+- name: id
+  type: INT64
+  nullable: false
+  meaning: Identifier.

@@ -379,6 +379,8 @@ class Adapter(Protocol):
 
 **Acceptance.** `fact check` and `fact project` run on every case in CI with the expected output; every gate stage has at least one hard case that fails it.
 
+**Done in round 7 (gate and projection parts).** Cases live in `tests/fixtures/hard-cases/`, with variants that fail a stage (for example `soft-delete-without-rule`, `key-not-unique-unique-basis`). `key-not-unique` added the admission rejection `non_unique_target`, and `nested-field` lets `anchor_reference` name a nested path. Deferred to WP1.7: the probe for ties (`soft-delete`), the null-rate probe (`nullable-fk`) and rendering a nested-path join per dialect (`nested-field`).
+
 ### WP1.9 Agent layer v1 (1 round)
 
 **Deliverables.** `agent/AGENTS.md` (template), `agent/skills/{model-onboard,entity-scaffold,evidence-gather,probe-write,probe-intake}/SKILL.md`, `agent/templates/brief.md`, `agent/templates/report.md`.

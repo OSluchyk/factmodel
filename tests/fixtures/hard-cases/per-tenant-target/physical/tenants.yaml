@@ -1,0 +1,22 @@
+kind: tenants
+environments:
+- prod
+tenants:
+- id: brand-a
+  meaning: Orders from the current shop.
+  ingest:
+    prod:
+      entities:
+      - orders
+      - channels
+      evidence:
+      - ev-confirmed
+- id: brand-b
+  meaning: Orders migrated from the old shop.
+  ingest:
+    prod:
+      entities:
+      - legacy_orders
+      - stores
+      evidence:
+      - ev-confirmed

@@ -1,0 +1,39 @@
+kind: evidence
+records:
+- id: ev-confirmed
+  source: shop-db
+  pin: postgres:shop.public@2026-11-01
+  quote: catalog read
+  status: confirmed
+  read_on: '2026-11-01'
+- id: ev-inferred
+  source: shop-db
+  pin: postgres:shop.public@2026-11-01
+  quote: column names match
+  status: inferred
+  read_on: '2026-11-01'
+- id: ev-unresolved
+  source: shop-db
+  pin: postgres:shop.public@2026-11-01
+  quote: not checked yet
+  status: unresolved
+  read_on: '2026-11-01'
+- id: ev-retracted
+  source: shop-db
+  pin: postgres:shop.public@2026-10-01
+  quote: joined on email
+  status: retracted
+  read_on: '2026-10-01'
+  named_error: The join used email, which is not unique.
+  superseded_by: ev-confirmed
+- id: ev-fanout
+  source: shop-db
+  pin: postgres:shop.public@2026-11-03
+  measurement:
+    addresses_per_shipment_max: 1
+    shipments_over_one_user: 0
+  status: confirmed
+  read_on: '2026-11-03'
+  probe: fanout-shipments-users
+  environment: prod
+  data_quality: representative

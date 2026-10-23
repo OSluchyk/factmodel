@@ -1,0 +1,17 @@
+kind: entity
+id: stores
+physical_name: shop.stores
+grain: one row per stores row
+class: reference
+status: draft
+keys:
+  primary:
+  - id
+  current_row_rule: null
+evidence:
+- ev-confirmed
+fields:
+- name: id
+  type: INT64
+  nullable: false
+  meaning: Identifier.

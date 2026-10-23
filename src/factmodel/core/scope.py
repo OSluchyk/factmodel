@@ -67,6 +67,8 @@ def _rejection(
         target is None or target.keys.current_row_rule is None
     ):
         return "no_current_row_rule"
+    if admission.basis == "unique_target" and rel.cardinality not in ("many_to_one", "one_to_one"):
+        return "non_unique_target"
     return None
 
 

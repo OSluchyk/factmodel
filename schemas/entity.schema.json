@@ -99,7 +99,8 @@
       ],
       "properties": {
         "field": {
-          "$ref": "#/$defs/field_name"
+          "description": "The field's name, or its path when the key sits in a nested field.",
+          "$ref": "#/$defs/field_address"
         },
         "evidence": {
           "$ref": "#/$defs/evidence_refs"
@@ -328,6 +329,11 @@
           "$ref": "#/$defs/evidence_refs"
         }
       }
+    },
+    "field_address": {
+      "description": "A field's name, or its dotted path when nested.",
+      "type": "string",
+      "pattern": "^[^\\s.]+(\\.[^\\s.]+)*$"
     },
     "field_name": {
       "description": "An engine column name or one segment of a nested path.",

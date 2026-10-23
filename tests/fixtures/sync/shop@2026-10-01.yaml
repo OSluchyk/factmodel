@@ -1,0 +1,76 @@
+kind: snapshot
+source: shop
+engine: postgres
+target: shop
+taken_on: '2026-10-01'
+pin: postgres:shop@2026-10-01
+objects:
+- name: customers
+  object_type: table
+  fields:
+  - name: customer_id
+    type: integer
+    type_class: integer
+    nullable: false
+  - name: email
+    type: text
+    type_class: text
+    nullable: true
+  - name: created
+    type: date
+    type_class: date
+    nullable: false
+  constraints:
+  - constraint_type: primary_key
+    name: customers_pkey
+    fields:
+    - customer_id
+    enforced: true
+- name: legacy_carts
+  object_type: table
+  fields:
+  - name: id
+    type: integer
+    type_class: integer
+    nullable: false
+- name: orders
+  object_type: table
+  fields:
+  - name: order_id
+    type: integer
+    type_class: integer
+    nullable: false
+  - name: customer_id
+    type: integer
+    type_class: integer
+    nullable: true
+  - name: total
+    type: numeric
+    type_class: decimal
+    nullable: false
+  - name: note
+    type: text
+    type_class: text
+    nullable: true
+  constraints:
+  - constraint_type: foreign_key
+    name: orders_customer_fk
+    fields:
+    - customer_id
+    references:
+      object: customers
+      fields:
+      - customer_id
+    enforced: true
+  - constraint_type: primary_key
+    name: orders_pkey
+    fields:
+    - order_id
+    enforced: true
+- name: tmp_import
+  object_type: table
+  fields:
+  - name: id
+    type: integer
+    type_class: integer
+    nullable: false

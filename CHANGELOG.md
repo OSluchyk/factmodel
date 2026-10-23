@@ -2,6 +2,14 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-23 - Round 10: WP1.6 Sync, drift and triggers
+
+**Why.** A model goes stale when the platform changes. Sync turns every change into a classified fact (new, changed, lost, no effect) with a concrete follow-up, and triggers make sure a change that needs work cannot be forgotten.
+
+- Add `fact sync --source <id>`: drift between the latest snapshot, the previous one and the model, in eight kinds; drafts for new facts, findings for lost facts, a `source_pin_moved` firing, and `generated/drift-<source>.md`. Idempotent.
+- Add the `triggers` gate stage: a fired trigger without `follow_up_ref` fails the gate.
+- New vocabulary block `drift_kind`.
+
 ## Unreleased - 2026-10-23 - Round 9: WP1.5b git adapter
 
 **Why.** Much of what a platform means is written down before it exists: DDL, configuration, pipeline code. Reading it from git, at a pinned commit, gives intent evidence for any dialect sqlglot parses, without credentials.

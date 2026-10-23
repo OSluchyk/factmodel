@@ -22,4 +22,5 @@ Small model repositories for what public datasets do not show (plan WP1.8b). Eac
 | [`polymorphic-missing-target`](polymorphic-missing-target/README.md) | polymorphic | references |
 | [`duplicate-key`](duplicate-key/README.md) | - | yaml |
 | [`stale-generated`](stale-generated/README.md) | nullable-fk | generated-fresh |
+| [`trigger-without-follow-up`](trigger-without-follow-up/README.md) | - | triggers |
 | [`probe-error-with-row`](probe-error-with-row/README.md) | - | privacy |

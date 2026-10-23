@@ -7,6 +7,7 @@ import typer
 
 from factmodel import __version__, repo, vocabulary
 from factmodel import status as status_module
+from factmodel import sync as sync_module
 from factmodel.adapters import registry
 from factmodel.adapters.base import AdapterError, with_date
 from factmodel.adapters.export import ExportAdapter
@@ -253,3 +254,24 @@ def quote_command(
         typer.echo(str(error), err=True)
         raise typer.Exit(1) from error
     typer.echo(repo.dump_yaml({"id": "ev-<name>", **record}).rstrip())
+
+
+@app.command("sync")
+def sync_command(
+    source_id: Annotated[str, typer.Option("--source", help="Source ID.")],
+    root: RootOption = Path("."),
+) -> None:
+    """Compare the latest snapshot with the previous one and the model; draft, open, fire."""
+    _source(root, source_id)
+    try:
+        result = sync_module.sync(root.resolve(), source_id)
+    except ValueError as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(1) from error
+    counts: dict[str, int] = {}
+    for item in result.items:
+        counts[item.drift_class] = counts.get(item.drift_class, 0) + 1
+    summary = ", ".join(f"{k} {v}" for k, v in sorted(counts.items())) or "no drift"
+    typer.echo(f"{summary}; {len(result.written)} files written")
+    for path in result.written:
+        typer.echo(f"  {path.relative_to(root.resolve()).as_posix()}")

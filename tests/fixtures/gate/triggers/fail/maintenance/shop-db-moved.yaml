@@ -1,0 +1,7 @@
+kind: trigger
+id: shop-db-moved
+event: source_pin_moved
+follow_up: Re-read evidence pinned to the old version.
+fired:
+- on: '2026-11-10'
+  detail: shop-db moved to 2026-11-10

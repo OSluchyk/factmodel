@@ -20,6 +20,7 @@ PLAN_STAGES = [
     "projection",
     "scope",
     "registers",
+    "triggers",
     "generated-fresh",
     "privacy",
 ]
@@ -43,7 +44,7 @@ def _project(root: Path) -> None:
     derived.write(root, derived.render(values))
 
 
-def test_stage_list_matches_the_plan_without_triggers() -> None:
+def test_stage_list_matches_the_plan() -> None:
     assert [s.name for s in stage_specs() if s.enabled] == PLAN_STAGES
 
 
@@ -66,7 +67,7 @@ def test_single_stage(tmp_path: Path) -> None:
     report = run_gate(FIXTURES / "privacy" / "fail", "privacy")
     assert [(s.name, s.verdict) for s in report.stages] == [("privacy", FAIL)]
     with pytest.raises(ValueError, match="unknown or disabled stage"):
-        run_gate(FIXTURES / "clean", "triggers")
+        run_gate(FIXTURES / "clean", "lineage")
 
 
 def test_blocked_stages_are_skipped() -> None:

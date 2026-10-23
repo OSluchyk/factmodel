@@ -621,7 +621,33 @@ Example probe result: `probe: join-orders-users`, `measurement: {match_rate: 1.0
 - no_effect
 ```
 
-**Trigger.** An event listed in `maintenance/` with the follow-up it requires. The gate fails when a fired trigger has no follow-up.
+**Drift kind.** What changed between two snapshots of a source, or between a snapshot and the model (`fact sync`, written to `generated/drift.md`).
+
+| Kind | Meaning | Class when the object is modelled |
+| --- | --- | --- |
+| `new_object` | An object the previous snapshot did not have. | `new_fact` (draft), `no_effect` if already modelled |
+| `dropped_object` | A modelled object, or one in the previous snapshot, that the latest does not have. | `lost_fact` (finding) |
+| `new_field` | A field the previous snapshot did not have. | `new_fact` (draft) |
+| `dropped_field` | A field that is gone. | `lost_fact` (finding) |
+| `type_class_change` | The field's `type_class` changed (D-013). | `changed_fact` |
+| `type_text_change` | The type text changed within the same class. | `no_effect`, listed |
+| `nullability_change` | The field became nullable or not nullable. | `changed_fact` |
+| `constraint_change` | A declared key or foreign key appeared, disappeared or changed. | `changed_fact` |
+
+A change to an object nobody has modelled yet is `no_effect`; the object's draft carries it.
+
+```yaml vocabulary:drift_kind
+- new_object
+- dropped_object
+- new_field
+- dropped_field
+- type_class_change
+- type_text_change
+- nullability_change
+- constraint_change
+```
+
+**Trigger.** An event with the follow-up it requires, one `kind: trigger` file per trigger in `maintenance/`. When the event happens, a `fired` entry records the date; its `follow_up_ref` records where the follow-up is (a register ID, a commit, a file). The `triggers` gate stage fails on any fired entry without `follow_up_ref`. `fact sync` fires `source_pin_moved` triggers when a source's snapshot pin changes.
 
 ```yaml vocabulary:trigger_event
 - new_tenant

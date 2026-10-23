@@ -1,0 +1,70 @@
+kind: snapshot
+source: shop
+engine: postgres
+target: shop
+taken_on: '2026-11-01'
+pin: postgres:shop@2026-11-01
+objects:
+- name: customers
+  object_type: table
+  fields:
+  - name: customer_id
+    type: integer
+    type_class: integer
+    nullable: false
+  - name: email
+    type: character varying(255)
+    type_class: text
+    nullable: true
+  - name: created
+    type: timestamp
+    type_class: timestamp
+    nullable: false
+  - name: phone_hash
+    type: text
+    type_class: text
+    nullable: true
+  constraints:
+  - constraint_type: primary_key
+    name: customers_pkey
+    fields:
+    - customer_id
+    enforced: true
+- name: orders
+  object_type: table
+  fields:
+  - name: order_id
+    type: integer
+    type_class: integer
+    nullable: false
+  - name: customer_id
+    type: integer
+    type_class: integer
+    nullable: true
+  - name: total
+    type: numeric
+    type_class: decimal
+    nullable: true
+  constraints:
+  - constraint_type: primary_key
+    name: orders_pkey
+    fields:
+    - order_id
+    enforced: true
+- name: refunds
+  object_type: table
+  fields:
+  - name: refund_id
+    type: integer
+    type_class: integer
+    nullable: false
+  - name: order_id
+    type: integer
+    type_class: integer
+    nullable: true
+  constraints:
+  - constraint_type: primary_key
+    name: refunds_pkey
+    fields:
+    - refund_id
+    enforced: true

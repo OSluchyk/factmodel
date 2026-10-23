@@ -26,6 +26,8 @@ Platform that forced it: none | <example or engine>
 | --- | --- | --- | --- |
 | [D-001](D-001-license.md) | License: Apache 2.0 | accepted | 2026-10-23 |
 | [D-002](D-002-relationship-identity.md) | Relationship identity: an author-set key | accepted | 2026-10-23 |
-| [D-003](D-003-name-check.md) | Name check: distribution name `plumbline-model` | accepted | 2026-10-23 |
+| [D-003](D-003-name-check.md) | Name check: distribution name `plumbline-model` | name part superseded by D-010 | 2026-10-23 |
 | [D-004](D-004-source-layout.md) | Source layout: `src/plumbline/` | accepted | 2026-10-23 |
 | [D-005](D-005-toolchain.md) | Toolchain | accepted | 2026-10-23 |
+| [D-008](D-008-agent-commits.md) | The agent commits per round | accepted | 2026-10-23 |
+| [D-010](D-010-name-factmodel.md) | Name: FactModel | accepted | 2026-10-23 |

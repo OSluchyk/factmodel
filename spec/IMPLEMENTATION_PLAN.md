@@ -1,13 +1,13 @@
-# Plumbline - Implementation Plan
+# FactModel - Implementation Plan
 
 Author: Oleksandr Sluchyk · Version 0.1 (draft) · 2026-10-23
 Companion to `spec/SPEC.md`. Where the two disagree, the spec wins and this plan is fixed.
 
 ## 1. How to use this plan
 
-- Work is split into **milestones** (M0-M4) and **work packages** (WP). One work package is one agent round: one brief in, one report out, the owner commits.
+- Work is split into **milestones** (M0-M4) and **work packages** (WP). One work package is one agent round: one brief in, one report out, one commit by the agent (D-008).
 - Every work package lists: goal, deliverables (exact paths), tasks, acceptance checks, dependencies.
-- A work package is done only when its acceptance checks pass in CI and the owner has committed it.
+- A work package is done only when its acceptance checks pass in CI and its round is committed.
 - Effort is given in agent rounds. It is a rough estimate, not a commitment.
 - Anything that changes the core after M2 needs a decision record (`decisions/D-NNN.md`) naming the platform that forced it.
 
@@ -19,8 +19,8 @@ Companion to `spec/SPEC.md`. Where the two disagree, the spec wins and this plan
 4. **Deterministic core.** The core package does no network or database I/O. Adapters do I/O and write files; the core reads files.
 5. **Schemas are normative.** JSON Schema files in `schemas/` define every file kind. Python models are checked against them in tests, never the other way round.
 6. **Every gate stage has a failing fixture.** A check that has never failed is not trusted.
-7. **Agents never commit, push or run queries against real platforms.** The owner does.
-8. **Every write command is idempotent.** A second run of `plb sync`, `plb project`, `plb probe intake` or any migration produces zero diff. Tests check it.
+7. **Agents never push or run queries against real platforms.** The owner does. On this repository the agent commits once per round (D-008).
+8. **Every write command is idempotent.** A second run of `fact sync`, `fact project`, `fact probe intake` or any migration produces zero diff. Tests check it.
 9. **Services are authored by hand in 1.0**, with evidence from code read through the git adapter. Automatic extraction of services from pipeline configuration is platform-specific and out of scope.
 
 ## 3. Technical baseline
@@ -71,9 +71,9 @@ README.md                    one-paragraph pitch, status, link to spec
 CONTRIBUTING.md              round workflow, commit rules, how to run checks
 CHANGELOG.md                 newest first, "why" for every entry
 decisions/README.md          decision record template (context, decision, consequences, platform)
-.github/workflows/ci.yml     ruff, mypy, pytest, plb check on examples (later)
+.github/workflows/ci.yml     ruff, mypy, pytest, fact check on examples (later)
 .pre-commit-config.yaml      ruff, end-of-file, trailing whitespace, YAML duplicate-key check
-src/plumbline/__init__.py
+src/factmodel/__init__.py
 tests/test_smoke.py
 ```
 
@@ -229,11 +229,11 @@ Expected model (to be confirmed by evidence, not assumed):
 
 ### WP1.1 Model loader and strict YAML (1 round)
 
-**Deliverables.** `src/plumbline/io/yaml_strict.py`, `src/plumbline/model/loader.py`, `src/plumbline/model/types.py` (pydantic).
+**Deliverables.** `src/factmodel/io/yaml_strict.py`, `src/factmodel/model/loader.py`, `src/factmodel/model/types.py` (pydantic).
 
 **Tasks.**
 
-- Load a model repository from `plumbline.yaml`: discover files by kind, validate each against its schema, build an in-memory `Model`.
+- Load a model repository from `factmodel.yaml`: discover files by kind, validate each against its schema, build an in-memory `Model`.
 - Fail on duplicate keys, unknown kinds, broken references (relationship to a missing entity, evidence ID not found, source not registered).
 - Errors carry file, line, column and a short fix hint.
 
@@ -241,7 +241,7 @@ Expected model (to be confirmed by evidence, not assumed):
 
 ### WP1.2 Projection and scope library (1-2 rounds)
 
-**Deliverables.** `src/plumbline/core/projection.py`, `src/plumbline/core/scope.py`, `src/plumbline/core/derived.py`.
+**Deliverables.** `src/factmodel/core/projection.py`, `src/factmodel/core/scope.py`, `src/factmodel/core/derived.py`.
 
 **Tasks.** Implement WP0.4 algorithms 1 and 2 as pure functions over `Model` + `Profile`. Write derived values to `generated/` (`relationships.tsv`, `scope.tsv`, `labels.tsv`) with a header that says "generated - do not edit".
 
@@ -249,7 +249,7 @@ Expected model (to be confirmed by evidence, not assumed):
 
 ### WP1.3 Gate runner (1 round)
 
-**Deliverables.** `src/plumbline/gate/runner.py`, `src/plumbline/gate/stages/*.py`, `gate.yaml` format, `tests/fixtures/gate/<stage>/fail/`.
+**Deliverables.** `src/factmodel/gate/runner.py`, `src/factmodel/gate/stages/*.py`, `gate.yaml` format, `tests/fixtures/gate/<stage>/fail/`.
 
 **Stages in M1:**
 
@@ -263,7 +263,7 @@ Expected model (to be confirmed by evidence, not assumed):
 | `projection` | residue > 0 |
 | `scope` | a transitive admission without a basis; a consumer-declared entity unreachable without an owner decision |
 | `registers` | closed escalation without answer source and evidence; reused or missing register ID |
-| `generated-fresh` | `generated/` differs from a fresh `plb project` |
+| `generated-fresh` | `generated/` differs from a fresh `fact project` |
 | `privacy` | an evidence or probe-result file contains a value that looks like an email, a personal identifier or a row sample |
 
 **Tasks.** Declarative stage list in `gate.yaml` (name, module, enabled); one verdict line per stage; exit code 0 only if all pass; `--stage` to run one.
@@ -272,19 +272,19 @@ Expected model (to be confirmed by evidence, not assumed):
 
 ### WP1.4 CLI skeleton (1 round, can merge with WP1.3)
 
-**Deliverables.** `src/plumbline/cli.py` with `plb init`, `plb source add`, `plb check`, `plb project`, `plb status`.
+**Deliverables.** `src/factmodel/cli.py` with `fact init`, `fact source add`, `fact check`, `fact project`, `fact status`.
 
 **Tasks.**
 
-- `plb init --profile retail <dir>`: writes `plumbline.yaml`, folder layout, `AGENTS.md` and skills from `agent/` templates, an empty source registry.
-- `plb init` also writes `.github/workflows/plb-check.yml` for the model repository (runs `plb check` on push) and a `CHANGELOG.md` with the format from the spec.
-- `plb status`: open findings, open escalations, fired triggers without follow-up, evidence older than its source pin, next actions.
+- `fact init --profile retail <dir>`: writes `factmodel.yaml`, folder layout, `AGENTS.md` and skills from `agent/` templates, an empty source registry.
+- `fact init` also writes `.github/workflows/fact-check.yml` for the model repository (runs `fact check` on push) and a `CHANGELOG.md` with the format from the spec.
+- `fact status`: open findings, open escalations, fired triggers without follow-up, evidence older than its source pin, next actions.
 
 **Acceptance.** End-to-end test: `init` → add a source → `check` passes on the empty model.
 
 ### WP1.5 BigQuery adapter (1-2 rounds)
 
-**Deliverables.** `src/plumbline/adapters/base.py` (adapter protocol), `src/plumbline/adapters/bigquery/`.
+**Deliverables.** `src/factmodel/adapters/base.py` (adapter protocol), `src/factmodel/adapters/bigquery/`.
 
 **Adapter protocol.**
 
@@ -300,27 +300,27 @@ class Adapter(Protocol):
 **Tasks.**
 
 - Live mode reads `INFORMATION_SCHEMA.TABLES`, `COLUMNS`, `COLUMN_FIELD_PATHS`, `TABLE_CONSTRAINTS`, `KEY_COLUMN_USAGE`, `TABLE_OPTIONS` (partitioning, clustering).
-- Offline mode reads the same as exported JSON; `plb snapshot --source <id>` writes that export to `sources/snapshots/` so tests and agents never need credentials. The snapshot format is engine-neutral and has its own schema (`schemas/snapshot.schema.json`): objects, fields with paths and types, declared constraints, partitioning, options.
+- Offline mode reads the same as exported JSON; `fact snapshot --source <id>` writes that export to `sources/snapshots/` so tests and agents never need credentials. The snapshot format is engine-neutral and has its own schema (`schemas/snapshot.schema.json`): objects, fields with paths and types, declared constraints, partitioning, options.
 - `to_facts` produces drafts with evidence pins; declared keys become `declared_fk`; nothing else is guessed.
 - Note in docs: BigQuery constraints are `NOT ENFORCED`; a declared key needs a probe before it is `confirmed`.
 
-**Acceptance.** Offline tests on a committed metadata snapshot of `thelook_ecommerce` (metadata only, no rows); live test behind `PLB_LIVE_BQ=1`.
+**Acceptance.** Offline tests on a committed metadata snapshot of `thelook_ecommerce` (metadata only, no rows); live test behind `FACT_LIVE_BQ=1`.
 
 ### WP1.5b Git source adapter (1 round)
 
-**Deliverables.** `src/plumbline/adapters/git/`.
+**Deliverables.** `src/factmodel/adapters/git/`.
 
 **Tasks.**
 
 - Read files from a repository at a commit: DDL (`CREATE TABLE`, parsed with sqlglot into the same snapshot format as a warehouse read), and any text file as a quotable source for evidence (configuration, schema definitions, pipeline code).
-- Pins are `<repo>@<sha>:<path>[:<line>]`; `plb snapshot` for a git source stores the parsed DDL plus the file list with hashes, never the whole repository.
-- Rank: a git source normally outranks a warehouse catalog for intent (what was meant) and loses to it for presence (what exists). The profile or `plumbline.yaml` sets ranks; the adapter only reports them.
+- Pins are `<repo>@<sha>:<path>[:<line>]`; `fact snapshot` for a git source stores the parsed DDL plus the file list with hashes, never the whole repository.
+- Rank: a git source normally outranks a warehouse catalog for intent (what was meant) and loses to it for presence (what exists). The profile or `factmodel.yaml` sets ranks; the adapter only reports them.
 
 **Acceptance.** Tests on a small fixture repository (created in the test) with two DDL dialects; a DDL and a catalog snapshot of the same table produce matching entity drafts.
 
 ### WP1.6 Sync, drift and triggers (1 round)
 
-**Deliverables.** `src/plumbline/sync/`, `plb sync`, `generated/drift.md`, `maintenance/triggers.yaml` format, gate stage `triggers` (a fired trigger has no follow-up entry).
+**Deliverables.** `src/factmodel/sync/`, `fact sync`, `generated/drift.md`, `maintenance/triggers.yaml` format, gate stage `triggers` (a fired trigger has no follow-up entry).
 
 **Tasks.** Compare adapter facts with the model: new table, dropped table, new column, dropped column, type change, nullability change, constraint change. Classify each as new fact / changed fact / lost fact / no effect. Write drafts for new facts into `drafts/` (never straight into `physical/`). Lost facts open findings.
 
@@ -328,7 +328,7 @@ class Adapter(Protocol):
 
 ### WP1.7 Probe generator v1 and intake (1-2 rounds)
 
-**Deliverables.** `src/plumbline/probes/` (`spec.py`, `generate.py`, `intake.py`), `plb probe generate`, `plb probe intake`.
+**Deliverables.** `src/factmodel/probes/` (`spec.py`, `generate.py`, `intake.py`), `fact probe generate`, `fact probe intake`.
 
 **Probe kinds in M1:** key duplicates, join match rate and orphans (both directions), fan-out per source row to anchor, null rate per field, row count per object.
 
@@ -351,7 +351,7 @@ class Adapter(Protocol):
 3. Owner: run probes on the public dataset, return output.
 4. Agent: intake; resolve residue; record decisions.
 
-**Acceptance (M1 gate).** `plb check` green on `examples/thelook`; projection residue 0; scopes match the table above or differ with a decision record; every relationship confirmed by a probe or explicitly inferred with a reason.
+**Acceptance (M1 gate).** `fact check` green on `examples/thelook`; projection residue 0; scopes match the table above or differ with a decision record; every relationship confirmed by a probe or explicitly inferred with a reason.
 
 ### WP1.8b Hard-case fixtures (1 round)
 
@@ -368,10 +368,10 @@ class Adapter(Protocol):
 | nullable-fk | optional reference to the anchor | scope `direct` with coverage note; probe for null rate |
 | reference-chain | data -> reference -> data | reference never propagates scope |
 | nested-field | STRUCT and ARRAY fields with a reference inside | field path resolves; join on a nested path renders per dialect |
-| stale-evidence | evidence pin older than the source | `plb status` flags it; gate passes (staleness is not an error) |
+| stale-evidence | evidence pin older than the source | `fact status` flags it; gate passes (staleness is not an error) |
 | retraction | a fact retracted with `named_error` | registers stage accepts; a retraction without the error fails |
 
-**Acceptance.** `plb check` and `plb project` run on every case in CI with the expected output; every gate stage has at least one hard case that fails it.
+**Acceptance.** `fact check` and `fact project` run on every case in CI with the expected output; every gate stage has at least one hard case that fails it.
 
 ### WP1.9 Agent layer v1 (1 round)
 
@@ -380,7 +380,7 @@ class Adapter(Protocol):
 **Content rules.**
 
 - `AGENTS.md`: invariants only (evidence rules, derived-never-authored, stop conditions, never commit, report shape with confirmed / inferred / unknown).
-- Each skill: when to use it, inputs, steps, which `plb` commands to run, acceptance checks, what to put in the report.
+- Each skill: when to use it, inputs, steps, which `fact` commands to run, acceptance checks, what to put in the report.
 - Report template ends with the exact `git add` list by name.
 
 **Acceptance.** A fresh agent session, given only the repository and the brief "onboard thelook", reproduces WP1.8 step 1-2 without extra instructions. Record the session transcript summary in `docs/dogfood/`.
@@ -397,13 +397,13 @@ Expected shape: anchor `customer`; direct `rental`, `payment`; reference `film`,
 
 **Tasks.** Read `information_schema.tables`, `columns`, `table_constraints`, `key_column_usage`, `referential_constraints`, plus `pg_catalog` for enforced foreign keys and indexes. Enforced FKs become `declared_fk` with `confirmed` status (enforced by the engine) - unlike BigQuery. Offline snapshot format identical to BigQuery's.
 
-**Acceptance.** Offline tests on a committed Pagila metadata snapshot; live test behind `PLB_LIVE_PG=1` against a local Docker database (`docker compose` file in `examples/pagila/`).
+**Acceptance.** Offline tests on a committed Pagila metadata snapshot; live test behind `FACT_LIVE_PG=1` against a local Docker database (`docker compose` file in `examples/pagila/`).
 
 ### WP2.2 Second domain profile and the Pagila example (1-2 rounds)
 
 **Deliverables.** `profiles/rental/` (or reuse `retail` if it fits without change - that is the preferred outcome), `examples/pagila/`.
 
-**Acceptance.** `plb check` green; residue 0.
+**Acceptance.** `fact check` green; residue 0.
 
 ### WP2.3 Core freeze review (1 round)
 
@@ -411,7 +411,7 @@ Expected shape: anchor `customer`; direct `rental`, `payment`; reference `film`,
 
 - List every core change made since M1 with its decision record.
 - Bump schemas to `1.0.0`; write `spec/VERSIONING.md` (semver for schemas: removing or renaming a key is major; adding an optional key is minor; fixing a description is patch).
-- Add `plb migrate` stub that reports which schema version a model uses.
+- Add `fact migrate` stub that reports which schema version a model uses.
 
 **Acceptance (M2 gate).** No core change without a decision record naming the platform that forced it; both examples green on the frozen schemas.
 
@@ -429,7 +429,7 @@ Expected shape: anchor `customer`; direct `rental`, `payment`; reference `film`,
 
 ### WP3.2 Equivalence harness (1-2 rounds)
 
-**Deliverables.** `src/plumbline/equivalence/`, corpus format `corpus/*.yaml`, `plb equivalence run`.
+**Deliverables.** `src/factmodel/equivalence/`, corpus format `corpus/*.yaml`, `fact equivalence run`.
 
 **Design.**
 
@@ -451,7 +451,7 @@ Expected shape: anchor `customer`; direct `rental`, `payment`; reference `film`,
 
 ### WP3.4 Release projection and model-lookup skill (1 round)
 
-**Deliverables.** `release/allowlist.yaml` format, `plb release --out`, `agent/skills/model-lookup/`, `agent/skills/release/`.
+**Deliverables.** `release/allowlist.yaml` format, `fact release --out`, `agent/skills/model-lookup/`, `agent/skills/release/`.
 
 **Tasks.** Complete partition (export / project / refuse); per-kind key allowlist; fail-closed on undeclared keys; internal notes marked with explicit markers; release notes are an append-only log, one section per version, never edited. The release carries a `VERSION` file with the release version, the source commit and the schema version, so consumers can pin.
 
@@ -459,7 +459,7 @@ Expected shape: anchor `customer`; direct `rental`, `payment`; reference `film`,
 
 ### WP3.5 Exporters (1-2 rounds)
 
-**Deliverables.** `src/plumbline/export/osi.py`, `src/plumbline/export/dbt.py`; Cube optional.
+**Deliverables.** `src/factmodel/export/osi.py`, `src/factmodel/export/dbt.py`; Cube optional.
 
 **Tasks.** Check the current OSI / Apache Ossie spec version at start and pin it in the exporter. Map layer concepts and measures; carry evidence status as metadata where the target allows, otherwise drop with a warning list.
 
@@ -467,7 +467,7 @@ Expected shape: anchor `customer`; direct `rental`, `payment`; reference `film`,
 
 ### WP3.6 Drift-review, layer-build, escalation skills (1 round)
 
-**Deliverables.** `agent/skills/{drift-review,layer-build,escalation-draft,maintenance-pack}/`; `plb probe generate --set volatile` for the maintenance pack.
+**Deliverables.** `agent/skills/{drift-review,layer-build,escalation-draft,maintenance-pack}/`; `fact probe generate --set volatile` for the maintenance pack.
 
 ---
 
@@ -475,7 +475,7 @@ Expected shape: anchor `customer`; direct `rental`, `payment`; reference `film`,
 
 ### WP4.1 Packaging (1 round)
 
-Re-check the name (D-003); publish `plumbline-model` with extras `[bigquery]`, `[postgres]`, `[duckdb]`; `plb --version` shows package and schema versions.
+Re-check the name (D-010); publish `factmodel` with extras `[bigquery]`, `[postgres]`, `[duckdb]`; `fact --version` shows package and schema versions.
 
 ### WP4.2 Documentation site and tutorial (1-2 rounds)
 
@@ -500,16 +500,16 @@ One person outside the project sets up a model of a platform of their choice usi
 | Adapters | offline snapshots; live tests behind env flags | `tests/adapters/` |
 | Probes | SQL snapshot per kind and dialect; intake cases | `tests/probes/` |
 | CLI | end-to-end in a temp directory | `tests/cli/` |
-| Examples | `plb check` on every example in CI | CI job |
+| Examples | `fact check` on every example in CI | CI job |
 | Equivalence | toy consumer right / wrong / partial | `tests/equivalence/` |
 
-Coverage target for `src/plumbline/core` and `gate`: 90 % lines. Adapters and CLI: 70 %.
+Coverage target for `src/factmodel/core` and `gate`: 90 % lines. Adapters and CLI: 70 %.
 
 ## 11. Working with agents on this repository
 
 - **Brief template** (`agent/templates/brief.md`): context, decisions already made, work items with deliverables, acceptance checks, stop conditions, out of scope, report shape.
 - **Report template**: outcome, files changed, checks run with results, confirmed / inferred / unknown, divergences from the brief, questions for the next round, exact `git add` list.
-- **Round rhythm:** brief → agent works → report → owner reviews → owner commits → next brief. One work package per round; two only when they are small and share files.
+- **Round rhythm:** brief → agent works → report → agent commits → owner reviews and pushes → next brief. One work package per round; two only when they are small and share files.
 - **Dogfooding:** from M1 onward the repository's own `AGENTS.md` follows the template it ships. A rule that is awkward for us is awkward for users.
 
 ## 12. Risks
@@ -529,7 +529,7 @@ Coverage target for `src/plumbline/core` and `gate`: 90 % lines. Adapters and CL
 | Decision | Needed by |
 | --- | --- |
 | License: Apache 2.0 (D-001); MIT possible before the first public push | WP0.1 |
-| Package name: `plumbline-model`, import `plumbline` (D-003); trademark still open | WP0.1 |
+| Name: FactModel, package `factmodel`, command `fact` (D-010); GitHub and trademark check still open | WP0.1 |
 | Relationship identity: key only (D-002) | WP0.2 |
 | Fact format: YAML only, or YAML plus generated graph (JSON-LD) | WP0.3 |
 | Second domain dataset (Pagila or Chinook) | WP2.2 |

@@ -28,7 +28,7 @@ class VocabularyError(ValueError):
 
 def vocabulary_text() -> str:
     """Return the text of VOCABULARY.md, from the installed package or the source tree."""
-    packaged = resources.files("plumbline").joinpath("VOCABULARY.md")
+    packaged = resources.files("factmodel").joinpath("VOCABULARY.md")
     if packaged.is_file():
         return packaged.read_text(encoding="utf-8")
     return _REPO_COPY.read_text(encoding="utf-8")

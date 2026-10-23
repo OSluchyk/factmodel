@@ -6,9 +6,9 @@ Work happens in rounds (see [rounds/README.md](rounds/README.md)):
 
 1. The owner writes a brief in `rounds/<date>-brief-<topic>.md`.
 2. An agent or contributor does the work and writes `rounds/<date>-report-<topic>.md`.
-3. The owner reviews the report and commits.
+3. The agent commits once at the end of the round (D-008); the owner reviews the report and the log, and pushes.
 
-Agents never commit or push. Rules for agents are in [AGENTS.md](AGENTS.md).
+Agents never push. Rules for agents are in [AGENTS.md](AGENTS.md).
 
 ## Rules
 
@@ -36,4 +36,5 @@ CI (`.github/workflows/ci.yml`) runs the same steps on every push and pull reque
 
 - First line: imperative mood, at most 72 characters, with the work package when there is one. Example: `WP0.2: add core vocabulary and loader`.
 - Body: what changed and why, wrapped at 72 characters.
-- One round, one commit, unless the report says otherwise.
+- One round, one commit, unless the brief says otherwise.
+- No attribution trailers (no co-author or tool lines).

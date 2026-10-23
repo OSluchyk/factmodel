@@ -1,4 +1,4 @@
-# Plumbline - Vocabulary
+# FactModel - Vocabulary
 
 Author: Oleksandr Sluchyk · Version 0.1 (draft) · 2026-10-23
 Companion to `spec/SPEC.md`. Every term the schemas use is defined here once.
@@ -6,7 +6,7 @@ Companion to `spec/SPEC.md`. Every term the schemas use is defined here once.
 ## How to read this file
 
 - Each term has a one-sentence meaning, its allowed values when it is an enumeration, and one example.
-- Every enumeration is also given as a fenced block that opens with `yaml vocabulary:<name>`. The code loads these blocks (`src/plumbline/vocabulary.py`), and later schemas import them, so the list here is the only source. Change a value here, and the code follows.
+- Every enumeration is also given as a fenced block that opens with `yaml vocabulary:<name>`. The code loads these blocks (`src/factmodel/vocabulary.py`), and later schemas import them, so the list here is the only source. Change a value here, and the code follows.
 - All values are slugs (see Identifiers). Where the spec used two words for one thing, one is chosen and the other is listed under "Not used".
 - Examples use the public dataset `bigquery-public-data.thelook_ecommerce`.
 
@@ -23,7 +23,7 @@ Companion to `spec/SPEC.md`. Every term the schemas use is defined here once.
 | agent | An AI agent that gathers evidence, drafts model changes and probes, and reports. |
 | authored | Written by a person or an agent, and therefore needing evidence. |
 | derived | Computed by deterministic code from authored facts, and never authored (see Derived values). |
-| gate | The set of checks run by `plb check`; one command, one verdict. |
+| gate | The set of checks run by `fact check`; one command, one verdict. |
 | round | One unit of agent work: one brief in, one report out, the owner commits. |
 
 Not used: "neutral core" as a name for the physical layer (the core is the framework; the physical layer is model content), "readable copy" (use release), "model owner" outside the users table (use owner).
@@ -34,7 +34,7 @@ Every model file declares its kind in a top-level `kind:` key. One kind, one sch
 
 | Kind | Meaning | Lives in (model repository) |
 | --- | --- | --- |
-| `model-config` | The root file: framework version, profile, adapters, consumers. | `plumbline.yaml` |
+| `model-config` | The root file: framework version, profile, adapters, consumers. | `factmodel.yaml` |
 | `source` | One entry in the source registry. | `sources/` |
 | `entity` | One table, view or object on the platform, with its fields and outgoing relationships. | `physical/entities/` |
 | `service` | One process that reads or writes entities. | `physical/services/` |
@@ -182,7 +182,7 @@ Example: a production warehouse is `owner_read`; its metadata snapshot in `sourc
 
 ### Rank
 
-**Rank** is an integer; when two sources disagree, the lower rank wins. A model may set its own ranks in `plumbline.yaml`; these are the defaults.
+**Rank** is an integer; when two sources disagree, the lower rank wins. A model may set its own ranks in `factmodel.yaml`; these are the defaults.
 
 | Kind | Default rank | Reason |
 | --- | --- | --- |
@@ -366,7 +366,7 @@ Example: tenant `brand-a` in `prod` has `ingest` for `orders` (from the loader c
 
 ## 6. Derived values
 
-Derived values are computed by `plb project` and written to `generated/` with a "generated - do not edit" header. The schema rejects them in authored files.
+Derived values are computed by `fact project` and written to `generated/` with a "generated - do not edit" header. The schema rejects them in authored files.
 
 | Value | Meaning | Written to |
 | --- | --- | --- |
@@ -410,7 +410,7 @@ Registers keep the model's history of problems, questions, permanent behaviour a
 | hazard (`H-`) | Permanent behaviour of the platform a reader must know. | `active`, `retired` | Evidence that the behaviour no longer exists (`retired`). |
 | decision (`D-`) | Why the model is the way it is, including retractions. | `accepted`, `superseded` | A later decision that replaces it (`superseded`). |
 
-**Hazards are not issues.** A hazard is permanent semantics, not a defect. Hazards are never counted as open issues, in `plb status` or anywhere else.
+**Hazards are not issues.** A hazard is permanent semantics, not a defect. Hazards are never counted as open issues, in `fact status` or anywhere else.
 
 ```yaml vocabulary:register_kind
 - finding

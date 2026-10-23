@@ -1,5 +1,5 @@
 [project]
-name = "plumbline-model"
+name = "factmodel"
 version = "0.0.1"
 description = "Evidence-grounded semantic models of data platforms, built and checked by AI agents."
 readme = "README.md"
@@ -22,7 +22,7 @@ dependencies = [
 ]
 
 [project.scripts]
-plb = "plumbline.cli:app"
+fact = "factmodel.cli:app"
 
 [dependency-groups]
 dev = [
@@ -38,10 +38,10 @@ requires = ["hatchling>=1.26"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/plumbline"]
+packages = ["src/factmodel"]
 
 [tool.hatch.build.targets.wheel.force-include]
-"spec/VOCABULARY.md" = "plumbline/VOCABULARY.md"
+"spec/VOCABULARY.md" = "factmodel/VOCABULARY.md"
 
 [tool.ruff]
 line-length = 100
@@ -56,7 +56,7 @@ select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
 
 [tool.mypy]
 python_version = "3.12"
-files = ["src/plumbline"]
+files = ["src/factmodel"]
 strict = true
 
 [tool.pytest.ini_options]

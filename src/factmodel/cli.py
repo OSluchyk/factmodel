@@ -1,13 +1,13 @@
-"""The `plb` command line."""
+"""The `fact` command line."""
 
 from typing import Annotated
 
 import typer
 
-from plumbline import __version__
+from factmodel import __version__
 
 app = typer.Typer(
-    name="plb",
+    name="fact",
     help="Build, check and keep current an evidence-grounded model of a data platform.",
     no_args_is_help=True,
     add_completion=False,
@@ -16,7 +16,7 @@ app = typer.Typer(
 
 def _print_version(value: bool) -> None:
     if value:
-        typer.echo(f"plb {__version__}")
+        typer.echo(f"fact {__version__}")
         raise typer.Exit()
 
 

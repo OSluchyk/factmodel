@@ -1,6 +1,6 @@
 import pytest
 
-from plumbline import vocabulary
+from factmodel import vocabulary
 
 EXPECTED_BLOCKS = {
     "file_kind",

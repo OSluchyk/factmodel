@@ -1,6 +1,6 @@
-# Plumbline
+# FactModel
 
-Plumbline is a framework that lets AI agents build, check and keep current a semantic model of any data platform. Every fact in a model carries its evidence - a source, a pin and a status - and every derived value is computed by code, never typed by hand. One physical layer describes what exists; semantic layers on top serve one use case each and are proven by the consumer that uses them.
+FactModel is a framework that lets AI agents build, check and keep current a semantic model of any data platform. Every fact in a model carries its evidence - a source, a pin and a status - and every derived value is computed by code, never typed by hand. One physical layer describes what exists; semantic layers on top serve one use case each and are proven by the consumer that uses them.
 
 **Status: pre-alpha.** The repository holds the specification, the core vocabulary and an empty Python package. Nothing is usable yet.
 
@@ -16,7 +16,7 @@ Requires Python 3.12+ and [uv](https://docs.astral.sh/uv/).
 ```bash
 uv sync
 uv run pytest -q
-uv run plb --version
+uv run fact --version
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full set of checks.

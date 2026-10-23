@@ -1,22 +1,20 @@
-# Plumbline - Product Specification
+# FactModel - Product Specification
 
 Author: Oleksandr Sluchyk · Version 0.1 (draft) · 2026-10-23
 
 ## Summary
 
-Plumbline is a framework that lets AI agents build, check and keep current a semantic model of any data platform. It ships schemas, a specification, agent instructions and skills, and a small command-line toolset. Every fact in a model carries its evidence, and every derived value is computed, never typed by hand.
+FactModel is a framework that lets AI agents build, check and keep current a semantic model of any data platform. It ships schemas, a specification, agent instructions and skills, and a small command-line toolset. Every fact in a model carries its evidence, and every derived value is computed, never typed by hand.
 
 The model has two kinds of layers. One **physical layer** describes what exists: sources, tables, fields, keys, relationships, services. Any number of **semantic layers** sit on top, one per use case, each proven correct by the consumer that uses it.
 
-**Why the name.** A plumb line is the builder's oldest tool for checking that a wall is true. Plumbline does the same for a data model: it checks every claim against the platform, not against what someone remembers.
-
-**Alternatives:** *Cairn* (stacked stones that mark a trail - layers plus waypoints), *Keel* (the part that keeps the structure steady). A quick web search found no data-tooling product named Plumbline; trademark search is still open.
+**Why the name.** FactModel is a model made of facts about a data platform, each with its evidence: where it came from, which version was read, and how sure it is. Semantic layers stand on those facts instead of on what someone remembers.
 
 ## Problem and principles
 
 A schema tells an agent what columns exist. It does not tell it which join is safe, which row is current, which column is stale, or which rule the platform applies silently. Agents that guess these things write SQL that runs and returns wrong answers.
 
-Semantic-layer tools (dbt MetricFlow, Cube, warehouse semantic views) and the Open Semantic Interchange standard define metrics and dimensions. They assume the facts underneath are already known. Plumbline produces and maintains those facts, with proof, and can export them to those tools.
+Semantic-layer tools (dbt MetricFlow, Cube, warehouse semantic views) and the Open Semantic Interchange standard define metrics and dimensions. They assume the facts underneath are already known. FactModel produces and maintains those facts, with proof, and can export them to those tools.
 
 **Principles**
 
@@ -41,7 +39,7 @@ Semantic-layer tools (dbt MetricFlow, Cube, warehouse semantic views) and the Op
 
 **Non-goals**
 
-- A query engine, BI tool or metrics server. Plumbline exports to those.
+- A query engine, BI tool or metrics server. FactModel exports to those.
 - A data catalog UI. It may generate static pages, nothing more.
 - Running probes against production by itself. People or CI with credentials run them.
 - Storing data samples, credentials or personal data.
@@ -104,10 +102,10 @@ flowchart TD
 | Adapters | Read engine metadata (`INFORMATION_SCHEMA`, catalogs, DDL in git) and emit facts with pins | Python plugins, one per engine |
 | Projection library | Computes labels, subject scope, current-row reads, residue | Python package, no I/O |
 | Profiles | Domain anchor, vocabularies, rule tables | YAML |
-| Gate | Runs every check; one command, one verdict | `plb check` |
-| Probe generator | Writes data probes from the model (see Validation) | `plb probe` |
-| Release projection | Allowlist per file kind; fail-closed on unknown keys | `plb release` |
-| Exporters | OSI / Apache Ossie, dbt semantic models, Cube | `plb export` |
+| Gate | Runs every check; one command, one verdict | `fact check` |
+| Probe generator | Writes data probes from the model (see Validation) | `fact probe` |
+| Release projection | Allowlist per file kind; fail-closed on unknown keys | `fact release` |
+| Exporters | OSI / Apache Ossie, dbt semantic models, Cube | `fact export` |
 | Agent layer | `AGENTS.md`, skills, prompt templates | Markdown |
 
 First adapters: BigQuery, PostgreSQL. Next: Snowflake, Databricks.
@@ -126,7 +124,7 @@ Validation runs at three levels. Each level catches mistakes the one before cann
 - Registers are consistent: no closed escalation without an answer and evidence; hazards never counted as issues.
 - The release partition is complete: every file has exactly one disposition.
 
-**2. Generated data probes (run by a person or CI with credentials).** The model writes its own tests. For each fact that data can confirm, `plb probe` generates a SQL check in the engine's dialect:
+**2. Generated data probes (run by a person or CI with credentials).** The model writes its own tests. For each fact that data can confirm, `fact probe` generates a SQL check in the engine's dialect:
 
 | Model fact | Generated probe |
 | --- | --- |
@@ -144,13 +142,13 @@ Probes return counts only. Results are saved with a pin (engine, dataset, date) 
 
 ## Keeping it current
 
-The model goes stale in three ways: the platform changes, a source changes, or a person answers a question. Plumbline handles each with a trigger, not a calendar alone.
+The model goes stale in three ways: the platform changes, a source changes, or a person answers a question. FactModel handles each with a trigger, not a calendar alone.
 
-1. **Sync.** `plb sync` re-reads every source at its current version and diffs the facts against their pins. New tables, dropped columns, changed types and moved commits become a drift report.
+1. **Sync.** `fact sync` re-reads every source at its current version and diffs the facts against their pins. New tables, dropped columns, changed types and moved commits become a drift report.
 2. **Classify the drift.** Each item is one of: new fact (agent drafts it), changed fact (evidence must be renewed), lost fact (finding), no effect.
 3. **Re-probe.** Only the probes whose facts changed are regenerated and queued for the owner.
 4. **Triggers.** A maintenance file lists events and what each one requires: a new tenant, a source pin move, an escalation answered, a ticket shipped, a probe result outside its range. The gate fails when a fired trigger has no follow-up.
-5. **Maintenance pack.** A scheduled full re-measure of environment presence and the probes marked as volatile (`plb probe generate --set volatile`).
+5. **Maintenance pack.** A scheduled full re-measure of environment presence and the probes marked as volatile (`fact probe generate --set volatile`).
 
 Every change lands in git with a changelog entry that says *why*, not only *what*.
 
@@ -185,21 +183,21 @@ The agent layer is plain Markdown that any capable coding agent can follow. It w
 
 ## Toolset
 
-One command, `plb`, with a few verbs. It is a small Python package run through `uv`; no server, no database.
+One command, `fact`, with a few verbs. It is a small Python package run through `uv`; no server, no database.
 
 | Command | Does |
 | --- | --- |
-| `plb init --profile <name>` | Create a model repository with the layout, schemas and agent files |
-| `plb source add` | Register a source: kind, access mode, rank, pin format |
-| `plb snapshot --source <id>` | Export a source's metadata to a file, so agents and tests work without credentials |
-| `plb sync [--source <id>]` | Run adapters, write new facts, produce a drift report |
-| `plb probe generate` | Write probe scripts for the facts that need data proof |
-| `plb probe intake <file>` | Turn probe output into evidence and findings |
-| `plb check` | Run the gate; exit 0 only when every stage passes |
-| `plb project` | Recompute derived values (labels, scope, generated tables) |
-| `plb release --out <dir>` | Build the readable release copy |
-| `plb export --to osi\|dbt\|cube` | Export a semantic layer to another tool |
-| `plb status` | Open findings, fired triggers, stale evidence, next actions |
+| `fact init --profile <name>` | Create a model repository with the layout, schemas and agent files |
+| `fact source add` | Register a source: kind, access mode, rank, pin format |
+| `fact snapshot --source <id>` | Export a source's metadata to a file, so agents and tests work without credentials |
+| `fact sync [--source <id>]` | Run adapters, write new facts, produce a drift report |
+| `fact probe generate` | Write probe scripts for the facts that need data proof |
+| `fact probe intake <file>` | Turn probe output into evidence and findings |
+| `fact check` | Run the gate; exit 0 only when every stage passes |
+| `fact project` | Recompute derived values (labels, scope, generated tables) |
+| `fact release --out <dir>` | Build the readable release copy |
+| `fact export --to osi\|dbt\|cube` | Export a semantic layer to another tool |
+| `fact status` | Open findings, fired triggers, stale evidence, next actions |
 
 Probe scripts are plain shell with SQL inside, so the owner can read them before running.
 
@@ -208,17 +206,17 @@ Probe scripts are plain shell with SQL inside, so the owner can read them before
 Two repositories: the framework, and one model repository per platform that uses it.
 
 ```text
-plumbline/                  framework
+factmodel/                  framework
   spec/                     this specification, versioned
   schemas/                  JSON Schema per file kind
-  src/plumbline/            Python package: core, projection, gate, probe, release, export, adapters
+  src/factmodel/            Python package: core, projection, gate, probe, release, export, adapters
   profiles/                 retail/, healthcare-payer/, ... (examples)
   agent/                    AGENTS.md template, skills/, prompt templates
   examples/thelook/         a full model of a public dataset
   decisions/, rounds/       decision records; briefs and reports
 
 <platform>-model/           one per platform
-  plumbline.yaml            framework version, profile, adapters, consumers
+  factmodel.yaml            framework version, profile, adapters, consumers
   sources/                  source registry; snapshots/ holds exported metadata
   physical/                 entities/, services/, tenants.yaml
   semantic/<layer>/         layer files and corpus/ (synthetic or redacted requests)
@@ -232,7 +230,7 @@ plumbline/                  framework
   CHANGELOG.md, AGENTS.md, .claude/skills/
 ```
 
-The framework version is pinned in `plumbline.yaml`. A model repository upgrades on purpose, with a migration note.
+The framework version is pinned in `factmodel.yaml`. A model repository upgrades on purpose, with a migration note.
 
 ## Security and privacy
 
@@ -259,15 +257,15 @@ The first public dataset is `bigquery-public-data.thelook_ecommerce` (check avai
 
 ## Later, not in 1.0
 
-- `plb serve`: an MCP server over a release, so consumer agents query the model instead of reading files.
+- `fact serve`: an MCP server over a release, so consumer agents query the model instead of reading files.
 - Writer-attribution probes from warehouse job history: who wrote or deleted rows, when, and by which statement.
 - Cross-model links between platforms.
 - Snowflake and Databricks adapters.
 
 ## Open questions
 
-- [x] License: Apache 2.0 (D-001). Models built with Plumbline stay private to their owners.
-- [x] Package name: `plumbline` is taken on PyPI; distribution `plumbline-model`, import `plumbline` (D-003).
+- [x] License: Apache 2.0 (D-001). Models built with FactModel stay private to their owners.
+- [x] Package name: `factmodel` for the distribution and the import, command `fact` (D-010).
 - [ ] Name: trademark check before the first public push.
 - [ ] Second domain for M2: which open-source application schema (needs a clear anchor and both reference and unanchored data).
 - [ ] Equivalence threshold: one global number or per layer.

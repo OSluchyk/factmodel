@@ -10,6 +10,7 @@ from factmodel import status as status_module
 from factmodel.adapters import registry
 from factmodel.adapters.base import AdapterError, with_date
 from factmodel.adapters.export import ExportAdapter
+from factmodel.adapters.git import GitAdapter
 from factmodel.core import derived
 from factmodel.core.drafts import to_facts
 from factmodel.gate.runner import BLOCKING_STAGES, run_gate
@@ -234,3 +235,21 @@ def draft_command(
         typer.echo(str(error), err=True)
         raise typer.Exit(1) from error
     typer.echo(f"{len(drafts)} drafts, {len(changed)} written")
+
+
+@app.command("quote")
+def quote_command(
+    source_id: Annotated[str, typer.Option("--source", help="A git source ID.")],
+    path: Annotated[str, typer.Option("--path", help="File path in the repository.")],
+    line: Annotated[int, typer.Option("--line", min=1, help="First line to quote.")],
+    lines: Annotated[int, typer.Option("--lines", min=1, help="Number of lines.")] = 1,
+    root: RootOption = Path("."),
+) -> None:
+    """Print an evidence record that quotes a text file in a git source, pinned to its version."""
+    source = _source(root, source_id)
+    try:
+        record = GitAdapter().quote(source, root.resolve(), path, line, lines)
+    except AdapterError as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(1) from error
+    typer.echo(repo.dump_yaml({"id": "ev-<name>", **record}).rstrip())

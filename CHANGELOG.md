@@ -2,6 +2,14 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-23 - Round 9: WP1.5b git adapter
+
+**Why.** Much of what a platform means is written down before it exists: DDL, configuration, pipeline code. Reading it from git, at a pinned commit, gives intent evidence for any dialect sqlglot parses, without credentials.
+
+- Add the `git` adapter: `CREATE TABLE` and `CREATE VIEW` at a commit or in the working tree become snapshot objects pinned `<repo>@<sha>:<path>:<line>`; the snapshot lists the files read with their blob hashes.
+- Add `fact quote`: an evidence record quoting a text file, pinned to its version.
+- DDL in two dialects agrees on the neutral parts, and DDL and a catalog of the same tables give the same drafts.
+
 ## Unreleased - 2026-10-23 - Round 8: WP1.5 Adapter protocol, export and sql adapters
 
 **Why.** FactModel must work with any data source. Tying M1 to one cloud engine meant credentials the agent must not have and a core shaped by one platform. The core now reads only snapshots and model files; engines arrive as plugins.

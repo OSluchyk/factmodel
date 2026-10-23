@@ -28,6 +28,7 @@ fact = "factmodel.cli:app"
 [project.entry-points."factmodel.adapters"]
 export = "factmodel.adapters.export:ExportAdapter"
 sql = "factmodel.adapters.sql:SqlAdapter"
+git = "factmodel.adapters.git:GitAdapter"
 
 [project.optional-dependencies]
 sql = [

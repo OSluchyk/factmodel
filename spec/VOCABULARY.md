@@ -195,6 +195,9 @@ Example: a production warehouse is `owner_read`; its metadata snapshot in `sourc
 | `engine` | A free slug for the engine. Engines in `engine_dialect` below have a default SQL dialect. | `postgres` |
 | `dialect` | The sqlglot dialect, required when the engine is not in `engine_dialect`. | `tsql` |
 | `dsn_env` | The name of the environment variable that holds the connection string. The string itself is never written in a model file; the `privacy` gate stage fails on one. | `FACT_PG_DSN` |
+| `location` | Where the source is: a schema or `<project>.<dataset>` for a warehouse, the repository path (absolute or relative to the model root) for git. | `../schema-repo` |
+| `revision` | For git: the commit, branch or tag to read (default `HEAD`); `worktree` reads the files as they are. | `main` |
+| `include` | For git: path globs of the DDL files to parse. | `[ddl/*.sql]` |
 
 ```yaml vocabulary-map:engine_dialect
 bigquery: bigquery

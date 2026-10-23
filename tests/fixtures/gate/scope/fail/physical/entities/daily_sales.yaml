@@ -1,0 +1,33 @@
+kind: entity
+id: daily_sales
+physical_name: shop.daily_sales
+grain: one row per daily_sales row
+class: data
+status: draft
+keys:
+  primary:
+  - id
+evidence:
+- ev-confirmed
+fields:
+- name: id
+  type: INT64
+  nullable: false
+  meaning: The id.
+- name: orders_id
+  type: INT64
+  nullable: true
+  meaning: The orders_id.
+relationships:
+- key: from-orders
+  to: orders
+  join: daily_sales.orders_id = orders.id
+  meaning: Sales are summed from orders.
+  mechanism: derivation
+  cardinality: one_to_many
+  scope_admission:
+    basis: unique_target
+    evidence:
+    - ev-confirmed
+  evidence:
+  - ev-confirmed

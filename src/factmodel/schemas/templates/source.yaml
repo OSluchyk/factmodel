@@ -17,6 +17,9 @@ properties:
     description: For a warehouse, the engine slug used in pins.
     $ref: "#/$defs/slug"
   location: {$ref: "#/$defs/text"}
+  current_pin:
+    description: The version of the source as last read; evidence pinned elsewhere is stale.
+    $ref: "#/$defs/pin"
   access:
     description: How access is obtained. Never a secret.
     $ref: "#/$defs/text"

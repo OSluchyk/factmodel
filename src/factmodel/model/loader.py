@@ -8,7 +8,6 @@ gate can run the loader once and report per stage.
 
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from dataclasses import dataclass, field
-from importlib import resources
 from pathlib import Path
 from typing import Any, cast
 
@@ -18,13 +17,14 @@ from pydantic import ValidationError
 from factmodel import vocabulary
 from factmodel.io.yaml_strict import Document, YamlLoadError, load, loads
 from factmodel.model import types as t
+from factmodel.resources import framework_text
 from factmodel.schemas.build import schema_for
 
 CONFIG_FILE = "factmodel.yaml"
 # Folders whose YAML files are not model files: proposals, generated output, adapter input,
 # equivalence corpora.
 SKIPPED_DIRS = frozenset({"drafts", "generated", "snapshots", "corpus", "node_modules"})
-_REPO_PROFILES = Path(__file__).resolve().parents[3] / "profiles"
+REGISTER_KINDS = frozenset({"finding", "escalation", "hazard", "decision"})
 
 HINTS = {
     "yaml": "fix the YAML at this position",
@@ -135,11 +135,7 @@ class _Issues:
 
 def bundled_profile(profile_id: str) -> str | None:
     """Return the text of a profile shipped with the framework, if there is one."""
-    packaged = resources.files("factmodel").joinpath("profiles", profile_id, "profile.yaml")
-    if packaged.is_file():
-        return packaged.read_text(encoding="utf-8")
-    repo = _REPO_PROFILES / profile_id / "profile.yaml"
-    return repo.read_text(encoding="utf-8") if repo.is_file() else None
+    return framework_text("profiles", profile_id, "profile.yaml")
 
 
 def discover(root: Path) -> list[Path]:
@@ -269,13 +265,16 @@ class _Checker:
 
     def _index(self, kind: str, key: str) -> dict[str, tuple[str, Document]]:
         index: dict[str, tuple[str, Document]] = {}
+        # A reused register ID is a register problem, reported by the registers stage.
+        stage = "registers" if kind in REGISTER_KINDS else "references"
         for name, doc in self.by_kind.get(kind, []):
             value = doc.data.get(key)
             if not isinstance(value, str):
                 continue
             if value in index:
                 first = index[value][0]
-                self.add("duplicate_id", name, doc, [key], f"{kind} {value!r} also in {first}")
+                message = f"{kind} {value!r} also in {first}"
+                self.issues.add(stage, "duplicate_id", doc, name, [key], message)
             else:
                 index[value] = (name, doc)
         return index

@@ -255,7 +255,7 @@ Expected model (to be confirmed by evidence, not assumed):
 
 ### WP1.3 Gate runner (1 round)
 
-**Deliverables.** `src/factmodel/gate/runner.py`, `src/factmodel/gate/stages/*.py`, `gate.yaml` format, `tests/fixtures/gate/<stage>/fail/`.
+**Deliverables.** `src/factmodel/gate/runner.py`, `src/factmodel/gate/stages/*.py`, `src/factmodel/gate/gate.yaml` (the stage list the framework ships), `tests/fixtures/gate/<stage>/fail/`.
 
 **Stages in M1:**
 

@@ -43,6 +43,8 @@ packages = ["src/factmodel"]
 
 [tool.hatch.build.targets.wheel.force-include]
 "spec/VOCABULARY.md" = "factmodel/VOCABULARY.md"
+"profiles" = "factmodel/profiles"
+"agent" = "factmodel/agent"
 
 [tool.ruff]
 line-length = 100

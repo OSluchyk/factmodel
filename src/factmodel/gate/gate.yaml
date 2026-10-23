@@ -1,0 +1,14 @@
+# Gate stages, in the order they run. Each module has run(ctx) -> issues, or None to skip.
+# A stage is skipped only when an earlier stage already failed in a way that blocks it.
+# The triggers stage comes with WP1.6.
+stages:
+  - {name: yaml, module: factmodel.gate.stages.yaml, enabled: true}
+  - {name: schema, module: factmodel.gate.stages.schema, enabled: true}
+  - {name: references, module: factmodel.gate.stages.references, enabled: true}
+  - {name: evidence, module: factmodel.gate.stages.evidence, enabled: true}
+  - {name: derived-not-authored, module: factmodel.gate.stages.derived_not_authored, enabled: true}
+  - {name: projection, module: factmodel.gate.stages.projection, enabled: true}
+  - {name: scope, module: factmodel.gate.stages.scope, enabled: true}
+  - {name: registers, module: factmodel.gate.stages.registers, enabled: true}
+  - {name: generated-fresh, module: factmodel.gate.stages.generated_fresh, enabled: true}
+  - {name: privacy, module: factmodel.gate.stages.privacy, enabled: true}

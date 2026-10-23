@@ -187,6 +187,8 @@ A person pin names a role, never a person's name.
 
 Example: a production warehouse is `owner_read`; its metadata snapshot in `sources/snapshots/` is read as `export_file`.
 
+**Current pin.** A source may record `current_pin`, the version of the source as last read (`fact sync` will update it). Evidence from that source pinned to another version is stale: `fact status` lists it, and the gate does not fail on it.
+
 ```yaml vocabulary:access_mode
 - agent_read
 - owner_read

@@ -1,0 +1,23 @@
+# Retail profile: customers are the subjects. Rules are evaluated in order; the first match wins.
+kind: profile
+id: retail
+meaning: Retail and e-commerce platforms, where the subject is the customer.
+anchor_entity: users
+labels: [customer_scoped, configuration, administrative, lineage, representation, unresolved]
+rules:
+  - when: {evidence_status: unresolved}
+    label: unresolved
+    note: Nothing else is known about a link that is not resolved.
+  - when: {mechanism: derivation}
+    label: lineage
+  - when: {mechanism: representation}
+    label: representation
+  - when: {any_end_class: administrative}
+    label: administrative
+  - when: {any_end_class: configuration}
+    label: configuration
+  - when:
+      all_ends_match: [{class: data, subject_scoped: true}, {class: reference}]
+      any_end_subject_scoped: true
+    label: customer_scoped
+    note: Customer data, or customer data joined to shared reference data.

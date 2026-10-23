@@ -7,4 +7,5 @@ source_kind: git
 access_mode: owner_read
 rank: -1
 location: git@example.com:data/etl-config.git
+current_pin: etl-config@9b1d220:loaders/orders.yaml
 access: Ask the data platform team for read access.

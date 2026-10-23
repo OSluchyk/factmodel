@@ -165,6 +165,7 @@ class Source(Strict):
     rank: Annotated[int, Field(ge=0)] | None = None
     engine: Slug | None = None
     location: Text | None = None
+    current_pin: Pin | None = None
     access: Text | None = None
     meaning: Text | None = None
     extensions: Extensions | None = None

@@ -1,0 +1,34 @@
+kind: evidence
+records:
+- id: ev-confirmed
+  source: shop-db
+  pin: postgres:shop.public@2026-11-01
+  quote: catalog read
+  status: confirmed
+  read_on: '2026-11-01'
+- id: ev-inferred
+  source: shop-db
+  pin: postgres:shop.public@2026-11-01
+  quote: column names match
+  status: inferred
+  read_on: '2026-11-01'
+- id: ev-unresolved
+  source: shop-db
+  pin: postgres:shop.public@2026-11-01
+  quote: not checked yet
+  status: unresolved
+  read_on: '2026-11-01'
+- id: ev-retracted
+  source: shop-db
+  pin: postgres:shop.public@2026-10-01
+  quote: joined on email
+  status: retracted
+  read_on: '2026-10-01'
+  named_error: The join used email, which is not unique.
+  superseded_by: ev-confirmed
+- id: ev-contact
+  source: shop-db
+  pin: postgres:shop.public@2026-11-01
+  quote: Ask jane.doe@example.com for the export
+  status: inferred
+  read_on: '2026-11-01'

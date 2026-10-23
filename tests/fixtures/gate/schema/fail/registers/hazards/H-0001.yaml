@@ -1,0 +1,9 @@
+kind: hazard
+id: H-0001
+title: Cancelled orders stay in the table
+status: open
+description: A cancelled order keeps its row.
+applies_to:
+- orders
+evidence:
+- ev-confirmed

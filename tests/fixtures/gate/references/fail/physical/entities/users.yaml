@@ -1,0 +1,17 @@
+kind: entity
+id: users
+physical_name: shop.users
+grain: one row per users row
+class: data
+status: draft
+keys:
+  primary:
+  - id
+  current_row_rule: null
+evidence:
+- ev-confirmed
+fields:
+- name: id
+  type: INT64
+  nullable: false
+  meaning: Identifier.

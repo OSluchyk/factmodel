@@ -2,6 +2,15 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-23 - Round 6: WP1.3 Gate runner, WP1.4 CLI skeleton
+
+**Why.** Rules that only live in documents drift. The gate turns every rule into a check with one verdict, and each check is proven by a model that fails it alone. The CLI makes a new model repository in one command, so the first thing an adopter sees is a passing gate.
+
+- Add `fact check`: ten stages from `gate.yaml` (yaml, schema, references, evidence, derived-not-authored, projection, scope, registers, generated-fresh, privacy), one verdict line each, `--stage` to run one.
+- Add `fact init`, `fact source add`, `fact status`.
+- Ship the `retail` profile and minimal agent templates (`AGENTS.md`, skills placeholder, changelog and CI templates).
+- Sources may record `current_pin`, so `fact status` can list stale evidence.
+
 ## Unreleased - 2026-10-23 - Round 5: WP1.2 Projection and scope library
 
 **Why.** Derived values are never authored, so something must compute them. Pure functions, checked against hand-written vectors and property tests, make the computation trustworthy before the gate depends on it.

@@ -51,6 +51,10 @@
     "location": {
       "$ref": "#/$defs/text"
     },
+    "current_pin": {
+      "description": "The version of the source as last read; evidence pinned elsewhere is stale.",
+      "$ref": "#/$defs/pin"
+    },
     "access": {
       "description": "How access is obtained. Never a secret.",
       "$ref": "#/$defs/text"
@@ -85,6 +89,11 @@
     "extensions": {
       "description": "A free map for adopters; never read by the core.",
       "type": "object"
+    },
+    "pin": {
+      "description": "The exact version read; the format depends on the source kind.",
+      "type": "string",
+      "pattern": "^\\S.*@\\S+$"
     },
     "slug": {
       "type": "string",

@@ -1,0 +1,4 @@
+kind: model-config
+id: shop
+framework_version: 0.0.1
+profile: retail

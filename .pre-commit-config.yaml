@@ -6,6 +6,8 @@ repos:
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
       - id: check-yaml
+        # Gate fixtures for the yaml stage are broken on purpose.
+        exclude: ^tests/fixtures/gate/yaml/
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.17.2
     hooks:

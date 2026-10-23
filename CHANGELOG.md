@@ -2,6 +2,14 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-23 - Round 4: WP1.1 Model loader
+
+**Why.** The gate, the projection and every command read the same model. One loader that finds every problem at once, and says where and how to fix it, keeps those parts simple and gives agents an error they can act on.
+
+- Add `factmodel.model.loader`: discovers model files, validates them against their schemas, checks references between files (entities, evidence, sources, fields, joins, registers, profile labels) and returns a typed `Model` with every issue.
+- Each issue has file, line, column, gate stage and a fix hint.
+- Add typed pydantic models for every kind; a parity test checks they agree with the JSON Schemas on every schema fixture.
+
 ## Unreleased - 2026-10-23 - Round 3: WP0.4 Algorithms, WP0.5 spec-v0.1
 
 **Why.** The core's three algorithms must be exact before code exists, so that the code is checked against the spec and not the other way round. The test vectors are that check, written by hand from the text.

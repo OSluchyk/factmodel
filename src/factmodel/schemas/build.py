@@ -122,12 +122,29 @@ def _render(name: str, template: dict[str, Any], common: dict[str, Any]) -> dict
 
 
 @cache
+def common_definitions() -> dict[str, Any]:
+    """Return the shared definitions of ``_common.yaml`` with placeholders rendered."""
+    common_template = _templates().get(COMMON, {})
+    defs: dict[str, Any] = _expand(
+        common_template.get("$defs", {}), vocabulary.load(), f"{COMMON}.yaml"
+    )
+    return defs
+
+
+def pattern(name: str) -> str:
+    """Return the regex of a shared string definition, for code that checks the same rule."""
+    value = common_definitions()[name]["pattern"]
+    assert isinstance(value, str)
+    return value
+
+
+@cache
 def render_all() -> dict[str, dict[str, Any]]:
     """Return every schema, keyed by name (the file kind, or ``snapshot``)."""
     vocab = vocabulary.load()
     raw = _templates()
-    common_template = raw.pop(COMMON, {})
-    common = _expand(common_template.get("$defs", {}), vocab, f"{COMMON}.yaml")
+    raw.pop(COMMON, None)
+    common = common_definitions()
     schemas = {
         name: _render(name, _expand(t, vocab, f"{name}.yaml"), common) for name, t in raw.items()
     }

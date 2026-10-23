@@ -1,15 +1,18 @@
 """The `fact` command line."""
 
+import json
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Any
 
 import typer
 
 from factmodel import __version__, repo, vocabulary
+from factmodel import probes as probes_module
 from factmodel import status as status_module
 from factmodel import sync as sync_module
 from factmodel.adapters import registry
-from factmodel.adapters.base import AdapterError, with_date
+from factmodel.adapters import sql as sql_adapter
+from factmodel.adapters.base import AdapterError, dialect_for, today, warehouse_pin, with_date
 from factmodel.adapters.export import ExportAdapter
 from factmodel.adapters.git import GitAdapter
 from factmodel.core import derived
@@ -17,7 +20,9 @@ from factmodel.core.drafts import to_facts
 from factmodel.gate.runner import BLOCKING_STAGES, run_gate
 from factmodel.io.yaml_strict import load
 from factmodel.model.loader import inspect_model
-from factmodel.model.types import Snapshot, Source
+from factmodel.model.types import Probe, Snapshot, Source
+from factmodel.probes import intake as probe_intake_module
+from factmodel.probes import script as probe_script
 
 app = typer.Typer(
     name="fact",
@@ -275,3 +280,119 @@ def sync_command(
     typer.echo(f"{summary}; {len(result.written)} files written")
     for path in result.written:
         typer.echo(f"  {path.relative_to(root.resolve()).as_posix()}")
+
+
+probe_app = typer.Typer(help="Generate, render, run and take in data probes.", no_args_is_help=True)
+app.add_typer(probe_app, name="probe")
+
+
+def _dialects(model: Any) -> dict[str, str]:
+    out = {}
+    for source in model.sources.values():
+        try:
+            out[source.id] = dialect_for(source.engine, source.dialect)
+        except AdapterError:
+            continue
+    return out
+
+
+@probe_app.command("generate")
+def probe_generate(
+    source_id: Annotated[str | None, typer.Option("--source", help="Only this source.")] = None,
+    root: RootOption = Path("."),
+) -> None:
+    """Write probes/<probe-id>.yaml for every fact data can confirm."""
+    model = inspect_model(root).model
+    entities = {
+        k: e for k, e in model.entities.items() if source_id is None or e.source == source_id
+    }
+    docs, skipped = probes_module.generate(entities, model.sources, _dialects(model))
+    changed = 0
+    for doc in docs:
+        changed += repo.write_text_if_changed(
+            root / "probes" / f"{doc['id']}.yaml",
+            probes_module.GENERATED_HEADER + "\n" + repo.dump_yaml(doc),
+        )
+    typer.echo(f"{len(docs)} probes, {changed} written, {len(skipped)} facts skipped")
+    for item in skipped:
+        typer.echo(f"  skipped {item.fact}: {item.reason}")
+
+
+def _probes_by_source(model: Any, source_id: str | None) -> dict[str, list[Probe]]:
+    grouped: dict[str, list[Probe]] = {}
+    for probe in model.probes.values():
+        entity = model.entities.get(probe.entity or "")
+        owner = entity.source if entity is not None else None
+        if owner and (source_id is None or owner == source_id):
+            grouped.setdefault(owner, []).append(probe)
+    return grouped
+
+
+@probe_app.command("render")
+def probe_render(
+    dialect: Annotated[str, typer.Option("--dialect", help="sqlglot dialect, e.g. postgres.")],
+    source_id: Annotated[str | None, typer.Option("--source", help="Only this source.")] = None,
+    root: RootOption = Path("."),
+) -> None:
+    """Write probes/scripts/<source>.<dialect>.sh, plain shell the owner reads, then runs."""
+    model = inspect_model(root).model
+    for owner, probes in sorted(_probes_by_source(model, source_id).items()):
+        text, skipped = probe_script.script(owner, dialect, probes)
+        path = root / "probes" / "scripts" / f"{owner}.{dialect}.sh"
+        repo.write_text_if_changed(path, text)
+        path.chmod(0o755)
+        note = f", {len(skipped)} not rendered" if skipped else ""
+        typer.echo(f"{path.relative_to(root).as_posix()}: {len(probes)} probes{note}")
+
+
+@probe_app.command("run")
+def probe_run(
+    source_id: Annotated[str, typer.Option("--source", help="A source with a dsn_env.")],
+    environment: Annotated[str, typer.Option("--environment")] = "prod",
+    data_quality: Annotated[str, typer.Option("--data-quality")] = "unknown",
+    date: Annotated[str | None, typer.Option("--date", help="YYYY-MM-DD.")] = None,
+    root: RootOption = Path("."),
+) -> None:
+    """Run a source's probes through the sql adapter (counts only); write probes/results/."""
+    source = _source(root, source_id)
+    model = inspect_model(root).model
+    try:
+        url = sql_adapter.dsn(source)
+        dialect = dialect_for(source.engine, source.dialect)
+    except AdapterError as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(1) from error
+    probes = sorted(_probes_by_source(model, source_id).get(source_id, []), key=lambda p: p.id)
+    queries = [(p.id, sql) for p in probes if (sql := probes_module.render(p, dialect))]
+    day = date or today()
+    header = {
+        "source": source.id,
+        "pin": warehouse_pin(source.engine or dialect, sql_adapter.target_of(source, url), day),
+        "environment": environment,
+        "data_quality": data_quality,
+        "ran_on": day,
+    }
+    rows = [header, *sql_adapter.measure(url, queries)]
+    path = root / "probes" / "results" / f"{source.id}@{day}.jsonl"
+    repo.write_text_if_changed(path, "".join(json.dumps(r, sort_keys=False) + "\n" for r in rows))
+    failed = sum(1 for r in rows[1:] if "error" in r)
+    typer.echo(f"{len(queries)} probes run, {failed} failed: {path.relative_to(root).as_posix()}")
+
+
+@probe_app.command("intake")
+def probe_intake(
+    results: Annotated[Path, typer.Argument(help="A results file (JSON lines).")],
+    root: RootOption = Path("."),
+) -> None:
+    """Turn probe results into evidence; cite in-range results, open findings for the rest."""
+    try:
+        out = probe_intake_module.intake(root.resolve(), results)
+    except probe_intake_module.IntakeError as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(1) from error
+    typer.echo(
+        f"{len(out.confirmed)} in range, {len(out.out_of_range)} out of range, "
+        f"{len(out.failed)} failed, {len(out.rejected)} rejected; {len(out.written)} files written"
+    )
+    for reason in out.rejected:
+        typer.echo(f"  rejected {reason}")

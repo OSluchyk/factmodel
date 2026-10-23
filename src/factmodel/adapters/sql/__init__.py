@@ -154,3 +154,48 @@ class SqlAdapter:
                 "objects": sorted(objects, key=lambda o: o["name"]),
             }
         )
+
+
+def target_of(source: Source, url: str) -> str:
+    """The target name a pin uses for this source, without any part of the connection string."""
+    from sqlalchemy.engine import make_url
+
+    return _target(source, make_url(url).database)
+
+
+def measure(url: str, queries: list[tuple[str, str]]) -> list[dict[str, Any]]:
+    """Run count queries; one result per query: ``{probe, measurement}`` or ``{probe, error}``.
+
+    Values are kept only when they are numbers; a failed query records ``QUERY FAILED`` and the
+    run goes on, as the rendered scripts do.
+    """
+    from sqlalchemy import create_engine, text
+
+    engine = create_engine(url)
+    results: list[dict[str, Any]] = []
+    try:
+        for probe_id, sql in queries:
+            try:
+                with engine.connect() as conn:
+                    row = conn.execute(text(sql)).mappings().first()
+            except Exception:  # the error text may quote data; never keep it
+                results.append({"probe": probe_id, "error": "QUERY FAILED"})
+                continue
+            values = {str(k): v for k, v in dict(row or {}).items()}
+            measurement = {
+                k: (int(v) if float(v).is_integer() else float(v))
+                for k, v in values.items()
+                if isinstance(v, int | float) or _numeric(v)
+            }
+            results.append({"probe": probe_id, "measurement": measurement})
+    finally:
+        engine.dispose()
+    return results
+
+
+def _numeric(value: Any) -> bool:
+    try:
+        float(value)
+    except (TypeError, ValueError):
+        return False
+    return not isinstance(value, bool | str)

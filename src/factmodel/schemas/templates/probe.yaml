@@ -2,17 +2,20 @@ title: Probe
 description: One generated data check. Returns counts and rates only.
 type: object
 additionalProperties: false
-required: [kind, id, probe_kind, fact, expected, dialect, sql]
+required: [kind, id, probe_kind, fact, dialect, sql]
 properties:
   kind: {$const: "file_kind:probe"}
   id: {$ref: "#/$defs/slug"}
   probe_kind: {$vocab: probe_kind}
+  entity:
+    description: The entity whose table the probe reads.
+    $ref: "#/$defs/slug"
   fact:
     description: The fact the probe tests, as an entity, relationship or field reference.
     type: string
     pattern: "^[a-z0-9][a-z0-9_-]{0,63}(\\.[^\\s]+)?$"
   expected:
-    description: Expected range per metric.
+    description: Expected range per metric. Absent for a probe that only measures.
     type: object
     minProperties: 1
     propertyNames: {$ref: "#/$defs/slug"}
@@ -26,4 +29,8 @@ properties:
   dialect: {$ref: "#/$defs/slug"}
   sql: {$ref: "#/$defs/text"}
   volatile: {type: boolean}
+  unsupported_on_dialect:
+    description: Dialects that lack a construct this probe needs; it is never rendered for them.
+    $ref: "#/$defs/slugs"
+  note: {$ref: "#/$defs/text"}
   extensions: {$ref: "#/$defs/extensions"}

@@ -168,6 +168,11 @@ def set_current_pin(root: Path, source_id: str, pin: str) -> None:
     path.write_text(buf.getvalue(), encoding="utf-8")
 
 
+def write_text_if_changed(path: Path, text: str) -> bool:
+    """Write ``text`` unless the file already holds it; return whether it changed."""
+    return _write_if_changed(path, text)
+
+
 def _write_if_changed(path: Path, text: str) -> bool:
     if path.is_file() and path.read_text(encoding="utf-8") == text:
         return False

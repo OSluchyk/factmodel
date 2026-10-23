@@ -589,7 +589,9 @@ Probe kinds:
 | `current_row_ties` | A current-row rule. | Keys with more than one row after the rule. |
 | `value_set` | A field against a vocabulary. | Share and count of rows whose value is outside the vocabulary. |
 
-The first five are built in M1 (WP1.7); `current_row_ties` and `value_set` are in the block now so the schema need not change later.
+All seven are built in M1 (WP1.7). Each probe is a sqlglot AST rendered per dialect with quoted identifiers; a probe that needs a construct a dialect lacks (a nested path outside BigQuery) lists it under `unsupported_on_dialect` and is never rendered for it.
+
+**Running probes.** `fact probe generate` writes `probes/<probe-id>.yaml`. The owner runs them from `fact probe render --dialect <d>` (a plain shell script per source), or `fact probe run --source <id>` runs them through the `sql` adapter where the source names a `dsn_env`; a local engine seeded with synthetic rows is a test fixture, not a platform (D-011). Both write JSON lines: a header `{source, pin, environment, data_quality, ran_on}`, then `{probe, measurement}` or `{probe, error}` per probe. `fact probe intake <file>` keeps numbers only, writes `evidence/probes/<probe-id>@<date>.yaml`, cites an in-range result from the fact it tests (which makes the fact `confirmed`) and opens a finding for an out-of-range one. Rates (`match_rate`, `null_rate`) are computed at intake, never in SQL.
 
 ```yaml vocabulary:probe_kind
 - key_duplicates

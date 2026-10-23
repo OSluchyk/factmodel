@@ -2,6 +2,14 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-23 - Round 11: WP1.7 Probes
+
+**Why.** An inferred join or key is a claim until data confirms it. Probes generated from the model, rendered for whichever engine holds the data and returning counts only, turn those claims into evidence without moving a single row into the repository.
+
+- Add `fact probe generate|render|run|intake`: seven probe kinds as sqlglot ASTs with quoted identifiers, rendered per dialect; owner-run shell scripts or a run through the `sql` adapter; intake writes evidence, confirms facts in range and opens findings out of range.
+- A probe a dialect cannot express is marked `unsupported_on_dialect` and never rendered wrong.
+- Counts agree on SQLite and PostgreSQL; the soft-delete, nullable-fk and nested-field hard cases now get their probes.
+
 ## Unreleased - 2026-10-23 - Round 10: WP1.6 Sync, drift and triggers
 
 **Why.** A model goes stale when the platform changes. Sync turns every change into a classified fact (new, changed, lost, no effect) with a concrete follow-up, and triggers make sure a change that needs work cannot be forgotten.

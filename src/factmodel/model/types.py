@@ -555,11 +555,14 @@ class Probe(Strict):
     kind: Literal["probe"]
     id: Slug
     probe_kind: ProbeKind
+    entity: Slug | None = None
     fact: Annotated[str, StringConstraints(pattern=r"^[a-z0-9][a-z0-9_-]{0,63}(\.[^\s]+)?$")]
-    expected: Annotated[dict[Slug, Range], Field(min_length=1)]
+    expected: Annotated[dict[Slug, Range], Field(min_length=1)] | None = None
     dialect: Slug
     sql: Text
     volatile: bool | None = None
+    unsupported_on_dialect: Slugs | None = None
+    note: Text | None = None
     extensions: Extensions | None = None
 
 

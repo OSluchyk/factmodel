@@ -1,0 +1,49 @@
+# Fields carry no evidence of their own; they inherit the entity's metadata evidence.
+kind: entity
+id: order_items
+physical_name: thelook_ecommerce.order_items
+grain: one row per item in an order
+class: data
+status: draft
+keys:
+  primary: [id]
+evidence: [ev-order-items-ddl]
+fields:
+  - name: id
+    type: INT64
+    nullable: false
+    meaning: Order item identifier.
+  - name: order_id
+    type: INT64
+    nullable: false
+    meaning: The order the item belongs to.
+  - name: product_id
+    type: INT64
+    nullable: false
+    meaning: The product sold.
+relationships:
+  - key: part-of
+    to: orders
+    join: order_items.order_id = orders.order_id
+    meaning: The order this item belongs to.
+    mechanism: inferred_join
+    cardinality: many_to_one
+    scope_admission:
+      basis: unique_target
+      evidence: [ev-orders-ddl]
+    evidence: [ev-order-items-ddl]
+  - key: sells
+    to: products
+    join: order_items.product_id = products.id
+    meaning: The product sold.
+    mechanism: inferred_join
+    cardinality: many_to_one
+    status: unresolved
+    missing: No probe has measured the match rate yet.
+records:
+  - id: ev-order-items-ddl
+    source: bq-public
+    pin: bigquery:bigquery-public-data.thelook_ecommerce@2026-11-01
+    quote: INFORMATION_SCHEMA.COLUMNS for order_items
+    status: inferred
+    read_on: 2026-11-01

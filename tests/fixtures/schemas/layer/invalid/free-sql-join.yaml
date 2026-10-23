@@ -1,0 +1,24 @@
+# reason: free sql join
+# expect: $.joins[0]
+kind: layer
+id: customer-filters
+purpose: Select customers by what they ordered.
+consumer: filter-sql
+status: draft
+joins:
+- orders JOIN users ON true
+- order_items.part-of
+filters:
+- entity: orders
+  rule: status != 'Cancelled'
+  reason: Cancelled orders are not purchases.
+concepts:
+- id: product-category
+  meaning: The category of a product sold.
+  field: products.category
+measures:
+- id: order-count
+  meaning: Number of orders.
+  aggregation: count_distinct
+  field: orders.order_id
+  time_field: orders.created_at

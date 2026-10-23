@@ -1,0 +1,58 @@
+# reason: quote and measurement
+# expect: $.records[1]
+kind: entity
+id: orders
+physical_name: thelook_ecommerce.orders
+source: bq-public
+grain: one row per order
+class: data
+status: draft
+keys:
+  primary:
+  - order_id
+  current_row_rule: null
+anchor_reference:
+  field: user_id
+  evidence:
+  - ev-orders-users-match
+evidence:
+- ev-orders-ddl
+fields:
+- name: order_id
+  type: INT64
+  nullable: false
+  meaning: Order identifier.
+  evidence:
+  - ev-orders-ddl
+- name: user_id
+  type: INT64
+  nullable: true
+  meaning: The customer who placed the order.
+relationships:
+- key: placed-by
+  to: users
+  join: orders.user_id = users.id
+  meaning: The customer who placed the order.
+  mechanism: inferred_join
+  cardinality: many_to_one
+  evidence:
+  - ev-orders-users-match
+records:
+- id: ev-orders-ddl
+  source: bq-public
+  pin: bigquery:bigquery-public-data.thelook_ecommerce@2026-11-01
+  quote: INFORMATION_SCHEMA.COLUMNS for orders
+  status: confirmed
+  read_on: '2026-11-01'
+- id: ev-orders-users-match
+  source: bq-public
+  pin: bigquery:bigquery-public-data.thelook_ecommerce@2026-11-02
+  measurement:
+    match_rate: 1.0
+    orphans_left: 0
+  status: confirmed
+  read_on: '2026-11-02'
+  probe: join-orders-users
+  environment: prod
+  data_quality: representative
+  quote: match rate 1.0

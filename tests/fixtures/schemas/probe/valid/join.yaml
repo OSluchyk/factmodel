@@ -1,0 +1,9 @@
+kind: probe
+id: join-orders-users
+probe_kind: join_match
+fact: orders.placed-by
+expected:
+  match_rate: {min: 0.99}
+  orphans_left: {max: 0}
+dialect: bigquery
+sql: SELECT COUNT(*) AS orphans_left FROM orders o LEFT JOIN users u ON o.user_id = u.id WHERE u.id IS NULL

@@ -103,10 +103,17 @@ Not used: positional relationship identity such as `orders#1`.
 | `measurement` | A map of counts or rates, never values or identifiers. | `{match_rate: 1.0, orphans_left: 0}` |
 | `status` | See below. | `confirmed` |
 | `read_on` | The date the source was read, `YYYY-MM-DD`. | `2026-11-01` |
-| `environment` | For probe results only: the environment the probe ran in. | `prod` |
-| `representative` | For probe results only: whether the data is representative of production use. | `true` |
+| `probe` | For evidence from a probe only: the ID of the probe that produced it. | `join-orders-users` |
+| `environment` | Required with `probe`: the environment the probe ran in. | `prod` |
+| `data_quality` | Required with `probe`: what kind of data the probe ran on (see below). | `representative` |
+| `named_error` | Required when `retracted`: one sentence on what was wrong. | `The join used users.email, which is not unique.` |
+| `superseded_by` | Required when `retracted`: the ID of the record that replaces it. | `ev-orders-users-match-2` |
 
 An evidence record has a `quote` or a `measurement`, not both.
+
+**Where evidence lives.** Evidence records have one schema. A record sits inline in the file of the fact it proves (under the top-level key `records:`), or standalone in `evidence/` (file kind `evidence`, also under `records:`) when several files share it. Evidence IDs are unique across the whole model; the loader checks it. A fact points to records by ID with an `evidence:` list. The key `evidence` always holds IDs; the key `records` always holds evidence records.
+
+**Probe evidence.** A `probe-result` file is the raw output of one probe run. Intake turns it into an evidence record that carries `probe: <probe-id>`, the warehouse source and pin, `environment` and `data_quality`.
 
 ### Evidence status
 
@@ -126,15 +133,21 @@ An evidence record has a `quote` or a `measurement`, not both.
 
 **Retraction.** A `retracted` record requires `named_error` (one sentence that says what was wrong) and `superseded_by` (the ID of the record that replaces it). Example: `named_error: The join used users.email, which is not unique.`, `superseded_by: ev-orders-users-match-2`.
 
-**Representative.** Whether probe data stands for production use. Synthetic test data is `false`. A share measured on non-representative data does not carry over to production; a zero-violation result does.
+**Data quality.** What kind of data a probe ran on (D-006). A share measured on data that is not `representative` does not carry over to production; a zero-violation result does.
 
-```yaml vocabulary:representative
-- "true"
-- "false"
+| Value | Meaning |
+| --- | --- |
+| `representative` | Real data that stands for production use. |
+| `synthetic` | Generated or seeded test data. |
+| `unknown` | Not known; treated like `synthetic` for shares. |
+
+```yaml vocabulary:data_quality
+- representative
+- synthetic
 - unknown
 ```
 
-**Inheritance.** A field without its own `evidence` inherits the entity's metadata evidence (the DDL or catalog snapshot).
+**Inheritance.** A field without its own `evidence` inherits the entity's `evidence` (the metadata evidence: the DDL or catalog snapshot).
 
 Not used: "date read" (use `read_on`), "probe output" for the stored result (use probe result).
 
@@ -217,7 +230,9 @@ What kind of rows an entity holds.
 - reference
 ```
 
-### Entity status
+### Review status
+
+Entities and layers both carry `status` from this block (D-009).
 
 | Status | Meaning |
 | --- | --- |
@@ -227,7 +242,7 @@ What kind of rows an entity holds.
 
 Example: `status: draft` on an entity an agent just scaffolded.
 
-```yaml vocabulary:entity_status
+```yaml vocabulary:review_status
 - draft
 - reviewed
 - deprecated
@@ -235,11 +250,14 @@ Example: `status: draft` on an entity an agent just scaffolded.
 
 ### Subject scope
 
-The **anchor entity** is the entity whose rows are the subjects of the domain (customers, patients, accounts); the profile names it. **Subject scope** says how an entity's rows reach the anchor. The entity declares its scope and basis; the gate checks the declaration against the computed closure (see Derived values).
+The **anchor entity** is the entity whose rows are the subjects of the domain (customers, patients, accounts); the profile names it. **Subject scope** says how an entity's rows reach the anchor. It is derived, never authored (D-007): `fact project` computes it from two authored facts and writes it to `generated/scope.tsv`.
+
+- **`anchor_reference`** on an entity: `{field: <field name>, evidence: [...]}` when that field holds the anchor's key. It makes the entity `direct`. Example: `anchor_reference: {field: user_id, evidence: [ev-orders-users-match]}` on `orders`.
+- **`scope_admission`** on a relationship: `{basis: <scope basis>, evidence: [...]}`. It lets scope pass from the target to the source entity. Example: `scope_admission: {basis: unique_target, evidence: [ev-orders-pk]}` on `order_items.part-of`.
 
 | Scope | Meaning | Example |
 | --- | --- | --- |
-| `direct` | Each row references the anchor key itself. | `orders` (has `user_id`) |
+| `direct` | Each row references the anchor key itself (the entity has `anchor_reference`). The anchor entity is `direct` by definition. | `orders` (has `user_id`) |
 | `transitive` | Each row reaches exactly one anchor through admitted relationships. | `order_items` through `orders` |
 | `none` | Rows are not about a subject. | `products` |
 
@@ -251,11 +269,10 @@ The **anchor entity** is the entity whose rows are the subjects of the domain (c
 
 ### Scope basis
 
-Why a scope is admitted. Every `direct` or `transitive` scope records one basis.
+Why a relationship may carry scope, given in its `scope_admission`. Every `transitive` scope is reached through admitted relationships, and the computed basis is the basis of the first step. A `direct` scope has no basis; `anchor_reference` expresses it.
 
 | Basis | Meaning |
 | --- | --- |
-| `declared_reference` | The entity declares a reference to the anchor key (used for `direct`). |
 | `unique_target` | Each step of the path joins to a unique key, so a row reaches at most one anchor. |
 | `current_row_rule` | The target key repeats, and the target's current-row rule picks one row. |
 | `measured_fanout` | A probe measured that no source row reaches more than one anchor. |
@@ -263,7 +280,6 @@ Why a scope is admitted. Every `direct` or `transitive` scope records one basis.
 Example: `order_items` is `transitive` with basis `unique_target` (`order_id` is unique in `orders`).
 
 ```yaml vocabulary:scope_basis
-- declared_reference
 - unique_target
 - current_row_rule
 - measured_fanout
@@ -276,12 +292,15 @@ A **relationship** is an authored link from one entity (the one whose file holds
 | Attribute | Meaning | Example |
 | --- | --- | --- |
 | `key` | Slug, unique within the source entity (D-002). | `placed-by` |
-| `to` | One target entity, or a **target set**: several targets, chosen per row by a discriminator or per tenant. | `users` |
-| `discriminator` | Optional; the field that selects the target in a target set. | `owner_type` |
-| `join` | The join condition, in `<entity>.<field> = <entity>.<field>` form. | `orders.user_id = users.id` |
+| `to` | One target entity, or a **target set**: a list of at least two targets, chosen per row by a discriminator or per tenant. | `users` |
+| `discriminator` | Only with a target set: the field that selects the target per row. Without it, the target is chosen per tenant. | `owner_type` |
+| `join` | The join condition, in `<entity>.<field> = <entity>.<field>` form. For a target set, a map from each target to its join. | `orders.user_id = users.id` |
 | `meaning` | One sentence on what the link means. | `The customer who placed the order.` |
 | `mechanism` | How the link exists (see below). | `inferred_join` |
 | `cardinality` | Rows on each side (see below). | `many_to_one` |
+| `scope_admission` | Optional: lets scope pass through this relationship (see Subject scope). | `{basis: unique_target, evidence: [ev-orders-pk]}` |
+| `status` | Optional, only `unresolved`: the link is not known yet. Then `evidence` may be absent. | `unresolved` |
+| `evidence` | Evidence IDs; required unless `status: unresolved`. | `[ev-orders-users-match]` |
 
 **Mechanism.**
 
@@ -324,6 +343,15 @@ Not used: "declared key" for a mechanism (use `declared_fk`; "declared key" mean
 | `repeated` | `true` for an array field. | `false` |
 | `meaning` | One sentence on what the value means. | `The customer who placed the order.` |
 | `hazards` | Register IDs of hazards that apply to this field. | `[H-0002]` |
+| `evidence` | Optional evidence IDs; without them the field inherits the entity's `evidence`. | `[ev-orders-ddl]` |
+
+A nested field has both `name` (its last segment) and `path` (the full dotted path). Example: `name: request_id`, `path: processing.request_id`.
+
+### Entity keys
+
+An entity file has `id`, `physical_name`, `grain`, `class`, `status`, `keys` (`primary`, optional `unique`, `current_row_rule`), optional `anchor_reference`, `fields`, `relationships`, `evidence` (the IDs of the metadata evidence - the DDL or catalog read - for the entity itself and for every field without its own evidence) and optional inline `records`.
+
+Keys that hold a vocabulary kind are named after the block, because `kind` is the file kind: a source has `source_kind`, a service `service_kind`, a probe `probe_kind`.
 
 ### Grain and current-row rule
 
@@ -366,19 +394,23 @@ Example: tenant `brand-a` in `prod` has `ingest` for `orders` (from the loader c
 
 ## 6. Derived values
 
-Derived values are computed by `fact project` and written to `generated/` with a "generated - do not edit" header. The schema rejects them in authored files.
+Derived values are computed by `fact project` and written to `generated/`. Every generated file starts with the header line `# generated by fact project - do not edit`. The schema rejects derived keys in authored files.
 
 | Value | Meaning | Written to |
 | --- | --- | --- |
 | `label` | The domain label the profile assigns to a relationship. | `generated/labels.tsv` |
-| `subject_scoped` | Whether an entity reaches the anchor, with its via-path and basis. | `generated/scope.tsv` |
+| `subject_scope` | `direct`, `transitive` or `none` per entity, with its via-path (D-007). | `generated/scope.tsv` |
+| `subject_scoped` | Whether an entity's subject scope is not `none`. | `generated/scope.tsv` |
+| `scope_basis` | The basis of the first admitted step of a transitive scope. | `generated/scope.tsv` |
 | `reachable` | Whether an entity a consumer declares is reachable from the anchor. | `generated/scope.tsv` |
 | `residue` | The relationships no profile rule matched. The gate fails when it is not empty. | `generated/residue.tsv` |
 | `withheld` | The label given to a target-set relationship whose targets do not agree. | `generated/labels.tsv` |
 
 ```yaml vocabulary:derived_value
 - label
+- subject_scope
 - subject_scoped
+- scope_basis
 - reachable
 - residue
 - withheld
@@ -469,7 +501,7 @@ A **consumer** is the agent, SQL generator or knowledge base that reads a layer 
 
 A **probe** is a data check generated from the model, written as a readable script for a person or CI with credentials to run. Probes return counts and rates only, never values, identifiers or rows. A result is saved with a pin and becomes evidence; a result outside its expected range opens a finding.
 
-Probe kinds planned for M1:
+Probe kinds:
 
 | Kind | Tests | Returns |
 | --- | --- | --- |
@@ -478,6 +510,10 @@ Probe kinds planned for M1:
 | `fan_out` | Cardinality and transitive scope. | Rows per source row; source rows that reach more than one anchor. |
 | `null_rate` | A field. | Share of null values. |
 | `row_count` | Presence per tenant and environment. | Number of rows. |
+| `current_row_ties` | A current-row rule. | Keys with more than one row after the rule. |
+| `value_set` | A field against a vocabulary. | Share and count of rows whose value is outside the vocabulary. |
+
+The first five are built in M1 (WP1.7); `current_row_ties` and `value_set` are in the block now so the schema need not change later.
 
 ```yaml vocabulary:probe_kind
 - key_duplicates
@@ -485,11 +521,11 @@ Probe kinds planned for M1:
 - fan_out
 - null_rate
 - row_count
+- current_row_ties
+- value_set
 ```
 
-Planned after M1 (not yet in the block): ties after a current-row rule, and value set against a vocabulary.
-
-Example probe result: `{probe: join-orders-users, match_rate: 1.0, orphans_left: 0}`.
+Example probe result: `probe: join-orders-users`, `measurement: {match_rate: 1.0, orphans_left: 0}`.
 
 ## 11. Keeping the model current
 
@@ -520,3 +556,26 @@ Example probe result: `{probe: join-orders-users, match_rate: 1.0, orphans_left:
 ```
 
 Example: `source_pin_moved` on the loader repository requires the evidence pinned to the old commit to be re-read.
+
+## 12. Metadata snapshots
+
+A **snapshot** is an engine-neutral export of a source's metadata (`fact snapshot --source <id>`), stored in `sources/snapshots/`, so adapters, agents and tests work without credentials. It holds objects, fields with paths and types, declared constraints, partitioning and options - never rows. It is not a model file kind: the gate does not read it, adapters do. Its schema is `schemas/snapshot.schema.json`.
+
+**Object type.**
+
+```yaml vocabulary:object_type
+- table
+- view
+- materialized_view
+- external
+```
+
+**Constraint type.** Constraints the engine or DDL declares. `enforced: false` marks a constraint the engine does not check.
+
+```yaml vocabulary:constraint_type
+- primary_key
+- unique
+- foreign_key
+```
+
+Example: a BigQuery primary key on `orders.order_id` is `{constraint_type: primary_key, fields: [order_id], enforced: false}`.

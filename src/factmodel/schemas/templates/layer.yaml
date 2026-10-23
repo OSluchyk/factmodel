@@ -1,0 +1,57 @@
+title: Semantic layer
+description: A named set of concepts, measures and filters for one use case. Details come in M3.
+type: object
+additionalProperties: false
+required: [kind, id, purpose, consumer, status]
+properties:
+  kind: {$const: "file_kind:layer"}
+  id: {$ref: "#/$defs/slug"}
+  purpose: {$ref: "#/$defs/text"}
+  consumer: {$ref: "#/$defs/slug"}
+  status: {$vocab: review_status}
+  joins:
+    description: Physical relationship references only, never free SQL.
+    type: array
+    items: {$ref: "#/$defs/relationship_ref"}
+    uniqueItems: true
+  filters:
+    description: Current-row rules and default filters the consumer must apply.
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [entity, rule]
+      properties:
+        entity: {$ref: "#/$defs/slug"}
+        rule: {$ref: "#/$defs/text"}
+        reason: {$ref: "#/$defs/text"}
+  concepts:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, meaning, field]
+      properties:
+        id: {$ref: "#/$defs/slug"}
+        meaning: {$ref: "#/$defs/text"}
+        field: {$ref: "#/$defs/field_ref"}
+        values:
+          type: array
+          items: {$ref: "#/$defs/text"}
+          uniqueItems: true
+  measures:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, meaning, aggregation, field]
+      properties:
+        id: {$ref: "#/$defs/slug"}
+        meaning: {$ref: "#/$defs/text"}
+        aggregation: {$ref: "#/$defs/slug"}
+        field: {$ref: "#/$defs/field_ref"}
+        time_field: {$ref: "#/$defs/field_ref"}
+  hazards: {$ref: "#/$defs/hazard_refs"}
+  evidence: {$ref: "#/$defs/evidence_refs"}
+  records: {$ref: "#/$defs/evidence_records"}
+  extensions: {$ref: "#/$defs/extensions"}

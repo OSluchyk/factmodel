@@ -1,0 +1,54 @@
+# One STRUCT field (processing) and one ARRAY field (tags).
+kind: entity
+id: web_events
+physical_name: analytics.web_events
+grain: one row per event
+class: data
+status: reviewed
+keys:
+  primary: [event_id]
+  unique: [[session_id, sequence_number]]
+evidence: [ev-web-events-ddl]
+fields:
+  - name: event_id
+    type: STRING
+    nullable: false
+    meaning: Event identifier.
+  - name: session_id
+    type: STRING
+    nullable: false
+    meaning: Browser session.
+  - name: sequence_number
+    type: INT64
+    nullable: false
+    meaning: Position of the event in its session.
+  - name: processing
+    type: STRUCT
+    nullable: true
+    meaning: Processing metadata added by the collector.
+  - name: request_id
+    path: processing.request_id
+    type: STRING
+    nullable: true
+    meaning: The collector request that carried the event.
+  - name: tags
+    type: STRING
+    nullable: false
+    repeated: true
+    meaning: Free tags set by the page.
+    hazards: [H-0001]
+relationships:
+  - key: in-request
+    to: collector_requests
+    join: web_events.processing.request_id = collector_requests.id
+    meaning: The request the event arrived in.
+    mechanism: representation
+    cardinality: many_to_one
+    evidence: [ev-web-events-ddl]
+records:
+  - id: ev-web-events-ddl
+    source: app-repo
+    pin: app@3f2a9c1:schemas/web_events.sql:1
+    quote: CREATE TABLE web_events (event_id STRING NOT NULL, ...)
+    status: confirmed
+    read_on: 2026-11-01

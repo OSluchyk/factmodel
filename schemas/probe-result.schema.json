@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:factmodel:schema:probe-result:0.1.0",
+  "title": "Probe result",
+  "description": "The raw output of one probe run. Intake turns it into an evidence record.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "probe",
+    "source",
+    "pin",
+    "environment",
+    "data_quality",
+    "ran_on"
+  ],
+  "properties": {
+    "kind": {
+      "const": "probe-result"
+    },
+    "probe": {
+      "$ref": "#/$defs/slug"
+    },
+    "source": {
+      "$ref": "#/$defs/slug"
+    },
+    "pin": {
+      "$ref": "#/$defs/pin"
+    },
+    "environment": {
+      "$ref": "#/$defs/slug"
+    },
+    "data_quality": {
+      "enum": [
+        "representative",
+        "synthetic",
+        "unknown"
+      ]
+    },
+    "ran_on": {
+      "$ref": "#/$defs/date"
+    },
+    "measurement": {
+      "$ref": "#/$defs/measurement"
+    },
+    "error": {
+      "description": "Set when the query failed; then there is no measurement.",
+      "$ref": "#/$defs/text"
+    },
+    "extensions": {
+      "$ref": "#/$defs/extensions"
+    }
+  },
+  "oneOf": [
+    {
+      "required": [
+        "measurement"
+      ]
+    },
+    {
+      "required": [
+        "error"
+      ]
+    }
+  ],
+  "$defs": {
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "extensions": {
+      "description": "A free map for adopters; never read by the core.",
+      "type": "object"
+    },
+    "measurement": {
+      "description": "Counts and rates only, never values or identifiers.",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "$ref": "#/$defs/slug"
+      },
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "pin": {
+      "description": "The exact version read; the format depends on the source kind.",
+      "type": "string",
+      "pattern": "^\\S.*@\\S+$"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

@@ -1,0 +1,13 @@
+# reason: retired without evidence
+# expect: $
+kind: hazard
+id: H-0001
+title: Returned orders still count as orders
+status: retired
+description: Order status Returned is set after refund, so a returned order 
+  still counts on its day.
+applies_to:
+- orders
+evidence:
+- ev-returned-answer
+retired_on: '2026-12-01'

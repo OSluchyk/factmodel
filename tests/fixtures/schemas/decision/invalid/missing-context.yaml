@@ -1,0 +1,12 @@
+# reason: missing context
+# expect: $
+kind: decision
+id: D-0001
+title: Retract the email join
+status: accepted
+date: '2026-11-03'
+decision: Retract ev-pk-retracted and join on users.id.
+retracts:
+- ev-pk-retracted
+about:
+- orders.placed-by

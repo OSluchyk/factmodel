@@ -1,0 +1,5 @@
+# reason: missing profile
+# expect: $
+kind: model-config
+id: thelook
+framework_version: 0.0.1

@@ -1,0 +1,20 @@
+# reason: missing evidence
+# expect: $
+kind: service
+id: nightly-orders-load
+service_kind: pipeline
+meaning: Loads orders and order items from the shop database.
+reads:
+- shop_orders
+writes:
+- orders
+- order_items
+schedule: daily at 02:00 UTC
+status: draft
+records:
+- id: ev-loader-config
+  source: etl-config
+  pin: etl-config@3f2a9c1:loaders/orders.yaml:12
+  quote: "schedule: '0 2 * * *'"
+  status: confirmed
+  read_on: '2026-11-01'

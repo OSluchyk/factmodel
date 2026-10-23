@@ -1,0 +1,46 @@
+# reason: target set with single join
+# expect: $.relationships[0].join
+kind: entity
+id: comments
+physical_name: app.comments
+grain: one row per comment
+class: data
+status: draft
+keys:
+  primary:
+  - id
+evidence:
+- ev-comments-ddl
+fields:
+- name: id
+  type: INT64
+  nullable: false
+  meaning: Comment identifier.
+- name: owner_type
+  type: STRING
+  nullable: false
+  meaning: The kind of object the comment is on.
+- name: owner_id
+  type: INT64
+  nullable: false
+  meaning: The object the comment is on.
+relationships:
+- key: on
+  to:
+  - orders
+  - products
+  - users
+  discriminator: owner_type
+  join: comments.owner_id = orders.order_id
+  meaning: The object the comment is about.
+  mechanism: inferred_join
+  cardinality: many_to_one
+  evidence:
+  - ev-comments-ddl
+records:
+- id: ev-comments-ddl
+  source: app-repo
+  pin: app@3f2a9c1:schemas/comments.sql:4
+  quote: owner_type IN ('order', 'product', 'user')
+  status: inferred
+  read_on: '2026-11-01'

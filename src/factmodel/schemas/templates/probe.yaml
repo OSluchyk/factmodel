@@ -1,0 +1,29 @@
+title: Probe
+description: One generated data check. Returns counts and rates only.
+type: object
+additionalProperties: false
+required: [kind, id, probe_kind, fact, expected, dialect, sql]
+properties:
+  kind: {$const: "file_kind:probe"}
+  id: {$ref: "#/$defs/slug"}
+  probe_kind: {$vocab: probe_kind}
+  fact:
+    description: The fact the probe tests, as an entity, relationship or field reference.
+    type: string
+    pattern: "^[a-z0-9][a-z0-9_-]{0,63}(\\.[^\\s]+)?$"
+  expected:
+    description: Expected range per metric.
+    type: object
+    minProperties: 1
+    propertyNames: {$ref: "#/$defs/slug"}
+    additionalProperties:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        min: {type: number}
+        max: {type: number}
+  dialect: {$ref: "#/$defs/slug"}
+  sql: {$ref: "#/$defs/text"}
+  volatile: {type: boolean}
+  extensions: {$ref: "#/$defs/extensions"}

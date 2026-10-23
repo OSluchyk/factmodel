@@ -64,15 +64,15 @@ The model is plain files (YAML and Markdown) in git. Six concepts carry it. Ever
 
 | Element | Key attributes |
 | --- | --- |
-| Entity | id, physical name, grain, keys, class (data, configuration, administrative, reference), subject scope (direct, transitive, none) with its basis, current-row rule, status (draft, reviewed, deprecated) |
+| Entity | id, physical name, grain, keys, class (data, configuration, administrative, reference), anchor reference (the field that holds the anchor key, if any), current-row rule, status (draft, reviewed, deprecated). Subject scope (direct, transitive, none) is computed, not authored (D-007) |
 | Field | name, path for nested fields, type, nullable, repeated, meaning, known hazards |
-| Relationship | key, from, to (one target, or a target set with a discriminator or per-tenant choice), join, mechanism (declared foreign key, inferred join, derivation, representation), cardinality, meaning |
+| Relationship | key, from, to (one target, or a target set with a discriminator or per-tenant choice), join, mechanism (declared foreign key, inferred join, derivation, representation), cardinality, meaning, scope admission (the basis that lets subject scope pass through it) |
 | Service | kind (pipeline, scheduled job, application, manual), what it reads and writes, when |
 | Tenant / environment | two separate facts: `ingest` (what the configuration accepts) and `presence` (what the data shows), measured per environment |
 
 **Semantic layer.** A named set of concepts, measures and filters for one use case, built only on physical facts. Each layer declares its consumer and the equivalence test that proves it. A consumer must apply every entity's current-row rule and default filters; the layer lists them so nothing is applied from memory.
 
-**Evidence.** Attached to every authored fact: source id, pin, quote or measurement, status, date read (`read_on`). A probe result is evidence too; it also records the environment and whether that data is representative. Shares measured on test data do not carry over to production; a zero-violation result does. Fields inherit their entity's metadata evidence unless they override it.
+**Evidence.** Attached to every authored fact: source id, pin, quote or measurement, status, date read (`read_on`). A probe result is evidence too; it also records the probe, the environment and the quality of that data (representative, synthetic, unknown). Shares measured on test data do not carry over to production; a zero-violation result does. Fields inherit their entity's metadata evidence unless they override it.
 
 **Registers.** Findings (problems to fix), escalations (questions for people, closed only by an answer with evidence), hazards (permanent behaviour a reader must know), decisions (why the model is the way it is, including retractions).
 

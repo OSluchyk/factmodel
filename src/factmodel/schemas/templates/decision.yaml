@@ -1,0 +1,28 @@
+title: Decision
+description: A register entry for why the model is the way it is, including retractions.
+type: object
+additionalProperties: false
+required: [kind, id, title, status, date, context, decision]
+properties:
+  kind: {$const: "file_kind:decision"}
+  id: {$ref: "#/$defs/decision_id"}
+  title: {$ref: "#/$defs/text"}
+  status: {$vocab: decision_status}
+  date: {$ref: "#/$defs/date"}
+  context: {$ref: "#/$defs/text"}
+  decision: {$ref: "#/$defs/text"}
+  consequences: {$ref: "#/$defs/text"}
+  superseded_by: {$ref: "#/$defs/decision_id"}
+  retracts:
+    description: Evidence IDs this decision retracts.
+    $ref: "#/$defs/evidence_refs"
+  about: {$ref: "#/$defs/model_refs"}
+  evidence: {$ref: "#/$defs/evidence_refs"}
+  records: {$ref: "#/$defs/evidence_records"}
+  extensions: {$ref: "#/$defs/extensions"}
+allOf:
+  - if:
+      required: [status]
+      properties: {status: {$const: "decision_status:superseded"}}
+    then:
+      required: [superseded_by]

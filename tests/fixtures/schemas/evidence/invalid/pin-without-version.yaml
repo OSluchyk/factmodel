@@ -1,0 +1,18 @@
+# reason: pin without version
+# expect: $.records[0].pin
+kind: evidence
+records:
+- id: ev-orders-ddl
+  source: bq-public
+  pin: bigquery:thelook
+  quote: INFORMATION_SCHEMA.COLUMNS for orders
+  status: confirmed
+  read_on: '2026-11-01'
+- id: ev-pk-retracted
+  source: bq-public
+  pin: bigquery:bigquery-public-data.thelook_ecommerce@2026-10-01
+  quote: users.email is unique
+  status: retracted
+  read_on: '2026-10-01'
+  named_error: The join used users.email, which is not unique.
+  superseded_by: ev-orders-ddl

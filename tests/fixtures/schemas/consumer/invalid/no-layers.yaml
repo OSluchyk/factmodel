@@ -1,0 +1,10 @@
+# reason: no layers
+# expect: $.layers
+kind: consumer
+id: filter-sql
+meaning: Turns a customer filter request into SQL.
+layers: []
+corpus:
+  location: semantic/customer-filters/corpus/
+  synthetic: true
+threshold: 0.95

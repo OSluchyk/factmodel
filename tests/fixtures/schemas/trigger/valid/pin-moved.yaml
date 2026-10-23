@@ -1,0 +1,9 @@
+kind: trigger
+id: loader-pin-moved
+event: source_pin_moved
+meaning: The loader configuration repository has a new commit.
+follow_up: Re-read every evidence record pinned to the old commit.
+fired:
+  - "on": 2026-11-10
+    detail: etl-config moved from 3f2a9c1 to 9b1d220.
+    follow_up_ref: F-0003

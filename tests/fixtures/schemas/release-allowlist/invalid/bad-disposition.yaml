@@ -1,0 +1,20 @@
+# reason: bad disposition
+# expect: $.files[0].disposition
+kind: release-allowlist
+files:
+- pattern: physical/entities/*.yaml
+  disposition: publish
+- pattern: registers/hazards/*.yaml
+  disposition: export
+- pattern: drafts/**
+  disposition: refuse
+  reason: Drafts are not reviewed.
+keys:
+  entity:
+  - id
+  - physical_name
+  - grain
+  - class
+  - keys
+  - fields
+  - relationships

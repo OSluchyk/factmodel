@@ -1,0 +1,9 @@
+title: Evidence
+description: Standalone evidence records, shared by several files.
+type: object
+additionalProperties: false
+required: [kind, records]
+properties:
+  kind: {$const: "file_kind:evidence"}
+  records: {$ref: "#/$defs/evidence_records"}
+  extensions: {$ref: "#/$defs/extensions"}

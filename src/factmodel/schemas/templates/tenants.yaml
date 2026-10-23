@@ -1,0 +1,42 @@
+title: Tenants
+description: Tenants and environments. Ingest and presence are separate facts and never merged.
+type: object
+additionalProperties: false
+required: [kind, environments, tenants]
+properties:
+  kind: {$const: "file_kind:tenants"}
+  environments:
+    type: array
+    items: {$ref: "#/$defs/slug"}
+    minItems: 1
+    uniqueItems: true
+  tenants:
+    type: array
+    minItems: 1
+    items: {$ref: "#/$defs/tenant"}
+  records: {$ref: "#/$defs/evidence_records"}
+  extensions: {$ref: "#/$defs/extensions"}
+$defs:
+  tenant:
+    type: object
+    additionalProperties: false
+    required: [id]
+    properties:
+      id: {$ref: "#/$defs/slug"}
+      meaning: {$ref: "#/$defs/text"}
+      ingest:
+        description: Per environment, what the configuration accepts.
+        $ref: "#/$defs/per_environment"
+      presence:
+        description: Per environment, what the data shows.
+        $ref: "#/$defs/per_environment"
+  per_environment:
+    type: object
+    propertyNames: {$ref: "#/$defs/slug"}
+    additionalProperties:
+      type: object
+      additionalProperties: false
+      required: [entities, evidence]
+      properties:
+        entities: {$ref: "#/$defs/slugs"}
+        evidence: {$ref: "#/$defs/evidence_refs"}

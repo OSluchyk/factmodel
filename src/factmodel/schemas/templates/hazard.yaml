@@ -1,0 +1,23 @@
+title: Hazard
+description: Permanent behaviour of the platform a reader must know. Never counted as an issue.
+type: object
+additionalProperties: false
+required: [kind, id, title, status, description, applies_to, evidence]
+properties:
+  kind: {$const: "file_kind:hazard"}
+  id: {$ref: "#/$defs/hazard_id"}
+  title: {$ref: "#/$defs/text"}
+  status: {$vocab: hazard_status}
+  description: {$ref: "#/$defs/text"}
+  applies_to: {$ref: "#/$defs/model_refs"}
+  evidence: {$ref: "#/$defs/evidence_refs"}
+  retired_on: {$ref: "#/$defs/date"}
+  retirement_evidence: {$ref: "#/$defs/evidence_refs"}
+  records: {$ref: "#/$defs/evidence_records"}
+  extensions: {$ref: "#/$defs/extensions"}
+allOf:
+  - if:
+      required: [status]
+      properties: {status: {$const: "hazard_status:retired"}}
+    then:
+      required: [retired_on, retirement_evidence]

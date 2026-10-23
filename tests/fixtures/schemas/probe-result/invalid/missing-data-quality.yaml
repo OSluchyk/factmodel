@@ -1,0 +1,11 @@
+# reason: missing data quality
+# expect: $
+kind: probe-result
+probe: join-orders-users
+source: bq-public
+pin: bigquery:bigquery-public-data.thelook_ecommerce@2026-11-02
+environment: prod
+ran_on: '2026-11-02'
+measurement:
+  match_rate: 1.0
+  orphans_left: 0

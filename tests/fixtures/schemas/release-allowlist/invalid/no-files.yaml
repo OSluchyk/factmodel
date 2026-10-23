@@ -1,0 +1,13 @@
+# reason: no files
+# expect: $.files
+kind: release-allowlist
+files: []
+keys:
+  entity:
+  - id
+  - physical_name
+  - grain
+  - class
+  - keys
+  - fields
+  - relationships

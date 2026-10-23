@@ -5,11 +5,11 @@ from factmodel import vocabulary
 EXPECTED_BLOCKS = {
     "file_kind",
     "evidence_status",
-    "representative",
+    "data_quality",
     "source_kind",
     "access_mode",
     "entity_class",
-    "entity_status",
+    "review_status",
     "subject_scope",
     "scope_basis",
     "mechanism",
@@ -46,7 +46,7 @@ def test_every_block_is_found() -> None:
 def test_load_returns_tuples() -> None:
     loaded = vocabulary.load()
     assert loaded["evidence_status"] == ("confirmed", "inferred", "unresolved", "retracted")
-    assert loaded["representative"] == ("true", "false", "unknown")
+    assert loaded["data_quality"] == ("representative", "synthetic", "unknown")
 
 
 def test_duplicate_block_name_fails() -> None:

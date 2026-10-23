@@ -1,0 +1,5 @@
+kind: escalation
+id: E-0002
+question: Which job deletes rows from events?
+status: open
+asked_on: 2026-11-05

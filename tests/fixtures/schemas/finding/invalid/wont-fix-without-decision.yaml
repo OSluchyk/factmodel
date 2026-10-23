@@ -1,0 +1,11 @@
+# reason: wont fix without decision
+# expect: $
+kind: finding
+id: F-0001
+title: Orders without a matching user
+status: wont_fix
+opened_on: '2026-11-02'
+about:
+- orders.placed-by
+description: A probe found 12 orders whose user_id has no row in users.
+closed_on: '2026-11-05'

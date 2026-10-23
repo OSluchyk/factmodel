@@ -1,0 +1,10 @@
+kind: finding
+id: F-0002
+title: Wrong join key for orders and users
+status: resolved
+opened_on: 2026-11-01
+closed_on: 2026-11-03
+about: [orders.placed-by]
+description: The join used users.email.
+resolution: The join now uses users.id; match rate is 1.0.
+evidence: [ev-orders-users-match]

@@ -1,0 +1,22 @@
+# reason: keys for unknown kind
+# expect: $.keys
+kind: release-allowlist
+files:
+- pattern: physical/entities/*.yaml
+  disposition: project
+- pattern: registers/hazards/*.yaml
+  disposition: export
+- pattern: drafts/**
+  disposition: refuse
+  reason: Drafts are not reviewed.
+keys:
+  entity:
+  - id
+  - physical_name
+  - grain
+  - class
+  - keys
+  - fields
+  - relationships
+  table:
+  - id

@@ -1,0 +1,26 @@
+title: Trigger
+description: An event and the follow-up it requires.
+type: object
+additionalProperties: false
+required: [kind, id, event, follow_up]
+properties:
+  kind: {$const: "file_kind:trigger"}
+  id: {$ref: "#/$defs/slug"}
+  event: {$vocab: trigger_event}
+  meaning: {$ref: "#/$defs/text"}
+  follow_up:
+    description: What must be done when the event fires.
+    $ref: "#/$defs/text"
+  fired:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: ["on"]
+      properties:
+        "on": {$ref: "#/$defs/date"}
+        detail: {$ref: "#/$defs/text"}
+        follow_up_ref:
+          description: Where the follow-up is recorded (a register ID, a commit, a file).
+          $ref: "#/$defs/text"
+  extensions: {$ref: "#/$defs/extensions"}

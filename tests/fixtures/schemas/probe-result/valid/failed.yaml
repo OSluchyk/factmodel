@@ -1,0 +1,8 @@
+kind: probe-result
+probe: join-orders-users
+source: bq-public
+pin: bigquery:bigquery-public-data.thelook_ecommerce@2026-11-02
+environment: prod
+data_quality: unknown
+ran_on: 2026-11-02
+error: QUERY FAILED

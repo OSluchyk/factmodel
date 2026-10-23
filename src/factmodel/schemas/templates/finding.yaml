@@ -1,0 +1,30 @@
+title: Finding
+description: A register entry for a problem to fix.
+type: object
+additionalProperties: false
+required: [kind, id, title, status, opened_on, description]
+properties:
+  kind: {$const: "file_kind:finding"}
+  id: {$ref: "#/$defs/finding_id"}
+  title: {$ref: "#/$defs/text"}
+  status: {$vocab: finding_status}
+  opened_on: {$ref: "#/$defs/date"}
+  closed_on: {$ref: "#/$defs/date"}
+  about: {$ref: "#/$defs/model_refs"}
+  description: {$ref: "#/$defs/text"}
+  resolution: {$ref: "#/$defs/text"}
+  decision: {$ref: "#/$defs/decision_id"}
+  evidence: {$ref: "#/$defs/evidence_refs"}
+  records: {$ref: "#/$defs/evidence_records"}
+  extensions: {$ref: "#/$defs/extensions"}
+allOf:
+  - if:
+      required: [status]
+      properties: {status: {$const: "finding_status:resolved"}}
+    then:
+      required: [resolution, evidence, closed_on]
+  - if:
+      required: [status]
+      properties: {status: {$const: "finding_status:wont_fix"}}
+    then:
+      required: [decision, closed_on]

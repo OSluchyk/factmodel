@@ -1,0 +1,21 @@
+title: Probe result
+description: The raw output of one probe run. Intake turns it into an evidence record.
+type: object
+additionalProperties: false
+required: [kind, probe, source, pin, environment, data_quality, ran_on]
+properties:
+  kind: {$const: "file_kind:probe-result"}
+  probe: {$ref: "#/$defs/slug"}
+  source: {$ref: "#/$defs/slug"}
+  pin: {$ref: "#/$defs/pin"}
+  environment: {$ref: "#/$defs/slug"}
+  data_quality: {$vocab: data_quality}
+  ran_on: {$ref: "#/$defs/date"}
+  measurement: {$ref: "#/$defs/measurement"}
+  error:
+    description: Set when the query failed; then there is no measurement.
+    $ref: "#/$defs/text"
+  extensions: {$ref: "#/$defs/extensions"}
+oneOf:
+  - required: [measurement]
+  - required: [error]

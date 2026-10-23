@@ -1,0 +1,22 @@
+title: Model config
+description: The root file of a model repository (factmodel.yaml).
+type: object
+additionalProperties: false
+required: [kind, id, framework_version, profile]
+properties:
+  kind: {$const: "file_kind:model-config"}
+  id: {$ref: "#/$defs/slug"}
+  title: {$ref: "#/$defs/text"}
+  framework_version:
+    type: string
+    pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+  profile: {$ref: "#/$defs/slug"}
+  adapters: {$ref: "#/$defs/slugs"}
+  consumers: {$ref: "#/$defs/slugs"}
+  environments: {$ref: "#/$defs/slugs"}
+  ranks:
+    description: Rank overrides per source kind; lower wins.
+    type: object
+    propertyNames: {$vocab: source_kind}
+    additionalProperties: {type: integer, minimum: 0}
+  extensions: {$ref: "#/$defs/extensions"}

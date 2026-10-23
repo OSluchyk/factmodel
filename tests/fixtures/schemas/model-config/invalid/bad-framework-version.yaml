@@ -1,0 +1,6 @@
+# reason: bad framework version
+# expect: $.framework_version
+kind: model-config
+id: thelook
+framework_version: v1
+profile: retail

@@ -1,0 +1,8 @@
+kind: consumer
+id: filter-sql
+meaning: Turns a customer filter request into SQL.
+layers: [customer-filters]
+corpus:
+  location: semantic/customer-filters/corpus/
+  synthetic: true
+threshold: 0.95

@@ -1,0 +1,40 @@
+title: Escalation
+description: A register entry for a question to people; closed only by an answer with evidence.
+type: object
+additionalProperties: false
+required: [kind, id, question, status, asked_on]
+properties:
+  kind: {$const: "file_kind:escalation"}
+  id: {$ref: "#/$defs/escalation_id"}
+  question: {$ref: "#/$defs/text"}
+  asked_to:
+    description: Roles, never names.
+    $ref: "#/$defs/slugs"
+  status: {$vocab: escalation_status}
+  asked_on: {$ref: "#/$defs/date"}
+  about: {$ref: "#/$defs/model_refs"}
+  answer:
+    type: object
+    additionalProperties: false
+    required: [text, source, answered_on, evidence]
+    properties:
+      text: {$ref: "#/$defs/text"}
+      source:
+        description: The registered source the answer came from.
+        $ref: "#/$defs/slug"
+      answered_on: {$ref: "#/$defs/date"}
+      evidence: {$ref: "#/$defs/evidence_refs"}
+  withdrawn_reason: {$ref: "#/$defs/text"}
+  records: {$ref: "#/$defs/evidence_records"}
+  extensions: {$ref: "#/$defs/extensions"}
+allOf:
+  - if:
+      required: [status]
+      properties: {status: {$const: "escalation_status:answered"}}
+    then:
+      required: [answer]
+  - if:
+      required: [status]
+      properties: {status: {$const: "escalation_status:withdrawn"}}
+    then:
+      required: [withdrawn_reason]

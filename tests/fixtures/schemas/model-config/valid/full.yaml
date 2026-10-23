@@ -1,0 +1,13 @@
+kind: model-config
+id: thelook
+title: thelook_ecommerce public dataset
+framework_version: 0.0.1
+profile: retail
+adapters: [bigquery, git]
+consumers: [filter-sql]
+environments: [prod]
+ranks:
+  git: 5
+  warehouse: 20
+extensions:
+  team: example

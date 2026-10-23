@@ -1,0 +1,10 @@
+# reason: bad source kind
+# expect: $.source_kind
+kind: source
+id: etl-config
+title: Loader configuration repository
+source_kind: email
+access_mode: owner_read
+rank: 5
+location: git@example.com:data/etl-config.git
+access: Ask the data platform team for read access.

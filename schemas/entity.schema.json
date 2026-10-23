@@ -1,0 +1,583 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:factmodel:schema:entity:0.1.0",
+  "title": "Entity",
+  "description": "One table, view or object on the platform, with its fields and outgoing relationships.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "id",
+    "physical_name",
+    "grain",
+    "class",
+    "status",
+    "keys",
+    "fields",
+    "evidence"
+  ],
+  "properties": {
+    "kind": {
+      "const": "entity"
+    },
+    "id": {
+      "$ref": "#/$defs/slug"
+    },
+    "physical_name": {
+      "$ref": "#/$defs/text"
+    },
+    "source": {
+      "$ref": "#/$defs/slug"
+    },
+    "grain": {
+      "$ref": "#/$defs/text"
+    },
+    "class": {
+      "enum": [
+        "data",
+        "configuration",
+        "administrative",
+        "reference"
+      ]
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "reviewed",
+        "deprecated"
+      ]
+    },
+    "meaning": {
+      "$ref": "#/$defs/text"
+    },
+    "keys": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primary"
+      ],
+      "properties": {
+        "primary": {
+          "description": "Field names of the primary key; empty when the entity has none.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/field_name"
+          },
+          "uniqueItems": true
+        },
+        "unique": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/field_name"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        },
+        "current_row_rule": {
+          "description": "A condition that picks the current row per key, or null.",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/text"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "anchor_reference": {
+      "description": "The field that holds the anchor's key; makes the entity direct (D-007).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "evidence"
+      ],
+      "properties": {
+        "field": {
+          "$ref": "#/$defs/field_name"
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidence_refs"
+        }
+      }
+    },
+    "evidence": {
+      "description": "Metadata evidence for the entity; fields without their own evidence inherit it.",
+      "$ref": "#/$defs/evidence_refs"
+    },
+    "fields": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/field"
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/relationship"
+      }
+    },
+    "hazards": {
+      "$ref": "#/$defs/hazard_refs"
+    },
+    "records": {
+      "$ref": "#/$defs/evidence_records"
+    },
+    "extensions": {
+      "$ref": "#/$defs/extensions"
+    },
+    "label": {
+      "description": "Derived value; computed by fact project, never authored.",
+      "not": {}
+    },
+    "subject_scope": {
+      "description": "Derived value; computed by fact project, never authored.",
+      "not": {}
+    },
+    "subject_scoped": {
+      "description": "Derived value; computed by fact project, never authored.",
+      "not": {}
+    },
+    "scope_basis": {
+      "description": "Derived value; computed by fact project, never authored.",
+      "not": {}
+    },
+    "reachable": {
+      "description": "Derived value; computed by fact project, never authored.",
+      "not": {}
+    },
+    "residue": {
+      "description": "Derived value; computed by fact project, never authored.",
+      "not": {}
+    },
+    "withheld": {
+      "description": "Derived value; computed by fact project, never authored.",
+      "not": {}
+    }
+  },
+  "$defs": {
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "evidence_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source",
+        "pin",
+        "status",
+        "read_on"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/slug"
+        },
+        "source": {
+          "$ref": "#/$defs/slug"
+        },
+        "pin": {
+          "$ref": "#/$defs/pin"
+        },
+        "quote": {
+          "$ref": "#/$defs/quote"
+        },
+        "measurement": {
+          "$ref": "#/$defs/measurement"
+        },
+        "status": {
+          "enum": [
+            "confirmed",
+            "inferred",
+            "unresolved",
+            "retracted"
+          ]
+        },
+        "read_on": {
+          "$ref": "#/$defs/date"
+        },
+        "probe": {
+          "$ref": "#/$defs/slug"
+        },
+        "environment": {
+          "$ref": "#/$defs/slug"
+        },
+        "data_quality": {
+          "enum": [
+            "representative",
+            "synthetic",
+            "unknown"
+          ]
+        },
+        "named_error": {
+          "$ref": "#/$defs/text"
+        },
+        "superseded_by": {
+          "$ref": "#/$defs/slug"
+        },
+        "note": {
+          "$ref": "#/$defs/text"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "quote"
+          ]
+        },
+        {
+          "required": [
+            "measurement"
+          ]
+        }
+      ],
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "const": "retracted"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "named_error",
+              "superseded_by"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "probe"
+            ]
+          },
+          "then": {
+            "required": [
+              "environment",
+              "data_quality"
+            ]
+          }
+        }
+      ]
+    },
+    "evidence_records": {
+      "description": "Inline evidence records.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence_record"
+      },
+      "minItems": 1
+    },
+    "evidence_refs": {
+      "description": "Evidence IDs; at least one.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/slug"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "extensions": {
+      "description": "A free map for adopters; never read by the core.",
+      "type": "object"
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "type",
+        "nullable",
+        "meaning"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/field_name"
+        },
+        "path": {
+          "$ref": "#/$defs/field_path"
+        },
+        "type": {
+          "$ref": "#/$defs/text"
+        },
+        "nullable": {
+          "type": "boolean"
+        },
+        "repeated": {
+          "type": "boolean"
+        },
+        "meaning": {
+          "$ref": "#/$defs/text"
+        },
+        "hazards": {
+          "$ref": "#/$defs/hazard_refs"
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidence_refs"
+        }
+      }
+    },
+    "field_name": {
+      "description": "An engine column name or one segment of a nested path.",
+      "type": "string",
+      "pattern": "^[^\\s.]+$"
+    },
+    "field_path": {
+      "description": "Dotted path of a nested field, at least two segments.",
+      "type": "string",
+      "pattern": "^[^\\s.]+(\\.[^\\s.]+)+$"
+    },
+    "hazard_id": {
+      "type": "string",
+      "pattern": "^H-[0-9]{4}$"
+    },
+    "hazard_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/hazard_id"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "join": {
+      "description": "<entity>.<field> = <entity>.<field>, joined with AND for composite keys",
+      "type": "string",
+      "pattern": "^[^\\s=]+\\.[^\\s=]+ = [^\\s=]+\\.[^\\s=]+( AND [^\\s=]+\\.[^\\s=]+ = [^\\s=]+\\.[^\\s=]+)*$"
+    },
+    "measurement": {
+      "description": "Counts and rates only, never values or identifiers.",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "$ref": "#/$defs/slug"
+      },
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "pin": {
+      "description": "The exact version read; the format depends on the source kind.",
+      "type": "string",
+      "pattern": "^\\S.*@\\S+$"
+    },
+    "quote": {
+      "description": "A verbatim quote, at most 40 words.",
+      "type": "string",
+      "pattern": "^\\s*\\S+(\\s+\\S+){0,39}\\s*$"
+    },
+    "relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "to",
+        "join",
+        "meaning",
+        "mechanism",
+        "cardinality"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/slug"
+        },
+        "to": {
+          "description": "One target entity, or a target set of at least two.",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/slug"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/slug"
+              },
+              "minItems": 2,
+              "uniqueItems": true
+            }
+          ]
+        },
+        "discriminator": {
+          "$ref": "#/$defs/field_name"
+        },
+        "join": {
+          "description": "One join, or for a target set a map from each target to its join.",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/join"
+            },
+            {
+              "type": "object",
+              "minProperties": 1,
+              "propertyNames": {
+                "$ref": "#/$defs/slug"
+              },
+              "additionalProperties": {
+                "$ref": "#/$defs/join"
+              }
+            }
+          ]
+        },
+        "meaning": {
+          "$ref": "#/$defs/text"
+        },
+        "mechanism": {
+          "enum": [
+            "declared_fk",
+            "inferred_join",
+            "derivation",
+            "representation"
+          ]
+        },
+        "cardinality": {
+          "enum": [
+            "one_to_one",
+            "many_to_one",
+            "one_to_many",
+            "many_to_many",
+            "unknown"
+          ]
+        },
+        "scope_admission": {
+          "description": "Lets subject scope pass from the target to this entity (D-007).",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "basis",
+            "evidence"
+          ],
+          "properties": {
+            "basis": {
+              "enum": [
+                "unique_target",
+                "current_row_rule",
+                "measured_fanout"
+              ]
+            },
+            "evidence": {
+              "$ref": "#/$defs/evidence_refs"
+            }
+          }
+        },
+        "status": {
+          "const": "unresolved"
+        },
+        "missing": {
+          "description": "With status unresolved, what is not known yet.",
+          "$ref": "#/$defs/text"
+        },
+        "hazards": {
+          "$ref": "#/$defs/hazard_refs"
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidence_refs"
+        },
+        "label": {
+          "description": "Derived value; computed by fact project, never authored.",
+          "not": {}
+        },
+        "subject_scope": {
+          "description": "Derived value; computed by fact project, never authored.",
+          "not": {}
+        },
+        "subject_scoped": {
+          "description": "Derived value; computed by fact project, never authored.",
+          "not": {}
+        },
+        "scope_basis": {
+          "description": "Derived value; computed by fact project, never authored.",
+          "not": {}
+        },
+        "reachable": {
+          "description": "Derived value; computed by fact project, never authored.",
+          "not": {}
+        },
+        "residue": {
+          "description": "Derived value; computed by fact project, never authored.",
+          "not": {}
+        },
+        "withheld": {
+          "description": "Derived value; computed by fact project, never authored.",
+          "not": {}
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "to"
+            ],
+            "properties": {
+              "to": {
+                "type": "string"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "discriminator": {
+                "description": "A discriminator is only allowed with a target set.",
+                "not": {}
+              },
+              "join": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "to"
+            ],
+            "properties": {
+              "to": {
+                "type": "array"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "join": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "not": {
+              "required": [
+                "status"
+              ]
+            }
+          },
+          "then": {
+            "required": [
+              "evidence"
+            ]
+          }
+        }
+      ]
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

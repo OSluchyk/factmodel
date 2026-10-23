@@ -1,0 +1,28 @@
+title: Consumer
+description: The agent, SQL generator or knowledge base that proves a layer. Details come in M3.
+type: object
+additionalProperties: false
+required: [kind, id, meaning, layers]
+properties:
+  kind: {$const: "file_kind:consumer"}
+  id: {$ref: "#/$defs/slug"}
+  meaning: {$ref: "#/$defs/text"}
+  layers:
+    type: array
+    items: {$ref: "#/$defs/slug"}
+    minItems: 1
+    uniqueItems: true
+  corpus:
+    description: Where the equivalence corpus is. A real corpus stays outside the repository.
+    type: object
+    additionalProperties: false
+    required: [location]
+    properties:
+      location: {$ref: "#/$defs/text"}
+      pin: {$ref: "#/$defs/pin"}
+      synthetic: {type: boolean}
+  threshold:
+    type: number
+    minimum: 0
+    maximum: 1
+  extensions: {$ref: "#/$defs/extensions"}

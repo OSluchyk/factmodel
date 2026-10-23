@@ -1,0 +1,20 @@
+title: Service
+description: One process that reads or writes entities.
+type: object
+additionalProperties: false
+required: [kind, id, service_kind, meaning, evidence]
+properties:
+  kind: {$const: "file_kind:service"}
+  id: {$ref: "#/$defs/slug"}
+  service_kind: {$vocab: service_kind}
+  meaning: {$ref: "#/$defs/text"}
+  reads: {$ref: "#/$defs/slugs"}
+  writes: {$ref: "#/$defs/slugs"}
+  schedule:
+    description: When it runs, in plain words.
+    $ref: "#/$defs/text"
+  status: {$vocab: review_status}
+  hazards: {$ref: "#/$defs/hazard_refs"}
+  evidence: {$ref: "#/$defs/evidence_refs"}
+  records: {$ref: "#/$defs/evidence_records"}
+  extensions: {$ref: "#/$defs/extensions"}

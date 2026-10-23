@@ -1,0 +1,7 @@
+# reason: answered without answer
+# expect: $
+kind: escalation
+id: E-0002
+question: Which job deletes rows from events?
+status: answered
+asked_on: '2026-11-05'

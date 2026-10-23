@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:factmodel:schema:trigger:0.1.0",
+  "title": "Trigger",
+  "description": "An event and the follow-up it requires.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "id",
+    "event",
+    "follow_up"
+  ],
+  "properties": {
+    "kind": {
+      "const": "trigger"
+    },
+    "id": {
+      "$ref": "#/$defs/slug"
+    },
+    "event": {
+      "enum": [
+        "new_tenant",
+        "source_pin_moved",
+        "escalation_answered",
+        "ticket_shipped",
+        "probe_out_of_range"
+      ]
+    },
+    "meaning": {
+      "$ref": "#/$defs/text"
+    },
+    "follow_up": {
+      "description": "What must be done when the event fires.",
+      "$ref": "#/$defs/text"
+    },
+    "fired": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "on"
+        ],
+        "properties": {
+          "on": {
+            "$ref": "#/$defs/date"
+          },
+          "detail": {
+            "$ref": "#/$defs/text"
+          },
+          "follow_up_ref": {
+            "description": "Where the follow-up is recorded (a register ID, a commit, a file).",
+            "$ref": "#/$defs/text"
+          }
+        }
+      }
+    },
+    "extensions": {
+      "$ref": "#/$defs/extensions"
+    }
+  },
+  "$defs": {
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "extensions": {
+      "description": "A free map for adopters; never read by the core.",
+      "type": "object"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

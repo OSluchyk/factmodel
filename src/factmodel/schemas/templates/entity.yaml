@@ -1,0 +1,133 @@
+title: Entity
+description: One table, view or object on the platform, with its fields and outgoing relationships.
+type: object
+additionalProperties: false
+$forbid: derived_value
+required: [kind, id, physical_name, grain, class, status, keys, fields, evidence]
+properties:
+  kind: {$const: "file_kind:entity"}
+  id: {$ref: "#/$defs/slug"}
+  physical_name: {$ref: "#/$defs/text"}
+  source: {$ref: "#/$defs/slug"}
+  grain: {$ref: "#/$defs/text"}
+  class: {$vocab: entity_class}
+  status: {$vocab: review_status}
+  meaning: {$ref: "#/$defs/text"}
+  keys:
+    type: object
+    additionalProperties: false
+    required: [primary]
+    properties:
+      primary:
+        description: Field names of the primary key; empty when the entity has none.
+        type: array
+        items: {$ref: "#/$defs/field_name"}
+        uniqueItems: true
+      unique:
+        type: array
+        items:
+          type: array
+          items: {$ref: "#/$defs/field_name"}
+          minItems: 1
+          uniqueItems: true
+      current_row_rule:
+        description: A condition that picks the current row per key, or null.
+        oneOf:
+          - {$ref: "#/$defs/text"}
+          - {type: "null"}
+  anchor_reference:
+    description: The field that holds the anchor's key; makes the entity direct (D-007).
+    type: object
+    additionalProperties: false
+    required: [field, evidence]
+    properties:
+      field: {$ref: "#/$defs/field_name"}
+      evidence: {$ref: "#/$defs/evidence_refs"}
+  evidence:
+    description: Metadata evidence for the entity; fields without their own evidence inherit it.
+    $ref: "#/$defs/evidence_refs"
+  fields:
+    type: array
+    minItems: 1
+    items: {$ref: "#/$defs/field"}
+  relationships:
+    type: array
+    items: {$ref: "#/$defs/relationship"}
+  hazards: {$ref: "#/$defs/hazard_refs"}
+  records: {$ref: "#/$defs/evidence_records"}
+  extensions: {$ref: "#/$defs/extensions"}
+$defs:
+  field:
+    type: object
+    additionalProperties: false
+    required: [name, type, nullable, meaning]
+    properties:
+      name: {$ref: "#/$defs/field_name"}
+      path: {$ref: "#/$defs/field_path"}
+      type: {$ref: "#/$defs/text"}
+      nullable: {type: boolean}
+      repeated: {type: boolean}
+      meaning: {$ref: "#/$defs/text"}
+      hazards: {$ref: "#/$defs/hazard_refs"}
+      evidence: {$ref: "#/$defs/evidence_refs"}
+  relationship:
+    type: object
+    additionalProperties: false
+    $forbid: derived_value
+    required: [key, to, join, meaning, mechanism, cardinality]
+    properties:
+      key: {$ref: "#/$defs/slug"}
+      to:
+        description: One target entity, or a target set of at least two.
+        oneOf:
+          - {$ref: "#/$defs/slug"}
+          - type: array
+            items: {$ref: "#/$defs/slug"}
+            minItems: 2
+            uniqueItems: true
+      discriminator: {$ref: "#/$defs/field_name"}
+      join:
+        description: One join, or for a target set a map from each target to its join.
+        oneOf:
+          - {$ref: "#/$defs/join"}
+          - type: object
+            minProperties: 1
+            propertyNames: {$ref: "#/$defs/slug"}
+            additionalProperties: {$ref: "#/$defs/join"}
+      meaning: {$ref: "#/$defs/text"}
+      mechanism: {$vocab: mechanism}
+      cardinality: {$vocab: cardinality}
+      scope_admission:
+        description: Lets subject scope pass from the target to this entity (D-007).
+        type: object
+        additionalProperties: false
+        required: [basis, evidence]
+        properties:
+          basis: {$vocab: scope_basis}
+          evidence: {$ref: "#/$defs/evidence_refs"}
+      status: {$const: "evidence_status:unresolved"}
+      missing:
+        description: With status unresolved, what is not known yet.
+        $ref: "#/$defs/text"
+      hazards: {$ref: "#/$defs/hazard_refs"}
+      evidence: {$ref: "#/$defs/evidence_refs"}
+    allOf:
+      - if:
+          required: [to]
+          properties: {to: {type: string}}
+        then:
+          properties:
+            discriminator:
+              description: A discriminator is only allowed with a target set.
+              not: {}
+            join: {type: string}
+      - if:
+          required: [to]
+          properties: {to: {type: array}}
+        then:
+          properties:
+            join: {type: object}
+      - if:
+          not: {required: [status]}
+        then:
+          required: [evidence]

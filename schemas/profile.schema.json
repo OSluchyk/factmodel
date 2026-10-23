@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:factmodel:schema:profile:0.1.0",
+  "title": "Profile",
+  "description": "The domain layer over the core - anchor entity, labels and ordered projection rules.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "id",
+    "anchor_entity",
+    "labels",
+    "rules"
+  ],
+  "properties": {
+    "kind": {
+      "const": "profile"
+    },
+    "id": {
+      "$ref": "#/$defs/slug"
+    },
+    "meaning": {
+      "$ref": "#/$defs/text"
+    },
+    "anchor_entity": {
+      "$ref": "#/$defs/slug"
+    },
+    "labels": {
+      "description": "The labels rules may assign. The core reserves withheld.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/slug"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "not": {
+        "contains": {
+          "const": "withheld"
+        }
+      }
+    },
+    "vocabularies": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/slug"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/slug"
+        },
+        "minItems": 1,
+        "uniqueItems": true
+      }
+    },
+    "rules": {
+      "description": "Evaluated in order; the first match wins.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/rule"
+      }
+    },
+    "extensions": {
+      "$ref": "#/$defs/extensions"
+    }
+  },
+  "$defs": {
+    "end_pattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "class": {
+          "enum": [
+            "data",
+            "configuration",
+            "administrative",
+            "reference"
+          ]
+        },
+        "subject_scoped": {
+          "type": "boolean"
+        }
+      }
+    },
+    "extensions": {
+      "description": "A free map for adopters; never read by the core.",
+      "type": "object"
+    },
+    "facets": {
+      "description": "All listed facets must hold. At least one facet; there is no catch-all rule.",
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "evidence_status": {
+          "enum": [
+            "confirmed",
+            "inferred",
+            "unresolved",
+            "retracted"
+          ]
+        },
+        "mechanism": {
+          "enum": [
+            "declared_fk",
+            "inferred_join",
+            "derivation",
+            "representation"
+          ]
+        },
+        "cardinality": {
+          "enum": [
+            "one_to_one",
+            "many_to_one",
+            "one_to_many",
+            "many_to_many",
+            "unknown"
+          ]
+        },
+        "any_end_class": {
+          "enum": [
+            "data",
+            "configuration",
+            "administrative",
+            "reference"
+          ]
+        },
+        "all_ends_class": {
+          "enum": [
+            "data",
+            "configuration",
+            "administrative",
+            "reference"
+          ]
+        },
+        "any_end_subject_scoped": {
+          "type": "boolean"
+        },
+        "all_ends_subject_scoped": {
+          "type": "boolean"
+        },
+        "all_ends_match": {
+          "description": "Every end matches at least one of these patterns.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/end_pattern"
+          }
+        }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "when",
+        "label"
+      ],
+      "properties": {
+        "when": {
+          "$ref": "#/$defs/facets"
+        },
+        "label": {
+          "$ref": "#/$defs/slug"
+        },
+        "note": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

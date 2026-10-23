@@ -29,5 +29,8 @@ Platform that forced it: none | <example or engine>
 | [D-003](D-003-name-check.md) | Name check: distribution name `plumbline-model` | name part superseded by D-010 | 2026-10-23 |
 | [D-004](D-004-source-layout.md) | Source layout: `src/plumbline/` | accepted | 2026-10-23 |
 | [D-005](D-005-toolchain.md) | Toolchain | accepted | 2026-10-23 |
+| [D-006](D-006-data-quality.md) | Data quality instead of a boolean | accepted | 2026-10-23 |
+| [D-007](D-007-scope-derived.md) | Subject scope is derived, not authored | accepted | 2026-10-23 |
 | [D-008](D-008-agent-commits.md) | The agent commits per round | accepted | 2026-10-23 |
+| [D-009](D-009-review-status.md) | One review status for entities and layers | accepted | 2026-10-23 |
 | [D-010](D-010-name-factmodel.md) | Name: FactModel | accepted | 2026-10-23 |

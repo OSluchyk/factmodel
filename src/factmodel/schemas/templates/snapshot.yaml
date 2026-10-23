@@ -1,0 +1,86 @@
+title: Metadata snapshot
+description: An engine-neutral export of a source's metadata. Not a model file kind; adapters read it.
+type: object
+additionalProperties: false
+required: [kind, engine, target, taken_on, objects]
+properties:
+  kind: {const: snapshot}
+  source: {$ref: "#/$defs/slug"}
+  engine: {$ref: "#/$defs/slug"}
+  target:
+    description: What was read, for example a project and dataset.
+    $ref: "#/$defs/text"
+  taken_on: {$ref: "#/$defs/date"}
+  objects:
+    type: array
+    items: {$ref: "#/$defs/object"}
+  extensions: {$ref: "#/$defs/extensions"}
+$defs:
+  object:
+    type: object
+    additionalProperties: false
+    required: [name, object_type, fields]
+    properties:
+      name: {$ref: "#/$defs/text"}
+      object_type: {$vocab: object_type}
+      description: {$ref: "#/$defs/text"}
+      fields:
+        type: array
+        items: {$ref: "#/$defs/snapshot_field"}
+      constraints:
+        type: array
+        items: {$ref: "#/$defs/constraint"}
+      partitioning:
+        type: object
+        additionalProperties: false
+        required: [field]
+        properties:
+          field: {$ref: "#/$defs/field_name"}
+          granularity: {$ref: "#/$defs/text"}
+      clustering:
+        type: array
+        items: {$ref: "#/$defs/field_name"}
+        uniqueItems: true
+      options:
+        type: object
+        additionalProperties:
+          type: [string, number, boolean, "null"]
+  snapshot_field:
+    type: object
+    additionalProperties: false
+    required: [name, type, nullable]
+    properties:
+      name: {$ref: "#/$defs/field_name"}
+      path: {$ref: "#/$defs/field_path"}
+      type: {$ref: "#/$defs/text"}
+      nullable: {type: boolean}
+      repeated: {type: boolean}
+      description: {$ref: "#/$defs/text"}
+  constraint:
+    type: object
+    additionalProperties: false
+    required: [constraint_type, fields, enforced]
+    properties:
+      constraint_type: {$vocab: constraint_type}
+      name: {$ref: "#/$defs/text"}
+      fields:
+        type: array
+        items: {$ref: "#/$defs/field_name"}
+        minItems: 1
+      references:
+        type: object
+        additionalProperties: false
+        required: [object, fields]
+        properties:
+          object: {$ref: "#/$defs/text"}
+          fields:
+            type: array
+            items: {$ref: "#/$defs/field_name"}
+            minItems: 1
+      enforced: {type: boolean}
+    allOf:
+      - if:
+          required: [constraint_type]
+          properties: {constraint_type: {$const: "constraint_type:foreign_key"}}
+        then:
+          required: [references]

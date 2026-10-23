@@ -1,0 +1,13 @@
+# reason: bad id
+# expect: $.id
+kind: decision
+id: D-001
+title: Retract the email join
+status: accepted
+date: '2026-11-03'
+context: The first join from orders to users used email.
+decision: Retract ev-pk-retracted and join on users.id.
+retracts:
+- ev-pk-retracted
+about:
+- orders.placed-by

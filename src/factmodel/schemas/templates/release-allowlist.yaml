@@ -1,0 +1,29 @@
+title: Release allowlist
+description: File dispositions and per-kind key allowlists for a release. Fail-closed.
+type: object
+additionalProperties: false
+required: [kind, files]
+properties:
+  kind: {$const: "file_kind:release-allowlist"}
+  files:
+    description: Glob patterns, first match wins; every file must match exactly one disposition.
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required: [pattern, disposition]
+      properties:
+        pattern: {$ref: "#/$defs/text"}
+        disposition: {$vocab: release_disposition}
+        reason: {$ref: "#/$defs/text"}
+  keys:
+    description: For projected files, the keys each file kind keeps.
+    type: object
+    propertyNames: {$vocab: file_kind}
+    additionalProperties:
+      type: array
+      items: {$ref: "#/$defs/text"}
+      minItems: 1
+      uniqueItems: true
+  extensions: {$ref: "#/$defs/extensions"}

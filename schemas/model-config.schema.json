@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:factmodel:schema:model-config:0.1.0",
+  "title": "Model config",
+  "description": "The root file of a model repository (factmodel.yaml).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "id",
+    "framework_version",
+    "profile"
+  ],
+  "properties": {
+    "kind": {
+      "const": "model-config"
+    },
+    "id": {
+      "$ref": "#/$defs/slug"
+    },
+    "title": {
+      "$ref": "#/$defs/text"
+    },
+    "framework_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "profile": {
+      "$ref": "#/$defs/slug"
+    },
+    "adapters": {
+      "$ref": "#/$defs/slugs"
+    },
+    "consumers": {
+      "$ref": "#/$defs/slugs"
+    },
+    "environments": {
+      "$ref": "#/$defs/slugs"
+    },
+    "ranks": {
+      "description": "Rank overrides per source kind; lower wins.",
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "git",
+          "warehouse",
+          "api",
+          "document",
+          "ticket",
+          "person"
+        ]
+      },
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "extensions": {
+      "$ref": "#/$defs/extensions"
+    }
+  },
+  "$defs": {
+    "extensions": {
+      "description": "A free map for adopters; never read by the core.",
+      "type": "object"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "slugs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/slug"
+      },
+      "uniqueItems": true
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

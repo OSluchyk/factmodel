@@ -93,17 +93,17 @@ tests/test_smoke.py
 - Register IDs: `F-0001`, `E-0001`, `H-0001`, `D-0001`; never reused, never deleted.
 - Evidence status: `confirmed | inferred | unresolved | retracted`.
 - Entity class: `data | configuration | administrative | reference`.
-- Subject scope: `direct | transitive | none`; scope basis: `declared_reference | unique_target | current_row_rule | measured_fanout`.
+- Subject scope: `direct | transitive | none`, derived (D-007); scope basis on a relationship's `scope_admission`: `unique_target | current_row_rule | measured_fanout`.
 - Relationship mechanism: `declared_fk | inferred_join | derivation | representation`.
 - Cardinality: `one_to_one | many_to_one | one_to_many | many_to_many | unknown`.
 - Source access mode: `agent_read | owner_read | export_file`; source kinds: `git | warehouse | api | document | ticket | person`.
 - Pin formats per source kind: git `<repo>@<sha>:<path>[:<line>]`; warehouse `<engine>:<project>.<dataset>@<date>`; api `<host><path>@<date>`; document `<title>@<version or date>`; ticket `<system>:<key>@<date>`; person `<role>@<date>` (never a name).
-- Entity and layer status: `draft | reviewed | deprecated`.
+- Entity and layer status (`review_status`, D-009): `draft | reviewed | deprecated`.
 - Field path: dotted path for nested fields (`processing.request_id`); `repeated: true` for arrays.
 - Relationship `meaning` (free text) and optional `discriminator` (the field that selects the target in a target set).
 - Service kind: `pipeline | scheduled_job | application | manual`.
 - Tenant facts on two axes: `ingest` (from configuration: which streams or objects the loader accepts) and `presence` (measured: which objects hold rows), per environment. They are never merged into one value.
-- Evidence from probes carries `environment` and `representative: true | false | unknown` (synthetic test data is `false`).
+- Evidence from probes carries `probe`, `environment` and `data_quality: representative | synthetic | unknown` (D-006).
 - A retraction names its error: `retracted` status requires `named_error` (one sentence) and `superseded_by`.
 
 **Acceptance.** Vocabulary reviewed by the owner; every term used in the spec appears here once.
@@ -123,10 +123,14 @@ id: orders
 physical_name: thelook_ecommerce.orders
 grain: one row per order
 class: data
-subject_scope: direct
+status: draft
 keys:
   primary: [order_id]
   current_row_rule: null
+anchor_reference:            # makes orders direct; scope itself is derived (D-007)
+  field: user_id
+  evidence: [ev-orders-users-match]
+evidence: [ev-orders-ddl]    # metadata evidence; fields without their own evidence inherit it
 fields:
   - name: order_id
     type: INT64
@@ -142,10 +146,11 @@ relationships:
   - key: placed-by
     to: users
     join: orders.user_id = users.id
+    meaning: The customer who placed the order.
     mechanism: inferred_join
     cardinality: many_to_one
     evidence: [ev-orders-users-match]
-evidence:
+records:                     # inline evidence records; `evidence` keys hold IDs only
   - id: ev-orders-ddl
     source: bq-public
     pin: bigquery:bigquery-public-data.thelook_ecommerce@2026-11-01
@@ -158,8 +163,9 @@ evidence:
     measurement: {match_rate: 1.0, orphans_left: 0}
     status: confirmed
     read_on: 2026-11-02
+    probe: join-orders-users
     environment: prod
-    representative: true
+    data_quality: representative
 ```
 
 ```yaml
@@ -186,7 +192,7 @@ rules:              # evaluated in order; first match wins
 **Rules for schemas.**
 
 - `additionalProperties: false` everywhere except `extensions:` (a free map for adopters, never read by the core).
-- Derived keys (`label`, `subject_scoped`, `reachable`) are forbidden in authored files; the schema rejects them.
+- Derived keys (`label`, `subject_scope`, `subject_scoped`, `scope_basis`, `reachable`, `residue`, `withheld`) are forbidden in authored files; the schema rejects them.
 - Every authored fact that can carry evidence has an `evidence` list with at least one ID, except when `status: unresolved` is explicit.
 - A field without its own `evidence` inherits the entity's metadata evidence (the DDL or catalog snapshot). The example above shows per-field evidence only to make the shape visible; the fixture set must include the inherited form.
 - Nested fields use `path`; the example set includes one STRUCT and one ARRAY field.
@@ -200,7 +206,7 @@ rules:              # evaluated in order; first match wins
 **Deliverables.** `spec/ALGORITHMS.md` and `tests/vectors/*.yaml` (input model + expected output).
 
 1. **Projection.** Input: relationships, entity facts, profile. For each relationship: if it has a target set, project per target (rule 0) and keep the label if all agree, else `withheld`; otherwise apply ordered rules, first match wins; no match = residue. Output: label per relationship, residue list. Test vectors: at least one per rule, one per tie case, one residue case, one target-set agreement, one disagreement.
-2. **Subject scope closure.** Direct: entity declares a reference to the anchor key. Transitive: fixed point over relationships with mechanism in `{declared_fk, inferred_join}`, evidence confirmed or inferred-with-citation, target scoped, and an admission basis recorded (`unique_target`, `current_row_rule`, `measured_fanout`). Reference entities never propagate. Direct wins. Output: scope, via-path, basis per entity. Vectors: chain of three, cycle, reference blocking, missing basis rejected.
+2. **Subject scope closure** (D-007). Direct: the entity has `anchor_reference`. Transitive: fixed point over relationships with mechanism in `{declared_fk, inferred_join}`, evidence confirmed or inferred-with-citation, target scoped, and a `scope_admission` with its basis (`unique_target`, `current_row_rule`, `measured_fanout`). Reference entities never propagate. Direct wins. Output: scope, via-path, basis per entity. Vectors: chain of three, cycle, reference blocking, missing basis rejected.
 3. **Release partition.** Every file in the model repository gets exactly one disposition: `export`, `project` (allowlisted keys only), `refuse`. Undeclared key in a projected file = failure. Vectors: complete, residue file, undeclared key.
 
 **Acceptance.** Owner review; vectors load against the schemas from WP0.3.
@@ -243,7 +249,7 @@ Expected model (to be confirmed by evidence, not assumed):
 
 **Deliverables.** `src/factmodel/core/projection.py`, `src/factmodel/core/scope.py`, `src/factmodel/core/derived.py`.
 
-**Tasks.** Implement WP0.4 algorithms 1 and 2 as pure functions over `Model` + `Profile`. Write derived values to `generated/` (`relationships.tsv`, `scope.tsv`, `labels.tsv`) with a header that says "generated - do not edit".
+**Tasks.** Implement WP0.4 algorithms 1 and 2 as pure functions over `Model` + `Profile`. Write derived values to `generated/` (`labels.tsv`, `scope.tsv`, `residue.tsv`) with the header line from `spec/VOCABULARY.md` section 6. `subject_scope`, its via-path and basis are computed here, never authored (D-007).
 
 **Acceptance.** All test vectors pass; hypothesis tests: projection is deterministic, order of files does not change output, adding an unrelated entity does not change existing labels.
 
@@ -423,7 +429,7 @@ Expected shape: anchor `customer`; direct `rental`, `payment`; reference `film`,
 
 **Deliverables.** `schemas/layer.schema.json`, `schemas/consumer.schema.json`, spec section.
 
-**Shape.** A layer has: id, purpose, consumer id, concepts (named filters over physical fields with a value vocabulary), measures (aggregations with grain and time column), joins (references to physical relationship keys only, never free SQL), hazards it inherits, status `draft | reviewed`.
+**Shape.** A layer has: id, purpose, consumer id, concepts (named filters over physical fields with a value vocabulary), measures (aggregations with grain and time column), joins (references to physical relationship keys only, never free SQL), hazards it inherits, status from `review_status` (`draft | reviewed | deprecated`, D-009).
 
 **Rule.** A layer can only reference physical facts by ID. The gate fails on a join or field not in the physical layer.
 

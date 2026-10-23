@@ -1,0 +1,55 @@
+# reason: presence without evidence
+# expect: $.tenants[0].presence.prod
+kind: tenants
+environments:
+- test
+- prod
+tenants:
+- id: brand-a
+  meaning: The first brand on the platform.
+  ingest:
+    prod:
+      entities:
+      - orders
+      - order_items
+      evidence:
+      - ev-loader-config
+  presence:
+    prod:
+      entities:
+      - orders
+      - order_items
+    test:
+      entities:
+      - orders
+      evidence:
+      - ev-presence-test
+- id: brand-b
+records:
+- id: ev-loader-config
+  source: etl-config
+  pin: etl-config@3f2a9c1:loaders/brands.yaml:3
+  quote: 'brands: [brand-a]'
+  status: confirmed
+  read_on: '2026-11-01'
+- id: ev-presence-prod
+  source: bq-public
+  pin: bigquery:example.shop@2026-11-02
+  measurement:
+    orders_rows: 1200
+    order_items_rows: 3100
+  status: confirmed
+  read_on: '2026-11-02'
+  probe: row-count-brand-a
+  environment: prod
+  data_quality: representative
+- id: ev-presence-test
+  source: bq-public
+  pin: bigquery:example.shop_test@2026-11-02
+  measurement:
+    orders_rows: 40
+  status: confirmed
+  read_on: '2026-11-02'
+  probe: row-count-brand-a
+  environment: test
+  data_quality: synthetic

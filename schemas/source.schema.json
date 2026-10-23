@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:factmodel:schema:source:0.1.0",
+  "title": "Source",
+  "description": "One entry in the source registry. Records how access is obtained, never a secret.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "id",
+    "title",
+    "source_kind",
+    "access_mode"
+  ],
+  "properties": {
+    "kind": {
+      "const": "source"
+    },
+    "id": {
+      "$ref": "#/$defs/slug"
+    },
+    "title": {
+      "$ref": "#/$defs/text"
+    },
+    "source_kind": {
+      "enum": [
+        "git",
+        "warehouse",
+        "api",
+        "document",
+        "ticket",
+        "person"
+      ]
+    },
+    "access_mode": {
+      "enum": [
+        "agent_read",
+        "owner_read",
+        "export_file"
+      ]
+    },
+    "rank": {
+      "description": "Overrides the default rank of the source kind; lower wins.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "engine": {
+      "description": "For a warehouse, the engine slug used in pins.",
+      "$ref": "#/$defs/slug"
+    },
+    "location": {
+      "$ref": "#/$defs/text"
+    },
+    "access": {
+      "description": "How access is obtained. Never a secret.",
+      "$ref": "#/$defs/text"
+    },
+    "meaning": {
+      "$ref": "#/$defs/text"
+    },
+    "extensions": {
+      "$ref": "#/$defs/extensions"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "source_kind"
+        ],
+        "properties": {
+          "source_kind": {
+            "const": "warehouse"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "engine"
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "extensions": {
+      "description": "A free map for adopters; never read by the core.",
+      "type": "object"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

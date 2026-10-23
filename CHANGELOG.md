@@ -2,6 +2,16 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-23 - Round 2: WP0.3 JSON Schemas
+
+**Why.** Every later piece (loader, gate, adapters) needs a normative shape for each file kind, and the shapes must not drift from the vocabulary. Three round-1 choices would have made the schemas awkward: a boolean-or-string field, an authored scope checked against a computed one, and a status block named for entities only.
+
+- Record D-006 (`data_quality` instead of `representative`), D-007 (subject scope is derived; `anchor_reference` and `scope_admission` are authored) and D-009 (`review_status` for entities and layers), and apply them to the vocabulary, spec and plan.
+- Add `schemas/` for every file kind plus the metadata snapshot, rendered by `factmodel.schemas.build` from templates and the vocabulary, so enumerations have one source.
+- Add valid and invalid fixtures for every kind; each invalid fixture fails for one named reason at one path.
+- Add `factmodel.io.yaml_strict`: duplicate keys fail, dates stay strings, nodes keep their positions.
+- Inline evidence records move under `records:`; `evidence:` always holds IDs.
+
 ## 0.0.1 - 2026-10-23 - Round 2a: rename to FactModel, agent commits per round
 
 **Why.** The name should say what the thing is - a model made of proven facts - instead of a metaphor that needs a paragraph; nothing was public yet, so the rename was cheap now and expensive later. Committing by hand after each round added owner work without adding review.

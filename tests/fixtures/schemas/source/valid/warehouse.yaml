@@ -1,0 +1,8 @@
+kind: source
+id: bq-public
+title: BigQuery public dataset thelook_ecommerce
+source_kind: warehouse
+access_mode: agent_read
+engine: bigquery
+location: bigquery-public-data.thelook_ecommerce
+access: Any Google account with BigQuery enabled can read public datasets.

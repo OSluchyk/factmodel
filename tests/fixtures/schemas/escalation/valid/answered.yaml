@@ -1,0 +1,19 @@
+kind: escalation
+id: E-0001
+question: Is a returned order removed from orders or only flagged?
+asked_to: [data-platform-lead]
+status: answered
+asked_on: 2026-11-01
+about: [orders]
+answer:
+  text: Only flagged; the row stays with status Returned.
+  source: platform-lead-answers
+  answered_on: 2026-11-04
+  evidence: [ev-returned-answer]
+records:
+  - id: ev-returned-answer
+    source: platform-lead-answers
+    pin: data-platform-lead@2026-11-04
+    quote: Returned orders stay in the table with status Returned.
+    status: confirmed
+    read_on: 2026-11-04

@@ -1,0 +1,34 @@
+# reason: empty when
+# expect: $.rules[0].when
+kind: profile
+id: retail
+anchor_entity: users
+labels:
+- customer_scoped
+- configuration
+- administrative
+- lineage
+- representation
+- unresolved
+rules:
+- when: {}
+  label: unresolved
+- when:
+    mechanism: derivation
+  label: lineage
+- when:
+    mechanism: representation
+  label: representation
+- when:
+    any_end_class: administrative
+  label: administrative
+- when:
+    any_end_class: configuration
+  label: configuration
+- when:
+    all_ends_match:
+    - class: data
+      subject_scoped: true
+    - class: reference
+    any_end_subject_scoped: true
+  label: customer_scoped

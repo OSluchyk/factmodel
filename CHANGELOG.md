@@ -2,6 +2,14 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-23 - Round 5: WP1.2 Projection and scope library
+
+**Why.** Derived values are never authored, so something must compute them. Pure functions, checked against hand-written vectors and property tests, make the computation trustworthy before the gate depends on it.
+
+- Add `factmodel.core`: effective evidence status, subject scope closure with rejections and reachability, projection with rule 0, and the release partition as a pure function.
+- Add `fact project`: writes `generated/labels.tsv`, `scope.tsv`, `residue.tsv` and `scope-rejections.tsv`; idempotent; refuses a broken model.
+- Every round-3 test vector now runs as a test; hypothesis checks determinism, order independence and that an unrelated entity changes nothing.
+
 ## Unreleased - 2026-10-23 - Round 4: WP1.1 Model loader
 
 **Why.** The gate, the projection and every command read the same model. One loader that finds every problem at once, and says where and how to fix it, keeps those parts simple and gives agents an error they can act on.

@@ -2,6 +2,17 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-27 - Round 28: WP4.3 Tutorial, pilot kit, Ossie pin
+
+**Why.** M4's test is someone building a model from the docs alone, and the QCEW model proving itself on real data. The tutorial is that path on Chinook, kept honest by a test that runs it on the installed wheel. The pilot kit lets the owner run the real-data step without the agent ever touching the data. The Ossie export followed a project page; it now follows the specification document itself.
+
+- Tutorial `docs/tutorial/chinook.md`: from an empty folder to residue, review, probes, a proven layer, a release and two exports, every step a command. A test runs every block on the installed wheel alone and checks the promised outputs (gate verdicts, residue 0, `proven`).
+- Pilot kit `docs/pilot/qcew-real-data.md`: the owner's six steps on the real QCEW files (model from `examples/qcew`, sources and two views over the per-year tables, snapshot and drift against a seed-shaped baseline, owner-run probes with the expected counts, a real corpus kept outside the repository, what to send back). Dry-run end to end on the seed split into per-year tables.
+- Ossie export pinned to the core specification 0.2.0.dev0 (a draft), read once: the flat document the specification defines (no `semantic_model` list), field expressions and types, relationships for equality joins, metric descriptions, and `custom_extensions` (vendor `factmodel`) for evidence status, required concepts, hazards and suppression. What it does not name stays in `ai_context`.
+- Fix: `fact equivalence script` wrote `... EXCEPT WITH ...` when a reference starts with a CTE, a syntax error on every engine, so every such item came back as an error. Each side of the EXCEPT is now a plain `SELECT * FROM (...)`. Found by the pilot dry run; the QCEW references all start with `WITH`.
+- The clean-room test and the tutorial test share one wheel build (`tests/install/wheel.py`, a session fixture).
+- `spec/SPEC.md` and the plan: M4 "kit done, pilot pending"; the M3 real-corpus caveat points at the pilot kit.
+
 ## Unreleased - 2026-10-27 - Round 27: WP4.2 Documentation site
 
 **Why.** A framework others set up from scratch needs one place to read it, generated from the files that define it so it cannot drift from them. The CLI and schema references come straight from the code and the schemas, and a strict build fails on any broken link between pages.

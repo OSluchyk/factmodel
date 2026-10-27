@@ -217,6 +217,22 @@ def test_bind_names_physical_tables_and_keeps_entity_qualifiers() -> None:
     )
 
 
+@pytest.mark.parametrize("dialect", ["sqlite", "duckdb"])
+def test_count_query_takes_a_side_that_starts_with_with(dialect: str) -> None:
+    # the QCEW references open with a CTE; EXCEPT <WITH ...> is a syntax error on every engine
+    mine = compare.bind("SELECT k, v FROM t WHERE k < 3", {})
+    theirs = compare.bind("WITH s AS (SELECT * FROM t WHERE k < 4) SELECT k, v FROM s", {})
+    sql = compare.render(compare.count_query(mine, theirs), dialect)
+    if dialect == "sqlite":
+        conn = sqlite3.connect(":memory:")
+    else:
+        duckdb = pytest.importorskip("duckdb")
+        conn = duckdb.connect()
+    conn.execute("CREATE TABLE t (k INTEGER, v INTEGER)")
+    conn.execute("INSERT INTO t VALUES (1, 10), (2, 20), (3, 30)")
+    assert conn.execute(sql).fetchone() == (2, 3, 0, 1)
+
+
 def test_normalise_ignores_quoting_case_and_conjunct_order() -> None:
     left = "SELECT t.a FROM t WHERE t.b = 1 AND t.c = 'X'"
     right = 'SELECT "T"."A" FROM "t" WHERE "t"."c" = \'X\' AND "t"."b" = 1'

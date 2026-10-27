@@ -1,5 +1,6 @@
 """The documentation: the site builds strictly, the references cover the CLI and the schemas,
-and the quickstart's commands produce what it promises."""
+the quickstart's commands produce what it promises, and the tutorial does the same on the
+installed wheel alone."""
 
 import importlib.util
 import os
@@ -9,7 +10,8 @@ from pathlib import Path
 
 import pytest
 
-from tests.docs.blocks import run
+from tests.docs.blocks import run, steps
+from tests.install.wheel import Installed, needs_uv
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -71,3 +73,36 @@ def test_quickstart_commands_give_what_they_promise(tmp_path: Path) -> None:
         )
         == 10
     )
+
+
+@needs_uv
+@pytest.mark.skipif(
+    shutil.which("sqlite3") is None or shutil.which("perl") is None,
+    reason="sqlite3 or perl not installed",
+)
+def test_tutorial_runs_on_the_installed_package(installed: Installed, tmp_path: Path) -> None:
+    text = (ROOT / "docs" / "tutorial" / "chinook.md").read_text(encoding="utf-8")
+    found = shutil.which("fact", path=installed.env["PATH"])
+    assert found is not None and found.startswith(str(installed.venv))  # the wheel, not the tree
+    outputs = run(text, tmp_path, installed.env)
+    joined = "\n".join(outputs)
+    assert "gate: fail" in outputs[2] and "residue: 0" in outputs[3]
+    assert "share 1.000, threshold 0.9: proven" in joined
+    assert joined.count("gate: pass") >= 5
+    assert (tmp_path / "chinook-export" / "ossie" / "purchases.ossie.yaml").is_file()
+    assert (tmp_path / "chinook-release" / "VERSION").is_file()
+    print("\n".join(line for out in outputs for line in out.splitlines() if "PASS" not in line))
+
+
+def test_pilot_kit_blocks_parse_and_state_the_expected_counts() -> None:
+    # the kit runs on the owner's real data only; here its shell must parse and its promises stay
+    text = (ROOT / "docs" / "pilot" / "qcew-real-data.md").read_text(encoding="utf-8")
+    blocks = [c for step in steps(text) for c in step.commands]
+    assert len(blocks) >= 10
+    for block in blocks:
+        done = subprocess.run(["bash", "-n"], input=block, capture_output=True, text=True)
+        assert done.returncode == 0, f"{done.stderr}\n{block}"
+    for number in ("4,649", "47,061", "46,370", "612,719", "610,230", "1,316,380", "14,639,988"):
+        assert number in text
+    assert "DATA_QUALITY=representative" in text and "treat_synthetic_as_representative" in text
+    assert "fact equivalence script" in text and "fact equivalence accept" in text

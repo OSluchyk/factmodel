@@ -33,13 +33,19 @@ def count_query(mine: exp.Expr, theirs: exp.Expr) -> exp.Select:
     """Counts only: rows on each side, and rows only one side has (EXCEPT, so duplicates
     collapse). Built as an AST so every dialect gets its own set-operation syntax."""
 
+    def wrapped(source: exp.Expr, alias: str) -> exp.Subquery:
+        return exp.Subquery(this=source.copy(), alias=exp.TableAlias(this=exp.to_identifier(alias)))
+
     def count(source: exp.Expr, alias: str) -> exp.Expr:
-        sub = exp.Subquery(this=source.copy(), alias=exp.TableAlias(this=exp.to_identifier(alias)))
-        inner = exp.select(exp.Count(this=exp.Star())).from_(sub)
+        inner = exp.select(exp.Count(this=exp.Star())).from_(wrapped(source, alias))
         return exp.Subquery(this=inner)
 
-    only_mine = exp.except_(mine.copy(), theirs.copy(), distinct=True)
-    only_theirs = exp.except_(theirs.copy(), mine.copy(), distinct=True)
+    def side(source: exp.Expr, alias: str) -> exp.Select:
+        # an operand of EXCEPT is a plain SELECT: a side that starts with WITH stays valid
+        return exp.select(exp.Star()).from_(wrapped(source, alias))
+
+    only_mine = exp.except_(side(mine, "m"), side(theirs, "t"), distinct=True)
+    only_theirs = exp.except_(side(theirs, "t"), side(mine, "m"), distinct=True)
     return exp.select(
         exp.alias_(count(mine, "c"), "consumer_rows"),
         exp.alias_(count(theirs, "r"), "reference_rows"),

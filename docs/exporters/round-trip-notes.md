@@ -21,13 +21,23 @@ Pinned to dbt-core 1.12.6 with dbt-duckdb 1.11.1 (dev dependencies). The tests r
 
 ## Apache Ossie (formerly Open Semantic Interchange)
 
-Pinned to https://ossie.apache.org/, read once on 2026-10-27. The page names no version and no published JSON Schema. It links the core specification at https://github.com/apache/ossie/blob/main/core-spec/spec.md, which was not read (one network read only). The exporter writes only the keys the page's example shows: `semantic_model[]` with `name`, `description`, `ai_context.instructions`, `datasets[]` (`name`, `source`, `primary_key`, `fields[]` with `name` and `dimension.is_time`) and `metrics[]` (`name`, `expression.dialects[]` with `dialect` and `expression`). The tests are structural only.
+Pinned to the Apache Ossie core specification, https://github.com/apache/ossie/blob/main/core-spec/spec.md, version `0.2.0.dev0`, read once on 2026-10-27 (round 28). The document marks itself a draft that may change before 0.2.0 is released, and publishes no JSON Schema, so the tests are structural: every key the export writes is one the document names, every name a key refers to resolves as the document says (`primary_key`, `from_columns`, `to_columns` and metric expressions name dataset fields, metrics are model-scoped with `dataset.field` references), and every expression parses in its dialect.
+
+The document is flat: one model at the root, with `version`, `name`, `description`, `ai_context`, `datasets`, `relationships`, `metrics` and `custom_extensions`. Round 25 wrote the `semantic_model` list shown on the project page; version 0.2.0.dev0 removes that list.
 
 | Layer part | In Ossie | Notes |
 | --- | --- | --- |
-| Entity | A dataset: physical name as `source`, primary key, every field | |
-| Field a concept reads, or a measure's time field | `dimension.is_time` false or true | |
-| Measure | A metric: aggregation and expression, rendered per dialect of the layer's sources | Dialect identifiers follow sqlglot; the page names none. |
-| Required concepts, joins, hazards, evidence status | Text in `ai_context.instructions` | No key for them on the pinned page. |
+| Entity | A dataset: physical name as `source`, primary key (field names), grain as `description`, every field | |
+| Field | A field: `expression.dialects` with the source column, meaning as `description`, `datatype` when the engine type maps to the document's enumeration | A nested path becomes one name with `__` in place of the dot. A type sqlglot cannot read, or one outside the enumeration, has no `datatype`. |
+| Field a concept reads, or a measure's time field | `dimension.is_time` false or true | A date or timestamp field defaults to `is_time` true under the document's rule. |
+| Join (relationship key), equality, to a one side, both entities in the layer | A relationship: `from` is the many side, `to` the one side, `from_columns` and `to_columns` are field names, the meaning is `ai_context` | A `one_to_many` key is written from its target. |
+| Join that is an expression, `many_to_many` or `unknown`, or to an entity outside the layer (QCEW `qtrly.to-area`, `annual.to-area`) | Text in `ai_context.instructions` | Note per join. Ossie's `to_columns` must be a key of the `to` dataset. |
+| Measure | A model-scoped metric: aggregation and expression, rendered per dialect of the layer's sources; meaning as `description` | Dialect names follow sqlglot; the document leaves names free-form and defines only `OSSIE_SQL_2026`, which is not written. |
+| Measure with suppressed-cell handling (every QCEW measure) | `custom_extensions` of the metric | Ossie metrics have no filter. |
+| Measure with aggregation `none` and no aggregate (QCEW `annual_employment`) | A metric whose expression is the field | Note: read at its grain. |
+| Required concepts, hazards, evidence status | Text in `ai_context.instructions`, and JSON in `custom_extensions` (vendor `factmodel`) on the model, each dataset and each metric | The document names no key for them. |
+| Concept with no required flag, value vocabulary, values table | Nothing beyond the field's `dimension` | |
 
-When the Ossie specification is read and pinned to a version, the instructions text should move into the keys it defines. That needs a network read and an owner decision.
+`custom_extensions` follows the document's schema: a list of `vendor_name` and `data`, where `data` is a JSON string. Vendor name `factmodel`. Keys: on the model `layer_status`, `consumer`, `required_concepts`, `hazards`; on a dataset `evidence_status`, `current_row_rule`, `default_filters`; on a metric `aggregation`, `grain`, and `suppressed` and `hazards` when set.
+
+When Ossie releases 0.2.0 or publishes a JSON Schema, the pin moves in a round with one read of the released document.

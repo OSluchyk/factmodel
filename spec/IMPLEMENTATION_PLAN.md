@@ -491,7 +491,7 @@ Round 24: `src/factmodel/release/` (`fact release`, `fact check --release`), `fa
 
 **Acceptance.** Exported files validate against the target's published schema or loader; round-trip notes list what cannot be expressed.
 
-Round 25: `src/factmodel/export/{dbt,ossie}.py`, `fact export`; dbt-core 1.12.6 validates the dbt export with `dbt parse`; the Ossie page was read once (no version stated) and the export keeps to the structure it shows (`docs/exporters/round-trip-notes.md`).
+Round 25: `src/factmodel/export/{dbt,ossie}.py`, `fact export`; dbt-core 1.12.6 validates the dbt export with `dbt parse`; the Ossie page was read once (no version stated) and the export keeps to the structure it shows (`docs/exporters/round-trip-notes.md`). Round 28 read the core specification once and pinned the export to 0.2.0.dev0.
 
 ### WP3.6 Drift-review, layer-build, escalation skills (1 round)
 
@@ -505,7 +505,11 @@ Round 25: skills `drift-review`, `layer-build`, `escalation-draft`, `maintenance
 
 Round 26 (WP4.1): `uv build` gives wheel and sdist (`twine check` passes); a clean-room test installs the wheel alone outside the repository and runs the Chinook loop; the M3 answers (layer join tables, value tables, dbt derived metrics, committed release notes, a migration registry slot).
 
+**Status: kit done, pilot pending.** Rounds 26 to 28 built the kit; the M4 gate waits on the owner's pilot on real QCEW data and the release round after it.
+
 Round 27 (WP4.2): the documentation site (MkDocs Material), assembled from the repository by `docs/_site/hooks.py`: spec, decisions on one page, guides, one page per skill, a CLI reference generated from the Typer app, a schema reference generated from the JSON Schemas, a quickstart (tested) and a FAQ; `mkdocs build --strict` in CI; `pages.yml` deploys on push to `main` once the owner enables GitHub Pages.
+
+Round 28 (WP4.3): the Chinook tutorial (`docs/tutorial/chinook.md`), from an empty folder to a release and two exports, tested on the installed wheel alone; the pilot kit (`docs/pilot/qcew-real-data.md`) for the owner's run on the real QCEW files, dry-run on the seed in per-year tables; the Ossie export pinned to the core specification 0.2.0.dev0.
 
 ### WP4.1 Packaging (1 round)
 

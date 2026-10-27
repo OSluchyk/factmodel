@@ -14,3 +14,5 @@ The current core-change ledger (D-018), continuing `spec/CORE-CHANGES-M3.md` fro
 | 6 | 26 | `fact migrate` registry with one documented slot (1.0.0 to 2.0.0, no automatic step) (M3 answer Q6) | implementation | - | none |
 | 7 | 26 | Packaging: sdist excludes the root `.claude/`; `fact --version` prints the schema version | implementation | - | none |
 | 8 | 27 | Documentation site: `mkdocs.yml`, `docs/_site/hooks.py`, quickstart, FAQ, `pages.yml`; SPEC toolset gains `fact probe render` and `fact quote` (the spec lagged the CLI) | documentation | - | none |
+| 9 | 28 | Ossie export pinned to the core specification 0.2.0.dev0: flat document, `version`, field expressions and `datatype`, `relationships`, model-scoped metrics with `description`, `custom_extensions` (vendor `factmodel`) | implementation (the target's format, no framework key) | - | QCEW, Chinook |
+| 10 | 28 | Tutorial `docs/tutorial/chinook.md` (tested on the installed wheel) and pilot kit `docs/pilot/qcew-real-data.md` | documentation | - | QCEW, Chinook |

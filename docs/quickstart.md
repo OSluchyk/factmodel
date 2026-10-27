@@ -35,4 +35,4 @@ What happened:
 4. The drafts went into `physical/entities/` unchanged. In a real model you review each one first (the `entity-scaffold` skill).
 5. `fact project` computed the derived values; `fact check` ran every gate stage.
 
-Next: the tutorial builds a full model of the Chinook schema, from probes to a release and an export.
+Next: the [tutorial](tutorial/chinook.md) builds a model of part of the Chinook schema, from residue to probes, a proven layer, a release and two exports.

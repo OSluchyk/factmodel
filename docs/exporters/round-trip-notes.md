@@ -21,23 +21,32 @@ Pinned to dbt-core 1.12.6 with dbt-duckdb 1.11.1 (dev dependencies). The tests r
 
 ## Apache Ossie (formerly Open Semantic Interchange)
 
-Pinned to the Apache Ossie core specification, https://github.com/apache/ossie/blob/main/core-spec/spec.md, version `0.2.0.dev0`, read once on 2026-10-27 (round 28). The document marks itself a draft that may change before 0.2.0 is released, and publishes no JSON Schema, so the tests are structural: every key the export writes is one the document names, every name a key refers to resolves as the document says (`primary_key`, `from_columns`, `to_columns` and metric expressions name dataset fields, metrics are model-scoped with `dataset.field` references), and every expression parses in its dialect.
+Two versions of the core specification are pinned, each read once on 2026-10-27. Neither publishes a JSON Schema, so the tests are structural: every key the export writes is one the document names, every name a key refers to resolves, and every expression parses in its dialect.
 
-The document is flat: one model at the root, with `version`, `name`, `description`, `ai_context`, `datasets`, `relationships`, `metrics` and `custom_extensions`. Round 25 wrote the `semantic_model` list shown on the project page; version 0.2.0.dev0 removes that list.
+| | 0.1.1 (default) | 0.2.0.dev0 (`--spec-version 0.2.0.dev0`) |
+| --- | --- | --- |
+| Document | https://github.com/apache/ossie/blob/osi-0.1.1-rc1/core-spec/spec.md, the released version (tag `osi-0.1.1-rc1`), read in round 29 | https://github.com/apache/ossie/blob/main/core-spec/spec.md, a draft that may change before 0.2.0, read in round 28 |
+| Model | A `semantic_model` list holding one model; no `version` key | One model at the root, with `version: 0.2.0.dev0` |
+| Keys and relationship columns | Name source columns | Name dataset fields |
+| Field type | No key; not written | `datatype`, when the engine type maps to the document's enumeration |
+| Dialects | A closed enumeration: `SNOWFLAKE` and `DATABRICKS` for those engines; every other engine is written once as neutral `ANSI_SQL` | Free-form: sqlglot names, one per source dialect; `OSSIE_SQL_2026`, the only dialect the document defines, is not written |
+| `custom_extensions` | Vendor names are a closed enumeration: vendor `COMMON`, the framework's keys under `factmodel` in the JSON | Vendor `factmodel` |
+
+Fields are written as the entity's columns, so a field name equals its column name and both versions resolve. Expressions in `ANSI_SQL` are sqlglot's neutral SQL, which is not checked against any one engine.
 
 | Layer part | In Ossie | Notes |
 | --- | --- | --- |
-| Entity | A dataset: physical name as `source`, primary key (field names), grain as `description`, every field | |
-| Field | A field: `expression.dialects` with the source column, meaning as `description`, `datatype` when the engine type maps to the document's enumeration | A nested path becomes one name with `__` in place of the dot. A type sqlglot cannot read, or one outside the enumeration, has no `datatype`. |
-| Field a concept reads, or a measure's time field | `dimension.is_time` false or true | A date or timestamp field defaults to `is_time` true under the document's rule. |
-| Join (relationship key), equality, to a one side, both entities in the layer | A relationship: `from` is the many side, `to` the one side, `from_columns` and `to_columns` are field names, the meaning is `ai_context` | A `one_to_many` key is written from its target. |
+| Entity | A dataset: physical name as `source`, primary key, grain as `description`, every field | |
+| Field | A field: `expression.dialects` with the source column, meaning as `description`; `datatype` in 0.2.0.dev0 only | A nested path becomes one name with `__` in place of the dot. |
+| Field a concept reads, or a measure's time field | `dimension.is_time` false or true | |
+| Join (relationship key), equality, to a one side, both entities in the layer | A relationship: `from` is the many side, `to` the one side; the meaning is `ai_context` | A `one_to_many` key is written from its target. |
 | Join that is an expression, `many_to_many` or `unknown`, or to an entity outside the layer (QCEW `qtrly.to-area`, `annual.to-area`) | Text in `ai_context.instructions` | Note per join. Ossie's `to_columns` must be a key of the `to` dataset. |
-| Measure | A model-scoped metric: aggregation and expression, rendered per dialect of the layer's sources; meaning as `description` | Dialect names follow sqlglot; the document leaves names free-form and defines only `OSSIE_SQL_2026`, which is not written. |
+| Measure | A model-level metric: aggregation and expression with `dataset.field` references; meaning as `description` | |
 | Measure with suppressed-cell handling (every QCEW measure) | `custom_extensions` of the metric | Ossie metrics have no filter. |
 | Measure with aggregation `none` and no aggregate (QCEW `annual_employment`) | A metric whose expression is the field | Note: read at its grain. |
-| Required concepts, hazards, evidence status | Text in `ai_context.instructions`, and JSON in `custom_extensions` (vendor `factmodel`) on the model, each dataset and each metric | The document names no key for them. |
+| Required concepts, hazards, evidence status | Text in `ai_context.instructions`, and JSON in `custom_extensions` on the model, each dataset and each metric | Neither document names a key for them. |
 | Concept with no required flag, value vocabulary, values table | Nothing beyond the field's `dimension` | |
 
-`custom_extensions` follows the document's schema: a list of `vendor_name` and `data`, where `data` is a JSON string. Vendor name `factmodel`. Keys: on the model `layer_status`, `consumer`, `required_concepts`, `hazards`; on a dataset `evidence_status`, `current_row_rule`, `default_filters`; on a metric `aggregation`, `grain`, and `suppressed` and `hazards` when set.
+The framework's keys in `custom_extensions`: on the model `layer_status`, `consumer`, `required_concepts`, `hazards`; on a dataset `evidence_status`, `current_row_rule`, `default_filters`; on a metric `aggregation`, `grain`, and `suppressed` and `hazards` when set.
 
-When Ossie releases 0.2.0 or publishes a JSON Schema, the pin moves in a round with one read of the released document.
+When Ossie releases 0.2.0 or publishes a JSON Schema, a new pin needs one read of that document.

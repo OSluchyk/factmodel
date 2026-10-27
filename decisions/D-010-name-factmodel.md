@@ -32,3 +32,4 @@ This supersedes the name part of D-003. D-003's PyPI and GitHub findings stay va
 - `https://pypi.org/project/factmodel/` returned 404 on 2026-10-23 (owner check, recorded in the brief; not re-checked in this round).
 - GitHub: not checked.
 - 2026-10-27 (round 26, one HEAD request by the agent): `https://pypi.org/project/factmodel/` returned 200, so a project page of that name now exists. Who owns it was not read. The owner decides before publishing (`rounds/2026-10-27-report-wp4.1.md`).
+- 2026-10-27 (reviewer check, correcting the line above): `https://pypi.org/project/factmodel/` returns 200 for any name, because it serves an anti-bot "Client Challenge" page (it does so for `typer` too), so its status says nothing about the name. `https://pypi.org/simple/factmodel/` and `https://pypi.org/pypi/factmodel/json` both return 404: the name is free. The owner keeps the name and publishes 0.1.0 to hold it.

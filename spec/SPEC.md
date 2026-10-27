@@ -291,10 +291,10 @@ The reference dataset is Chinook, schema only, with synthetic rows generated at 
 - [ ] Name: trademark check before the first public push.
 - [ ] Second domain for M2: which open-source application schema (needs a clear anchor and both reference and unanchored data).
 - [x] Equivalence threshold: 0.9 by default, per consumer when the owner sets `threshold` (D-021).
-- [x] Export target priority: both in M3 (round 25); dbt validated with `dbt parse`; Ossie pinned to the core specification 0.2.0.dev0 (a draft, read in round 28), structural tests because no JSON Schema is published.
+- [x] Export target priority: both in M3 (round 25); dbt validated with `dbt parse`; Ossie pinned to the released core specification 0.1.1 by default (read in round 29) and to the 0.2.0.dev0 draft behind `--spec-version` (read in round 28); structural tests, because no JSON Schema is published.
 - [ ] Format of facts: YAML files only, or YAML plus a generated graph file (for example JSON-LD) for graph consumers.
 
 ## Sources
 
 - [Thoughtworks Technology Radar: Semantic layer (Apr 2026)](https://www.thoughtworks.com/en-ec/radar/techniques/semantic-layer)
-- [Apache Ossie (formerly Open Semantic Interchange)](https://ossie.apache.org/); core specification 0.2.0.dev0: https://github.com/apache/ossie/blob/main/core-spec/spec.md (read 2026-10-27)
+- [Apache Ossie (formerly Open Semantic Interchange)](https://ossie.apache.org/); core specification 0.1.1: https://github.com/apache/ossie/blob/osi-0.1.1-rc1/core-spec/spec.md and 0.2.0.dev0: https://github.com/apache/ossie/blob/main/core-spec/spec.md (both read 2026-10-27)

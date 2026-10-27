@@ -1,32 +1,31 @@
 """Export a layer as an Apache Ossie (formerly Open Semantic Interchange) semantic model.
 
-Pinned source: the Apache Ossie core specification,
-https://github.com/apache/ossie/blob/main/core-spec/spec.md, read once on 2026-10-27 (round
-28). The document states "Version: 0.2.0.dev0" and marks itself a draft; that is the version
-pinned here. It publishes no JSON Schema, so the tests are structural.
+Two versions of the core specification are pinned, each read once and written only with the
+keys it names. Neither publishes a JSON Schema, so the tests are structural.
 
-What the document names becomes a real key:
+- **0.1.1, the default** (the released version): the document at tag ``osi-0.1.1-rc1``,
+  https://github.com/apache/ossie/blob/osi-0.1.1-rc1/core-spec/spec.md, read 2026-10-27 (round
+  29). A ``semantic_model`` list holds the model; no ``version`` key and no field ``datatype``;
+  dialects and vendor names come from closed enumerations, so expressions are written as
+  ``ANSI_SQL`` (``SNOWFLAKE`` or ``DATABRICKS`` for those engines) and the extensions use vendor
+  ``COMMON`` with the framework's keys under ``factmodel`` in the JSON. Keys and
+  relationship columns name source columns.
+- **0.2.0.dev0** (``--spec-version 0.2.0.dev0``, a draft): the document on ``main``,
+  https://github.com/apache/ossie/blob/main/core-spec/spec.md, read 2026-10-27 (round 28). One
+  model at the root with ``version``; field ``datatype``; keys, relationship columns and metric
+  references name dataset fields; dialect names are free-form (sqlglot names are written,
+  ``OSSIE_SQL_2026`` is not) and the vendor name is ``factmodel``.
 
-- the model at the document root (no ``semantic_model`` wrapper): ``version``, ``name``,
-  ``description``, ``ai_context``, ``datasets``, ``relationships``, ``metrics`` and
-  ``custom_extensions``;
-- a dataset: ``name``, ``source``, ``primary_key``, ``description``, ``fields``,
-  ``custom_extensions``;
-- a field: ``name``, ``expression.dialects`` (the source column), ``description``,
-  ``datatype`` (when the engine type maps to the document's enumeration) and
-  ``dimension.is_time``;
-- a relationship: ``name``, ``from`` (the many side), ``to``, ``from_columns``,
-  ``to_columns`` (field names), for an equality join between two layer entities;
-- a metric (model-scoped, ``dataset.field`` references): ``name``, ``description``,
-  ``expression.dialects``, ``custom_extensions``.
-
-What it does not name stays in ``ai_context.instructions`` as text (required concepts,
-hazards, evidence status, joins it cannot hold) and in ``custom_extensions`` with vendor name
-``factmodel`` as a JSON string. Dialect names follow sqlglot; the document leaves dialect
-names free-form and defines only ``OSSIE_SQL_2026``, which this exporter does not write.
+In both, each entity is a dataset (``name``, ``source``, ``primary_key``, ``description``,
+``fields``), each field has ``expression.dialects``, ``description`` and ``dimension.is_time``
+for a time field or a concept's field; each equality join to a one side between two layer
+entities is a relationship; each measure is a model-level metric (``dataset.field``). What the
+documents do not name stays in ``ai_context.instructions`` as text (required concepts,
+hazards, evidence status, joins they cannot hold) and in ``custom_extensions`` as JSON.
 """
 
 import json
+from dataclasses import dataclass
 from typing import Any
 
 import sqlglot
@@ -34,16 +33,48 @@ from sqlglot import exp
 from sqlglot.errors import ParseError
 
 from factmodel.adapters.base import dialect_for
-from factmodel.export import Export, layer_of, status_of
+from factmodel.export import Export, ExportError, layer_of, status_of
 from factmodel.model import joins
 from factmodel.model.loader import Model
 from factmodel.repo import dump_yaml
 
-SPEC_URL = "https://github.com/apache/ossie/blob/main/core-spec/spec.md"
-SOURCE_URL = SPEC_URL
-PINNED_VERSION = "0.2.0.dev0"
-READ_ON = "2026-10-27"
-VENDOR = "factmodel"
+
+@dataclass(frozen=True)
+class Spec:
+    version: str
+    url: str
+    read_on: str
+    note: str
+    flat: bool  # one model at the root with `version`, else a `semantic_model` list
+    datatype: bool  # fields carry `datatype`
+    vendor: str
+    dialects: dict[str, str] | None  # sqlglot dialect -> enumeration name; None: free-form
+
+
+SPECS = {
+    "0.1.1": Spec(
+        "0.1.1",
+        "https://github.com/apache/ossie/blob/osi-0.1.1-rc1/core-spec/spec.md",
+        "2026-10-27",
+        "the released version, at tag osi-0.1.1-rc1",
+        flat=False,
+        datatype=False,
+        vendor="COMMON",
+        dialects={"snowflake": "SNOWFLAKE", "databricks": "DATABRICKS"},
+    ),
+    "0.2.0.dev0": Spec(
+        "0.2.0.dev0",
+        "https://github.com/apache/ossie/blob/main/core-spec/spec.md",
+        "2026-10-27",
+        "a draft, on main",
+        flat=True,
+        datatype=True,
+        vendor="factmodel",
+        dialects=None,
+    ),
+}
+DEFAULT_VERSION = "0.1.1"
+VENDOR = "factmodel"  # the key, or vendor name, that holds the framework's own metadata
 FALLBACK_DIALECTS = ("duckdb", "postgres")
 AGGREGATE = {
     "sum": "SUM({})",
@@ -71,8 +102,22 @@ DATATYPES = (
 SWAP = {"many_to_one": False, "one_to_one": False, "one_to_many": True}
 
 
-def _extension(data: dict[str, Any]) -> list[dict[str, str]]:
-    return [{"vendor_name": VENDOR, "data": json.dumps(data, sort_keys=True)}]
+def _extension(spec: Spec, data: dict[str, Any]) -> list[dict[str, str]]:
+    payload = data if spec.vendor == VENDOR else {VENDOR: data}
+    return [{"vendor_name": spec.vendor, "data": json.dumps(payload, sort_keys=True)}]
+
+
+def _render(tree: exp.Expr, dialects: list[str], spec: Spec) -> list[dict[str, str]]:
+    """One entry per dialect; under an enumeration, other engines share neutral ANSI_SQL."""
+    out: dict[str, str] = {}
+    for dialect in dialects:
+        if spec.dialects is None:
+            out.setdefault(dialect, tree.sql(dialect=dialect))
+        elif dialect in spec.dialects:
+            out.setdefault(spec.dialects[dialect], tree.sql(dialect=dialect))
+        else:
+            out.setdefault("ANSI_SQL", tree.sql())
+    return [{"dialect": name, "expression": sql} for name, sql in out.items()]
 
 
 def _field_name(address: str) -> str:
@@ -176,7 +221,10 @@ def _instructions(model: Model, layer: Any, unheld: list[str]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def export(model: Model, layer_id: str) -> Export:
+def export(model: Model, layer_id: str, spec_version: str = DEFAULT_VERSION) -> Export:
+    spec = SPECS.get(spec_version)
+    if spec is None:
+        raise ExportError(f"unknown Ossie version {spec_version!r}; one of {', '.join(SPECS)}")
     layer = layer_of(model, layer_id)
     out = Export()
     members = [e.entity for e in layer.entities]
@@ -195,13 +243,13 @@ def export(model: Model, layer_id: str) -> Export:
         for fld in entity.fields:
             address = fld.path or fld.name
             column = exp.column(address) if fld.path is None else exp.to_column(address)
-            per_dialect = [{"dialect": d, "expression": column.sql(dialect=d)} for d in dialects]
+            per_dialect = _render(column, dialects, spec)
             row: dict[str, Any] = {
                 "name": _field_name(address),
                 "expression": {"dialects": per_dialect},
                 "description": fld.meaning.strip(),
             }
-            datatype = _datatype(fld.type, own)
+            datatype = _datatype(fld.type, own) if spec.datatype else None
             if datatype is not None:
                 row["datatype"] = datatype
             if address in time_fields.get(entity.id, set()):
@@ -217,11 +265,12 @@ def export(model: Model, layer_id: str) -> Export:
                 "description": entity.grain.strip(),
                 "fields": fields,
                 "custom_extensions": _extension(
+                    spec,
                     {
                         "evidence_status": status_of(model, entity.id),
                         "current_row_rule": item.current_row_rule or entity.keys.current_row_rule,
                         "default_filters": list(item.default_filters or []),
-                    }
+                    },
                 ),
             }
         )
@@ -236,7 +285,7 @@ def export(model: Model, layer_id: str) -> Export:
     for measure in layer.measures or []:
         expression = AGGREGATE[measure.aggregation].format(measure.expression.strip())
         tree = sqlglot.parse_one(expression)
-        rendered = [{"dialect": d, "expression": tree.sql(dialect=d)} for d in dialects]
+        rendered = _render(tree, dialects, spec)
         extra: dict[str, Any] = {"aggregation": measure.aggregation}
         extra["grain"] = {"entity": measure.grain.entity, "fields": list(measure.grain.fields)}
         if measure.suppressed:
@@ -248,11 +297,11 @@ def export(model: Model, layer_id: str) -> Export:
                 "name": measure.id,
                 "description": measure.meaning.strip(),
                 "expression": {"dialects": rendered},
-                "custom_extensions": _extension(extra),
+                "custom_extensions": _extension(spec, extra),
             }
         )
-    document: dict[str, Any] = {
-        "version": PINNED_VERSION,
+    document: dict[str, Any] = {"version": spec.version} if spec.flat else {}
+    document |= {
         "name": layer.id,
         "description": layer.purpose,
         "ai_context": {"instructions": _instructions(model, layer, unheld)},
@@ -262,23 +311,34 @@ def export(model: Model, layer_id: str) -> Export:
         document["relationships"] = relationships
     document["metrics"] = metrics
     document["custom_extensions"] = _extension(
+        spec,
         {
             "layer_status": layer.status,
             "consumer": layer.consumer,
             "required_concepts": [c.id for c in layer.concepts or [] if c.required],
             "hazards": list(layer.hazards or []),
-        }
+        },
     )
+    if not spec.flat:
+        document = {"semantic_model": [document]}
     out.files[f"{layer.id}.ossie.yaml"] = dump_yaml(document)
+    where = f"vendor {spec.vendor}" + ("" if spec.vendor == VENDOR else f", key {VENDOR}")
     out.warnings += [
-        f"pinned to the Ossie core specification {PINNED_VERSION} (a draft), read {READ_ON}: "
-        f"{SPEC_URL}",
+        f"pinned to the Ossie core specification {spec.version} ({spec.note}), read "
+        f"{spec.read_on}: {spec.url}",
         "required concepts, hazards and evidence status travel as text in ai_context and as "
-        f"JSON in custom_extensions (vendor {VENDOR})",
-        "dialect names follow sqlglot; OSSIE_SQL_2026 (the only dialect the document defines) "
-        "is not written",
+        f"JSON in custom_extensions ({where})",
+        (
+            "dialect names follow sqlglot; OSSIE_SQL_2026 (the only dialect the document "
+            "defines) is not written"
+            if spec.dialects is None
+            else "dialects come from the document's enumeration: engines it does not list are "
+            "written once, as neutral ANSI_SQL"
+        ),
         "no JSON Schema is published for the pinned version; structural tests only",
     ]
+    if not spec.datatype:
+        out.warnings.append("field types: the document has no datatype key; not written")
     out.warnings += [
         f"join {ref}: not an equality join to the one side between two layer entities; "
         "kept as text in ai_context"

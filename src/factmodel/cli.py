@@ -620,6 +620,14 @@ def export_command(
     target: Annotated[str, typer.Option("--target", help="ossie or dbt.")],
     layer: Annotated[str, typer.Option("--layer", help="Layer ID.")],
     out: Annotated[Path, typer.Option("--out", help="Folder for the exported files.")],
+    spec_version: Annotated[
+        str | None,
+        typer.Option(
+            "--spec-version",
+            help=f"Ossie only: the core specification version, one of "
+            f"{', '.join(export_ossie.SPECS)}; default {export_ossie.DEFAULT_VERSION}.",
+        ),
+    ] = None,
     root: RootOption = Path("."),
 ) -> None:
     """Export a layer to another tool; what the target cannot hold is listed, never dropped."""
@@ -627,9 +635,15 @@ def export_command(
     if target not in exporters or target not in vocabulary.load()["export_target"]:
         typer.echo(f"unknown target {target!r}; one of {', '.join(sorted(exporters))}", err=True)
         raise typer.Exit(2)
+    if spec_version is not None and target != "ossie":
+        typer.echo("--spec-version applies to --target ossie only", err=True)
+        raise typer.Exit(2)
     model = inspect_model(root).model
     try:
-        result = exporters[target].export(model, layer)
+        if target == "ossie":
+            result = export_ossie.export(model, layer, spec_version or export_ossie.DEFAULT_VERSION)
+        else:
+            result = exporters[target].export(model, layer)
     except ExportError as error:
         typer.echo(str(error), err=True)
         raise typer.Exit(1) from error

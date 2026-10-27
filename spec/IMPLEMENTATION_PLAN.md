@@ -491,7 +491,7 @@ Round 24: `src/factmodel/release/` (`fact release`, `fact check --release`), `fa
 
 **Acceptance.** Exported files validate against the target's published schema or loader; round-trip notes list what cannot be expressed.
 
-Round 25: `src/factmodel/export/{dbt,ossie}.py`, `fact export`; dbt-core 1.12.6 validates the dbt export with `dbt parse`; the Ossie page was read once (no version stated) and the export keeps to the structure it shows (`docs/exporters/round-trip-notes.md`). Round 28 read the core specification once and pinned the export to 0.2.0.dev0.
+Round 25: `src/factmodel/export/{dbt,ossie}.py`, `fact export`; dbt-core 1.12.6 validates the dbt export with `dbt parse`; the Ossie page was read once (no version stated) and the export keeps to the structure it shows (`docs/exporters/round-trip-notes.md`). Round 28 read the core specification once and pinned the export to 0.2.0.dev0. Round 29 read the released 0.1.1 once and made it the default; 0.2.0.dev0 stays behind `--spec-version`.
 
 ### WP3.6 Drift-review, layer-build, escalation skills (1 round)
 

@@ -183,6 +183,99 @@ python -c "import duckdb, sys; c = duckdb.connect(sys.argv[1], read_only=True); 
 
 A result out of range opens a finding (`registers/findings/`). Read each one: either the model is wrong (fix the fact) or the data is (keep the finding open, it is now evidence).
 
+Now remove the seed's probe evidence. Those records measured the synthetic seed, not your platform; the real intake above replaces them. The script deletes every record from source `qcew-sqlite` with `data_quality: synthetic`, and every citation of one. Catalog evidence and document evidence (BLS layouts, title files, `profile.md`) stay.
+
+```bash
+cat > "$PILOT/drop-seed-evidence.py" <<'PY'
+"""Remove probe records measured on the seed (source qcew-sqlite, data_quality synthetic) and
+every citation of them from the model at argv[1]; keep catalog and document evidence. A file
+is rewritten only when something was removed from it."""
+import sys
+from pathlib import Path
+
+from ruamel.yaml import YAML
+
+root = Path(sys.argv[1])
+
+
+def writer(nulls):
+    """The settings fact probe intake writes with; nulls stay 'null' where the file wrote them so."""
+    out = YAML(typ="rt")
+    out.preserve_quotes = True
+    out.width = 4096
+    if nulls:
+        out.representer.add_representer(
+            type(None), lambda r, _: r.represent_scalar("tag:yaml.org,2002:null", "null")
+        )
+    return out
+
+
+yaml = writer(False)
+
+
+def seed(record):
+    return record.get("source") == "qcew-sqlite" and record.get("data_quality") == "synthetic"
+
+
+def cites(value, ids):
+    return isinstance(value, str) and value in ids
+
+
+def prune(node, ids):
+    """Drop citations of ids; a list of nothing but such citations goes with its key."""
+    changed = False
+    if isinstance(node, dict):
+        for key in list(node):
+            value = node[key]
+            if isinstance(value, list) and value and all(cites(v, ids) for v in value):
+                del node[key]
+                changed = True
+            else:
+                changed |= prune(value, ids)
+    elif isinstance(node, list):
+        for i in reversed(range(len(node))):
+            if cites(node[i], ids):
+                del node[i]
+                changed = True
+            else:
+                changed |= prune(node[i], ids)
+    return changed
+
+
+files = sorted(p for p in root.rglob("*.yaml") if ".git" not in p.parts and "drafts" not in p.parts)
+docs = {p: yaml.load(p.read_text(encoding="utf-8")) for p in files}
+ids, deleted, edited = set(), 0, 0
+for path, doc in docs.items():
+    records = doc.get("records") if isinstance(doc, dict) else None
+    if records and any(seed(r) for r in records):
+        ids |= {r["id"] for r in records if seed(r)}
+        doc["records"] = [r for r in records if not seed(r)]
+        doc["_dirty"] = True
+for path, doc in docs.items():
+    if not isinstance(doc, dict):
+        continue
+    dirty = doc.pop("_dirty", False)
+    if dirty and not doc["records"] and doc.get("kind") == "evidence":
+        path.unlink()
+        deleted += 1
+        continue
+    if prune(doc, ids) or dirty:
+        nulls = ": null\n" in path.read_text(encoding="utf-8")
+        with path.open("w", encoding="utf-8") as handle:
+            writer(nulls).dump(doc, handle)
+        edited += 1
+print(f"{len(ids)} seed probe records removed; {deleted} files deleted, {edited} edited")
+PY
+python "$PILOT/drop-seed-evidence.py" "$M"
+fact project --root "$M"
+fact check --root "$M"
+fact status --root "$M"
+git -C "$M" add -A
+git -C "$M" commit --quiet -m "Pilot step 4: seed probe evidence removed"
+```
+
+Expect `49 seed probe records removed; 49 files deleted` and `gate: pass`. A fact the seed alone had confirmed now rests on your intake: in range, it is `confirmed`; out of range, its finding is open.
+
 ## 5. The real corpus
 
 Write 30 questions, each with the SQL you trust as the answer. Keep them outside the model repository, in `$PILOT/corpus/`, one YAML file per question, in the same form as the example corpus (`examples/qcew/semantic/employment-wages/corpus/` has 38 to read). For example:

@@ -170,6 +170,7 @@ Defect fixes (CHANGELOG only, D-018): the EXCEPT operands of the equivalence scr
 ## 10. Questions for the owner
 
 1. **PyPI name.** Keep `factmodel` (a page now exists), or choose another distribution name before publishing? A change needs a decision record superseding D-010.
+   Correction (round 29): no page exists. `https://pypi.org/project/factmodel/` returns 200 for any name, because it serves an anti-bot "Client Challenge" page (it does so for `typer` too), so its status says nothing about the name. `https://pypi.org/simple/factmodel/` and `https://pypi.org/pypi/factmodel/json` both return 404: the name is free. The owner keeps the name (D-010 evidence).
 2. **Ossie pin.** Keep the draft 0.2.0.dev0, or pin to the released 0.1.1, whose text was not read (one more read)?
 3. **Site generator.** Stay on MkDocs Material, or move to its successor, Zensical, before Material's end of life (May 2027)?
 4. **Seed evidence after the pilot.** Remove the seed's probe evidence and the `qcew-sqlite` source from the pilot model once real evidence is in, or keep them as history?

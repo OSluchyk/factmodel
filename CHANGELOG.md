@@ -2,6 +2,14 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-27 - Round 29: D-010 evidence correction, Ossie 0.1.1 pin, kit step
+
+**Why.** Three corrections after review. The round-26 PyPI check read a status code that PyPI returns for every name, so the record said the name was taken when it is free. An export should default to what Ossie has released, not to a draft. The pilot model kept the seed's probe evidence next to the real results, though it describes the seed, not the platform.
+
+- D-010 gains a dated reviewer line after the round-26 line: `/project/` answers 200 for any name (an anti-bot page); `/simple/factmodel/` and `/pypi/factmodel/json` answer 404, so the name is free. Correction notes in the round-26 report and the M4 final report.
+- Ossie: one read of the released core specification 0.1.1 (tag `osi-0.1.1-rc1`); the export defaults to it. 0.1.1 has the `semantic_model` list, no `version` and no `datatype`, and closed enumerations for dialects (`ANSI_SQL` for engines it does not list) and vendors (`COMMON`, with the framework's keys under `factmodel`). `fact export --spec-version 0.2.0.dev0` keeps the round-28 shape. Tests cover both.
+- Pilot kit, step 4: after the real intake, a block removes the seed's probe evidence (source `qcew-sqlite`, `data_quality: synthetic`) and every citation of it, then runs `fact project` and `fact check`. Catalog and document evidence stay. Dry-run on the stand-in.
+
 ## Unreleased - 2026-10-27 - Round 28: WP4.3 Tutorial, pilot kit, Ossie pin
 
 **Why.** M4's test is someone building a model from the docs alone, and the QCEW model proving itself on real data. The tutorial is that path on Chinook, kept honest by a test that runs it on the installed wheel. The pilot kit lets the owner run the real-data step without the agent ever touching the data. The Ossie export followed a project page; it now follows the specification document itself.

@@ -2,6 +2,21 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-27 - Round 27: WP4.2 Documentation site
+
+**Why.** A framework others set up from scratch needs one place to read it, generated from the files that define it so it cannot drift from them. The CLI and schema references come straight from the code and the schemas, and a strict build fails on any broken link between pages.
+
+- MkDocs Material (dev dependency). `docs/_site/hooks.py` assembles the site before every build:
+  - the spec and the roadmap;
+  - the decisions on one page;
+  - the guides;
+  - one page per skill;
+  - a CLI reference with every command, option and one example;
+  - a schema reference with one page per file kind;
+  - a tested ten-command quickstart, and a FAQ.
+- `mkdocs build --strict` runs in tests and CI; `pages.yml` deploys on push to `main` once the owner enables Pages.
+- The spec's toolset gains `fact probe render` and `fact quote`, which it had missed.
+
 ## Unreleased - 2026-10-27 - Round 26: WP4.1 Packaging, clean-room install, M3 answers
 
 **Why.** Before anyone else can use FactModel, the built package alone has to work with nothing from the source tree. The M3 answers close the gaps the reference consumers found: joins a consumer had to look up, a level matrix it had to derive, a formula dbt could not hold, and release notes that did not survive a fresh build folder.

@@ -40,6 +40,10 @@ jobs:
           DO_NOT_TRACK: "1"
       - name: Build and check the package
         run: uv build && uv run twine check dist/*
+      - name: Documentation site
+        run: uv run mkdocs build --strict
+        env:
+          NO_MKDOCS_2_WARNING: "1"
       - name: Chinook gate (M1)
         run: uv run fact check --root examples/chinook
       - name: QCEW gate (M2)

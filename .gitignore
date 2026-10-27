@@ -28,3 +28,8 @@ _work/
 
 # Release output (fact release --out release/out)
 examples/*/release/out/
+
+# Documentation site build (docs/_site/hooks.py writes the pages)
+docs/_site/pages/*
+!docs/_site/pages/.gitkeep
+site/

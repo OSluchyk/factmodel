@@ -58,6 +58,7 @@ dev = [
     "dbt-core>=1.12.6",
     "dbt-duckdb>=1.11.1",
     "twine>=7.0.0",
+    "mkdocs-material>=9.8.0",
 ]
 
 [tool.uv.sources]

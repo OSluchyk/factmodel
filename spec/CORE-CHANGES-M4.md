@@ -13,3 +13,4 @@ The current core-change ledger (D-018), continuing `spec/CORE-CHANGES-M3.md` fro
 | 5 | 26 | `RELEASE_NOTES.md` committed in the model repository (`release/RELEASE_NOTES.md`); `fact release` appends and copies (M3 answer Q5) | release format, additive | ledger line (D-018) | none |
 | 6 | 26 | `fact migrate` registry with one documented slot (1.0.0 to 2.0.0, no automatic step) (M3 answer Q6) | implementation | - | none |
 | 7 | 26 | Packaging: sdist excludes the root `.claude/`; `fact --version` prints the schema version | implementation | - | none |
+| 8 | 27 | Documentation site: `mkdocs.yml`, `docs/_site/hooks.py`, quickstart, FAQ, `pages.yml`; SPEC toolset gains `fact probe render` and `fact quote` (the spec lagged the CLI) | documentation | - | none |

@@ -1,0 +1,44 @@
+# The documentation site, assembled from the repository by docs/_site/hooks.py before every
+# build (into docs/_site/pages, gitignored except .gitkeep). Build: uv run mkdocs build --strict
+site_name: FactModel
+site_description: Evidence-grounded semantic models of data platforms, built and checked by AI agents.
+repo_url: https://github.com/OSluchyk/factmodel
+docs_dir: docs/_site/pages
+site_dir: site
+strict: true
+hooks:
+  - docs/_site/hooks.py
+theme:
+  name: material
+  features: [navigation.sections, navigation.indexes, content.code.copy]
+markdown_extensions:
+  - tables
+  - admonition
+  - toc: {permalink: true}
+  - pymdownx.superfences
+validation:
+  omitted_files: info
+  absolute_links: info
+  unrecognized_links: info
+nav:
+  - Home: index.md
+  - Quickstart: docs/quickstart.md
+  - FAQ: docs/faq.md
+  - Specification:
+      - Spec: spec/SPEC.md
+      - Vocabulary: spec/VOCABULARY.md
+      - Algorithms: spec/ALGORITHMS.md
+      - Versioning: spec/VERSIONING.md
+      - Roadmap: spec/IMPLEMENTATION_PLAN.md
+      - Core changes M2: spec/CORE-CHANGES-M2.md
+      - Core changes M3: spec/CORE-CHANGES-M3.md
+      - Core changes M4: spec/CORE-CHANGES-M4.md
+  - Decisions: decisions/README.md
+  - Reference:
+      - CLI: reference/cli.md
+      - Schemas: reference/schemas/index.md
+  - Skills: skills/index.md
+  - Guides:
+      - BigQuery adopters: docs/adopters/bigquery.md
+      - Adapter packaging: docs/adapters/packaging.md
+      - Exporters: docs/exporters/round-trip-notes.md

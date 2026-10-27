@@ -201,9 +201,11 @@ One command, `fact`, with a few verbs. It is a small Python package run through 
 | `fact adapters` | List the installed adapters, the engines they read and their default dialects |
 | `fact export-sql --source <id>` | Print the SQL the owner runs to export a source's metadata |
 | `fact snapshot --source <id>` | Write a source's metadata to a snapshot file, so agents and tests work without credentials |
+| `fact quote --source <id> --path <file> --line <n>` | Print a pinned quote from a git source, for an evidence record |
 | `fact draft --source <id>` | Turn the latest snapshot into entity drafts in `drafts/` |
 | `fact sync [--source <id>]` | Run adapters, write new facts, produce a drift report |
 | `fact probe generate` | Write probe scripts for the facts that need data proof |
+| `fact probe render --dialect <d>` | Write a shell script per source that runs the probes for an owner (counts only) |
 | `fact probe run --source <id>` | Run probes through the `sql` adapter where the source names a `dsn_env` (counts only) |
 | `fact probe intake <file>` | Turn probe output into evidence and findings |
 | `fact check` | Run the gate; exit 0 only when every stage passes |

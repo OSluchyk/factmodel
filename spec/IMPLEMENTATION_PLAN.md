@@ -505,6 +505,8 @@ Round 25: skills `drift-review`, `layer-build`, `escalation-draft`, `maintenance
 
 Round 26 (WP4.1): `uv build` gives wheel and sdist (`twine check` passes); a clean-room test installs the wheel alone outside the repository and runs the Chinook loop; the M3 answers (layer join tables, value tables, dbt derived metrics, committed release notes, a migration registry slot).
 
+Round 27 (WP4.2): the documentation site (MkDocs Material), assembled from the repository by `docs/_site/hooks.py`: spec, decisions on one page, guides, one page per skill, a CLI reference generated from the Typer app, a schema reference generated from the JSON Schemas, a quickstart (tested) and a FAQ; `mkdocs build --strict` in CI; `pages.yml` deploys on push to `main` once the owner enables GitHub Pages.
+
 ### WP4.1 Packaging (1 round)
 
 Re-check the name (D-010); publish `factmodel` with extras `[sql]`, `[postgres]` and further drivers; `fact --version` shows package and schema versions.

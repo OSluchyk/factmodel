@@ -113,6 +113,8 @@ def _doc(
     }
     if expected:
         doc["expected"] = {k: dict(v) for k, v in expected.items()}
+    if kind in vocabulary.load()["volatile_probe_kind"]:
+        doc["volatile"] = True  # re-run by a maintenance pack (fact probe generate --set volatile)
     doc["dialect"] = dialect
     doc["sql"] = query.sql(dialect=dialect, identify=True)
     if nested:

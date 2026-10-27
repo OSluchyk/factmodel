@@ -7,5 +7,6 @@ fact: area_titles
 expected:
   row_count:
     min: 1
+volatile: true
 dialect: sqlite
 sql: SELECT COUNT(*) AS "row_count" FROM "area_titles" AS "t"

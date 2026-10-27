@@ -213,7 +213,7 @@ One command, `fact`, with a few verbs. It is a small Python package run through 
 | `fact check --release <dir> [--previous <dir>]` | The reduced gate for a release: yaml, schema, references, privacy, and the release stage |
 | `fact lookup --layer\|--entity\|--hazard <id>` | Print a layer with its joins resolved, an entity or a hazard, from a model or a release |
 | `fact equivalence run\|accept\|script` | Run a layer's consumer on its corpus and compare with the references (counts and outcomes only); accept a run (owner); write an owner-run live comparison script |
-| `fact export --to osi\|dbt\|cube` | Export a semantic layer to another tool |
+| `fact export --target ossie\|dbt --layer <id> --out <dir>` | Export a semantic layer to another tool, with `EXPORT_NOTES.md` listing what the target cannot hold (`docs/exporters/round-trip-notes.md`) |
 | `fact status` | Open findings, fired triggers, stale evidence, next actions |
 
 Probe scripts are plain shell with SQL inside, so the owner can read them before running.
@@ -268,7 +268,7 @@ Each milestone ends at a gate. The core schema is frozen only after M2, when a s
 | M0 - Specification | spec, JSON Schemas, profile contract, projection algorithm | spec reviewed; every rule has a worked example |
 | M1 - Core, engine-neutral | core package, gate, adapter protocol, `export`, `sql` and `git` adapters, probes rendered per dialect, retail profile, Chinook example on SQLite and PostgreSQL | residue 0; expected scopes hold (Invoice direct, InvoiceLine transitive, catalog tables reference); the same probes give the same counts on both engines |
 | **M2 - Cloud engines by adopters and a second domain** (done: schemas 1.0.0) | BigQuery verified through `export` and `sql` by an adopter on their own project (owner-pending); third-party adapter guide; second domain profile (`statistics`, QCEW) | every core change in the ledger with its record (D-018: removals, renames and meaning changes need a decision; additions a ledger line) |
-| M3 - Semantic layers | layer contract, probe generator, equivalence harness, OSI and dbt export | one real consumer meets its equivalence threshold on a real corpus |
+| M3 - Semantic layers (done on synthetic corpora: rounds 20 to 25) | layer contract, probe generator, equivalence harness, OSI and dbt export | one real consumer meets its equivalence threshold on a real corpus (two reference consumers met it on synthetic corpora; the real corpus is the M4 pilot) |
 | M4 - Release 1.0 | packaging, guides, examples, upgrade notes | someone else sets up a model repository from scratch using only the docs |
 
 The reference dataset is Chinook, schema only, with synthetic rows generated at test time (D-011): it has a clear anchor (`Customer`), a direct link (`Invoice`), a transitive one (`InvoiceLine`), administrative data (`Employee`), a reference chain (`Track` to `Album` to `Artist`) and a bridge between reference entities (`PlaylistTrack`).
@@ -288,7 +288,7 @@ The reference dataset is Chinook, schema only, with synthetic rows generated at 
 - [ ] Name: trademark check before the first public push.
 - [ ] Second domain for M2: which open-source application schema (needs a clear anchor and both reference and unanchored data).
 - [x] Equivalence threshold: 0.9 by default, per consumer when the owner sets `threshold` (D-021).
-- [ ] Export target priority: OSI / Apache Ossie first, or dbt first.
+- [x] Export target priority: both in M3 (round 25); dbt validated with `dbt parse`, Ossie structural until its specification is pinned to a version.
 - [ ] Format of facts: YAML files only, or YAML plus a generated graph file (for example JSON-LD) for graph consumers.
 
 ## Sources

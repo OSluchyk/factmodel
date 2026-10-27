@@ -7,6 +7,7 @@ fact: industry_titles.parent
 expected:
   beyond:
     max: 0
+volatile: true
 dialect: sqlite
 sql: SELECT COALESCE(SUM(CASE WHEN "r"."parent_suppressed" = 0 AND 
   "r"."suppressed_children" = 0 THEN 1 ELSE 0 END), 0) AS "parents_compared", 

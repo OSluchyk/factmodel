@@ -2,6 +2,16 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-27 - Round 25: WP3.5 and WP3.6 Exporters and maintenance skills
+
+**Why.** A proven layer is most useful where teams already work: in dbt's semantic layer and in the open Ossie interchange format. An export that silently loses the disclosure filter or a hazard would carry a wrong answer into those tools, so every exporter lists what its target cannot hold. The maintenance skills close the loop: drift, escalations, scheduled re-measuring and building the next layer.
+
+- `fact export --target dbt`: semantic models and metrics with the disclosure filter as a MetricFlow filter and evidence status in `meta`; validated with `dbt parse` (dbt-core 1.12.6, dev dependency).
+- `fact export --target ossie`: pinned to the Apache Ossie page read on 2026-10-27, which states no version. Only the keys that page shows are written, and the rest goes in `ai_context` as text.
+- `EXPORT_NOTES.md` per export, and `docs/exporters/round-trip-notes.md`.
+- Skills `drift-review`, `layer-build`, `escalation-draft` and `maintenance-pack`.
+- Volatile probes: a new vocabulary block, the `volatile: true` mark, and `fact probe generate --set volatile`.
+
 ## Unreleased - 2026-10-27 - Round 24: WP3.4 Release projection, model-lookup and release skills
 
 **Why.** Consumers should read a pinned, checked copy of a model, not its working files. A release that leaks internal notes or derived values, or ships a layer that stopped answering like the platform, would undo what the gate and the harness proved. The dogfood note showed that consumers also need joins resolved for them.

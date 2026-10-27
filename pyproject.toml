@@ -55,6 +55,8 @@ dev = [
     "duckdb>=1.1",
     "duckdb-engine>=0.17.0",
     "factmodel-csvdir",
+    "dbt-core>=1.12.6",
+    "dbt-duckdb>=1.11.1",
 ]
 
 [tool.uv.sources]

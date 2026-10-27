@@ -7,5 +7,6 @@ fact: invoice
 expected:
   row_count:
     min: 1
+volatile: true
 dialect: sqlite
 sql: SELECT COUNT(*) AS "row_count" FROM "Invoice" AS "t"

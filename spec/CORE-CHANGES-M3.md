@@ -20,3 +20,6 @@ The current core-change ledger (D-018): every change to the contract since the M
 | 12 | 23 | Equivalence threshold: share in `same_rows`/`same_predicate` over non-gap items, no regression, every failure explained; corpus keys `known_gap`, `finding`; run summary `threshold`, `share`, `proven`, `unexplained`; `reviewed` needs a proven accepted run | contract, meaning of reviewed | D-021 | none |
 | 13 | 24 | Release folder format: `VERSION` keys, append-only `RELEASE_NOTES.md`, internal-note markers `internal:begin` / `internal:end` | contract, additive | ledger line (D-018) | none |
 | 14 | 24 | `fact release`, `fact check --release` (reduced gate plus a `release` stage), `fact lookup`; the loader skips `release/out/` | implementation (plan WP3.4) | - | none |
+| 15 | 25 | Vocabulary value `ossie` in `export_target` (`osi` kept) | vocabulary value | ledger line (D-018) | none |
+| 16 | 25 | Vocabulary block `volatile_probe_kind`; generated probes of those kinds carry `volatile: true`; `fact probe generate --set volatile` | vocabulary, additive | ledger line (D-018) | none |
+| 17 | 25 | `fact export --target ossie|dbt`, `EXPORT_NOTES.md` | implementation (plan WP3.5) | - | none |

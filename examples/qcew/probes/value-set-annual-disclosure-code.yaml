@@ -9,6 +9,7 @@ expected:
     max: 0
   outside_rows:
     max: 0
+volatile: true
 dialect: sqlite
 sql: SELECT COUNT(DISTINCT "t"."disclosure_code") AS "distinct_values", 
   COUNT(DISTINCT CASE WHEN NOT "t"."disclosure_code" IN ('N') THEN 

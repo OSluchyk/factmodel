@@ -7,6 +7,7 @@ fact: employee
 expected:
   duplicate_keys:
     max: 0
+volatile: true
 dialect: sqlite
 sql: SELECT COUNT(*) AS "duplicate_keys" FROM (SELECT "t"."EmployeeId" FROM 
   "Employee" AS "t" WHERE NOT "t"."EmployeeId" IS NULL GROUP BY "t"."EmployeeId"

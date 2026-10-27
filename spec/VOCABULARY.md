@@ -622,12 +622,13 @@ A `project` file keeps only the top-level keys its kind lists under `keep` in th
 
 **Building a release** (`fact release --out <dir> --version <v>`). The model's gate must pass, and no `reviewed` layer may have dropped against its accepted equivalence run (D-021). Every file of the repository is partitioned (built releases under `release/out/` and `.git` are not part of it). Exported text files lose every block between a line holding `internal:begin` and a line holding `internal:end`; an unclosed block refuses the release. Markers are explicit; prose is never pattern-matched. The release folder holds `VERSION` (`release`, `source_commit`, `schema_version`, `framework_version`) and `RELEASE_NOTES.md`, one section per version, newest last, never edited. `fact check --release <dir> --previous <dir>` runs yaml, schema, references and privacy on the release, and a `release` stage: `VERSION` and the notes exist, no derived key leaked, and every earlier section of the notes is unchanged.
 
-**Export targets.** Other tools a layer can be exported to.
+**Export targets.** Other tools a layer can be exported to. `ossie` is Apache Ossie, formerly Open Semantic Interchange (`osi`, kept so no value is removed); `fact export --target ossie|dbt --layer <id> --out <dir>` writes the files and `EXPORT_NOTES.md`, the list of what the target cannot hold. `cube` has no exporter yet.
 
 ```yaml vocabulary:export_target
 - osi
 - dbt
 - cube
+- ossie
 ```
 
 ## 10. Probes
@@ -676,6 +677,15 @@ duckdb: 'duckdb -noheader -list "${DUCKDB_DB:?set DUCKDB_DB to the database file
 - null_rate
 - row_count
 - current_row_ties
+- value_set
+- rollup
+```
+
+**Volatile probes.** Kinds whose results change as the platform loads data. `fact probe generate` marks their probes `volatile: true`; `fact probe generate --set volatile` writes only those, the probes a maintenance pack re-runs on a schedule.
+
+```yaml vocabulary:volatile_probe_kind
+- key_duplicates
+- row_count
 - value_set
 - rollup
 ```

@@ -11,5 +11,7 @@ Procedures an agent follows in a model repository. Each skill names the `fact` c
 | [`probe-intake`](probe-intake/SKILL.md) | owner | Read probe results, update evidence, open findings |
 | [`model-lookup`](model-lookup/SKILL.md) | consumer | Find an entity, a layer's concepts and measures, a join or a hazard in a release |
 | [`release`](release/SKILL.md) | owner | Build and check a release with the allowlist, VERSION and append-only notes |
-
-Planned later: `drift-review`, `layer-build`, `escalation-draft`, `maintenance-pack`.
+| [`drift-review`](drift-review/SKILL.md) | agent | Classify drift after `fact sync` and turn each item into its follow-up |
+| [`layer-build`](layer-build/SKILL.md) | owner | Build a semantic layer and its corpus up to an accepted equivalence run |
+| [`escalation-draft`](escalation-draft/SKILL.md) | agent | Turn a question only people can answer into an escalation entry |
+| [`maintenance-pack`](maintenance-pack/SKILL.md) | owner | Re-measure volatile probes on a schedule and report what moved |

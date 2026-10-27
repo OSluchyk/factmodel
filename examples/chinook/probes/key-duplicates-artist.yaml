@@ -7,6 +7,7 @@ fact: artist
 expected:
   duplicate_keys:
     max: 0
+volatile: true
 dialect: sqlite
 sql: SELECT COUNT(*) AS "duplicate_keys" FROM (SELECT "t"."ArtistId" FROM 
   "Artist" AS "t" WHERE NOT "t"."ArtistId" IS NULL GROUP BY "t"."ArtistId" 

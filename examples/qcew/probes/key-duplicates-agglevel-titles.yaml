@@ -7,6 +7,7 @@ fact: agglevel_titles
 expected:
   duplicate_keys:
     max: 0
+volatile: true
 dialect: sqlite
 sql: SELECT COUNT(*) AS "duplicate_keys" FROM (SELECT "t"."agglvl_code" FROM 
   "agglevel_titles" AS "t" WHERE NOT "t"."agglvl_code" IS NULL GROUP BY 

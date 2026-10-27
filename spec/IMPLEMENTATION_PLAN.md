@@ -49,7 +49,7 @@ Companion to `spec/SPEC.md`. Where the two disagree, the spec wins and this plan
 | M0 - Specification | Repository bootstrapped; every file kind specified with JSON Schema and worked examples; algorithms written as pseudo-code with test vectors | Spec review; schema test suite green | 3-4 |
 | M1 - Core, engine-neutral | Core package, gate, CLI, adapter protocol and registry, `export`, `sql` and `git` adapters, sync, probe generator v1 rendered per dialect, hard-case fixtures, retail profile, `examples/chinook` on SQLite and PostgreSQL | Gate green on `examples/chinook` and on every hard-case fixture; expected scopes hold; residue 0; the same probes give the same counts on SQLite and PostgreSQL | 12-14 |
 | M2 - Cloud engines by adopters and a second domain | BigQuery `export` and `sql` paths verified by an adopter on their own project; third-party adapter packaging guide; second domain profile with a dataset chosen then; core frozen at schema 1.0.0 | No core change, or each change has a decision record naming the platform that forced it | 4-5 (done: rounds 15 to 19; BigQuery adopter run owner-pending) |
-| M3 - Semantic layers | Layer contract, consumer equivalence harness, reference consumer, exports (OSI, dbt), release projection | One consumer meets its threshold on a corpus | 6-8 |
+| M3 - Semantic layers | Layer contract, consumer equivalence harness, reference consumer, exports (OSI, dbt), release projection | One consumer meets its threshold on a corpus | 6-8 (done: rounds 20 to 25, synthetic corpora) |
 | M4 - Release 1.0 | Packaging, docs site, tutorial, upgrade policy, external pilot | Someone else sets up a model from scratch using only the docs | 3-4 |
 
 Dependencies: M0 before everything. Within M1, WP1.1-WP1.4 come first; adapters and probes after. M3 needs M2's frozen core.
@@ -491,10 +491,14 @@ Round 24: `src/factmodel/release/` (`fact release`, `fact check --release`), `fa
 
 **Acceptance.** Exported files validate against the target's published schema or loader; round-trip notes list what cannot be expressed.
 
+Round 25: `src/factmodel/export/{dbt,ossie}.py`, `fact export`; dbt-core 1.12.6 validates the dbt export with `dbt parse`; the Ossie page was read once (no version stated) and the export keeps to the structure it shows (`docs/exporters/round-trip-notes.md`).
+
 ### WP3.6 Drift-review, layer-build, escalation skills (1 round)
 
 **Deliverables.** `agent/skills/{drift-review,layer-build,escalation-draft,maintenance-pack}/`; `fact probe generate --set volatile` for the maintenance pack.
 
+
+Round 25: skills `drift-review`, `layer-build`, `escalation-draft`, `maintenance-pack`; vocabulary block `volatile_probe_kind` and `fact probe generate --set volatile`. **M3 done** (the owner-run live comparison and a real corpus are M4's pilot).
 ---
 
 ## 9. M4 - Release 1.0

@@ -7,6 +7,7 @@ fact: playlist
 expected:
   duplicate_keys:
     max: 0
+volatile: true
 dialect: sqlite
 sql: SELECT COUNT(*) AS "duplicate_keys" FROM (SELECT "t"."PlaylistId" FROM 
   "Playlist" AS "t" WHERE NOT "t"."PlaylistId" IS NULL GROUP BY "t"."PlaylistId"

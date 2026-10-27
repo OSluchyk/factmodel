@@ -7,6 +7,7 @@ fact: invoice_line
 expected:
   duplicate_keys:
     max: 0
+volatile: true
 dialect: sqlite
 sql: SELECT COUNT(*) AS "duplicate_keys" FROM (SELECT "t"."InvoiceLineId" FROM 
   "InvoiceLine" AS "t" WHERE NOT "t"."InvoiceLineId" IS NULL GROUP BY 

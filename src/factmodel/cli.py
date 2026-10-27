@@ -19,6 +19,9 @@ from factmodel.core import derived
 from factmodel.core.drafts import to_facts
 from factmodel.equivalence import harness
 from factmodel.equivalence.corpus import CorpusError
+from factmodel.export import ExportError
+from factmodel.export import dbt as export_dbt
+from factmodel.export import ossie as export_ossie
 from factmodel.gate.runner import BLOCKING_STAGES, run_gate
 from factmodel.io.yaml_strict import load
 from factmodel.model.loader import inspect_model
@@ -341,9 +344,16 @@ def _dialects(model: Any) -> dict[str, str]:
 @probe_app.command("generate")
 def probe_generate(
     source_id: Annotated[str | None, typer.Option("--source", help="Only this source.")] = None,
+    probe_set: Annotated[
+        str | None,
+        typer.Option("--set", help="volatile: only the probes a maintenance pack re-runs."),
+    ] = None,
     root: RootOption = Path("."),
 ) -> None:
     """Write probes/<probe-id>.yaml for every fact data can confirm."""
+    if probe_set not in (None, "volatile"):
+        typer.echo(f"unknown set {probe_set!r}; the only set is volatile", err=True)
+        raise typer.Exit(2)
     model = inspect_model(root).model
     entities = {
         k: e for k, e in model.entities.items() if source_id is None or e.source == source_id
@@ -354,6 +364,8 @@ def probe_generate(
         if source_id is None or any(entities.get(e.entity) for e in layer.entities)
     }
     docs, skipped = probes_module.generate(entities, model.sources, _dialects(model), layers=layers)
+    if probe_set == "volatile":
+        docs = [d for d in docs if d.get("volatile")]
     changed = 0
     for doc in docs:
         changed += repo.write_text_if_changed(
@@ -599,3 +611,32 @@ def lookup_command(
         raise typer.Exit(1) from error
     for line in lines:
         typer.echo(line)
+
+
+@app.command("export")
+def export_command(
+    target: Annotated[str, typer.Option("--target", help="ossie or dbt.")],
+    layer: Annotated[str, typer.Option("--layer", help="Layer ID.")],
+    out: Annotated[Path, typer.Option("--out", help="Folder for the exported files.")],
+    root: RootOption = Path("."),
+) -> None:
+    """Export a layer to another tool; what the target cannot hold is listed, never dropped."""
+    exporters = {"ossie": export_ossie, "dbt": export_dbt}
+    if target not in exporters or target not in vocabulary.load()["export_target"]:
+        typer.echo(f"unknown target {target!r}; one of {', '.join(sorted(exporters))}", err=True)
+        raise typer.Exit(2)
+    model = inspect_model(root).model
+    try:
+        result = exporters[target].export(model, layer)
+    except ExportError as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(1) from error
+    out.mkdir(parents=True, exist_ok=True)
+    for name, text in result.files.items():
+        repo.write_text_if_changed(out / name, text)
+    notes = "".join(f"- {w}\n" for w in result.warnings) or "- none\n"
+    repo.write_text_if_changed(
+        out / "EXPORT_NOTES.md",
+        f"# Export notes: layer {layer} to {target}\n\nWhat the target cannot hold:\n\n{notes}",
+    )
+    typer.echo(f"{layer} -> {target}: {len(result.files)} file(s), {len(result.warnings)} note(s)")

@@ -7,6 +7,7 @@ fact: media_type
 expected:
   duplicate_keys:
     max: 0
+volatile: true
 dialect: sqlite
 sql: SELECT COUNT(*) AS "duplicate_keys" FROM (SELECT "t"."MediaTypeId" FROM 
   "MediaType" AS "t" WHERE NOT "t"."MediaTypeId" IS NULL GROUP BY 

@@ -7,6 +7,7 @@ fact: annual
 expected:
   duplicate_keys:
     max: 0
+volatile: true
 dialect: sqlite
 sql: SELECT COUNT(*) AS "duplicate_keys" FROM (SELECT "t"."area_fips", 
   "t"."own_code", "t"."industry_code", "t"."size_code", "t"."year", "t"."qtr" 

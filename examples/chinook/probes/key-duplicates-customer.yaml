@@ -7,6 +7,7 @@ fact: customer
 expected:
   duplicate_keys:
     max: 0
+volatile: true
 dialect: sqlite
 sql: SELECT COUNT(*) AS "duplicate_keys" FROM (SELECT "t"."CustomerId" FROM 
   "Customer" AS "t" WHERE NOT "t"."CustomerId" IS NULL GROUP BY "t"."CustomerId"

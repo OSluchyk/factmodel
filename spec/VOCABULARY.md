@@ -620,6 +620,8 @@ A `project` file keeps only the top-level keys its kind lists under `keep` in th
 - undeclared_key
 ```
 
+**Building a release** (`fact release --out <dir> --version <v>`). The model's gate must pass, and no `reviewed` layer may have dropped against its accepted equivalence run (D-021). Every file of the repository is partitioned (built releases under `release/out/` and `.git` are not part of it). Exported text files lose every block between a line holding `internal:begin` and a line holding `internal:end`; an unclosed block refuses the release. Markers are explicit; prose is never pattern-matched. The release folder holds `VERSION` (`release`, `source_commit`, `schema_version`, `framework_version`) and `RELEASE_NOTES.md`, one section per version, newest last, never edited. `fact check --release <dir> --previous <dir>` runs yaml, schema, references and privacy on the release, and a `release` stage: `VERSION` and the notes exist, no derived key leaked, and every earlier section of the notes is unchanged.
+
 **Export targets.** Other tools a layer can be exported to.
 
 ```yaml vocabulary:export_target

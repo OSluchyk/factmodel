@@ -6,7 +6,7 @@ from typing import Annotated, Any, cast
 
 import typer
 
-from factmodel import __version__, migrate, repo, vocabulary
+from factmodel import __version__, lookup, migrate, repo, vocabulary
 from factmodel import probes as probes_module
 from factmodel import status as status_module
 from factmodel import sync as sync_module
@@ -25,6 +25,8 @@ from factmodel.model.loader import inspect_model
 from factmodel.model.types import Probe, Snapshot, Source
 from factmodel.probes import intake as probe_intake_module
 from factmodel.probes import script as probe_script
+from factmodel.release import build as release_build
+from factmodel.release.check import check as release_check
 
 app = typer.Typer(
     name="fact",
@@ -88,10 +90,16 @@ def project(root: RootOption = Path(".")) -> None:
 def check(
     root: RootOption = Path("."),
     stage: Annotated[str | None, typer.Option("--stage", help="Run one stage only.")] = None,
+    release: Annotated[
+        Path | None, typer.Option("--release", help="Check a release folder instead.")
+    ] = None,
+    previous: Annotated[
+        Path | None, typer.Option("--previous", help="With --release: the previous release.")
+    ] = None,
 ) -> None:
     """Run the gate; exit 0 only when every stage passes."""
     try:
-        report = run_gate(root, stage)
+        report = release_check(release, previous) if release else run_gate(root, stage)
     except ValueError as error:
         typer.echo(str(error), err=True)
         raise typer.Exit(2) from error
@@ -547,3 +555,47 @@ def equivalence_script(
     repo.write_text_if_changed(path, text)
     path.chmod(0o755)
     typer.echo(path.relative_to(root).as_posix())
+
+
+@app.command("release")
+def release_command(
+    out: Annotated[Path, typer.Option("--out", help="Folder for the release.")],
+    version: Annotated[str, typer.Option("--version", help="Release version, e.g. 0.1.0.")],
+    date: Annotated[str | None, typer.Option("--date", help="YYYY-MM-DD.")] = None,
+    root: RootOption = Path("."),
+) -> None:
+    """Build the readable release copy: complete partition, VERSION, append-only notes."""
+    try:
+        result = release_build.build(root, out, version, date)
+    except release_build.ReleaseError as error:
+        typer.echo(f"release refused: {error}", err=True)
+        raise typer.Exit(1) from error
+    typer.echo(
+        f"release {version}: {result.count('export')} exported, {result.count('project')} "
+        f"projected, {result.count('refuse')} refused -> {out}"
+    )
+
+
+@app.command("lookup")
+def lookup_command(
+    layer: Annotated[str | None, typer.Option("--layer", help="A layer ID.")] = None,
+    entity: Annotated[str | None, typer.Option("--entity", help="An entity ID.")] = None,
+    hazard: Annotated[str | None, typer.Option("--hazard", help="A hazard ID.")] = None,
+    root: RootOption = Path("."),
+) -> None:
+    """Print a layer (joins resolved), an entity or a hazard from a model or a release."""
+    model = inspect_model(root).model
+    try:
+        if layer:
+            lines = lookup.layer(model, layer)
+        elif entity:
+            lines = lookup.entity(model, entity)
+        elif hazard:
+            lines = lookup.hazard(model, hazard)
+        else:
+            raise lookup.LookupError_("name --layer, --entity or --hazard")
+    except lookup.LookupError_ as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(1) from error
+    for line in lines:
+        typer.echo(line)

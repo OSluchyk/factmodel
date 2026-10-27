@@ -19,6 +19,7 @@ Source: U.S. Bureau of Labor Statistics, Quarterly Census of Employment and Wage
 | `registers/` | Findings F-0001 to F-0009, hazards H-0001 and H-0002. |
 | `semantic/employment-wages/` | The layer (D-019) and its consumer `measure-sql`: required concepts `disclosed`, `level` and `distinct_areas`; measures from monthly levels; rollups over county to state and NAICS parent (D-020). |
 | `consumers/measure-sql/`, `semantic/employment-wages/corpus/`, `equivalence/` | The reference consumer, its corpus of 38 items (six naive-versus-correct pairs, two known gaps) and the accepted run (D-021). |
+| `release/allowlist.yaml` | What leaves the repository in a release (`fact release --out release/out --version <v>`; the output is gitignored). |
 | `generated/` | Labels, scope and residue from `fact project`, and the equivalence report. |
 
 ## Expected shape

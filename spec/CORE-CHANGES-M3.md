@@ -18,3 +18,5 @@ The current core-change ledger (D-018): every change to the contract since the M
 | 10 | 22 | Optional layer measure key `rollups` (hierarchy, field, suppressed concept); the `layers` stage checks it; `fact probe generate` reads layers | contract, additive | D-020 (ledger line under D-018) | QCEW |
 | 11 | 22 | Schemas 2.1.0 | version | D-018 (additive) | QCEW |
 | 12 | 23 | Equivalence threshold: share in `same_rows`/`same_predicate` over non-gap items, no regression, every failure explained; corpus keys `known_gap`, `finding`; run summary `threshold`, `share`, `proven`, `unexplained`; `reviewed` needs a proven accepted run | contract, meaning of reviewed | D-021 | none |
+| 13 | 24 | Release folder format: `VERSION` keys, append-only `RELEASE_NOTES.md`, internal-note markers `internal:begin` / `internal:end` | contract, additive | ledger line (D-018) | none |
+| 14 | 24 | `fact release`, `fact check --release` (reduced gate plus a `release` stage), `fact lookup`; the loader skips `release/out/` | implementation (plan WP3.4) | - | none |

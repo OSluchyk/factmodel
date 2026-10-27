@@ -119,9 +119,13 @@ def _runner(spec: StageSpec) -> Callable[[GateContext], list[LoadIssue] | None]:
     return run
 
 
-def run_gate(root: Path, only: str | None = None) -> GateReport:
-    """Run every enabled stage, or only the named one."""
+def run_gate(
+    root: Path, only: str | None = None, stages: tuple[str, ...] | None = None
+) -> GateReport:
+    """Run every enabled stage, only the named one, or the listed ones (a release check)."""
     specs = [s for s in stage_specs() if s.enabled]
+    if stages is not None:
+        specs = [s for s in specs if s.name in stages]
     if only is not None:
         specs = [s for s in specs if s.name == only]
         if not specs:

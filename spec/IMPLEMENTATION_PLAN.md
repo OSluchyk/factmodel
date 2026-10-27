@@ -481,6 +481,8 @@ Round 23 (D-021): reference consumers `examples/qcew/consumers/measure-sql/` and
 
 **Acceptance.** Tests for partition residue, undeclared key, marker stripping; release of `examples/chinook` reads cleanly with no derived-key leaks.
 
+Round 24: `src/factmodel/release/` (`fact release`, `fact check --release`), `fact lookup`, skills `model-lookup` and `release`; allowlists for both examples; both release into `release/out/` (gitignored) in tests.
+
 ### WP3.5 Exporters (1-2 rounds)
 
 **Deliverables.** `src/factmodel/export/osi.py`, `src/factmodel/export/dbt.py`; Cube optional.

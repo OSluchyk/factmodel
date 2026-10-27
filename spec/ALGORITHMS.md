@@ -153,3 +153,5 @@ The release is built only when no file fails (`vocabulary:release_failure`). Eve
 | `complete` | Every disposition; first match wins; dropped keys leave the copy. |
 | `residue-file` | Without a catch-all pattern, an unlisted file fails with `unmatched`. |
 | `undeclared-key` | A projected entity with `extensions` that is in neither `keep` nor `drop` fails with `undeclared_key`. |
+
+`fact release` (round 24) applies this partition to every file of the repository, then writes exported files (internal blocks stripped), projected files (kept keys only) and the `VERSION` and `RELEASE_NOTES.md` files (`spec/VOCABULARY.md`, section 9).

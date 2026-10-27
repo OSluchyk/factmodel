@@ -264,6 +264,20 @@ def regressions(root: Path, result: RunResult) -> list[str]:
     )
 
 
+def drops(root: Path, layer_id: str) -> list[str]:
+    """Items that passed in the accepted run and do not pass in the last run (D-021)."""
+    accepted = _read(root, ACCEPTED)["layers"].get(layer_id)
+    if not accepted:
+        return []
+    last = _read(root, LAST_RUN)["layers"].get(layer_id) or {}
+    now = {k: v.get("outcome") for k, v in (last.get("items") or {}).items()}
+    return sorted(
+        item_id
+        for item_id, before in accepted.get("items", {}).items()
+        if before.get("outcome") == "pass" and now.get(item_id) != "pass"
+    )
+
+
 def report(result: RunResult) -> str:
     counts = result.counts()
     lines = [

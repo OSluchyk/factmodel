@@ -2,6 +2,18 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-27 - Round 24: WP3.4 Release projection, model-lookup and release skills
+
+**Why.** Consumers should read a pinned, checked copy of a model, not its working files. A release that leaks internal notes or derived values, or ships a layer that stopped answering like the platform, would undo what the gate and the harness proved. The dogfood note showed that consumers also need joins resolved for them.
+
+- `fact release`:
+  - builds the copy: complete partition, internal-note markers, `VERSION`, append-only `RELEASE_NOTES.md`;
+  - is refused on a failing gate, an equivalence drop in a reviewed layer, or any partition failure.
+- `fact check --release`: the reduced release gate.
+- `fact lookup`: a layer with its joins resolved, an entity or a hazard.
+- Skills `model-lookup` and `release`, and release allowlists for both examples.
+- Defect found and fixed in passing: the model loader no longer reads a built release under `release/out/` as model files.
+
 ## Unreleased - 2026-10-27 - Round 23: WP3.3 Reference consumers and corpora, threshold (D-021)
 
 **Why.** A layer is proven only by a consumer that answers like the platform. QCEW shows why that matters: the naive answers (summing suppressed zeros, joining the raw area list, mixing levels, summing annual averages, averaging weekly wages) are all different. D-021 fixes when a run proves a layer, so `reviewed` means something.

@@ -1,0 +1,23 @@
+# What leaves the model repository in a release (spec/ALGORITHMS.md, algorithm 3).
+# Patterns are tried in order; the first match wins; every file gets exactly one disposition.
+kind: release-allowlist
+files:
+- {pattern: factmodel.yaml, disposition: export}
+- {pattern: README.md, disposition: export}
+- {pattern: physical/entities/*.yaml, disposition: project, reason: drafting metadata stays}
+- {pattern: sources/*.yaml, disposition: project, reason: how access is obtained stays}
+- {pattern: evidence/**, disposition: export}
+- {pattern: registers/**/*.yaml, disposition: export}
+- {pattern: semantic/**, disposition: export}
+- {pattern: equivalence/*.json, disposition: export}
+- {pattern: generated/*.tsv, disposition: export}
+- {pattern: generated/*.md, disposition: export}
+- {pattern: probes/*.yaml, disposition: export}
+- {pattern: '**', disposition: refuse, reason: 'drafts, seeds, DDL, snapshots, code and agent files stay'}
+keys:
+  entity:
+    keep: [kind, id, physical_name, source, grain, class, status, meaning, keys, anchor_reference, evidence, fields, relationships, hazards, records]
+    drop: [extensions]
+  source:
+    keep: [kind, id, title, source_kind, access_mode, rank, adapter, engine, dialect, location, current_pin, meaning]
+    drop: [access, dsn_env, revision, include, extensions]

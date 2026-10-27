@@ -157,6 +157,8 @@ def discover(root: Path) -> list[Path]:
         parts = path.relative_to(root).parts[:-1]
         if any(part.startswith(".") or part in SKIPPED_DIRS for part in parts):
             continue
+        if parts[:2] == ("release", "out"):  # a built release, not the model (fact release)
+            continue
         found.append(path)
     return sorted(found, key=lambda p: p.relative_to(root).as_posix())
 

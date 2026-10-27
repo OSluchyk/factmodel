@@ -31,7 +31,7 @@ Platform that forced it: none | <example or engine>
 | [D-005](D-005-toolchain.md) | Toolchain | accepted | 2026-10-23 |
 | [D-006](D-006-data-quality.md) | Data quality instead of a boolean | accepted | 2026-10-23 |
 | [D-007](D-007-scope-derived.md) | Subject scope is derived, not authored | accepted | 2026-10-23 |
-| [D-008](D-008-agent-commits.md) | The agent commits per round | accepted | 2026-10-23 |
+| [D-008](D-008-agent-commits.md) | The agent commits per round | round-report part superseded by D-022 | 2026-10-23 |
 | [D-009](D-009-review-status.md) | One review status for entities and layers | accepted | 2026-10-23 |
 | [D-010](D-010-name-factmodel.md) | Name: FactModel | accepted | 2026-10-23 |
 | [D-011](D-011-engine-blind-core.md) | Engine-blind core, universal adapters, local reference engines | accepted | 2026-10-23 |
@@ -45,3 +45,4 @@ Platform that forced it: none | <example or engine>
 | [D-019](D-019-semantic-layer-contract.md) | Semantic layer contract v1 | accepted | 2026-10-27 |
 | [D-020](D-020-rollup-probe.md) | Rollup probe kind | accepted | 2026-10-27 |
 | [D-021](D-021-equivalence-threshold.md) | Equivalence threshold | accepted | 2026-10-27 |
+| [D-022](D-022-round-reports-private.md) | Round reports are private | accepted | 2026-10-27 |

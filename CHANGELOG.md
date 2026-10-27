@@ -6,6 +6,13 @@ Newest first. Every entry says why, not only what.
 
 The first public release. The entries below are the rounds that built it.
 
+## Unreleased - 2026-10-27 - Round 31: D-022 round reports are private
+
+**Why.** Round 30 moved round reports out of the repository, but D-008 still said the round commit holds the report. A decision record is never edited, so a new record states the change and the rule `AGENTS.md` follows rests on a decision again.
+
+- D-022: round reports are private working notes the owner keeps outside the repository; agents write them to `_work/` (ignored). It supersedes only that part of D-008; one commit per round, never push, stays.
+- `decisions/README.md` marks the superseded part of D-008, as it does for D-003.
+
 ## Unreleased - 2026-10-27 - Round 30: public release cleanup
 
 **Why.** The repository goes public. It should hold what a user, a contributor or CI needs, and nothing that only made sense during development or names the owner's machine. The public history will be one commit, so commit hashes in the text would point nowhere.

@@ -1,4 +1,4 @@
-"""Release projection (WP3.4): both examples release cleanly; every refusal; internal notes;
+"""Release projection: both examples release cleanly; every refusal; internal notes;
 append-only release notes; the reduced release gate."""
 
 import json

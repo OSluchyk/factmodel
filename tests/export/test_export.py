@@ -1,4 +1,4 @@
-"""Exporters (WP3.5): both examples to dbt (validated with dbt parse when dbt-core is installed)
+"""Exporters: both examples to dbt (validated with dbt parse when dbt-core is installed)
 and to Apache Ossie (structural tests against the pinned core specifications, 0.1.1 by default
 and 0.2.0.dev0)."""
 

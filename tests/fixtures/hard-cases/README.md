@@ -1,6 +1,6 @@
 # Hard cases
 
-Small model repositories for what public datasets do not show (plan WP1.8b). Each folder holds the model files, `generated/` as committed, `expected/verdict.json` (the stages `fact check` must fail, and whether `fact project` writes or refuses) and `expected/generated/` (what `fact project` must write). `tests/hard_cases/test_hard_cases.py` runs both commands on every case.
+Small model repositories for what public datasets do not show. Each folder holds the model files, `generated/` as committed, `expected/verdict.json` (the stages `fact check` must fail, and whether `fact project` writes or refuses) and `expected/generated/` (what `fact project` must write). `tests/hard_cases/test_hard_cases.py` runs both commands on every case.
 
 | Case | Plan case | Gate |
 | --- | --- | --- |

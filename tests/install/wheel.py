@@ -1,5 +1,5 @@
-"""The built wheel installed alone in a fresh virtual environment outside the repository
-(WP4.1), shared by the clean-room test and the tutorial test so the wheel is built once."""
+"""The built wheel installed alone in a fresh virtual environment outside the repository,
+shared by the clean-room test and the tutorial test so the wheel is built once."""
 
 import os
 import shutil

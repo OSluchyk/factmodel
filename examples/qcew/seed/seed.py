@@ -223,7 +223,7 @@ def _year(months: list[int], wages: list[int], estabs: list[int]) -> list[int]:
     employment = Fraction(sum(months), 12)
     return [
         round(Fraction(sum(estabs), 4)),  # half to even
-        round(employment),  # half to even (M3)
+        round(employment),  # half to even (profiling notes M3)
         total,
         taxable,
         contributions,

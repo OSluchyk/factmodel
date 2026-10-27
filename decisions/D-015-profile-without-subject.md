@@ -30,4 +30,4 @@ Supersedes nothing; refines D-012.
 ## Evidence
 
 - Maintainer decision, 2026-10-27.
-- QCEW grain (area_fips, own_code, industry_code, size_code, year, qtr): owner's `profile.md`, G1 and Q05, read 2026-10-23.
+- QCEW grain (area_fips, own_code, industry_code, size_code, year, qtr): the QCEW profiling notes (`profile.md`), G1 and Q05, read 2026-10-23.

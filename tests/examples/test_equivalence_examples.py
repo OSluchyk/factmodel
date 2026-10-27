@@ -1,4 +1,4 @@
-"""Both reference consumers prove their layers (WP3.3, D-021) on SQLite and DuckDB, and the
+"""Both reference consumers prove their layers (D-021) on SQLite and DuckDB, and the
 QCEW corpus keeps at least five naive-versus-correct pairs whose answers really differ."""
 
 import importlib.util

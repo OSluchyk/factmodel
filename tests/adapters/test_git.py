@@ -1,4 +1,4 @@
-"""The git adapter: DDL at a commit or in the working tree, in two dialects (WP1.5b)."""
+"""The git adapter: DDL at a commit or in the working tree, in two dialects."""
 
 import subprocess
 from pathlib import Path

@@ -1,4 +1,4 @@
-"""The Chinook example: the M1 gate on SQLite, and the same answers on PostgreSQL (WP1.8)."""
+"""The Chinook example: the M1 gate on SQLite, and the same answers on PostgreSQL."""
 
 import importlib.util
 import json

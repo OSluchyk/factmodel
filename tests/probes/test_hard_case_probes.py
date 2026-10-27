@@ -1,4 +1,4 @@
-"""The probe parts of the hard cases, added with the probes (WP1.7)."""
+"""The probe parts of the hard cases, added with the probes."""
 
 from pathlib import Path
 

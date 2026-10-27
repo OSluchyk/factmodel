@@ -1,4 +1,4 @@
-"""Property tests for the derived values (plan WP1.2)."""
+"""Property tests for the derived values."""
 
 import random
 from typing import Any

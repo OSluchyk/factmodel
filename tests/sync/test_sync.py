@@ -1,4 +1,4 @@
-"""fact sync: drift kinds and classes, drafts, findings, triggers, idempotency (WP1.6)."""
+"""fact sync: drift kinds and classes, drafts, findings, triggers, idempotency."""
 
 import shutil
 from pathlib import Path

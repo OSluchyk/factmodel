@@ -1,4 +1,4 @@
-"""Run fact check and fact project on every hard case (plan WP1.8b)."""
+"""Run fact check and fact project on every hard case."""
 
 import json
 import re

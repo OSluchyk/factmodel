@@ -27,4 +27,4 @@ The file is copied unchanged, defects included. Everything else in an example st
 ## Evidence
 
 - Maintainer decision, 2026-10-27.
-- BLS public-domain notice and the title file URLs: owner's `README.md` and `profile.md` A3, read 2026-10-23.
+- BLS public-domain notice and the title file URLs: the QCEW profiling notes (`README.md`; `profile.md` A3), read 2026-10-23.

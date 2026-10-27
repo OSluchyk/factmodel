@@ -25,4 +25,4 @@ A relationship's `join` was field equality only: `<entity>.<field> = <entity>.<f
 ## Evidence
 
 - Maintainer decision, 2026-10-27.
-- NAICS and area code structure: owner's `profile.md`, sections H1, V3 and A3, read 2026-10-23.
+- NAICS and area code structure: the QCEW profiling notes (`profile.md`), sections H1, V3 and A3, read 2026-10-23.

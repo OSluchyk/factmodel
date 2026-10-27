@@ -1,4 +1,4 @@
-"""The model-onboard skill, followed command by command, reproduces the Chinook drafts (WP1.9)."""
+"""The model-onboard skill, followed command by command, reproduces the Chinook drafts."""
 
 import filecmp
 import re

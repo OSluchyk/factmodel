@@ -1,4 +1,4 @@
-"""The equivalence harness (WP3.2) on a toy layer with three toy consumers: right, wrong and
+"""The equivalence harness on a toy layer with three toy consumers: right, wrong and
 partly right; all three modes; regressions against the accepted run; idempotency."""
 
 import json

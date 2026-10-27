@@ -1,4 +1,4 @@
-"""Clean-room install (WP4.1): the built wheel alone, in a fresh virtual environment outside the
+"""Clean-room install: the built wheel alone, in a fresh virtual environment outside the
 repository, runs the whole Chinook loop. Nothing is imported from the source tree: the commands
 run from a folder outside it, with no PYTHONPATH, and the test checks where `factmodel` and
 its shipped files resolve from."""

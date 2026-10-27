@@ -1,5 +1,5 @@
 """The QCEW example: a domain without a subject (D-015), join expressions (D-017) and BLS code
-lists as fixtures (D-016), on SQLite, PostgreSQL and DuckDB (WP2.2)."""
+lists as fixtures (D-016), on SQLite, PostgreSQL and DuckDB."""
 
 import hashlib
 import importlib.util

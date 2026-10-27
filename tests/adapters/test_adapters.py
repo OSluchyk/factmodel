@@ -1,4 +1,4 @@
-"""The export and sql adapters, the type classes and the registry (WP1.5)."""
+"""The export and sql adapters, the type classes and the registry."""
 
 import uuid
 from importlib.metadata import EntryPoint

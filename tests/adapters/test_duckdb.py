@@ -1,4 +1,4 @@
-"""DuckDB as a third local engine through the ``sql`` adapter (WP2.1)."""
+"""DuckDB as a third local engine through the ``sql`` adapter."""
 
 import importlib.util
 import uuid

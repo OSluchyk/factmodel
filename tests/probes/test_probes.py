@@ -1,4 +1,4 @@
-"""Probe generation, rendering per dialect, execution, scripts and intake (WP1.7)."""
+"""Probe generation, rendering per dialect, execution, scripts and intake."""
 
 import json
 import os

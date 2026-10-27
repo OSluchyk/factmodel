@@ -1,4 +1,4 @@
-"""``fact migrate``: report the schema version a model uses and whether it is read (WP2.3)."""
+"""``fact migrate``: report the schema version a model uses and whether it is read."""
 
 import shutil
 from pathlib import Path

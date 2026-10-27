@@ -2,7 +2,7 @@
 
 import json
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated, Any, cast
 
 import typer
 
@@ -17,6 +17,8 @@ from factmodel.adapters.export import ExportAdapter
 from factmodel.adapters.git import GitAdapter
 from factmodel.core import derived
 from factmodel.core.drafts import to_facts
+from factmodel.equivalence import harness
+from factmodel.equivalence.corpus import CorpusError
 from factmodel.gate.runner import BLOCKING_STAGES, run_gate
 from factmodel.io.yaml_strict import load
 from factmodel.model.loader import inspect_model
@@ -428,3 +430,108 @@ def probe_intake(
     )
     for reason in out.rejected:
         typer.echo(f"  rejected {reason}")
+
+
+equivalence_app = typer.Typer(
+    help="Prove a layer: run its consumer on the corpus and compare with the references.",
+    no_args_is_help=True,
+)
+app.add_typer(equivalence_app, name="equivalence")
+LayerOption = Annotated[str, typer.Option("--layer", help="Layer ID.")]
+
+
+def _layer_source(model: Any, layer_id: str, source_id: str | None) -> Source:
+    if source_id is not None:
+        source = model.sources.get(source_id)
+    else:
+        layer = model.layers.get(layer_id)
+        entity = model.entities.get(layer.entities[0].entity) if layer else None
+        source = model.sources.get(entity.source) if entity is not None else None
+    if source is None:
+        typer.echo("no source to run on; pass --source", err=True)
+        raise typer.Exit(1)
+    return cast(Source, source)
+
+
+@equivalence_app.command("run")
+def equivalence_run(
+    layer_id: LayerOption,
+    corpus: Annotated[Path | None, typer.Option("--corpus", help="Another corpus folder.")] = None,
+    source_id: Annotated[
+        str | None, typer.Option("--source", help="Source to run on; default: the layer's.")
+    ] = None,
+    results: Annotated[
+        Path | None, typer.Option("--results", help="Output of fact equivalence script.")
+    ] = None,
+    date: Annotated[str | None, typer.Option("--date", help="YYYY-MM-DD.")] = None,
+    root: RootOption = Path("."),
+) -> None:
+    """Compile every corpus item, compare it with its reference, write the report and last run."""
+    model = inspect_model(root).model
+    source = _layer_source(model, layer_id, source_id)
+    day = date or today()
+    try:
+        dialect = dialect_for(source.engine, source.dialect)
+        if results is not None:
+            result = harness.from_results(
+                root.resolve(),
+                model,
+                layer_id,
+                results,
+                source=source.id,
+                dialect=dialect,
+                ran_on=day,
+            )
+        else:
+            result = harness.run(
+                root.resolve(),
+                model,
+                layer_id,
+                url=sql_adapter.dsn(source),
+                source=source.id,
+                dialect=dialect,
+                ran_on=day,
+                corpus=corpus,
+            )
+    except (AdapterError, harness.EquivalenceError, CorpusError) as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(1) from error
+    harness.write(root.resolve(), result)
+    total = result.counts()["all"]
+    typer.echo(
+        f"{layer_id}: {total['pass']} pass, {total['fail']} fail, {total['error']} error "
+        f"of {len(result.items)}"
+    )
+    if result.regressions:
+        typer.echo(f"regressions against the accepted run: {', '.join(result.regressions)}")
+        raise typer.Exit(1)
+
+
+@equivalence_app.command("accept")
+def equivalence_accept(layer_id: LayerOption, root: RootOption = Path(".")) -> None:
+    """Accept the layer's last run (the owner's act): copy it into equivalence/accepted.json."""
+    try:
+        changed = harness.accept(root.resolve(), layer_id)
+    except harness.EquivalenceError as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(1) from error
+    typer.echo(f"{layer_id}: {'accepted' if changed else 'already accepted'}")
+
+
+@equivalence_app.command("script")
+def equivalence_script(
+    layer_id: LayerOption,
+    dialect: Annotated[str, typer.Option("--dialect", help="sqlglot dialect, e.g. postgres.")],
+    root: RootOption = Path("."),
+) -> None:
+    """Write equivalence/scripts/<layer>.<dialect>.sh for an owner-run live comparison."""
+    model = inspect_model(root).model
+    try:
+        text = harness.script(root.resolve(), model, layer_id, dialect)
+    except (harness.EquivalenceError, CorpusError) as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(1) from error
+    path = root / "equivalence" / "scripts" / f"{layer_id}.{dialect}.sh"
+    repo.write_text_if_changed(path, text)
+    path.chmod(0o755)
+    typer.echo(path.relative_to(root).as_posix())

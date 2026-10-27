@@ -2,6 +2,14 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-27 - Round 21: WP3.2 Equivalence harness
+
+**Why.** A layer is only as good as the answers a consumer gets from it. The harness runs a consumer over a corpus of requests with known answers and compares the two. It keeps outcomes and counts, never rows, so a layer can be proven, accepted and protected against regressions.
+
+- `src/factmodel/equivalence/`: one YAML corpus item per file. Modes `same_rows`, `same_count` and `same_predicate` (normalised AST). Consumers and references name tables by entity id, and the harness binds them to physical names.
+- `fact equivalence run` runs offline on SQLite or DuckDB, or reads the output of an owner-run script from `fact equivalence script`. `fact equivalence accept` is the owner's act. A drop against the accepted run is reported as a regression and exits 1.
+- Tests with a toy layer and right, wrong and partly right consumers.
+
 ## Unreleased - 2026-10-27 - Round 20: WP3.1 Semantic layer contract v1 (D-019)
 
 **Why.** M3 needs layers a consumer can rely on. QCEW shows that a layer must carry more than names: the filters every query applies, the level discriminator, the distinct-codes rule, measures defined by expression and documented formula, and the hazards behind them. The 1.0.0 placeholders could not hold that, so D-019 replaces them and the gate checks the new contract.

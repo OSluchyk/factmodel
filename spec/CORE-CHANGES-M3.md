@@ -12,3 +12,5 @@ The current core-change ledger (D-018): every change to the contract since the M
 | 4 | 20 | Gate stage `layers` | gate | D-019 | QCEW, Chinook |
 | 5 | 20 | `fact check` warns (never fails) on a `schema_version` difference when every file validates | implementation | - | none |
 | 6 | 20 | Framework version 0.1.0 (M2 closed; 1.0.0 is M4) | release | - | none |
+| 7 | 21 | Equivalence corpus item format (`id`, `request`, `reference`, `mode`, `note`, `tags`) and vocabulary block `equivalence_mode` | contract, additive | ledger line (D-018) | none |
+| 8 | 21 | `fact equivalence run`, `accept`, `script`; `equivalence/last-run.json`, `equivalence/accepted.json`, `generated/equivalence-<layer>.md` | implementation (plan WP3.2) | - | none |

@@ -584,6 +584,16 @@ A **consumer** is the agent, SQL generator or knowledge base that reads a layer 
 
 The gate stage `layers` checks every rule in this section; a layer at `status: reviewed` needs an accepted equivalence run.
 
+**Equivalence corpus.** One YAML file per item in the layer's corpus folder (`semantic/<layer-id>/corpus/`, never read as a model file): `id`, `request` (the consumer's input, a map), `reference` (the platform's own answer: SQL in the neutral dialect that names tables by entity id), `mode`, `note`, `tags`. `fact equivalence run` compiles each request with the consumer, binds entity ids to physical names, runs both sides and compares; it writes `generated/equivalence-<layer>.md` and `equivalence/last-run.json`, outcomes and counts only. `fact equivalence accept` copies the last run into `equivalence/accepted.json`; an item that passed there and does not pass now is a regression.
+
+```yaml vocabulary:equivalence_mode
+- same_rows
+- same_count
+- same_predicate
+```
+
+`same_rows`: equal result sets as multisets (order ignored, duplicates kept). `same_count`: equal row counts. `same_predicate`: equal normalised ASTs (lower-case identifiers, no quoting, sorted conjunctions, literals kept); nothing runs.
+
 **Release.** The readable copy of a model for consumers. Every file in the model repository gets exactly one disposition; a projected file keeps only allowlisted keys, and an undeclared key fails the release.
 
 ```yaml vocabulary:release_disposition

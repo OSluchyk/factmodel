@@ -210,6 +210,7 @@ One command, `fact`, with a few verbs. It is a small Python package run through 
 | `fact migrate` | Report the schema version a model uses and whether the installed framework reads it (`spec/VERSIONING.md`) |
 | `fact project` | Recompute derived values (labels, scope, generated tables) |
 | `fact release --out <dir>` | Build the readable release copy |
+| `fact equivalence run\|accept\|script` | Run a layer's consumer on its corpus and compare with the references (counts and outcomes only); accept a run (owner); write an owner-run live comparison script |
 | `fact export --to osi\|dbt\|cube` | Export a semantic layer to another tool |
 | `fact status` | Open findings, fired triggers, stale evidence, next actions |
 

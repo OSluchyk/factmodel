@@ -459,6 +459,8 @@ Round 20 (D-019): the v1 shape is in `spec/VOCABULARY.md` section 9 (entities wi
 
 **Acceptance.** Harness tests with a toy consumer that is right, wrong and partially right.
 
+Round 21: `src/factmodel/equivalence/` (corpus, compare, harness), `fact equivalence run|accept|script`; tables are named by entity id in consumer and reference SQL and bound to physical names by the harness; executed offline on SQLite and DuckDB; outcomes and counts only.
+
 ### WP3.3 Reference consumer for the Chinook example (1-2 rounds)
 
 **Goal.** Prove the loop end to end with a real consumer.

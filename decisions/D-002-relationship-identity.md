@@ -17,8 +17,8 @@ A relationship is identified by an author-set `key`, a slug unique within its so
 - Generated files (`generated/labels.tsv` and others) and every register entry use the full reference.
 - Reordering relationships produces no diff in generated files.
 - Renaming a key is a breaking change for references; it needs a migration or a decision in the model.
-- `spec/IMPLEMENTATION_PLAN.md` (WP0.2 and section 13) is updated to match.
+- The roadmap (`spec/ROADMAP.md`) is updated to match.
 
 ## Evidence
 
-- Owner decision in the owner brief of 2026-10-23 on WP0.1 and WP0.2 (private working notes), section 3.
+- Maintainer decision, 2026-10-23.

@@ -1,4 +1,4 @@
-"""DuckDB in the probe maps (round 19): the JSON wrap and the default runner of rendered
+"""DuckDB in the probe maps: the JSON wrap and the default runner of rendered
 scripts. The wrap is checked through the duckdb module; the script itself runs through the
 duckdb CLI when it is installed."""
 

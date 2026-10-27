@@ -9,12 +9,12 @@ Source: U.S. Bureau of Labor Statistics, Quarterly Census of Employment and Wage
 | Path | What |
 | --- | --- |
 | `factmodel.yaml` | Profile `statistics`, no `anchor_entity` (D-015); `treat_synthetic_as_representative: true` (the data tables are seeded). |
-| `sources/` | `qcew-sqlite`, `qcew-pg`, `qcew-duckdb` (adapter `sql`), `qcew-ddl` (adapter `git`), and four documents: the BLS annual and quarterly layouts, the BLS title files, and the owner's `profile.md` (round 1 of the owner's `qcew-model`). |
+| `sources/` | `qcew-sqlite`, `qcew-pg`, `qcew-duckdb` (adapter `sql`), `qcew-ddl` (adapter `git`), and four documents: the BLS annual and quarterly layouts, the BLS title files, and `profile.md` of the QCEW profiling notes (`qcew-model`). |
 | `sources/codelists/` | The five BLS title files, unchanged, with `SOURCES.md` (URL, read date, citation, checksum). |
-| `sources/ddl/` | `annual`, `qtrly` and the five title tables for SQLite, PostgreSQL and DuckDB, after the owner's `load.sh` layouts. |
+| `sources/ddl/` | `annual`, `qtrly` and the five title tables for SQLite, PostgreSQL and DuckDB, after the `load.sh` layouts of the QCEW profiling notes (qcew-model). |
 | `seed/seed.py` | Deterministic synthetic `annual` and `qtrly` rows (two years, two states, five counties, one MSA across a state line), plus the code lists as they are. |
 | `physical/entities/` | Seven entities: `annual`, `qtrly` (data) and the five title tables (reference). |
-| `evidence/documents.yaml` | Quotes from the BLS pages and the owner's profile, each with its query id. |
+| `evidence/documents.yaml` | Quotes from the BLS pages and the QCEW profiling notes, each with its query id. |
 | `probes/`, `evidence/probes/` | 44 generated probes and 2 written by hand (`null_rate`, V2), their SQLite results, and the evidence intake wrote. |
 | `registers/` | Findings F-0001 to F-0009, hazards H-0001 and H-0002. |
 | `semantic/employment-wages/` | The layer (D-019) and its consumer `measure-sql`: required concepts `disclosed`, `level` and `distinct_areas`; measures from monthly levels; rollups over county to state and NAICS parent (D-020). |

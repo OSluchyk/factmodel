@@ -4,14 +4,14 @@ Two versions of the core specification are pinned, each read once and written on
 keys it names. Neither publishes a JSON Schema, so the tests are structural.
 
 - **0.1.1, the default** (the released version): the document at tag ``osi-0.1.1-rc1``,
-  https://github.com/apache/ossie/blob/osi-0.1.1-rc1/core-spec/spec.md, read 2026-10-27 (round
-  29). A ``semantic_model`` list holds the model; no ``version`` key and no field ``datatype``;
+  https://github.com/apache/ossie/blob/osi-0.1.1-rc1/core-spec/spec.md, read 2026-10-27. A
+  ``semantic_model`` list holds the model; no ``version`` key and no field ``datatype``;
   dialects and vendor names come from closed enumerations, so expressions are written as
   ``ANSI_SQL`` (``SNOWFLAKE`` or ``DATABRICKS`` for those engines) and the extensions use vendor
   ``COMMON`` with the framework's keys under ``factmodel`` in the JSON. Keys and
   relationship columns name source columns.
 - **0.2.0.dev0** (``--spec-version 0.2.0.dev0``, a draft): the document on ``main``,
-  https://github.com/apache/ossie/blob/main/core-spec/spec.md, read 2026-10-27 (round 28). One
+  https://github.com/apache/ossie/blob/main/core-spec/spec.md, read 2026-10-27. One
   model at the root with ``version``; field ``datatype``; keys, relationship columns and metric
   references name dataset fields; dialect names are free-form (sqlglot names are written,
   ``OSSIE_SQL_2026`` is not) and the vendor name is ``factmodel``.

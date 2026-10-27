@@ -1,5 +1,5 @@
-"""A discriminator on a single target, and unresolved relationships without a join (round 19,
-additive under D-018)."""
+"""A discriminator on a single target, and unresolved relationships without a join (additive
+under D-018)."""
 
 import shutil
 from pathlib import Path

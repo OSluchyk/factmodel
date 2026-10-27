@@ -20,12 +20,10 @@ Semantic versioning, applied to the contract:
 After the freeze (M2), D-018 says what a change needs:
 
 - A **decision record** naming the platform that forced it, when a contract change removes or renames a key, changes the meaning of an existing key or value, or changes an algorithm's result.
-- A **`CHANGELOG.md` entry and a core-change ledger line**, when it adds an optional key, a vocabulary value or a probe kind.
+- A **`CHANGELOG.md` entry and a line in `spec/CORE-CHANGES.md`**, when it adds an optional key, a vocabulary value or a probe kind.
 - A **`CHANGELOG.md` entry** only, for a defect fix: code made to obey the existing schema.
 
-An owner brief is not a decision record.
-
-Current schema version: **2.2.0**. 2.0.0 (round 20, D-019) was the semantic layer contract v1, which removes and renames layer keys; 2.1.0 (round 22, D-020) added the optional measure key `rollups` and the probe kind `rollup`; 2.2.0 (round 26) adds the concept form `values_table`. Frozen 1.0.0 was the M2 gate. The next removal or rename of a key is **3.0.0**.
+Current schema version: **2.2.0**. 2.0.0 (D-019) was the semantic layer contract v1, which removes and renames layer keys; 2.1.0 (D-020) added the optional measure key `rollups` and the probe kind `rollup`; 2.2.0 adds the concept form `values_table`. Frozen 1.0.0 was the M2 gate. The next removal or rename of a key is **3.0.0**.
 
 ## `framework_version` in a model
 

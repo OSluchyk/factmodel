@@ -13,7 +13,8 @@ The model has two kinds of layers. One **physical layer** describes what exists:
 - [`VOCABULARY.md`](VOCABULARY.md) - every term and enumeration, defined once; the code and schemas load its lists.
 - [`ALGORITHMS.md`](ALGORITHMS.md) - projection, subject scope closure and release partition, with test vectors in `tests/vectors/`.
 - [`../schemas/`](../schemas/README.md) - one JSON Schema per file kind; the valid fixtures in `tests/fixtures/schemas/` are the normative examples.
-- [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md) - milestones and work packages.
+- [`ROADMAP.md`](ROADMAP.md) - milestones and their status.
+- [`CORE-CHANGES.md`](CORE-CHANGES.md) - every change to the core contract, with its record.
 - [`../decisions/`](../decisions/README.md) - why the framework is the way it is.
 
 **Why the name.** FactModel is a model made of facts about a data platform, each with its evidence: where it came from, which version was read, and how sure it is. Semantic layers stand on those facts instead of on what someone remembers.
@@ -270,9 +271,9 @@ Each milestone ends at a gate. The core schema is frozen only after M2, when a s
 | --- | --- | --- |
 | M0 - Specification | spec, JSON Schemas, profile contract, projection algorithm | spec reviewed; every rule has a worked example |
 | M1 - Core, engine-neutral | core package, gate, adapter protocol, `export`, `sql` and `git` adapters, probes rendered per dialect, retail profile, Chinook example on SQLite and PostgreSQL | residue 0; expected scopes hold (Invoice direct, InvoiceLine transitive, catalog tables reference); the same probes give the same counts on both engines |
-| **M2 - Cloud engines by adopters and a second domain** (done: schemas 1.0.0) | BigQuery verified through `export` and `sql` by an adopter on their own project (owner-pending); third-party adapter guide; second domain profile (`statistics`, QCEW) | every core change in the ledger with its record (D-018: removals, renames and meaning changes need a decision; additions a ledger line) |
-| M3 - Semantic layers (done on synthetic corpora: rounds 20 to 25) | layer contract, probe generator, equivalence harness, OSI and dbt export | one real consumer meets its equivalence threshold on a real corpus (two reference consumers met it on synthetic corpora; the real corpus is the M4 pilot, which the owner runs) |
-| M4 - Release 1.0 (kit done, pilot pending: rounds 26 to 28) | packaging, guides, examples, upgrade notes | someone else sets up a model repository from scratch using only the docs |
+| M2 - Cloud engines by adopters and a second domain (done: schemas 1.0.0; BigQuery verified by an adopter: not yet) | BigQuery verified through `export` and `sql` by an adopter on their own project; third-party adapter guide; second domain profile (`statistics`, QCEW) | every core change in the ledger with its record (D-018: removals, renames and meaning changes need a decision; additions a ledger line) |
+| M3 - Semantic layers (done on synthetic corpora; a real corpus: not yet) | layer contract, probe generator, equivalence harness, OSI and dbt export | one real consumer meets its equivalence threshold on a real corpus (two reference consumers met it on synthetic corpora) |
+| M4 - Release 1.0 (in progress: packaging, documentation and tutorial done) | packaging, guides, examples, upgrade notes | someone else sets up a model repository from scratch using only the docs |
 
 The reference dataset is Chinook, schema only, with synthetic rows generated at test time (D-011): it has a clear anchor (`Customer`), a direct link (`Invoice`), a transitive one (`InvoiceLine`), administrative data (`Employee`), a reference chain (`Track` to `Album` to `Artist`) and a bridge between reference entities (`PlaylistTrack`).
 
@@ -289,9 +290,9 @@ The reference dataset is Chinook, schema only, with synthetic rows generated at 
 - [x] License: Apache 2.0 (D-001). Models built with FactModel stay private to their owners.
 - [x] Package name: `factmodel` for the distribution and the import, command `fact` (D-010).
 - [ ] Name: trademark check before the first public push.
-- [ ] Second domain for M2: which open-source application schema (needs a clear anchor and both reference and unanchored data).
+- [x] Second domain for M2: BLS QCEW, a statistics domain with no subject (D-015).
 - [x] Equivalence threshold: 0.9 by default, per consumer when the owner sets `threshold` (D-021).
-- [x] Export target priority: both in M3 (round 25); dbt validated with `dbt parse`; Ossie pinned to the released core specification 0.1.1 by default (read in round 29) and to the 0.2.0.dev0 draft behind `--spec-version` (read in round 28); structural tests, because no JSON Schema is published.
+- [x] Export target priority: both; dbt validated with `dbt parse`; Ossie pinned to the released core specification 0.1.1 by default and to the 0.2.0.dev0 draft behind `--spec-version`; structural tests, because no JSON Schema is published.
 - [ ] Format of facts: YAML files only, or YAML plus a generated graph file (for example JSON-LD) for graph consumers.
 
 ## Sources

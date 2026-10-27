@@ -332,7 +332,7 @@ def write(root: Path, result: RunResult) -> list[Path]:
 
 
 def accept(root: Path, layer_id: str) -> bool:
-    """Copy the layer's last run into accepted.json (the owner's act). True when it changed."""
+    """Copy the layer's last run into accepted.json (an owner step). True when it changed."""
     last = _read(root, LAST_RUN)["layers"].get(layer_id)
     if last is None:
         raise EquivalenceError(f"no run of layer {layer_id!r} in {LAST_RUN}")

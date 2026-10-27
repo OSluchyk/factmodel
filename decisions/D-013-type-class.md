@@ -21,4 +21,4 @@ Snapshot fields carry the engine's own type text (`INT64`, `integer`, `NUMBER(38
 
 ## Evidence
 
-- Owner decision in the owner brief of 2026-10-23 on closing M1 engine-neutral (private working notes), section 2.
+- Maintainer decision, 2026-10-23.

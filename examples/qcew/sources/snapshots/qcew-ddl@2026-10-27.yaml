@@ -7,7 +7,7 @@ objects:
 - name: agglevel_titles
   object_type: table
   pin: 
-    qcew-ddl@3550e8778d856284afbb956e6043c7fd9db36c9e:examples/qcew/sources/ddl/sqlite.sql:94
+    qcew-ddl@ecb4dd650c95c0b1f5feff1a3cde7b44fc58bf37:examples/qcew/sources/ddl/sqlite.sql:94
   fields:
   - name: agglvl_code
     type: TEXT
@@ -20,7 +20,7 @@ objects:
 - name: annual
   object_type: table
   pin: 
-    qcew-ddl@3550e8778d856284afbb956e6043c7fd9db36c9e:examples/qcew/sources/ddl/sqlite.sql:8
+    qcew-ddl@ecb4dd650c95c0b1f5feff1a3cde7b44fc58bf37:examples/qcew/sources/ddl/sqlite.sql:8
   fields:
   - name: area_fips
     type: TEXT
@@ -177,7 +177,7 @@ objects:
 - name: area_titles
   object_type: table
   pin: 
-    qcew-ddl@3550e8778d856284afbb956e6043c7fd9db36c9e:examples/qcew/sources/ddl/sqlite.sql:99
+    qcew-ddl@ecb4dd650c95c0b1f5feff1a3cde7b44fc58bf37:examples/qcew/sources/ddl/sqlite.sql:99
   fields:
   - name: area_fips
     type: TEXT
@@ -190,7 +190,7 @@ objects:
 - name: industry_titles
   object_type: table
   pin: 
-    qcew-ddl@3550e8778d856284afbb956e6043c7fd9db36c9e:examples/qcew/sources/ddl/sqlite.sql:104
+    qcew-ddl@ecb4dd650c95c0b1f5feff1a3cde7b44fc58bf37:examples/qcew/sources/ddl/sqlite.sql:104
   fields:
   - name: industry_code
     type: TEXT
@@ -203,7 +203,7 @@ objects:
 - name: ownership_titles
   object_type: table
   pin: 
-    qcew-ddl@3550e8778d856284afbb956e6043c7fd9db36c9e:examples/qcew/sources/ddl/sqlite.sql:109
+    qcew-ddl@ecb4dd650c95c0b1f5feff1a3cde7b44fc58bf37:examples/qcew/sources/ddl/sqlite.sql:109
   fields:
   - name: own_code
     type: TEXT
@@ -216,7 +216,7 @@ objects:
 - name: qtrly
   object_type: table
   pin: 
-    qcew-ddl@3550e8778d856284afbb956e6043c7fd9db36c9e:examples/qcew/sources/ddl/sqlite.sql:49
+    qcew-ddl@ecb4dd650c95c0b1f5feff1a3cde7b44fc58bf37:examples/qcew/sources/ddl/sqlite.sql:49
   fields:
   - name: area_fips
     type: TEXT
@@ -389,7 +389,7 @@ objects:
 - name: size_titles
   object_type: table
   pin: 
-    qcew-ddl@3550e8778d856284afbb956e6043c7fd9db36c9e:examples/qcew/sources/ddl/sqlite.sql:114
+    qcew-ddl@ecb4dd650c95c0b1f5feff1a3cde7b44fc58bf37:examples/qcew/sources/ddl/sqlite.sql:114
   fields:
   - name: size_code
     type: TEXT
@@ -402,5 +402,5 @@ objects:
 extensions:
   files:
   - path: examples/qcew/sources/ddl/sqlite.sql
-    blob: 3550e8778d856284afbb956e6043c7fd9db36c9e
+    blob: ecb4dd650c95c0b1f5feff1a3cde7b44fc58bf37
   revision: worktree

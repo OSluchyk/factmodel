@@ -7,6 +7,6 @@ location: https://www.bls.gov/cew/classifications/industry/industry-titles.htm
 access: >-
   The title file pages (industry, area, ownership, size, aggregation level) read by the owner
   on 2026-10-23, and the area guide https://www.bls.gov/cew/classifications/areas/area-guide.htm.
-  The files themselves are in sources/codelists/ (D-016). Quotes come from the owner's
-  qcew-model profile.md, sections A3, A4 and A7.
+  The files themselves are in sources/codelists/ (D-016). Quotes come from the QCEW
+  profiling notes (qcew-model), profile.md, sections A3, A4 and A7.
 current_pin: BLS QCEW title files@2026-10-23

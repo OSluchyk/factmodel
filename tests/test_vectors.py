@@ -1,7 +1,7 @@
 """Test vectors for spec/ALGORITHMS.md are valid input.
 
 The vectors are data: every input file must match its schema and every expected output
-must cover the whole input. Round 5 runs the algorithms against them.
+must cover the whole input. The core tests run the algorithms against them.
 """
 
 from pathlib import Path

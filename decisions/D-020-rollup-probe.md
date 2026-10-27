@@ -25,5 +25,5 @@ QCEW is a lattice of aggregates: a state row is the sum of its county rows, a NA
 
 ## Evidence
 
-- Owner decision in the owner brief of 2026-10-27 on M3 semantic layers (private working notes), sections 0 and 4 (pre-approved).
+- Maintainer decision, 2026-10-27.
 - `examples/qcew/registers/findings/F-0007.yaml`; profile.md M4, M5, H5, Q13, Q16, Q17.

@@ -1,5 +1,5 @@
 -- QCEW tables for DuckDB, written for the FactModel QCEW example.
--- annual and qtrly follow the BLS singlefile layouts as loaded by the owner's qcew-model
+-- annual and qtrly follow the BLS singlefile layouts as loaded by the QCEW profiling notes (qcew-model)
 -- scripts/load.sh (eight key fields, then the measures; codes as text, counts and money as
 -- integers, ratios as doubles), with one annual table for every year. The title tables hold
 -- the BLS title files as they are. Like the BLS files, nothing declares a key: keys are facts

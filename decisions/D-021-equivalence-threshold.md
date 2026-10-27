@@ -5,7 +5,7 @@ Platform that forced it: none
 
 ## Context
 
-The harness (round 21) says per item whether a consumer answered like the platform. A layer still needs a rule for when the consumer has proven it: how many items must pass, in which modes, what a failure must carry, and what an earlier accepted run protects. The open question in `spec/SPEC.md` was "one global number or per layer".
+The harness says per item whether a consumer answered like the platform. A layer still needs a rule for when the consumer has proven it: how many items must pass, in which modes, what a failure must carry, and what an earlier accepted run protects. The open question in `spec/SPEC.md` was "one global number or per layer".
 
 ## Decision
 
@@ -25,4 +25,4 @@ A consumer proves a layer when all of these hold:
 
 ## Evidence
 
-- Owner decision in the owner brief of 2026-10-27 on M3 semantic layers (private working notes), sections 0 and 5 (pre-approved).
+- Maintainer decision, 2026-10-27.

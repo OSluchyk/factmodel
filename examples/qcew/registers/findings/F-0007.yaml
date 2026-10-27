@@ -10,7 +10,7 @@ about:
 - area_titles.in-state
 description: >-
   A parent can be disclosed while its children are suppressed, and the reverse (profile.md H5,
-  Q16): summing children never rebuilds a parent where any cell is N. Measured since round 22
+  Q16): summing children never rebuilds a parent where any cell is N. Measured
   with rollup probes (D-020) on the seed, whose parents are true sums of their children. For
   third-month employment, county to state: 296 parents with nothing suppressed, all exact
   (M5), and 24 parents with a suppressed child. NAICS child to parent: 216 parents, all exact,

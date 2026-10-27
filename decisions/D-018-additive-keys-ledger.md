@@ -5,7 +5,7 @@ Platform that forced it: none (the framework's own probes and adapters)
 
 ## Context
 
-The M2 freeze review (`spec/CORE-CHANGES-M2.md`, round 18) found three contract changes without a decision record: snapshot `pin` keys (round 8), the optional probe `expected` with the probe keys `entity` and `note` (round 11), and the field key `values` (round 14). Each only adds an optional key. The rule "every core change needs a decision record" stopped the freeze over changes that cannot break a model, while it did not say what a defect fix needs.
+The M2 freeze review (`spec/CORE-CHANGES.md`) found three contract changes without a decision record: snapshot `pin` keys, the optional probe `expected` with the probe keys `entity` and `note`, and the field key `values`. Each only adds an optional key. The rule "every core change needs a decision record" stopped the freeze over changes that cannot break a model, while it did not say what a defect fix needs.
 
 ## Decision
 
@@ -18,11 +18,11 @@ The M2 freeze review (`spec/CORE-CHANGES-M2.md`, round 18) found three contract 
 
 ## Consequences
 
-- `spec/CORE-CHANGES-M2.md` cites D-018 for the three rows and states the rule at the top.
+- `spec/CORE-CHANGES.md` cites D-018 for the three rows and states the rule at the top.
 - `spec/VERSIONING.md` and `AGENTS.md` rule 6 state the rule.
 - The schemas freeze at 1.0.0 in the same round.
 
 ## Evidence
 
-- Owner decision in the owner brief of 2026-10-27 on closing the M2 freeze (private working notes), sections 1 and 4 (Q3).
-- `spec/CORE-CHANGES-M2.md`, section "Changes without a decision record".
+- Maintainer decision, 2026-10-27.
+- `spec/CORE-CHANGES.md`, the three rows marked "D-018 (retroactive)".

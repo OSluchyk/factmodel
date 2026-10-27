@@ -7,5 +7,5 @@ location: https://www.bls.gov/cew/about-data/downloadable-file-layouts/quarterly
 access: >-
   Read by the owner in a browser on 2026-10-23, with the CSV slice page
   https://www.bls.gov/cew/additional-resources/open-data/csv-data-slices.htm. Quotes come from
-  the owner's qcew-model profile.md, section A2.
+  the QCEW profiling notes (qcew-model), profile.md, section A2.
 current_pin: BLS QCEW quarterly layout@2026-10-23

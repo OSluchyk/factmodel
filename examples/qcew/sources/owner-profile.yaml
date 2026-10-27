@@ -1,16 +1,16 @@
 kind: source
 id: owner-profile
-title: Owner's QCEW profile, round 1 (qcew-model profile.md)
+title: QCEW profiling notes (qcew-model profile.md)
 source_kind: document
 access_mode: owner_read
 location: qcew-model/profile.md
 access: >-
-  The owner's own profiling of the 2024 and 2025 QCEW singlefiles on public data, outside this
-  repository; read on 2026-10-23. Every number in it comes from a named query (Q01 to Q36) of
-  the owner's scripts/profile.sql.
+  The QCEW profiling notes (qcew-model): profiling of the 2024 and 2025 QCEW singlefiles on
+  public data, outside this repository; read on 2026-10-23. Every number in it comes from a
+  named query (Q01 to Q36) of the notes' scripts/profile.sql.
 current_pin: qcew-model profile.md@2026-10-23
 rank: 20
 meaning: >-
-  What the 2024 and 2025 data files hold, measured by the owner's queries and header checks.
+  What the 2024 and 2025 data files hold, measured by the profiling queries and header checks.
   It ranks with a warehouse catalog (20), above the BLS documentation pages (40), because it
   reports the files themselves, not written intent.

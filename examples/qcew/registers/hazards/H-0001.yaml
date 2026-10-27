@@ -7,7 +7,7 @@ description: >-
   from their parents by up to the number of children even with nothing suppressed (profile.md
   M4, Q14, Q17). Monthly levels and wages are additive where nothing is suppressed (M5). A
   semantic layer (M3) must aggregate from monthly levels, never sum annual averages. Measured
-  since round 22: the rollup of annual_avg_emplvl from counties to states is exact for 47 of
+  with a rollup probe (D-020): the rollup of annual_avg_emplvl from counties to states is exact for 47 of
   74 parents with nothing suppressed and within rounding for 27, never beyond.
 applies_to:
 - annual

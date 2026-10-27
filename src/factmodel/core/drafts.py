@@ -4,7 +4,7 @@ Drafts are engine-neutral by construction: they hold what the snapshot declares 
 else. Declared foreign keys become ``declared_fk`` relationships whose evidence is ``confirmed``
 when the engine enforces them and ``inferred`` when it does not. Class is ``data`` as a
 placeholder, the entity is ``status: draft``, and every placeholder is listed under
-``extensions.draft`` so a reviewer sees what is still to be written, with the engine's
+``extensions.draft`` so the person reviewing it sees what is still to be written, with the engine's
 constraint names under ``extensions.draft.constraint_name``. A comment or description from the
 source becomes the meaning it proposes, cited by an ``inferred`` record that quotes it.
 """

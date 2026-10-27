@@ -25,7 +25,7 @@ Two versions of the core specification are pinned, each read once on 2026-10-27.
 
 | | 0.1.1 (default) | 0.2.0.dev0 (`--spec-version 0.2.0.dev0`) |
 | --- | --- | --- |
-| Document | https://github.com/apache/ossie/blob/osi-0.1.1-rc1/core-spec/spec.md, the released version (tag `osi-0.1.1-rc1`), read in round 29 | https://github.com/apache/ossie/blob/main/core-spec/spec.md, a draft that may change before 0.2.0, read in round 28 |
+| Document | https://github.com/apache/ossie/blob/osi-0.1.1-rc1/core-spec/spec.md, the released version (tag `osi-0.1.1-rc1`), read 2026-10-27 | https://github.com/apache/ossie/blob/main/core-spec/spec.md, a draft that may change before 0.2.0, read 2026-10-27 |
 | Model | A `semantic_model` list holding one model; no `version` key | One model at the root, with `version: 0.2.0.dev0` |
 | Keys and relationship columns | Name source columns | Name dataset fields |
 | Field type | No key; not written | `datatype`, when the engine type maps to the document's enumeration |

@@ -543,7 +543,7 @@ def equivalence_run(
 
 @equivalence_app.command("accept")
 def equivalence_accept(layer_id: LayerOption, root: RootOption = Path(".")) -> None:
-    """Accept the layer's last run (the owner's act): copy it into equivalence/accepted.json."""
+    """Accept the layer's last run (an owner step): copy it into equivalence/accepted.json."""
     try:
         changed = harness.accept(root.resolve(), layer_id)
     except harness.EquivalenceError as error:

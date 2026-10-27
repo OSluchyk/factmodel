@@ -22,4 +22,4 @@ The retail profile said `anchor_entity: users`, the name of a table in one datas
 
 ## Evidence
 
-- Owner decision in the owner brief of 2026-10-23 on closing M1 engine-neutral (private working notes), section 2.
+- Maintainer decision, 2026-10-23.

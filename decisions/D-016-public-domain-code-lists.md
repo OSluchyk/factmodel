@@ -20,11 +20,11 @@ The file is copied unchanged, defects included. Everything else in an example st
 
 ## Consequences
 
-- `spec/IMPLEMENTATION_PLAN.md` ground rule 3 states the exception.
+- `spec/ROADMAP.md` ground rule 3 states the exception.
 - The `privacy` gate stage still runs on the files; a code list that trips it is not committed.
 - QCEW commits five BLS title files (511,232 bytes together).
 
 ## Evidence
 
-- Owner decision in the owner brief of 2026-10-27 on M2, QCEW and the freeze (private working notes), section 3.
+- Maintainer decision, 2026-10-27.
 - BLS public-domain notice and the title file URLs: owner's `README.md` and `profile.md` A3, read 2026-10-23.

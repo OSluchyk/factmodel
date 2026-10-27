@@ -5,7 +5,7 @@ Platform that forced it: none
 
 ## Context
 
-Round 1 defined probe evidence with `representative: true | false | unknown`. In YAML, unquoted `true` and `false` are booleans and `unknown` is a string, so one key holds two types. The vocabulary block had to quote the values, and every reader would have to handle both forms.
+The first draft of the vocabulary defined probe evidence with `representative: true | false | unknown`. In YAML, unquoted `true` and `false` are booleans and `unknown` is a string, so one key holds two types. The vocabulary block had to quote the values, and every reader would have to handle both forms.
 
 ## Decision
 
@@ -19,4 +19,4 @@ The `representative` block is renamed `data_quality`, with the values `represent
 
 ## Evidence
 
-- Owner decision in the owner brief of 2026-10-23 on M0 and M1 core (private working notes), section 2.
+- Maintainer decision, 2026-10-23.

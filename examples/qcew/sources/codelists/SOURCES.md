@@ -12,4 +12,4 @@ Citation required by BLS: "Source: U.S. Bureau of Labor Statistics, Quarterly Ce
 | `ownership_titles.csv` | https://data.bls.gov/cew/doc/titles/ownership/ownership_titles.csv | 2026-10-23 | 230 | `9586b30199a494e1add8615998638801b58cc7d52dacacd5e62b41feab5b11b6` |
 | `size_titles.csv` | https://data.bls.gov/cew/doc/titles/size/size_titles.csv | 2026-10-23 | 445 | `76436a799b3f3fdcf338213e9c00111f0b81eeba1a99ac26451492db056b98e8` |
 
-The files were downloaded by the owner on 2026-10-23 (`qcew-model/scripts/load.sh`) and copied from the owner's folder into this repository; nothing was fetched again.
+The files were downloaded on 2026-10-23 by `scripts/load.sh` of the QCEW profiling notes (qcew-model) and copied into this repository; nothing was fetched again.

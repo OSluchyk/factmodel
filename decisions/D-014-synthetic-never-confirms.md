@@ -1,7 +1,7 @@
 # D-014 Synthetic data never confirms a fact about a platform
 
 Date: 2026-10-23 · Status: accepted
-Platform that forced it: none (review of rounds 8 to 13)
+Platform that forced it: none (review of the M1 core)
 
 ## Context
 
@@ -22,4 +22,4 @@ Until now intake moved a fact to `confirmed` whenever a probe result was in rang
 
 ## Evidence
 
-- Owner decision in the owner brief of 2026-10-23 on M1 residue (private working notes), section 2.
+- Maintainer decision, 2026-10-23.

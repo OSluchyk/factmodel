@@ -20,7 +20,7 @@ The owner asks for a release, or a layer became `reviewed` and its consumers nee
 2. For every `reviewed` layer, the last equivalence run must not drop against the accepted one (`fact equivalence run --root <dir> --layer <id>`; the owner accepts with `fact equivalence accept`). A drop refuses the release.
 3. Build: `fact release --root <dir> --out <dir>/release/out --version <version>`. Every file gets exactly one disposition (export, project, refuse); an unmatched file, a projected file of a kind without a key list, an undeclared key, or an unclosed internal block refuses the release. Lines between `internal:begin` and `internal:end` never leave the repository.
 4. Check: `fact check --release <out> --previous <previous release folder>`. Earlier sections of `RELEASE_NOTES.md` must stay byte for byte; a version's section is written once.
-5. Hand the folder to the owner; publishing it is the owner's act.
+5. Hand the folder to the owner; publishing it is a step only the owner takes.
 
 ## Rules
 

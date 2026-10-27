@@ -24,5 +24,5 @@ A relationship's `join` was field equality only: `<entity>.<field> = <entity>.<f
 
 ## Evidence
 
-- Owner decision in the owner brief of 2026-10-27 on M2, QCEW and the freeze (private working notes), section 3.
+- Maintainer decision, 2026-10-27.
 - NAICS and area code structure: owner's `profile.md`, sections H1, V3 and A3, read 2026-10-23.

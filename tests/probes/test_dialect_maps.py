@@ -1,5 +1,5 @@
 """Probe dialect knowledge is vocabulary: a dialect added to the maps changes behaviour without a
-code change (D-011, round 14)."""
+code change (D-011)."""
 
 import copy
 import subprocess

@@ -91,7 +91,7 @@ Probes return counts only. Scanning large tables costs money: render the probes 
 
 ## 3. What you send back
 
-To the model repository (or to the framework owner, for WP2.1):
+To the model repository (or, to report how the adapters worked on BigQuery, to the FactModel maintainers in an issue):
 
 - the snapshot files from both paths (`sources/snapshots/*.yaml`);
 - the probe result files (`probes/results/*.jsonl`), if you ran probes;
@@ -102,4 +102,4 @@ Never send credentials, connection strings, service account keys, query results 
 
 ## 4. Status
 
-This guide is written from the adapter code and its tests on exported fixtures. The adopter run on a real BigQuery project is owner-pending (plan WP2.1).
+This guide is written from the adapter code and its tests on exported fixtures. A run by an adopter on a real BigQuery project has not been done yet.

@@ -9,4 +9,4 @@ location: ../..
 revision: worktree
 include:
   - examples/qcew/sources/ddl/sqlite.sql
-access: The framework repository itself; the DDL follows the owner's load.sh layouts (sources/ddl/).
+access: The framework repository itself; the DDL follows the load.sh layouts of the QCEW profiling notes (qcew-model) (sources/ddl/).

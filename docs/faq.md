@@ -1,7 +1,5 @@
 # FAQ
 
-Questions the round reports asked, and the answers the owner gave. Each answer points at the record that holds it.
-
 ## Platforms and access
 
 **Does the agent need credentials for a cloud warehouse?** No. The core reads model files and snapshots only. Cloud engines are reached through the `export` adapter (the owner runs the export SQL) or the `sql` adapter with the owner's own login (D-011, `docs/adopters/bigquery.md`).
@@ -30,8 +28,6 @@ Questions the round reports asked, and the answers the owner gave. Each answer p
 
 **When does a change need a decision record?** When it removes or renames a key, changes the meaning of a key or value, or changes an algorithm's result. Additive changes need a CHANGELOG entry and a ledger line; defect fixes a CHANGELOG entry (D-018).
 
-**Is an owner brief a decision record?** No. When a brief decides something D-018 classes as a decision, the round records it.
-
 **Why are the schemas at 2.x after a 1.0.0 freeze?** The semantic layer contract v1 replaced the 1.0.0 placeholders (D-019, 2.0.0); rollups (2.1.0) and value tables (2.2.0) were added later.
 
 **How do I migrate a model?** `fact migrate` reports versions and compatibility. Its registry holds one documented slot (1.0.0 to 2.0.0, no automatic step); no model has needed a migration yet.
@@ -51,5 +47,3 @@ Questions the round reports asked, and the answers the owner gave. Each answer p
 **Where do release notes live?** In the model repository (`release/RELEASE_NOTES.md`), append-only. `fact release` adds a section per new version and copies the file into the release.
 
 **What does dbt not hold?** Measures read at their grain, distinct rules, value tables and value vocabularies, listed in each export's `EXPORT_NOTES.md`. A formula over exported metrics becomes a derived metric (`docs/exporters/round-trip-notes.md`).
-
-**Is the PyPI name free?** Not any more: the project page answered 200 on 2026-10-27. The owner decides before publishing (D-010 evidence).

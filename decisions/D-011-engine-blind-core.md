@@ -5,7 +5,7 @@ Platform that forced it: none (supersedes the plan's "M1 - Core on BigQuery" fra
 
 ## Context
 
-FactModel must work with many data sources, ideally any. The plan tied M1 to one cloud engine (BigQuery) and one dataset (`thelook_ecommerce`), and therefore to cloud credentials the agent must not have. A withdrawn draft brief tried to solve that with an access exception; this record replaces that draft and takes its number.
+FactModel must work with many data sources, ideally any. The plan tied M1 to one cloud engine (BigQuery) and one dataset (`thelook_ecommerce`), and therefore to cloud credentials the agent must not have. An earlier, withdrawn draft tried to solve that with an access exception; this record replaces that draft and takes its number.
 
 ## Decision
 
@@ -20,7 +20,7 @@ FactModel must work with many data sources, ideally any. The plan tied M1 to one
 
 ## Consequences
 
-- M1 becomes "Core, engine-neutral", gated on the Chinook example; M2 becomes "Cloud engines by adopters and a second domain" (`spec/IMPLEMENTATION_PLAN.md`, sections 4 and 6).
+- M1 becomes "Core, engine-neutral", gated on the Chinook example; M2 becomes "Cloud engines by adopters and a second domain" (`spec/ROADMAP.md`, section 3).
 - WP1.5 is rewritten: an adapter protocol, a registry, the `export` and `sql` adapters; drafts are made by one core function (`to_facts`), not by adapters.
 - Engine knowledge that the framework needs (default dialects, which engines enforce foreign keys) lives in vocabulary blocks, not in code.
 - Plan ground rule 7 stays; it gains one sentence about local test engines.
@@ -28,4 +28,4 @@ FactModel must work with many data sources, ideally any. The plan tied M1 to one
 
 ## Evidence
 
-- Owner decision in the owner brief of 2026-10-23 on closing M1 engine-neutral (private working notes), sections 0 and 2.
+- Maintainer decision, 2026-10-23.

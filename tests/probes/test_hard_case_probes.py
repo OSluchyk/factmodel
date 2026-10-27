@@ -1,4 +1,4 @@
-"""The probe parts of the hard cases that round 7 deferred to WP1.7."""
+"""The probe parts of the hard cases, added with the probes (WP1.7)."""
 
 from pathlib import Path
 

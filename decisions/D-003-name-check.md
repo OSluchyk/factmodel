@@ -5,7 +5,7 @@ Platform that forced it: none
 
 ## Context
 
-The spec leaves the package-name check open before M1. The brief asks for evidence from PyPI and from a GitHub search for `plumbline` repositories that are data or schema tools. A trademark search is not part of this record.
+The spec leaves the package-name check open before M1. The check needs evidence from PyPI and from a GitHub search for `plumbline` repositories that are data or schema tools. A trademark search is not part of this record.
 
 ## Decision
 

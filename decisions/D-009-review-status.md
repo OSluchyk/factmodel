@@ -18,4 +18,4 @@ The `entity_status` block is renamed `review_status`, with the values `draft | r
 
 ## Evidence
 
-- Owner decision in the owner brief of 2026-10-23 on M0 and M1 core (private working notes), section 2.
+- Maintainer decision, 2026-10-23.

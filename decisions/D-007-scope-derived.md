@@ -5,7 +5,7 @@ Platform that forced it: none
 
 ## Context
 
-Round 1 let an entity declare `subject_scope` and `scope_basis`, and planned a gate check that compared the claim with a computed closure. That is two sources for one fact, and it creates a class of errors (claim and closure disagree) that exists only because the claim is authored. Spec principle 2 says scopes are computed.
+The first draft of the vocabulary let an entity declare `subject_scope` and `scope_basis`, and planned a gate check that compared the claim with a computed closure. That is two sources for one fact, and it creates a class of errors (claim and closure disagree) that exists only because the claim is authored. Spec principle 2 says scopes are computed.
 
 ## Decision
 
@@ -25,5 +25,5 @@ Only the facts that scope is computed from are authored:
 
 ## Evidence
 
-- Owner decision in the owner brief of 2026-10-23 on M0 and M1 core (private working notes), section 2.
+- Maintainer decision, 2026-10-23.
 - `spec/SPEC.md`, principle 2.

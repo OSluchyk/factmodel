@@ -1,6 +1,6 @@
 # Agent layer templates
 
-Files that `fact init` copies into a new model repository: the agent rules, five skills (WP1.9) and the round templates.
+Files that `fact init` copies into a new model repository: the agent rules, the skills and the brief and report templates for agent rounds.
 
 | Template | Copied to | Purpose |
 | --- | --- | --- |

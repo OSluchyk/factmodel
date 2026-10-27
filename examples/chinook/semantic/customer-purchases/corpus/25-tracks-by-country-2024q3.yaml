@@ -1,0 +1,9 @@
+id: tracks-by-country-2024q3
+request:
+  ask: measure
+  measure: tracks_bought
+  by: country
+  from: '2024-07-01'
+  to: '2024-10-01'
+reference: SELECT i.BillingCountry AS key, SUM(l.Quantity) AS value FROM invoice AS i JOIN invoice_line AS l ON l.InvoiceId = i.InvoiceId JOIN track AS t ON t.TrackId = l.TrackId JOIN genre AS g ON g.GenreId = t.GenreId WHERE i.InvoiceDate >= '2024-07-01' AND i.InvoiceDate < '2024-10-01' GROUP BY i.BillingCountry
+mode: same_rows

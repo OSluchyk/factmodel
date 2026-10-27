@@ -1,0 +1,13 @@
+id: de-private-weekly-wage-2025q1
+request:
+  measure: avg_weekly_wage
+  area: '10000'
+  industry: '10'
+  ownership: '5'
+  year: '2025'
+  qtr: '1'
+reference: WITH sel AS (SELECT * FROM qtrly WHERE area_fips = '10000' AND industry_code = '10' AND own_code = '5' AND year = '2025' AND qtr = '1' AND agglvl_code = '51') SELECT SUM(CASE WHEN disclosure_code IS NULL THEN total_qtrly_wages END) / ((SUM(CASE WHEN disclosure_code IS NULL THEN month1_emplvl END) + SUM(CASE WHEN disclosure_code IS NULL THEN month2_emplvl END) + SUM(CASE WHEN disclosure_code IS NULL THEN month3_emplvl END)) / 3.0) / 13 AS value, SUM(CASE WHEN disclosure_code = 'N' THEN 1 ELSE 0 END) AS suppressed_cells FROM sel
+mode: same_rows
+note: "Naive SQL: SELECT AVG(avg_wkly_wage) FROM qtrly WHERE area_fips IN ('10001', '10003', '10005') AND industry_code = '10' AND own_code = '5' AND year = '2025' AND qtr = '1' Why it differs: an average of county weekly wages weighs every county alike and starts from rounded values; the documented formula divides summed wages by summed employment (H-0002)."
+tags:
+- naive

@@ -1,0 +1,162 @@
+{
+  "layers": {
+    "customer-purchases": {
+      "consumer": "filter-sql",
+      "counts": {
+        "all": {
+          "error": 0,
+          "fail": 0,
+          "pass": 31
+        },
+        "same_count": {
+          "error": 0,
+          "fail": 0,
+          "pass": 0
+        },
+        "same_predicate": {
+          "error": 0,
+          "fail": 0,
+          "pass": 2
+        },
+        "same_rows": {
+          "error": 0,
+          "fail": 0,
+          "pass": 29
+        }
+      },
+      "dialect": "sqlite",
+      "items": {
+        "customers-active-by-country-2024": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-active-by-genre-2024h1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-active-country-a-2024q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-active-country-a-2024q2": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-active-country-a-2024q3": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-active-country-a-2024q4": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-genre-1-2024q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-genre-1-country-a-2024h2": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-genre-2-2024q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-genre-2-country-b-2024h2": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-genre-3-2024q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-genre-3-country-c-2024h2": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-genre-4-2024q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-genre-4-country-d-2024h2": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-genre-5-2024q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-genre-6-2024q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-genre-7-2024q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "customers-genre-8-2024q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "predicate-customers-genre-2-2024q2": {
+          "mode": "same_predicate",
+          "outcome": "pass"
+        },
+        "predicate-revenue-country-b-2024": {
+          "mode": "same_predicate",
+          "outcome": "pass"
+        },
+        "revenue-by-country-2024q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "revenue-by-country-2024q2": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "revenue-by-country-2024q3": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "revenue-by-country-2024q4": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "revenue-by-genre-2024": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "revenue-genre-5-2024": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "revenue-genre-6-2024": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "revenue-genre-7-2024": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "revenue-genre-8-2024": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "tracks-by-country-2024q3": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "tracks-by-genre-2024": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        }
+      },
+      "proven": true,
+      "ran_on": "2026-10-27",
+      "share": 1.0,
+      "source": "chinook-sqlite",
+      "threshold": 0.9,
+      "unexplained": []
+    }
+  }
+}

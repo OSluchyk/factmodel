@@ -5,7 +5,7 @@ kind: layer
 id: employment-wages
 purpose: Employment, wages and establishments by area, industry, ownership and period, as QCEW publishes them.
 consumer: measure-sql
-status: draft
+status: reviewed
 entities:
 - entity: qtrly
   current_row_rule: null

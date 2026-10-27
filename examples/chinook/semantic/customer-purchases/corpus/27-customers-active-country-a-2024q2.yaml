@@ -1,0 +1,9 @@
+id: customers-active-country-a-2024q2
+request:
+  ask: measure
+  measure: customers_active
+  country: Country A
+  from: '2024-04-01'
+  to: '2024-07-01'
+reference: SELECT COUNT(DISTINCT i.CustomerId) AS value FROM invoice AS i JOIN invoice_line AS l ON l.InvoiceId = i.InvoiceId JOIN track AS t ON t.TrackId = l.TrackId JOIN genre AS g ON g.GenreId = t.GenreId WHERE i.InvoiceDate >= '2024-04-01' AND i.InvoiceDate < '2024-07-01' AND i.BillingCountry = 'Country A'
+mode: same_rows

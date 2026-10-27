@@ -38,11 +38,13 @@ ACCEPTED = Path("equivalence") / "accepted.json"
 
 
 def _accepted(root: Path) -> set[str]:
+    """Layers whose accepted equivalence run proved them (D-021)."""
     path = root / ACCEPTED
     if not path.is_file():
         return set()
     data = json.loads(path.read_text(encoding="utf-8"))
-    return set((data.get("layers") or {}).keys()) if isinstance(data, dict) else set()
+    layers = (data.get("layers") or {}) if isinstance(data, dict) else {}
+    return {k for k, v in layers.items() if isinstance(v, dict) and v.get("proven") is True}
 
 
 def _columns(text: str) -> list[tuple[str, str]]:
@@ -201,7 +203,7 @@ def _check(ctx: GateContext, layer: Layer, path: str) -> Iterator[LoadIssue]:
             message = f"the layer inherits {hazard} from {origin} but does not list it"
             yield issue("missing_hazard", ["hazards"] if listed else ["id"], message)
     if layer.status == "reviewed" and layer.id not in _accepted(ctx.root):
-        message = f"layer {layer.id!r} is reviewed but has no accepted equivalence run"
+        message = f"layer {layer.id!r} is reviewed but no accepted equivalence run proves it"
         yield issue("not_accepted", ["status"], message)
 
 

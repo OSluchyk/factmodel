@@ -1,0 +1,190 @@
+{
+  "layers": {
+    "employment-wages": {
+      "consumer": "measure-sql",
+      "counts": {
+        "all": {
+          "error": 2,
+          "fail": 0,
+          "pass": 36
+        },
+        "same_count": {
+          "error": 0,
+          "fail": 0,
+          "pass": 0
+        },
+        "same_predicate": {
+          "error": 0,
+          "fail": 0,
+          "pass": 2
+        },
+        "same_rows": {
+          "error": 2,
+          "fail": 0,
+          "pass": 34
+        }
+      },
+      "dialect": "sqlite",
+      "items": {
+        "cecil-manufacturing-avg-2025q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "cecil-wholesale-2024q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "de-counties-construction-2025q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "de-counties-private-2025q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "de-counties-wages-2025q4": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "de-federal-2025q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "de-goods-producing-2025q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "de-private-annual-2025": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "de-private-establishments-2025q2": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "de-private-oty-2025q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "de-private-total-2025q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "de-private-wages-2025q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "de-private-weekly-wage-2025q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "de-total-covered-2025q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "kent-construction-2025q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "kent-construction-annual-2025": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "kent-construction-buildings-2025q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "kent-construction-establishments-2025q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "kent-construction-wages-2025q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "md-counties-construction-2025q2": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "md-private-avg-2025q3": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "md-private-total-2025q2": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "md-total-annual-2024": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "md-trade-transport-2025q2": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "montgomery-retail-2025q4": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "montgomery-supermarkets-2025q4": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "montgomery-total-weekly-wage-2025q4": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "msa-detail-from-counties-2025q3": {
+          "mode": "same_rows",
+          "outcome": "error"
+        },
+        "msa-private-2025q2": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "msa-private-2025q3": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "msa-total-covered-2025q1": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "nation-from-states-2025q1": {
+          "mode": "same_rows",
+          "outcome": "error"
+        },
+        "new-castle-retail-2025q3": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "new-castle-total-wages-2025q2": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "predicate-de-private-establishments": {
+          "mode": "same_predicate",
+          "outcome": "pass"
+        },
+        "predicate-kent-construction": {
+          "mode": "same_predicate",
+          "outcome": "pass"
+        },
+        "sussex-bakeries-2025q2": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        },
+        "sussex-total-oty-2025q3": {
+          "mode": "same_rows",
+          "outcome": "pass"
+        }
+      },
+      "proven": true,
+      "ran_on": "2026-10-27",
+      "share": 1.0,
+      "source": "qcew-sqlite",
+      "threshold": 0.9,
+      "unexplained": []
+    }
+  }
+}

@@ -1,0 +1,13 @@
+id: de-private-total-2025q1
+request:
+  measure: employment_month3
+  area: '10000'
+  industry: '10'
+  ownership: '5'
+  year: '2025'
+  qtr: '1'
+reference: WITH sel AS (SELECT * FROM qtrly WHERE area_fips = '10000' AND industry_code = '10' AND own_code = '5' AND year = '2025' AND qtr = '1' AND agglvl_code = '51') SELECT SUM(CASE WHEN disclosure_code IS NULL THEN month3_emplvl END) AS value, SUM(CASE WHEN disclosure_code = 'N' THEN 1 ELSE 0 END) AS suppressed_cells FROM sel
+mode: same_rows
+note: "Naive SQL: SELECT SUM(month3_emplvl) FROM qtrly WHERE area_fips = '10000' AND own_code = '5' AND year = '2025' AND qtr = '1' Why it differs: it adds every industry level (total, domains, supersectors, sectors, 3- and 6-digit) for the area, so each worker counts many times (F-0008)."
+tags:
+- naive

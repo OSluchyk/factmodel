@@ -1,0 +1,10 @@
+id: msa-total-covered-2025q1
+request:
+  measure: employment_month3
+  area: C3798
+  industry: '10'
+  ownership: '0'
+  year: '2025'
+  qtr: '1'
+reference: WITH sel AS (SELECT * FROM qtrly WHERE area_fips = 'C3798' AND industry_code = '10' AND own_code = '0' AND year = '2025' AND qtr = '1' AND agglvl_code = '40') SELECT SUM(CASE WHEN disclosure_code IS NULL THEN month3_emplvl END) AS value, SUM(CASE WHEN disclosure_code = 'N' THEN 1 ELSE 0 END) AS suppressed_cells FROM sel
+mode: same_rows

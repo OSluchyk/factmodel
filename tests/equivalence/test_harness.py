@@ -110,8 +110,10 @@ def _interface(root: Path, consumer: str) -> None:
     lines = [
         line
         for line in path.read_text().splitlines()
-        if not line.startswith(("interface", "corpus", "  location"))
+        if not line.startswith(("interface", "corpus", "  location", "threshold"))
     ]
+    # one of four items is same_count, which does not count towards the share (D-021)
+    lines += ["threshold: 0.75"]
     lines += [
         f"interface: consumers/{consumer}/compile.py:compile",
         "corpus:",
@@ -285,3 +287,41 @@ def test_the_same_corpus_runs_on_duckdb(tmp_path: Path) -> None:
         ran_on=DAY,
     )
     assert _outcomes(result) == _outcomes(_run(root, sqlite_url)) == dict.fromkeys(CORPUS, "pass")
+
+
+def _corpus_item(root: Path, item_id: str, **extra: str) -> None:
+    path = root / "semantic" / "employment" / "corpus" / f"{item_id}.yaml"
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    doc.update(extra)
+    path.write_text(json.dumps(doc), encoding="utf-8")
+
+
+def test_d021_threshold_share_and_explanations(tmp_path: Path) -> None:
+    root, url = _model(tmp_path, "partial")
+    result = _run(root, url)
+    # two of four pass; count-2025 is same_count and does not count; total-2025 errors
+    assert result.share() == 0.5
+    assert result.unexplained() == ["count-2025", "total-2025"]
+    assert not result.proven()
+    _corpus_item(root, "total-2025", known_gap="the consumer has no 2025 totals yet")
+    _corpus_item(root, "count-2025", finding="F-0001")
+    result = _run(root, url)
+    assert result.unexplained() == []
+    assert result.share() == round(2 / 3, 6)  # known gaps leave the denominator
+    assert not result.proven()  # 0.667 < 0.75
+    summary = result.summary()
+    assert (summary["threshold"], summary["proven"]) == (0.75, False)
+    assert "| total-2025 | same_rows | error | the consumer gave no SQL | known gap |" in (
+        harness.report(result)
+    )
+
+
+def test_accept_records_the_verdict_and_the_gate_reads_it(tmp_path: Path) -> None:
+    from factmodel.gate.runner import run_gate
+
+    root, url = _model(tmp_path, "partial")
+    layer = root / "semantic" / "employment" / "layer.yaml"
+    layer.write_text(layer.read_text().replace("status: draft", "status: reviewed"), "utf-8")
+    harness.write(root, _run(root, url))
+    harness.accept(root, "employment")
+    assert run_gate(root).failed == ["layers"]  # accepted, but not proven

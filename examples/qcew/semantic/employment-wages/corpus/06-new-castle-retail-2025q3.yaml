@@ -1,0 +1,10 @@
+id: new-castle-retail-2025q3
+request:
+  measure: employment_month3
+  area: '10003'
+  industry: 44-45
+  ownership: '5'
+  year: '2025'
+  qtr: '3'
+reference: WITH sel AS (SELECT * FROM qtrly WHERE area_fips = '10003' AND industry_code = '44-45' AND own_code = '5' AND year = '2025' AND qtr = '3' AND agglvl_code = '74') SELECT SUM(CASE WHEN disclosure_code IS NULL THEN month3_emplvl END) AS value, SUM(CASE WHEN disclosure_code = 'N' THEN 1 ELSE 0 END) AS suppressed_cells FROM sel
+mode: same_rows

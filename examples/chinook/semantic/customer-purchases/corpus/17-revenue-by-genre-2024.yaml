@@ -1,0 +1,9 @@
+id: revenue-by-genre-2024
+request:
+  ask: measure
+  measure: revenue
+  by: genre
+  from: '2024-01-01'
+  to: '2025-01-01'
+reference: SELECT g.Name AS key, SUM(l.UnitPrice * l.Quantity) AS value FROM invoice AS i JOIN invoice_line AS l ON l.InvoiceId = i.InvoiceId JOIN track AS t ON t.TrackId = l.TrackId JOIN genre AS g ON g.GenreId = t.GenreId WHERE i.InvoiceDate >= '2024-01-01' AND i.InvoiceDate < '2025-01-01' GROUP BY g.Name
+mode: same_rows

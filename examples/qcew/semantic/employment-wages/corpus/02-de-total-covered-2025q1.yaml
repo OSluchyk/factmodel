@@ -1,0 +1,13 @@
+id: de-total-covered-2025q1
+request:
+  measure: employment_month3
+  area: '10000'
+  industry: '10'
+  ownership: '0'
+  year: '2025'
+  qtr: '1'
+reference: WITH sel AS (SELECT * FROM qtrly WHERE area_fips = '10000' AND industry_code = '10' AND own_code = '0' AND year = '2025' AND qtr = '1' AND agglvl_code = '50') SELECT SUM(CASE WHEN disclosure_code IS NULL THEN month3_emplvl END) AS value, SUM(CASE WHEN disclosure_code = 'N' THEN 1 ELSE 0 END) AS suppressed_cells FROM sel
+mode: same_rows
+note: "Naive SQL: SELECT SUM(month3_emplvl) FROM qtrly WHERE area_fips = '10000' AND industry_code = '10' AND year = '2025' AND qtr = '1' Why it differs: own_code 0 is the total of 1, 2, 3 and 5; summing every ownership counts the total twice."
+tags:
+- naive

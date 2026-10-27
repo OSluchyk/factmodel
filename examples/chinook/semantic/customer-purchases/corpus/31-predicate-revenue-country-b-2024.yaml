@@ -1,0 +1,10 @@
+id: predicate-revenue-country-b-2024
+request:
+  ask: measure
+  measure: revenue
+  country: Country B
+  from: '2024-01-01'
+  to: '2025-01-01'
+reference: SELECT SUM(invoice_line.UnitPrice * invoice_line.Quantity) AS value FROM invoice_line JOIN invoice ON invoice_line.InvoiceId = invoice.InvoiceId JOIN track ON invoice_line.TrackId = track.TrackId JOIN genre ON track.GenreId = genre.GenreId WHERE invoice.BillingCountry = 'Country B' AND invoice.InvoiceDate < '2025-01-01' AND invoice.InvoiceDate >= '2024-01-01'
+mode: same_predicate
+note: Revenue is unit price times quantity, never the invoice total.

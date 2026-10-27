@@ -1,0 +1,12 @@
+id: nation-from-states-2025q1
+request:
+  measure: employment_month3
+  areas:
+    kind: nation
+  industry: '10'
+  ownership: '0'
+  year: '2025'
+  qtr: '1'
+reference: SELECT SUM(month3_emplvl) AS value FROM qtrly WHERE area_fips IN ('10000', '24000') AND industry_code = '10' AND own_code = '0' AND year = '2025' AND qtr = '1'
+mode: same_rows
+known_gap: US000 excludes Puerto Rico and the Virgin Islands (H2); a rollup across the geography lattice needs the coverage of each national code (F-0009).

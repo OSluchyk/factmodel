@@ -1,0 +1,8 @@
+id: customers-genre-5-2024q1
+request:
+  ask: customers
+  genre: genre-5
+  from: '2024-01-01'
+  to: '2024-04-01'
+reference: SELECT i.CustomerId FROM invoice AS i WHERE i.InvoiceDate >= '2024-01-01' AND i.InvoiceDate < '2024-04-01' AND EXISTS (SELECT 1 FROM invoice_line AS l JOIN track AS t ON l.TrackId = t.TrackId JOIN genre AS g ON t.GenreId = g.GenreId WHERE l.InvoiceId = i.InvoiceId AND g.Name = 'genre-5') GROUP BY i.CustomerId
+mode: same_rows

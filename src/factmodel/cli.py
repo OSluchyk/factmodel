@@ -507,8 +507,15 @@ def equivalence_run(
         f"{layer_id}: {total['pass']} pass, {total['fail']} fail, {total['error']} error "
         f"of {len(result.items)}"
     )
+    typer.echo(
+        f"share {result.share():.3f}, threshold {result.threshold}: "
+        f"{'proven' if result.proven() else 'not proven'}"
+    )
     if result.regressions:
         typer.echo(f"regressions against the accepted run: {', '.join(result.regressions)}")
+    if result.unexplained():
+        typer.echo(f"unexplained failures: {', '.join(result.unexplained())}")
+    if not result.proven():
         raise typer.Exit(1)
 
 

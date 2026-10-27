@@ -80,9 +80,13 @@ def test_reviewed_with_an_accepted_run_passes(tmp_path: Path) -> None:
     _edit(root, "status: draft", "status: reviewed")
     (root / "equivalence").mkdir()
     (root / "equivalence" / "accepted.json").write_text(
-        json.dumps({"layers": {"employment": {}}}), encoding="utf-8"
+        json.dumps({"layers": {"employment": {"proven": True}}}), encoding="utf-8"
     )
     assert _codes(root) == []
+    (root / "equivalence" / "accepted.json").write_text(
+        json.dumps({"layers": {"employment": {"proven": False}}}), encoding="utf-8"
+    )
+    assert _codes(root) == ["not_accepted"]
 
 
 @pytest.mark.parametrize(

@@ -1,0 +1,15 @@
+id: de-counties-private-2025q1
+request:
+  measure: employment_month3
+  areas:
+    kind: county
+    state: '10'
+  industry: '10'
+  ownership: '5'
+  year: '2025'
+  qtr: '1'
+reference: SELECT t.area_fips, t.area_title, SUM(CASE WHEN q.disclosure_code IS NULL THEN q.month3_emplvl END) AS value, SUM(CASE WHEN q.disclosure_code = 'N' THEN 1 ELSE 0 END) AS suppressed_cells FROM qtrly AS q JOIN (SELECT area_fips, MIN(area_title) AS area_title FROM area_titles GROUP BY area_fips) AS t ON q.area_fips = t.area_fips WHERE q.area_fips LIKE '10%' AND q.area_fips NOT LIKE '__000' AND q.industry_code = '10' AND q.own_code = '5' AND q.year = '2025' AND q.qtr = '1' AND q.agglvl_code = '71' GROUP BY t.area_fips, t.area_title
+mode: same_rows
+note: "Naive SQL: SELECT t.area_fips, t.area_title, SUM(q.month3_emplvl) FROM qtrly AS q JOIN area_titles AS t ON q.area_fips = t.area_fips WHERE q.area_fips LIKE '10%' AND q.area_fips NOT LIKE '__000' AND q.industry_code = '10' AND q.own_code = '5' AND q.year = '2025' AND q.qtr = '1' GROUP BY t.area_fips, t.area_title Why it differs: the raw area list repeats its codes (F-0001), so every county row joins twice and every total doubles."
+tags:
+- naive

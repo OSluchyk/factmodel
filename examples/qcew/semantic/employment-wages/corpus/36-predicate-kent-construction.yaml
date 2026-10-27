@@ -1,0 +1,11 @@
+id: predicate-kent-construction
+request:
+  measure: employment_month3
+  area: '10001'
+  industry: '23'
+  ownership: '5'
+  year: '2025'
+  qtr: '1'
+reference: SELECT (SELECT SUM(qtrly.month3_emplvl) FROM qtrly WHERE qtrly.disclosure_code IS NULL AND qtrly.agglvl_code = '74' AND qtrly.qtr = '1' AND qtrly.year = '2025' AND qtrly.own_code = '5' AND qtrly.industry_code = '23' AND qtrly.area_fips = '10001') AS value, (SELECT SUM(CASE WHEN qtrly.disclosure_code = 'N' THEN 1 ELSE 0 END) FROM qtrly WHERE qtrly.agglvl_code = '74' AND qtrly.qtr = '1' AND qtrly.year = '2025' AND qtrly.own_code = '5' AND qtrly.industry_code = '23' AND qtrly.area_fips = '10001') AS suppressed_cells
+mode: same_predicate
+note: The required concept disclosed is applied to the measure and not to its companion.

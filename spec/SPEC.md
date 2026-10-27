@@ -285,7 +285,7 @@ The reference dataset is Chinook, schema only, with synthetic rows generated at 
 - [x] Package name: `factmodel` for the distribution and the import, command `fact` (D-010).
 - [ ] Name: trademark check before the first public push.
 - [ ] Second domain for M2: which open-source application schema (needs a clear anchor and both reference and unanchored data).
-- [ ] Equivalence threshold: one global number or per layer.
+- [x] Equivalence threshold: 0.9 by default, per consumer when the owner sets `threshold` (D-021).
 - [ ] Export target priority: OSI / Apache Ossie first, or dbt first.
 - [ ] Format of facts: YAML files only, or YAML plus a generated graph file (for example JSON-LD) for graph consumers.
 

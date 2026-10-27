@@ -15,7 +15,8 @@ A full FactModel model of the Chinook schema (a digital media store), the refere
 | `physical/entities/` | The reviewed model: classes, grains, meanings, the anchor reference on Invoice, the scope admission on InvoiceLine. |
 | `probes/`, `evidence/probes/` | Generated probes, their results on SQLite, and the evidence intake wrote. |
 | `semantic/customer-purchases/` | The layer (D-019) and its consumer `filter-sql`: revenue, tracks bought and active customers by genre, billing country and period. |
-| `generated/` | Labels, scope and residue from `fact project`. |
+| `consumers/filter-sql/`, `semantic/customer-purchases/corpus/`, `equivalence/` | The reference consumer, its corpus of 31 items and the accepted run (D-021). |
+| `generated/` | Labels, scope and residue from `fact project`, and the equivalence report. |
 
 ## Expected shape
 

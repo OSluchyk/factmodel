@@ -17,3 +17,4 @@ The current core-change ledger (D-018): every change to the contract since the M
 | 9 | 22 | Probe kind `rollup` (counts per parent against the sum of its children); a hierarchy is confirmed for aggregation only by a rollup in range; intake cites it on the hierarchy relationship | contract, meaning of confirmed | D-020 | QCEW |
 | 10 | 22 | Optional layer measure key `rollups` (hierarchy, field, suppressed concept); the `layers` stage checks it; `fact probe generate` reads layers | contract, additive | D-020 (ledger line under D-018) | QCEW |
 | 11 | 22 | Schemas 2.1.0 | version | D-018 (additive) | QCEW |
+| 12 | 23 | Equivalence threshold: share in `same_rows`/`same_predicate` over non-gap items, no regression, every failure explained; corpus keys `known_gap`, `finding`; run summary `threshold`, `share`, `proven`, `unexplained`; `reviewed` needs a proven accepted run | contract, meaning of reviewed | D-021 | none |

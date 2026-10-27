@@ -1,0 +1,12 @@
+id: md-counties-construction-2025q2
+request:
+  measure: employment_month3
+  areas:
+    kind: county
+    state: '24'
+  industry: '23'
+  ownership: '5'
+  year: '2025'
+  qtr: '2'
+reference: SELECT t.area_fips, t.area_title, SUM(CASE WHEN q.disclosure_code IS NULL THEN q.month3_emplvl END) AS value, SUM(CASE WHEN q.disclosure_code = 'N' THEN 1 ELSE 0 END) AS suppressed_cells FROM qtrly AS q JOIN (SELECT area_fips, MIN(area_title) AS area_title FROM area_titles GROUP BY area_fips) AS t ON q.area_fips = t.area_fips WHERE q.area_fips LIKE '24%' AND q.area_fips NOT LIKE '__000' AND q.industry_code = '23' AND q.own_code = '5' AND q.year = '2025' AND q.qtr = '2' AND q.agglvl_code = '74' GROUP BY t.area_fips, t.area_title
+mode: same_rows

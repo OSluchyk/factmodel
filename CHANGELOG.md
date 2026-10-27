@@ -2,6 +2,16 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-27 - Round 23: WP3.3 Reference consumers and corpora, threshold (D-021)
+
+**Why.** A layer is proven only by a consumer that answers like the platform. QCEW shows why that matters: the naive answers (summing suppressed zeros, joining the raw area list, mixing levels, summing annual averages, averaging weekly wages) are all different. D-021 fixes when a run proves a layer, so `reviewed` means something.
+
+- D-021: the threshold, known gaps and findings, and the run verdict. `fact equivalence run` exits 1 when a layer is not proven, and the gate needs a proven accepted run for `reviewed`.
+- QCEW: consumer `measure-sql` and a 38-item corpus. It has six naive-versus-correct pairs with the naive SQL in the note, and two known gaps (MSA detail from counties, the national rollup).
+- Chinook: consumer `filter-sql` and a 31-item corpus.
+- Both layers are proven on SQLite and DuckDB, accepted (the owner's act, simulated once) and `reviewed`.
+- `docs/dogfood/2026-10-27-model-lookup.md` lists what the consumers looked up outside their layers.
+
 ## Unreleased - 2026-10-27 - Round 22: WP3.3a Layers for QCEW and Chinook, rollup probe (D-020)
 
 **Why.** The layer contract has to carry real cases. For QCEW the layer must make the disclosure filter, the level, distinct area codes and formula-based measures impossible to miss. A hierarchy's arithmetic was never measured, so D-020 adds a probe that shows where QCEW's numbers add up and where suppression breaks them.

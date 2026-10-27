@@ -4,7 +4,7 @@ kind: layer
 id: customer-purchases
 purpose: Revenue, tracks bought and active customers by genre, billing country and period.
 consumer: filter-sql
-status: draft
+status: reviewed
 entities:
 - entity: invoice_line
   current_row_rule: null

@@ -1,0 +1,10 @@
+id: md-private-avg-2025q3
+request:
+  measure: employment_avg
+  area: '24000'
+  industry: '10'
+  ownership: '5'
+  year: '2025'
+  qtr: '3'
+reference: WITH sel AS (SELECT * FROM qtrly WHERE area_fips = '24000' AND industry_code = '10' AND own_code = '5' AND year = '2025' AND qtr = '3' AND agglvl_code = '51') SELECT SUM(CASE WHEN disclosure_code IS NULL THEN (month1_emplvl + month2_emplvl + month3_emplvl) / 3.0 END) AS value, SUM(CASE WHEN disclosure_code = 'N' THEN 1 ELSE 0 END) AS suppressed_cells FROM sel
+mode: same_rows

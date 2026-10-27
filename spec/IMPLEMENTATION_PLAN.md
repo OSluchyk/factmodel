@@ -471,6 +471,8 @@ Round 22: layers `employment-wages` (QCEW) and `customer-purchases` (Chinook) at
 
 **Acceptance (M3 gate).** Equivalence at or above the threshold chosen in the open question (record it as a decision); every failure explained as a finding.
 
+Round 23 (D-021): reference consumers `examples/qcew/consumers/measure-sql/` and `examples/chinook/consumers/filter-sql/`; corpora of 38 and 31 items; both layers proven on SQLite and DuckDB and `reviewed`; the owner's accept simulated once.
+
 ### WP3.4 Release projection and model-lookup skill (1 round)
 
 **Deliverables.** `release/allowlist.yaml` format, `fact release --out`, `agent/skills/model-lookup/`, `agent/skills/release/`.

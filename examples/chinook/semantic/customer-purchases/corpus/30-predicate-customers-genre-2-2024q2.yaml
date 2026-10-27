@@ -1,0 +1,9 @@
+id: predicate-customers-genre-2-2024q2
+request:
+  ask: customers
+  genre: genre-2
+  from: '2024-04-01'
+  to: '2024-07-01'
+reference: SELECT DISTINCT "invoice"."CustomerId" FROM "invoice_line" JOIN "invoice" ON "invoice_line"."InvoiceId" = "invoice"."InvoiceId" JOIN "track" ON "invoice_line"."TrackId" = "track"."TrackId" JOIN "genre" ON "track"."GenreId" = "genre"."GenreId" WHERE "genre"."Name" = 'genre-2' AND "invoice"."InvoiceDate" < '2024-07-01' AND "invoice"."InvoiceDate" >= '2024-04-01'
+mode: same_predicate
+note: 'The filter itself: genre, then the half-open period.'

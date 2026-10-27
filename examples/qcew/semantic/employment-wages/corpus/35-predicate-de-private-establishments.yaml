@@ -1,0 +1,11 @@
+id: predicate-de-private-establishments
+request:
+  measure: establishments
+  area: '10000'
+  industry: '10'
+  ownership: '5'
+  year: '2025'
+  qtr: '2'
+reference: SELECT (SELECT SUM("qtrly"."qtrly_estabs") FROM "qtrly" WHERE "qtrly"."agglvl_code" = '51' AND "qtrly"."qtr" = '2' AND "qtrly"."year" = '2025' AND "qtrly"."own_code" = '5' AND "qtrly"."industry_code" = '10' AND "qtrly"."area_fips" = '10000') AS value
+mode: same_predicate
+note: 'The filter the consumer must write: every key field and the level.'

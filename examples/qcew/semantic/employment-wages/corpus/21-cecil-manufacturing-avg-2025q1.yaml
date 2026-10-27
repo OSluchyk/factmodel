@@ -1,0 +1,10 @@
+id: cecil-manufacturing-avg-2025q1
+request:
+  measure: employment_avg
+  area: '24015'
+  industry: 31-33
+  ownership: '5'
+  year: '2025'
+  qtr: '1'
+reference: WITH sel AS (SELECT * FROM qtrly WHERE area_fips = '24015' AND industry_code = '31-33' AND own_code = '5' AND year = '2025' AND qtr = '1' AND agglvl_code = '74') SELECT SUM(CASE WHEN disclosure_code IS NULL THEN (month1_emplvl + month2_emplvl + month3_emplvl) / 3.0 END) AS value, SUM(CASE WHEN disclosure_code = 'N' THEN 1 ELSE 0 END) AS suppressed_cells FROM sel
+mode: same_rows

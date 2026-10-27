@@ -1,0 +1,11 @@
+id: kent-construction-establishments-2025q1
+request:
+  measure: establishments
+  area: '10001'
+  industry: '23'
+  ownership: '5'
+  year: '2025'
+  qtr: '1'
+reference: WITH sel AS (SELECT * FROM qtrly WHERE area_fips = '10001' AND industry_code = '23' AND own_code = '5' AND year = '2025' AND qtr = '1' AND agglvl_code = '74') SELECT SUM(qtrly_estabs) AS value FROM sel
+mode: same_rows
+note: Establishments stay filled on a suppressed row (F-0003), so this cell has a value.

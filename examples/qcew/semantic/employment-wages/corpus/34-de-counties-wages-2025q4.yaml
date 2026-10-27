@@ -1,0 +1,12 @@
+id: de-counties-wages-2025q4
+request:
+  measure: total_wages
+  areas:
+    kind: county
+    state: '10'
+  industry: '10'
+  ownership: '0'
+  year: '2025'
+  qtr: '4'
+reference: SELECT t.area_fips, t.area_title, SUM(CASE WHEN q.disclosure_code IS NULL THEN q.total_qtrly_wages END) AS value, SUM(CASE WHEN q.disclosure_code = 'N' THEN 1 ELSE 0 END) AS suppressed_cells FROM qtrly AS q JOIN (SELECT area_fips, MIN(area_title) AS area_title FROM area_titles GROUP BY area_fips) AS t ON q.area_fips = t.area_fips WHERE q.area_fips LIKE '10%' AND q.area_fips NOT LIKE '__000' AND q.industry_code = '10' AND q.own_code = '0' AND q.year = '2025' AND q.qtr = '4' AND q.agglvl_code = '70' GROUP BY t.area_fips, t.area_title
+mode: same_rows

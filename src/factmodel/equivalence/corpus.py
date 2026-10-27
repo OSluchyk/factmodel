@@ -7,7 +7,7 @@ from pydantic import Field
 
 from factmodel import vocabulary
 from factmodel.io.yaml_strict import load
-from factmodel.model.types import Slug, Strict, Text
+from factmodel.model.types import FindingId, Slug, Strict, Text
 
 
 class CorpusError(ValueError):
@@ -20,6 +20,9 @@ class CorpusItem(Strict):
     reference: Text
     mode: str
     note: Text | None = None
+    # D-021: why the consumer may fail this item, or the finding that records the failure
+    known_gap: Text | None = None
+    finding: FindingId | None = None
     tags: Annotated[list[Slug], Field(min_length=1)] | None = None
 
 

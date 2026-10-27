@@ -8,3 +8,4 @@ corpus:
   location: corpus
   synthetic: true
 threshold: 0.9
+interface: consumers/measure-sql/compile.py:compile

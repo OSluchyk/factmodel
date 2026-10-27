@@ -1,0 +1,12 @@
+id: de-private-annual-2025
+request:
+  measure: annual_employment
+  area: '10000'
+  industry: '10'
+  ownership: '5'
+  year: '2025'
+reference: WITH sel AS (SELECT * FROM annual WHERE area_fips = '10000' AND industry_code = '10' AND own_code = '5' AND year = '2025' AND agglvl_code = '51') SELECT MAX(CASE WHEN disclosure_code IS NULL THEN annual_avg_emplvl END) AS value, SUM(CASE WHEN disclosure_code = 'N' THEN 1 ELSE 0 END) AS suppressed_cells FROM sel
+mode: same_rows
+note: "Naive SQL: SELECT SUM(annual_avg_emplvl) FROM annual WHERE area_fips IN ('10001', '10003', '10005') AND industry_code = '10' AND own_code = '5' AND year = '2025' Why it differs: county annual averages are rounded, so their sum misses the state's annual average by up to one per county (H-0001)."
+tags:
+- naive

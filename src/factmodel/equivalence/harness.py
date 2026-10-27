@@ -24,6 +24,8 @@ from factmodel.probes import WRAPS
 LAST_RUN = Path("equivalence") / "last-run.json"
 ACCEPTED = Path("equivalence") / "accepted.json"
 OUTCOMES = ("pass", "fail", "error")
+PROVING_MODES = ("same_rows", "same_predicate")  # D-021: equal counts do not prove answers
+DEFAULT_THRESHOLD = 0.9
 
 Compile = Callable[[dict[str, Any], Layer], str]
 
@@ -38,6 +40,8 @@ class ItemResult:
     mode: str
     outcome: str
     detail: str = ""
+    known_gap: bool = False
+    finding: str | None = None
 
 
 @dataclass
@@ -49,6 +53,24 @@ class RunResult:
     ran_on: str
     items: list[ItemResult] = field(default_factory=list)
     regressions: list[str] = field(default_factory=list)
+    threshold: float = DEFAULT_THRESHOLD
+
+    def share(self) -> float:
+        """Items passing in same_rows or same_predicate, over items not marked known_gap (D-021)."""
+        counted = [i for i in self.items if not i.known_gap]
+        if not counted:
+            return 0.0
+        passing = [i for i in counted if i.outcome == "pass" and i.mode in PROVING_MODES]
+        return round(len(passing) / len(counted), 6)
+
+    def unexplained(self) -> list[str]:
+        """Items that do not pass and carry neither a known gap nor a finding."""
+        return [
+            i.id for i in self.items if i.outcome != "pass" and not i.known_gap and not i.finding
+        ]
+
+    def proven(self) -> bool:
+        return self.share() >= self.threshold and not self.regressions and not self.unexplained()
 
     def counts(self) -> dict[str, dict[str, int]]:
         """Outcome counts per mode, and over all modes under ``all``."""
@@ -66,6 +88,10 @@ class RunResult:
             "dialect": self.dialect,
             "ran_on": self.ran_on,
             "counts": self.counts(),
+            "threshold": self.threshold,
+            "share": self.share(),
+            "proven": self.proven(),
+            "unexplained": self.unexplained(),
             "items": {i.id: {"mode": i.mode, "outcome": i.outcome} for i in self.items},
         }
 
@@ -146,11 +172,27 @@ def run(
     """Compile every corpus item, execute both sides, and compare them in the item's mode."""
     s = setup(root, model, layer_id, corpus)
     fn = load_compile(root, s.consumer)
-    result = RunResult(s.layer.id, s.consumer.id, source, dialect, ran_on)
+    result = _result(s, source, dialect, ran_on)
     for item in s.items:
-        result.items.append(_one(fn, item, s, url, dialect))
+        result.items.append(_explained(item, _one(fn, item, s, url, dialect)))
     result.regressions = regressions(root, result)
     return result
+
+
+def _result(s: Setup, source: str, dialect: str, ran_on: str) -> RunResult:
+    threshold = s.consumer.threshold if s.consumer.threshold is not None else DEFAULT_THRESHOLD
+    return RunResult(s.layer.id, s.consumer.id, source, dialect, ran_on, threshold=threshold)
+
+
+def _explained(item: CorpusItem, result: ItemResult) -> ItemResult:
+    return ItemResult(
+        result.id,
+        result.mode,
+        result.outcome,
+        result.detail,
+        known_gap=item.known_gap is not None,
+        finding=item.finding,
+    )
 
 
 def _one(fn: Compile, item: CorpusItem, s: Setup, url: str, dialect: str) -> ItemResult:
@@ -193,6 +235,22 @@ def _write_json(root: Path, rel: Path, data: dict[str, Any]) -> bool:
     return True
 
 
+def _measured(fn: Compile, item: CorpusItem, s: Setup, row: dict[str, Any] | None) -> ItemResult:
+    if item.mode == "same_predicate":
+        sql = _compile(fn, item, s.layer)
+        same = sql is not None and compare.normalise(sql) == compare.normalise(item.reference)
+        return ItemResult(item.id, item.mode, "pass" if same else "fail", "predicate")
+    m = (row or {}).get("measurement")
+    if not isinstance(m, dict):
+        return ItemResult(item.id, item.mode, "error", "no result")
+    counts = Counter({k: int(m.get(k, -1)) for k in ("consumer_rows", "reference_rows")})
+    same = counts["consumer_rows"] == counts["reference_rows"]
+    if item.mode == "same_rows":
+        same = same and m.get("only_consumer") == 0 and m.get("only_reference") == 0
+    detail = f"{counts['consumer_rows']} vs {counts['reference_rows']} rows"
+    return ItemResult(item.id, item.mode, "pass" if same else "fail", detail)
+
+
 def regressions(root: Path, result: RunResult) -> list[str]:
     """Items that passed in the accepted run and do not pass now (or are gone)."""
     accepted = _read(root, ACCEPTED)["layers"].get(result.layer)
@@ -221,8 +279,21 @@ def report(result: RunResult) -> str:
     ]
     for mode, row in counts.items():
         lines.append(f"| {mode} | {row['pass']} | {row['fail']} | {row['error']} |")
-    lines += ["", "| Item | Mode | Outcome | Detail |", "| --- | --- | --- | --- |"]
-    lines += [f"| {i.id} | {i.mode} | {i.outcome} | {i.detail} |" for i in result.items]
+    verdict = "proven" if result.proven() else "not proven"
+    lines += [
+        "",
+        f"Share passing in same_rows or same_predicate: {result.share():.3f}; "
+        f"threshold {result.threshold} (D-021): {verdict}.",
+        "Unexplained failures: " + (", ".join(result.unexplained()) or "none"),
+    ]
+    lines += [
+        "",
+        "| Item | Mode | Outcome | Detail | Explained by |",
+        "| --- | --- | --- | --- | --- |",
+    ]
+    for i in result.items:
+        why = "known gap" if i.known_gap else (i.finding or "")
+        lines.append(f"| {i.id} | {i.mode} | {i.outcome} | {i.detail} | {why} |")
     lines += [
         "",
         "Regressions against the accepted run: " + (", ".join(result.regressions) or "none"),
@@ -323,25 +394,8 @@ def from_results(
     fn = load_compile(root, s.consumer)
     rows = [json.loads(line) for line in results.read_text(encoding="utf-8").splitlines() if line]
     measured = {r["item"]: r for r in rows if isinstance(r, dict) and "item" in r}
-    result = RunResult(s.layer.id, s.consumer.id, source, dialect, ran_on)
+    result = _result(s, source, dialect, ran_on)
     for item in s.items:
-        if item.mode == "same_predicate":
-            sql = _compile(fn, item, s.layer)
-            same = sql is not None and compare.normalise(sql) == compare.normalise(item.reference)
-            result.items.append(
-                ItemResult(item.id, item.mode, "pass" if same else "fail", "predicate")
-            )
-            continue
-        row = measured.get(item.id)
-        m = (row or {}).get("measurement")
-        if not isinstance(m, dict):
-            result.items.append(ItemResult(item.id, item.mode, "error", "no result"))
-            continue
-        counts = Counter({k: int(m.get(k, -1)) for k in ("consumer_rows", "reference_rows")})
-        same = counts["consumer_rows"] == counts["reference_rows"]
-        if item.mode == "same_rows":
-            same = same and m.get("only_consumer") == 0 and m.get("only_reference") == 0
-        detail = f"{counts['consumer_rows']} vs {counts['reference_rows']} rows"
-        result.items.append(ItemResult(item.id, item.mode, "pass" if same else "fail", detail))
+        result.items.append(_explained(item, _measured(fn, item, s, measured.get(item.id))))
     result.regressions = regressions(root, result)
     return result

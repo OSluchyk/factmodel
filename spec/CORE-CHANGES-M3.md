@@ -1,6 +1,6 @@
 # Core changes in M3
 
-The current core-change ledger (D-018): every change to the contract since the M2 freeze (`61f9112`, schemas 1.0.0), with the record that covers it. What counts as core is defined in `spec/CORE-CHANGES-M2.md`.
+The current core-change ledger (D-018): every change to the contract since the M2 freeze (round 19, schemas 1.0.0), with the record that covers it. What counts as core is defined in `spec/CORE-CHANGES-M2.md`.
 
 **Rule (D-018).** A decision record is required when a contract change removes or renames a key, changes the meaning of an existing key or value, or changes an algorithm's result. Adding an optional key, a vocabulary value or a probe kind needs a `CHANGELOG.md` entry and a line here. A defect fix needs a `CHANGELOG.md` entry only.
 

@@ -7,7 +7,7 @@ Rules for agents working on this repository (the FactModel framework). Invariant
 1. **Clean room.** Write from `spec/` and general knowledge only. Never copy code, names, tickets, data or documents from any employer, client or other private project. Examples use Chinook on SQLite and PostgreSQL.
 2. **English only**, plain and short, in code, comments, docs and reports. Use a hyphen, never an em dash.
 3. **No data, no secrets** in the repository.
-4. **One commit per round, never push** (D-008). At the end of a round, commit once on the branch the brief names. Never push, never amend or rewrite history, never add attribution lines (no co-author or tool trailers). The owner reviews the log and pushes.
+4. **One commit per round, never push** (D-008). At the end of a round, commit once on the branch the brief names. Never push, never amend or rewrite history, never add attribution lines (no co-author or tool trailers). The round report is not committed. The owner reviews the log and pushes.
 5. **Every change has a `CHANGELOG.md` entry** that says why.
 6. **Decisions go to `decisions/`** in the format of `decisions/README.md`. A decision record is never edited to reverse it; write a new one that supersedes it. A record is required when a contract change removes or renames a key, changes the meaning of a key or value, or changes an algorithm's result; adding an optional key, a vocabulary value or a probe kind needs a CHANGELOG entry and a core-change ledger line; a defect fix needs a CHANGELOG entry (D-018). An owner brief is not a record.
 7. **The vocabulary has one source:** `spec/VOCABULARY.md`. Code reads it through `factmodel.vocabulary`; never copy an enumeration into code by hand.
@@ -18,7 +18,7 @@ Rules for agents working on this repository (the FactModel framework). Invariant
 
 ## Report
 
-Write `rounds/<date>-report-<topic>.md` with:
+Write the round report to `_work/` (ignored by git; the owner keeps it), as `_work/report-<date>-<topic>.md`, with:
 
 1. Outcome in two sentences.
 2. Files created and updated.
@@ -27,4 +27,4 @@ Write `rounds/<date>-report-<topic>.md` with:
 5. Confirmed / inferred / unknown, kept apart.
 6. Divergences from the brief, one line each.
 7. Questions for the next round.
-8. The files committed and the commit message; the report is part of the commit.
+8. The files committed and the commit message.

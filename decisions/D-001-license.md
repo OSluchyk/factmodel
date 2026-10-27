@@ -20,5 +20,5 @@ The framework is licensed under the Apache License 2.0, copyright 2026 Oleksandr
 
 ## Evidence
 
-- Owner decision in `rounds/2026-10-23-brief-wp0.1-wp0.2.md`, section 3.
+- Owner decision in the owner brief of 2026-10-23 on WP0.1 and WP0.2 (private working notes), section 3.
 - License text from `https://www.apache.org/licenses/LICENSE-2.0.txt`, read on 2026-10-23.

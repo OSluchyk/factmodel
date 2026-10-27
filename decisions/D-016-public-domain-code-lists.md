@@ -26,5 +26,5 @@ The file is copied unchanged, defects included. Everything else in an example st
 
 ## Evidence
 
-- Owner decision in `rounds/2026-10-27-brief-m2-qcew-freeze.md`, section 3.
+- Owner decision in the owner brief of 2026-10-27 on M2, QCEW and the freeze (private working notes), section 3.
 - BLS public-domain notice and the title file URLs: owner's `README.md` and `profile.md` A3, read 2026-10-23.

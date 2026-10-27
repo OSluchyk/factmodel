@@ -2,10 +2,10 @@
 
 ## Round workflow
 
-Work happens in rounds (see [rounds/README.md](rounds/README.md)):
+Work happens in rounds:
 
-1. The owner writes a brief in `rounds/<date>-brief-<topic>.md`.
-2. An agent or contributor does the work and writes `rounds/<date>-report-<topic>.md`.
+1. The owner writes a brief. Briefs are working notes and stay out of the repository.
+2. An agent or contributor does the work and writes a report to `_work/` (ignored by git); the owner keeps it.
 3. The agent commits once at the end of the round (D-008); the owner reviews the report and the log, and pushes.
 
 Agents never push. Rules for agents are in [AGENTS.md](AGENTS.md).

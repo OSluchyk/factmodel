@@ -20,10 +20,11 @@ runner = CliRunner()
 
 
 @pytest.mark.parametrize("example", ["chinook", "qcew"])
-def test_examples_release_into_release_out_and_read_cleanly(example: str) -> None:
-    root = ROOT / "examples" / example
-    out = root / "release" / "out"  # gitignored
-    shutil.rmtree(out, ignore_errors=True)
+def test_examples_release_into_release_out_and_read_cleanly(example: str, tmp_path: Path) -> None:
+    # on a copy: a build appends to the model's release/RELEASE_NOTES.md, which the examples
+    # keep at the header until their first real release
+    root = _copy(tmp_path, example)
+    out = root / "release" / "out"
     result = build(root, out, "0.1.0", DAY)
     assert result.count("export") > 0 and result.count("project") > 0
     report = check(out)
@@ -43,6 +44,8 @@ def test_examples_release_into_release_out_and_read_cleanly(example: str) -> Non
     assert "release: 0.1.0" in version and "schema_version: " in version
     # the model's own gate ignores the built release
     assert runner.invoke(app, ["check", "--root", str(root)]).exit_code == 0
+    committed = ROOT / "examples" / example / "release" / "RELEASE_NOTES.md"
+    assert "## " not in committed.read_text(encoding="utf-8")  # header only, no section yet
 
 
 def _copy(tmp_path: Path, example: str = "chinook") -> Path:

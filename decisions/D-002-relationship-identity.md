@@ -21,4 +21,4 @@ A relationship is identified by an author-set `key`, a slug unique within its so
 
 ## Evidence
 
-- Owner decision in `rounds/2026-10-23-brief-wp0.1-wp0.2.md`, section 3.
+- Owner decision in the owner brief of 2026-10-23 on WP0.1 and WP0.2 (private working notes), section 3.

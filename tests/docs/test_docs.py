@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.docs.blocks import run, steps
+from tests.docs.blocks import run
 from tests.install.wheel import Installed, needs_uv
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -92,17 +92,3 @@ def test_tutorial_runs_on_the_installed_package(installed: Installed, tmp_path: 
     assert (tmp_path / "chinook-export" / "ossie" / "purchases.ossie.yaml").is_file()
     assert (tmp_path / "chinook-release" / "VERSION").is_file()
     print("\n".join(line for out in outputs for line in out.splitlines() if "PASS" not in line))
-
-
-def test_pilot_kit_blocks_parse_and_state_the_expected_counts() -> None:
-    # the kit runs on the owner's real data only; here its shell must parse and its promises stay
-    text = (ROOT / "docs" / "pilot" / "qcew-real-data.md").read_text(encoding="utf-8")
-    blocks = [c for step in steps(text) for c in step.commands]
-    assert len(blocks) >= 10
-    for block in blocks:
-        done = subprocess.run(["bash", "-n"], input=block, capture_output=True, text=True)
-        assert done.returncode == 0, f"{done.stderr}\n{block}"
-    for number in ("4,649", "47,061", "46,370", "612,719", "610,230", "1,316,380", "14,639,988"):
-        assert number in text
-    assert "DATA_QUALITY=representative" in text and "treat_synthetic_as_representative" in text
-    assert "fact equivalence script" in text and "fact equivalence accept" in text

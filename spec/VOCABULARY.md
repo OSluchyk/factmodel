@@ -159,7 +159,7 @@ A **source** is one place facts come from. The source registry records how to ob
 
 | Kind | Meaning | Pin format | Example pin |
 | --- | --- | --- | --- |
-| `git` | A git repository: DDL, configuration, pipeline code. | `<repo>@<sha>:<path>[:<line>]`; the sha is a commit, or the file's blob hash for a read of the working tree | `etl-config@3f2a9c1:loaders/orders.yaml:12` |
+| `git` | A git repository: DDL, configuration, pipeline code. | `<repo>@<sha>:<path>[:<line>]`; the sha is a commit, or the file's blob hash for a read of the working tree | `etl-config@<commit>:loaders/orders.yaml:12` |
 | `warehouse` | An engine's catalog or data, read through an adapter or a probe. | `<engine>:<target>@<YYYY-MM-DD>`, where the target is what was read (a database, a schema, `<project>.<dataset>`) | `postgres:chinook@2026-10-23`, `bigquery:my-project.sales@2026-10-23` |
 | `api` | An HTTP API that describes or serves platform objects. | `<host><path>@<YYYY-MM-DD>` | `api.example.com/v2/objects@2026-11-01` |
 | `document` | A vendor or internal document with a version or date. | `<title>@<version or YYYY-MM-DD>` | `Loader guide@4.2` |

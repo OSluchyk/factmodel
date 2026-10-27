@@ -29,5 +29,5 @@ Supersedes nothing; refines D-012.
 
 ## Evidence
 
-- Owner decision in `rounds/2026-10-27-brief-m2-qcew-freeze.md`, section 3.
+- Owner decision in the owner brief of 2026-10-27 on M2, QCEW and the freeze (private working notes), section 3.
 - QCEW grain (area_fips, own_code, industry_code, size_code, year, qtr): owner's `profile.md`, G1 and Q05, read 2026-10-23.

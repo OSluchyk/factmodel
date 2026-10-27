@@ -7,8 +7,8 @@ county, state: "10"}``: one row per county of a state), ``industry``, ``ownershi
 
 What it takes from the layer: every measure expression and its companion, the predicates of
 the required concepts ``disclosed`` / ``disclosed_annual``, the area-kind predicates and the
-distinct rule for area titles. What it had to look up elsewhere (the dogfood list for the
-model-lookup skill): the A4 aggregation-level matrix, which turns (geography, industry,
+distinct rule for area titles. What it had to look up elsewhere (what the model-lookup
+skill now answers): the A4 aggregation-level matrix, which turns (geography, industry,
 ownership) into agglvl_code, and the join condition behind ``qtrly.to-area``.
 """
 

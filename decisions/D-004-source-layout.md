@@ -19,5 +19,5 @@ The package lives in `src/plumbline/`. Tests import only the installed package (
 
 ## Evidence
 
-- Owner decision in `rounds/2026-10-23-brief-wp0.1-wp0.2.md`, section 3.
+- Owner decision in the owner brief of 2026-10-23 on WP0.1 and WP0.2 (private working notes), section 3.
 - Python Packaging User Guide, "src layout vs flat layout" (`https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/`), general knowledge, not re-read in this round.

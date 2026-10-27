@@ -24,5 +24,5 @@ The M2 freeze review (`spec/CORE-CHANGES-M2.md`, round 18) found three contract 
 
 ## Evidence
 
-- Owner decision in `rounds/2026-10-27-brief-m2-freeze-close.md`, sections 1 and 4 (Q3).
+- Owner decision in the owner brief of 2026-10-27 on closing the M2 freeze (private working notes), sections 1 and 4 (Q3).
 - `spec/CORE-CHANGES-M2.md`, section "Changes without a decision record".

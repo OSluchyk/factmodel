@@ -28,4 +28,4 @@ FactModel must work with many data sources, ideally any. The plan tied M1 to one
 
 ## Evidence
 
-- Owner decision in `rounds/2026-10-23-brief-m1-close-engine-neutral.md`, sections 0 and 2.
+- Owner decision in the owner brief of 2026-10-23 on closing M1 engine-neutral (private working notes), sections 0 and 2.

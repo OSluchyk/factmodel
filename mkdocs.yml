@@ -43,4 +43,3 @@ nav:
       - BigQuery adopters: docs/adopters/bigquery.md
       - Adapter packaging: docs/adapters/packaging.md
       - Exporters: docs/exporters/round-trip-notes.md
-      - Pilot on real QCEW data: docs/pilot/qcew-real-data.md

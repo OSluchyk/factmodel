@@ -8,8 +8,8 @@ Requests:
   measure, overall or one row per country or genre.
 
 What it takes from the layer: measure expressions and aggregations, and the concept fields
-for genre, country and period. What it had to look up elsewhere (the dogfood list for the
-model-lookup skill): the join conditions behind the relationship keys the layer lists.
+for genre, country and period. What it had to look up elsewhere (what the model-lookup
+skill now answers): the join conditions behind the relationship keys the layer lists.
 """
 
 from typing import Any

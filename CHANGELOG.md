@@ -2,6 +2,20 @@
 
 Newest first. Every entry says why, not only what.
 
+## 0.1.0 - 2026-10-27
+
+The first public release. The entries below are the rounds that built it.
+
+## Unreleased - 2026-10-27 - Round 30: public release cleanup
+
+**Why.** The repository goes public. It should hold what a user, a contributor or CI needs, and nothing that only made sense during development or names the owner's machine. The public history will be one commit, so commit hashes in the text would point nowhere.
+
+- Briefs and round reports, the agent's session notes and the owner's pilot kit leave the tree; the owner keeps them privately. Round reports now go to `_work/` (ignored) instead of the tree (`AGENTS.md`, `CONTRIBUTING.md`).
+- References to the removed files become plain words. Decision evidence lines cite the owner's brief by date as private working notes; decision text is unchanged.
+- Commit hashes leave the core-change ledgers, the changelog and the vocabulary's example pin; the round labels stay.
+- The plan drops its "First three briefs" section. The examples' release notes go back to the header, because their 0.1.0 section named a source commit that will not exist; the release test builds on a copy, so the committed notes stay at the header.
+- The pilot-kit page and its test leave the site; the skill reproduction test gets a plain name.
+
 ## Unreleased - 2026-10-27 - Round 29: D-010 evidence correction, Ossie 0.1.1 pin, kit step
 
 **Why.** Three corrections after review. The round-26 PyPI check read a status code that PyPI returns for every name, so the record said the name was taken when it is free. An export should default to what Ossie has released, not to a draft. The pilot model kept the seed's probe evidence next to the real results, though it describes the seed, not the platform.
@@ -15,7 +29,7 @@ Newest first. Every entry says why, not only what.
 **Why.** M4's test is someone building a model from the docs alone, and the QCEW model proving itself on real data. The tutorial is that path on Chinook, kept honest by a test that runs it on the installed wheel. The pilot kit lets the owner run the real-data step without the agent ever touching the data. The Ossie export followed a project page; it now follows the specification document itself.
 
 - Tutorial `docs/tutorial/chinook.md`: from an empty folder to residue, review, probes, a proven layer, a release and two exports, every step a command. A test runs every block on the installed wheel alone and checks the promised outputs (gate verdicts, residue 0, `proven`).
-- Pilot kit `docs/pilot/qcew-real-data.md`: the owner's six steps on the real QCEW files (model from `examples/qcew`, sources and two views over the per-year tables, snapshot and drift against a seed-shaped baseline, owner-run probes with the expected counts, a real corpus kept outside the repository, what to send back). Dry-run end to end on the seed split into per-year tables.
+- Pilot kit (kept with the owner's working notes): the owner's six steps on the real QCEW files (model from `examples/qcew`, sources and two views over the per-year tables, snapshot and drift against a seed-shaped baseline, owner-run probes with the expected counts, a real corpus kept outside the repository, what to send back). Dry-run end to end on the seed split into per-year tables.
 - Ossie export pinned to the core specification 0.2.0.dev0 (a draft), read once: the flat document the specification defines (no `semantic_model` list), field expressions and types, relationships for equality joins, metric descriptions, and `custom_extensions` (vendor `factmodel`) for evidence status, required concepts, hazards and suppression. What it does not name stays in `ai_context`.
 - Fix: `fact equivalence script` wrote `... EXCEPT WITH ...` when a reference starts with a CTE, a syntax error on every engine, so every such item came back as an error. Each side of the EXCEPT is now a plain `SELECT * FROM (...)`. Found by the pilot dry run; the QCEW references all start with `WITH`.
 - The clean-room test and the tutorial test share one wheel build (`tests/install/wheel.py`, a session fixture).
@@ -65,7 +79,7 @@ Newest first. Every entry says why, not only what.
 
 ## Unreleased - 2026-10-27 - Round 24: WP3.4 Release projection, model-lookup and release skills
 
-**Why.** Consumers should read a pinned, checked copy of a model, not its working files. A release that leaks internal notes or derived values, or ships a layer that stopped answering like the platform, would undo what the gate and the harness proved. The dogfood note showed that consumers also need joins resolved for them.
+**Why.** Consumers should read a pinned, checked copy of a model, not its working files. A release that leaks internal notes or derived values, or ships a layer that stopped answering like the platform, would undo what the gate and the harness proved. The reference consumers' own run showed that consumers also need joins resolved for them.
 
 - `fact release`:
   - builds the copy: complete partition, internal-note markers, `VERSION`, append-only `RELEASE_NOTES.md`;
@@ -83,7 +97,7 @@ Newest first. Every entry says why, not only what.
 - QCEW: consumer `measure-sql` and a 38-item corpus. It has six naive-versus-correct pairs with the naive SQL in the note, and two known gaps (MSA detail from counties, the national rollup).
 - Chinook: consumer `filter-sql` and a 31-item corpus.
 - Both layers are proven on SQLite and DuckDB, accepted (the owner's act, simulated once) and `reviewed`.
-- `docs/dogfood/2026-10-27-model-lookup.md` lists what the consumers looked up outside their layers.
+- A working note (kept privately) lists what the consumers looked up outside their layers.
 
 ## Unreleased - 2026-10-27 - Round 22: WP3.3a Layers for QCEW and Chinook, rollup probe (D-020)
 
@@ -135,7 +149,7 @@ Newest first. Every entry says why, not only what.
 
 **Why.** The schemas may freeze only when every core change since M1 has a decision record naming the platform that forced it. The ledger is how that is checked. It found three contract changes without a record, so the freeze waits for the owner instead of being declared.
 
-- `spec/CORE-CHANGES-M2.md`: 26 changes since `74013ed`, each with its record. Three have none: snapshot pins (round 8), optional probe keys (round 11), field `values` (round 14).
+- `spec/CORE-CHANGES-M2.md`: 26 changes since WP1.8b, each with its record. Three have none: snapshot pins (round 8), optional probe keys (round 11), field `values` (round 14).
 - `spec/VERSIONING.md`: schema and framework versions are separate; semver rules for the schemas; how `framework_version` is used.
 - `fact migrate` reports a model's framework version, the installed schema version and whether every file validates. It writes nothing.
 - `.gitattributes` keeps the BLS code lists byte for byte. Round 17's commit had stored them with LF line endings (`core.autocrlf=input`), so they were not the published files until this round.
@@ -177,11 +191,11 @@ Newest first. Every entry says why, not only what.
 
 ## Unreleased - 2026-10-23 - Round 13: WP1.9 Agent layer v1
 
-**Why.** Rules an agent cannot follow by itself do not scale. Skills turn the framework's procedures into steps an agent runs with `fact` commands only, and a dogfood run proves they are enough.
+**Why.** Rules an agent cannot follow by itself do not scale. Skills turn the framework's procedures into steps an agent runs with `fact` commands only, and a run of the agent on its own skills proves they are enough.
 
 - Add five skills (`model-onboard`, `entity-scaffold`, `evidence-gather`, `probe-write`, `probe-intake`), the model-repository `AGENTS.md` template, and brief and report templates; `fact init` copies the skills.
 - `fact source add` can set the adapter, dialect, `dsn_env`, revision and include globs.
-- Dogfood: following only `model-onboard`, the Chinook snapshot and drafts are reproduced exactly; a test repeats it.
+- Self-test: following only `model-onboard`, the Chinook snapshot and drafts are reproduced exactly; a test repeats it.
 
 ## Unreleased - 2026-10-23 - Round 12: WP1.8 Chinook example (M1 gate)
 

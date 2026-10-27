@@ -234,7 +234,7 @@ factmodel/                  framework
   agent/                    AGENTS.md template, skills/, prompt templates
   examples/chinook/         a full model of the Chinook schema on SQLite and PostgreSQL
   examples/qcew/            BLS QCEW: no subject, code-prefix hierarchies, BLS code lists (M2)
-  decisions/, rounds/       decision records; briefs and reports
+  decisions/                decision records
 
 <platform>-model/           one per platform
   factmodel.yaml            framework version, profile, adapters, consumers
@@ -271,7 +271,7 @@ Each milestone ends at a gate. The core schema is frozen only after M2, when a s
 | M0 - Specification | spec, JSON Schemas, profile contract, projection algorithm | spec reviewed; every rule has a worked example |
 | M1 - Core, engine-neutral | core package, gate, adapter protocol, `export`, `sql` and `git` adapters, probes rendered per dialect, retail profile, Chinook example on SQLite and PostgreSQL | residue 0; expected scopes hold (Invoice direct, InvoiceLine transitive, catalog tables reference); the same probes give the same counts on both engines |
 | **M2 - Cloud engines by adopters and a second domain** (done: schemas 1.0.0) | BigQuery verified through `export` and `sql` by an adopter on their own project (owner-pending); third-party adapter guide; second domain profile (`statistics`, QCEW) | every core change in the ledger with its record (D-018: removals, renames and meaning changes need a decision; additions a ledger line) |
-| M3 - Semantic layers (done on synthetic corpora: rounds 20 to 25) | layer contract, probe generator, equivalence harness, OSI and dbt export | one real consumer meets its equivalence threshold on a real corpus (two reference consumers met it on synthetic corpora; the real corpus is the M4 pilot, `docs/pilot/qcew-real-data.md`) |
+| M3 - Semantic layers (done on synthetic corpora: rounds 20 to 25) | layer contract, probe generator, equivalence harness, OSI and dbt export | one real consumer meets its equivalence threshold on a real corpus (two reference consumers met it on synthetic corpora; the real corpus is the M4 pilot, which the owner runs) |
 | M4 - Release 1.0 (kit done, pilot pending: rounds 26 to 28) | packaging, guides, examples, upgrade notes | someone else sets up a model repository from scratch using only the docs |
 
 The reference dataset is Chinook, schema only, with synthetic rows generated at test time (D-011): it has a clear anchor (`Customer`), a direct link (`Invoice`), a transitive one (`InvoiceLine`), administrative data (`Employee`), a reference chain (`Track` to `Album` to `Artist`) and a bridge between reference entities (`PlaylistTrack`).

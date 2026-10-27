@@ -1,6 +1,6 @@
 # Core changes in M4
 
-The current core-change ledger (D-018), continuing `spec/CORE-CHANGES-M3.md` from `85494ea` (schemas 2.1.0, framework 0.1.0). What counts as core is defined in `spec/CORE-CHANGES-M2.md`.
+The current core-change ledger (D-018), continuing `spec/CORE-CHANGES-M3.md` from the end of round 25 (schemas 2.1.0, framework 0.1.0). What counts as core is defined in `spec/CORE-CHANGES-M2.md`.
 
 **Rule (D-018).** A decision record is required when a contract change removes or renames a key, changes the meaning of an existing key or value, or changes an algorithm's result. Adding an optional key, a vocabulary value or a probe kind needs a `CHANGELOG.md` entry and a line here. A defect fix needs a `CHANGELOG.md` entry only.
 
@@ -15,5 +15,5 @@ The current core-change ledger (D-018), continuing `spec/CORE-CHANGES-M3.md` fro
 | 7 | 26 | Packaging: sdist excludes the root `.claude/`; `fact --version` prints the schema version | implementation | - | none |
 | 8 | 27 | Documentation site: `mkdocs.yml`, `docs/_site/hooks.py`, quickstart, FAQ, `pages.yml`; SPEC toolset gains `fact probe render` and `fact quote` (the spec lagged the CLI) | documentation | - | none |
 | 9 | 28 | Ossie export pinned to the core specification 0.2.0.dev0: flat document, `version`, field expressions and `datatype`, `relationships`, model-scoped metrics with `description`, `custom_extensions` (vendor `factmodel`) | implementation (the target's format, no framework key) | - | QCEW, Chinook |
-| 10 | 28 | Tutorial `docs/tutorial/chinook.md` (tested on the installed wheel) and pilot kit `docs/pilot/qcew-real-data.md` | documentation | - | QCEW, Chinook |
+| 10 | 28 | Tutorial `docs/tutorial/chinook.md` (tested on the installed wheel) and the owner's pilot kit (kept with the owner's working notes) | documentation | - | QCEW, Chinook |
 | 11 | 29 | Ossie export defaults to the released core specification 0.1.1; `fact export --spec-version` keeps 0.2.0.dev0 | implementation (the target's format, no framework key); CLI option, additive | - | QCEW, Chinook |

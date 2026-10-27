@@ -25,5 +25,5 @@ Only the facts that scope is computed from are authored:
 
 ## Evidence
 
-- Owner decision in `rounds/2026-10-23-brief-m0-m1-core.md`, section 2.
+- Owner decision in the owner brief of 2026-10-23 on M0 and M1 core (private working notes), section 2.
 - `spec/SPEC.md`, principle 2.

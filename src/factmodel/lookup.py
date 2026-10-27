@@ -1,6 +1,7 @@
 """``fact lookup``: what a reader of a model or a release needs about one layer, entity or
 hazard, in plain text, with every relationship key resolved to its join (the model-lookup need
-found when the reference consumers were written, docs/dogfood/2026-10-27-model-lookup.md)."""
+found when the reference consumers were written: the join behind each relationship key, and
+the value tables a request needs)."""
 
 from factmodel.model.loader import Model
 

@@ -36,5 +36,5 @@ The gate gets a stage `layers` that checks all of the above; `status: reviewed` 
 
 ## Evidence
 
-- Owner decision in `rounds/2026-10-27-brief-m3-semantic-layers.md`, sections 0 and 2 (pre-approved).
+- Owner decision in the owner brief of 2026-10-27 on M3 semantic layers (private working notes), sections 0 and 2 (pre-approved).
 - QCEW findings F-0001, F-0002, F-0003, F-0006, F-0008 and hazards H-0001, H-0002 (`examples/qcew/registers/`).

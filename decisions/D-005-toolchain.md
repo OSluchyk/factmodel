@@ -23,5 +23,5 @@ Agents and people must run the same checks with the same tools. The plan's techn
 
 ## Evidence
 
-- Owner decision in `rounds/2026-10-23-brief-wp0.1-wp0.2.md`, section 3.
+- Owner decision in the owner brief of 2026-10-23 on WP0.1 and WP0.2 (private working notes), section 3.
 - `spec/IMPLEMENTATION_PLAN.md`, section 3.

@@ -25,4 +25,4 @@ A consumer proves a layer when all of these hold:
 
 ## Evidence
 
-- Owner decision in `rounds/2026-10-27-brief-m3-semantic-layers.md`, sections 0 and 5 (pre-approved).
+- Owner decision in the owner brief of 2026-10-27 on M3 semantic layers (private working notes), sections 0 and 5 (pre-approved).

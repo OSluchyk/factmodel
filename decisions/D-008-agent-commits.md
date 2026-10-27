@@ -14,10 +14,10 @@ At the end of each round the agent makes one commit on the branch the brief name
 ## Consequences
 
 - `AGENTS.md` rule 4 changes from "never commit" to "one commit per round, never push"; the report lists the commit instead of a `git add` list.
-- `CONTRIBUTING.md`, `rounds/README.md` and `spec/IMPLEMENTATION_PLAN.md` (sections 1, 2 and 11) say the same.
+- `CONTRIBUTING.md`, the round workflow notes (private working notes) and `spec/IMPLEMENTATION_PLAN.md` (sections 1, 2 and 11) say the same.
 - A mistake in a round is fixed by a new commit in a later round, never by rewriting history.
 - This applies to the framework repository. The agent template for model repositories (`agent/AGENTS.md`, WP1.9) keeps "never commit" until a decision says otherwise.
 
 ## Evidence
 
-- Owner decision in `rounds/2026-10-23-brief-rename-factmodel.md`, section 1.
+- Owner decision in the owner brief of 2026-10-23 on the rename to FactModel (private working notes), section 1.

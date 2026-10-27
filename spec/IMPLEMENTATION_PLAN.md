@@ -393,7 +393,7 @@ class Adapter(Protocol):
 - Each skill: when to use it, inputs, steps, which `fact` commands to run, acceptance checks, what to put in the report.
 - Report template ends with the exact `git add` list by name.
 
-**Acceptance.** Following only the skill text, an agent reproduces WP1.8 steps 1 and 2 for `examples/chinook` and gets the committed drafts. Record the result in `docs/dogfood/`. A fresh-session run stays with the owner.
+**Acceptance.** Following only the skill text, an agent reproduces WP1.8 steps 1 and 2 for `examples/chinook` and gets the committed drafts. Record the result in the round report. A fresh-session run stays with the owner.
 
 ---
 
@@ -509,7 +509,7 @@ Round 26 (WP4.1): `uv build` gives wheel and sdist (`twine check` passes); a cle
 
 Round 27 (WP4.2): the documentation site (MkDocs Material), assembled from the repository by `docs/_site/hooks.py`: spec, decisions on one page, guides, one page per skill, a CLI reference generated from the Typer app, a schema reference generated from the JSON Schemas, a quickstart (tested) and a FAQ; `mkdocs build --strict` in CI; `pages.yml` deploys on push to `main` once the owner enables GitHub Pages.
 
-Round 28 (WP4.3): the Chinook tutorial (`docs/tutorial/chinook.md`), from an empty folder to a release and two exports, tested on the installed wheel alone; the pilot kit (`docs/pilot/qcew-real-data.md`) for the owner's run on the real QCEW files, dry-run on the seed in per-year tables; the Ossie export pinned to the core specification 0.2.0.dev0.
+Round 28 (WP4.3): the Chinook tutorial (`docs/tutorial/chinook.md`), from an empty folder to a release and two exports, tested on the installed wheel alone; the pilot kit for the owner's run on the real QCEW files (kept with the owner's working notes), dry-run on the seed in per-year tables; the Ossie export pinned to the core specification 0.2.0.dev0.
 
 ### WP4.1 Packaging (1 round)
 
@@ -548,7 +548,7 @@ Coverage target for `src/factmodel/core` and `gate`: 90 % lines. Adapters and CL
 - **Brief template** (`agent/templates/brief.md`): context, decisions already made, work items with deliverables, acceptance checks, stop conditions, out of scope, report shape.
 - **Report template**: outcome, files changed, checks run with results, confirmed / inferred / unknown, divergences from the brief, questions for the next round, exact `git add` list.
 - **Round rhythm:** brief → agent works → report → agent commits → owner reviews and pushes → next brief. One work package per round; two only when they are small and share files.
-- **Dogfooding:** from M1 onward the repository's own `AGENTS.md` follows the template it ships. A rule that is awkward for us is awkward for users.
+- **Same rules for us:** from M1 onward the repository's own `AGENTS.md` follows the template it ships. A rule that is awkward for us is awkward for users.
 
 ## 12. Risks
 
@@ -573,9 +573,3 @@ Coverage target for `src/factmodel/core` and `gate`: 90 % lines. Adapters and CL
 | Second domain dataset (chosen in M2: QCEW) | WP2.2 |
 | Equivalence threshold: global or per layer | WP3.2 |
 | Export priority: OSI first or dbt first | WP3.5 |
-
-## 14. First three briefs
-
-1. **WP0.1 + WP0.2:** bootstrap the repository, write `spec/VOCABULARY.md`, record D-001 (license).
-2. **WP0.3:** JSON Schemas for all file kinds with valid and invalid fixtures.
-3. **WP0.4 + WP0.5:** algorithms with test vectors; update and tag the spec `spec-v0.1`.

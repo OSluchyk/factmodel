@@ -22,4 +22,4 @@ Until now intake moved a fact to `confirmed` whenever a probe result was in rang
 
 ## Evidence
 
-- Owner decision in `rounds/2026-10-23-brief-m1-residue.md`, section 2.
+- Owner decision in the owner brief of 2026-10-23 on M1 residue (private working notes), section 2.

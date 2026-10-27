@@ -56,6 +56,7 @@ def test_init_writes_the_layout(tmp_path: Path) -> None:
         "framework_version": "0.0.1",
         "profile": "retail",
         "anchor_entity": "customer",
+        "treat_synthetic_as_representative": False,
     }
     for rel in (
         "AGENTS.md",

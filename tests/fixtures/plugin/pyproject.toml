@@ -1,0 +1,19 @@
+# A tiny third-party adapter package, used by the tests and by docs/adapters/packaging.md.
+# It is installed into the development environment as a path dependency, so its entry point
+# is found exactly as an adopter's package would be.
+[project]
+name = "factmodel-csvdir"
+version = "0.1.0"
+description = "Example factmodel adapter: a folder of CSV files read as tables (header only)."
+requires-python = ">=3.12"
+dependencies = ["factmodel"]
+
+[project.entry-points."factmodel.adapters"]
+csvdir = "factmodel_csvdir:CsvDirAdapter"
+
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/factmodel_csvdir"]

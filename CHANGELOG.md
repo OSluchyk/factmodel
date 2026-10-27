@@ -2,6 +2,15 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-27 - Round 15: WP2.1 Adopter guides, plugin packaging, DuckDB
+
+**Why.** M2 asks whether the core holds beyond the engines it was built on. Adopters need a written path to BigQuery that never hands the agent a credential, third parties need a proven way to add an adapter, and a third local engine tests the `sql` adapter on a dialect nobody tuned it for.
+
+- `docs/adopters/bigquery.md` (the `export` path, then the `sql` path) and `docs/adapters/packaging.md`; the plan's BigQuery adopter run is owner-pending.
+- A test package `tests/fixtures/plugin/` (`factmodel-csvdir`) installed as a path dependency of the dev group: `fact adapters` lists it and `fact snapshot` runs through it.
+- DuckDB through `sql` (extra `[duckdb]`). Its SQLAlchemy dialect cannot reflect (it sends PostgreSQL catalog queries DuckDB does not answer), so the `sql` adapter now falls back to the standard `INFORMATION_SCHEMA` views. Neutral parts and Chinook's 45 probe counts agree with SQLite and PostgreSQL. DuckDB joins `engine_enforces_foreign_keys` because a test measured it.
+- `value_set` also counts rows outside the domain (`outside_rows`); `fact init` writes `treat_synthetic_as_representative: false` so the setting is visible.
+
 ## Unreleased - 2026-10-23 - Round 14: M1 residue
 
 **Why.** The review of rounds 8 to 13 found dialect knowledge still hard-coded in the probes, and a probe rule that let synthetic rows confirm facts about a platform. M2 should start from a core that holds its own rules.

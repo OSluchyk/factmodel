@@ -117,7 +117,7 @@ flowchart TD
 | Exporters | OSI / Apache Ossie, dbt semantic models, Cube | `fact export` |
 | Agent layer | `AGENTS.md`, skills, prompt templates | Markdown |
 
-Built-in adapters (D-011): `export` (owner-exported standard `INFORMATION_SCHEMA` views, any engine that has them), `sql` (live reflection through SQLAlchemy, any engine with a SQLAlchemy dialect) and `git` (DDL and text in a repository, any dialect sqlglot parses). The reference engines are SQLite and PostgreSQL; cloud engines are reached through `export` or `sql` by adopters with their own credentials.
+Built-in adapters (D-011): `export` (owner-exported standard `INFORMATION_SCHEMA` views, any engine that has them), `sql` (live reflection through SQLAlchemy, any engine with a SQLAlchemy dialect) and `git` (DDL and text in a repository, any dialect sqlglot parses). The reference engines are SQLite, PostgreSQL and DuckDB (DuckDB since M2, through `sql`; when a SQLAlchemy dialect cannot reflect, `sql` reads the standard `INFORMATION_SCHEMA` views instead); cloud engines are reached through `export` or `sql` by adopters with their own credentials.
 
 ## Validation
 

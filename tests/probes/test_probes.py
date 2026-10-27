@@ -240,7 +240,7 @@ def test_rendered_sqlite_script_runs_and_feeds_intake(tmp_path: Path) -> None:
 def _with_domains(root: Path) -> None:
     for name, field, values in (
         ("customer_version", "IsCurrent", [0, 1]),
-        ("customer", "EmailHash", ["h1", "h2"]),
+        ("customer", "EmailHash", ["h1"]),
     ):
         path = root / "physical" / "entities" / f"{name}.yaml"
         doc = load(path).data
@@ -259,12 +259,22 @@ def test_value_set_counts_values_outside_the_declared_domain(tmp_path: Path) -> 
     ]
     for probe in domain.values():
         assert probe.expected is not None and probe.expected["outside_values"].max == 0
+        assert probe.expected["outside_rows"].max == 0
         assert "'h1'" not in probe.sql.split("FROM")[0].split("CASE")[0]
     url = create_sqlite(tmp_path / "shop.db")
     results = measure(url, [(pid, render(p, "sqlite") or "") for pid, p in domain.items()])
     assert {r["probe"]: r["measurement"] for r in results} == {
-        "value-set-customer-email-hash": {"distinct_values": 3, "outside_values": 1},
-        "value-set-customer-version-is-current": {"distinct_values": 2, "outside_values": 0},
+        # h2 twice and h5 once are outside {h1}; the null is not
+        "value-set-customer-email-hash": {
+            "distinct_values": 3,
+            "outside_values": 2,
+            "outside_rows": 3,
+        },
+        "value-set-customer-version-is-current": {
+            "distinct_values": 2,
+            "outside_values": 0,
+            "outside_rows": 0,
+        },
     }
 
 
@@ -286,9 +296,13 @@ def test_value_set_on_postgres(tmp_path: Path) -> None:
         domain = {k: p for k, p in _probes(root).items() if p.probe_kind == "value_set"}
         url = f"{PG_DSN}?options=-csearch_path%3D{schema}"
         results = measure(url, [(pid, render(p, "postgres") or "") for pid, p in domain.items()])
-        assert {r["probe"]: r["measurement"]["outside_values"] for r in results} == {
-            "value-set-customer-email-hash": 1,
-            "value-set-customer-version-is-current": 0,
+        measured = {
+            r["probe"]: (r["measurement"]["outside_values"], r["measurement"]["outside_rows"])
+            for r in results
+        }
+        assert measured == {
+            "value-set-customer-email-hash": (2, 3),
+            "value-set-customer-version-is-current": (0, 0),
         }
     finally:
         with engine.begin() as conn:

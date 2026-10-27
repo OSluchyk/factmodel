@@ -183,7 +183,7 @@ def generate(
                     f"{entity_id}.{fld.address}",
                     build.value_set(name, fld.address, fld.values),
                     dialect,
-                    {"outside_values": {"max": 0}},
+                    {"outside_values": {"max": 0}, "outside_rows": {"max": 0}},
                     nested,
                 )
             )

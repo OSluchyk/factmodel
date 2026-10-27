@@ -1,10 +1,13 @@
 """The ``sql`` adapter: live reflection through SQLAlchemy 2, any engine with a dialect.
 
 Reads tables, views, columns, primary keys, unique constraints, foreign keys and comments
-with ``sqlalchemy.inspect``. The connection string comes only from the environment variable
-the source names in ``dsn_env``; it is never written to a file or a log. Whether constraints
-are enforced follows ``vocabulary:engine_enforces_foreign_keys``. Needs the extra ``[sql]``
-and a driver extra for the engine (for example ``[postgres]``).
+with ``sqlalchemy.inspect``. When the engine's SQLAlchemy dialect cannot reflect (some
+third-party dialects send catalog queries the engine does not answer), the adapter reads the
+standard ``INFORMATION_SCHEMA`` views instead, the same rows the ``export`` adapter reads.
+The connection string comes only from the environment variable the source names in
+``dsn_env``; it is never written to a file or a log. Whether constraints are enforced follows
+``vocabulary:engine_enforces_foreign_keys``. Needs the extra ``[sql]`` and a driver extra for
+the engine (for example ``[postgres]`` or ``[duckdb]``).
 """
 
 import os
@@ -19,6 +22,7 @@ from factmodel.adapters.base import (
     today,
     warehouse_pin,
 )
+from factmodel.adapters.export import STANDARD_VIEWS, standard_constraints, standard_fields
 from factmodel.adapters.types import type_class
 from factmodel.model.types import Snapshot, Source
 
@@ -112,6 +116,43 @@ def _object(insp: Any, name: str, object_type: str, enforced: bool) -> dict[str,
     return obj
 
 
+SYSTEM_SCHEMAS = ("information_schema", "pg_catalog")
+
+
+def _standard_objects(engine: Any, enforced: bool) -> list[dict[str, Any]]:
+    """Objects from the standard ``INFORMATION_SCHEMA`` views, read through a plain connection."""
+    from sqlalchemy import text
+
+    rows: dict[str, list[dict[str, Any]]] = {}
+    with engine.connect() as conn:
+        for view in STANDARD_VIEWS:
+            try:
+                result = conn.execute(text(f"SELECT * FROM information_schema.{view.lower()}"))
+            except Exception:  # an optional view the engine does not have
+                if view in ("TABLES", "COLUMNS"):
+                    raise
+                conn.rollback()
+                continue
+            items = [{str(k).lower(): v for k, v in r.items()} for r in result.mappings()]
+            rows[view] = [r for r in items if r.get("table_schema") not in SYSTEM_SCHEMAS]
+    objects = []
+    for table in rows["TABLES"]:
+        name = table["table_name"]
+        object_type = "view" if str(table["table_type"]).upper() == "VIEW" else "table"
+        columns = [c for c in rows["COLUMNS"] if c["table_name"] == name]
+        obj: dict[str, Any] = {
+            "name": name,
+            "object_type": object_type,
+            "fields": standard_fields(columns),
+        }
+        if object_type == "table":
+            constraints = standard_constraints(name, rows, enforced)
+            if constraints:
+                obj["constraints"] = constraints
+        objects.append(obj)
+    return objects
+
+
 class SqlAdapter:
     name = "sql"
 
@@ -127,6 +168,7 @@ class SqlAdapter:
     def reflect(self, source: Source, url: str, taken_on: str | None = None) -> Snapshot:
         try:
             from sqlalchemy import create_engine, inspect
+            from sqlalchemy.exc import SQLAlchemyError
         except ImportError as error:
             raise AdapterError("the sql adapter needs the extra: uv sync --extra sql") from error
         engine_name = source.engine
@@ -135,9 +177,13 @@ class SqlAdapter:
         enforced = enforces_foreign_keys(engine_name)
         engine = create_engine(url)
         try:
-            insp = inspect(engine)
-            objects = [_object(insp, t, "table", enforced) for t in sorted(insp.get_table_names())]
-            objects += [_object(insp, v, "view", enforced) for v in sorted(insp.get_view_names())]
+            try:
+                insp = inspect(engine)
+                tables, views = insp.get_table_names(), insp.get_view_names()
+                objects = [_object(insp, t, "table", enforced) for t in sorted(tables)]
+                objects += [_object(insp, v, "view", enforced) for v in sorted(views)]
+            except (SQLAlchemyError, NotImplementedError):
+                objects = _standard_objects(engine, enforced)
             database = engine.url.database
         finally:
             engine.dispose()

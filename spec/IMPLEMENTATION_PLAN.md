@@ -404,7 +404,9 @@ Target: show that the universal adapters reach cloud engines without core change
 
 **Tasks.** An adopter runs the `export` path (`fact export-sql`, then `fact snapshot --from-export`) and the `sql` path on BigQuery with their own project and reports back; differences become findings or decision records naming the platform. Write a guide for packaging a third-party adapter as an entry point in `factmodel.adapters`.
 
-**Acceptance.** An adopter report for BigQuery with snapshots that validate; the packaging guide followed once by a test package.
+**Deliverables (round 15).** `docs/adopters/bigquery.md` (the `export` path, then the `sql` path through `sqlalchemy-bigquery`); `docs/adapters/packaging.md` with the test package `tests/fixtures/plugin/` (`factmodel-csvdir`); DuckDB as a third local engine through `sql` (extra `[duckdb]`), its foreign-key enforcement measured by a test.
+
+**Acceptance.** An adopter report for BigQuery with snapshots that validate: owner-pending (the adopter run is the owner's, outside the agent's runs). The packaging guide followed once by a test package: done in round 15.
 
 ### WP2.2 Second domain profile and example (1-2 rounds)
 

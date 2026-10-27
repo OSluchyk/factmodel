@@ -17,7 +17,7 @@ METRICS: dict[str, tuple[str, ...]] = {
     "null_rate": ("row_count", "non_null"),
     "row_count": ("row_count",),
     "current_row_ties": ("tied_keys",),
-    "value_set": ("distinct_values", "outside_values"),
+    "value_set": ("distinct_values", "outside_values", "outside_rows"),
 }
 
 
@@ -131,8 +131,8 @@ def _literal(value: str | float) -> exp.Expr:
 
 
 def value_set(physical: str, field: str, values: Sequence[str | float] | None = None) -> exp.Select:
-    """How many distinct values a field holds, and how many fall outside its declared domain:
-    counts, never the values."""
+    """How many distinct values a field holds, how many fall outside its declared domain, and
+    on how many rows: counts, never the values. Nulls are never outside the domain."""
     col = column("t", field)
     selects = [exp.alias_(exp.Count(this=exp.Distinct(expressions=[col])), "distinct_values")]
     if values:
@@ -141,4 +141,6 @@ def value_set(physical: str, field: str, values: Sequence[str | float] | None = 
         selects.append(
             exp.alias_(exp.Count(this=exp.Distinct(expressions=[case])), "outside_values")
         )
+        flag = exp.Case(ifs=[exp.If(this=outside.copy(), true=exp.Literal.number(1))])
+        selects.append(exp.alias_(exp.Count(this=flag), "outside_rows"))
     return exp.select(*selects).from_(table(physical, "t"))

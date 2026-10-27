@@ -37,6 +37,10 @@ sql = [
 postgres = [
     "psycopg[binary]>=3",
 ]
+duckdb = [
+    "duckdb>=1.1",
+    "duckdb-engine>=0.17.0",
+]
 
 [dependency-groups]
 dev = [
@@ -48,7 +52,14 @@ dev = [
     "types-jsonschema>=4.26.0.20261006",
     "sqlalchemy>=2.0",
     "psycopg[binary]>=3",
+    "duckdb>=1.1",
+    "duckdb-engine>=0.17.0",
+    "factmodel-csvdir",
 ]
+
+[tool.uv.sources]
+# The example third-party adapter (docs/adapters/packaging.md), installed for the tests.
+factmodel-csvdir = { path = "tests/fixtures/plugin", editable = true }
 
 [build-system]
 requires = ["hatchling>=1.26"]

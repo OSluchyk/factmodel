@@ -72,7 +72,7 @@ def test_export_generic_csv() -> None:
     assert (fk.references.object, fk.references.fields, fk.enforced) == (
         "customers",
         ["customer_id"],
-        False,
+        True,  # DuckDB enforces foreign keys (test_duckdb.py)
     )
     lines = objects["order_lines"]
     pk = next(c for c in lines.constraints if c.constraint_type == "primary_key")

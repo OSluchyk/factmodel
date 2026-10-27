@@ -220,7 +220,10 @@ oracle: oracle
 - mysql
 - mssql
 - oracle
+- duckdb
 ```
+
+DuckDB is in the list because it was measured, not assumed: `tests/adapters/test_duckdb.py::test_duckdb_enforces_foreign_keys` inserts a row that violates a declared foreign key and the engine rejects it.
 
 **Current pin.** A source may record `current_pin`, the version of the source as last read (`fact sync` will update it). Evidence from that source pinned to another version is stale: `fact status` lists it, and the gate does not fail on it.
 
@@ -590,7 +593,7 @@ Probe kinds:
 | `null_rate` | A field. | Share of null values. |
 | `row_count` | Presence per tenant and environment. | Number of rows. |
 | `current_row_ties` | A current-row rule. | Keys with more than one row after the rule. |
-| `value_set` | A field against its declared `values`. | Count of distinct values, and of distinct values outside the declared set; never the values. |
+| `value_set` | A field against its declared `values`. | Count of distinct values, of distinct values outside the declared set (`outside_values`), and of rows holding one (`outside_rows`); nulls are never outside; never the values. |
 
 All seven are built in M1 (WP1.7). Each probe is a sqlglot AST rendered per dialect with quoted identifiers; a probe that needs a construct a dialect lacks (a nested path outside BigQuery) lists it under `unsupported_on_dialect` and is never rendered for it.
 

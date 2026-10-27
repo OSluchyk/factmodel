@@ -83,6 +83,8 @@ def init(
         "framework_version": __version__,
         "profile": profile,
         "anchor_entity": anchor or _slug(subject),
+        # written explicitly so the setting is visible; only example models set it true (D-014)
+        "treat_synthetic_as_representative": False,
     }
     _check("model-config", config)
     target.mkdir(parents=True, exist_ok=True)

@@ -226,6 +226,7 @@ factmodel/                  framework
   profiles/                 retail/, statistics/, ... (examples)
   agent/                    AGENTS.md template, skills/, prompt templates
   examples/chinook/         a full model of the Chinook schema on SQLite and PostgreSQL
+  examples/qcew/            BLS QCEW: no subject, code-prefix hierarchies, BLS code lists (M2)
   decisions/, rounds/       decision records; briefs and reports
 
 <platform>-model/           one per platform

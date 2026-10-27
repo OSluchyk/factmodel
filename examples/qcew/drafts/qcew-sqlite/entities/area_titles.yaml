@@ -1,0 +1,35 @@
+kind: entity
+id: area_titles
+physical_name: area_titles
+source: qcew-sqlite
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary: []
+evidence:
+- ev-area_titles-catalog
+fields:
+- name: area_fips
+  type: TEXT
+  nullable: true
+  meaning: Not written yet.
+- name: area_title
+  type: TEXT
+  nullable: true
+  meaning: Not written yet.
+records:
+- id: ev-area_titles-catalog
+  source: qcew-sqlite
+  pin: sqlite:qcew@2026-10-27
+  quote: table area_titles in qcew
+  status: confirmed
+  read_on: '2026-10-27'
+extensions:
+  draft:
+    from: sqlite:qcew@2026-10-27
+    placeholders:
+    - grain
+    - class
+    - fields.area_fips.meaning
+    - fields.area_title.meaning

@@ -1,0 +1,215 @@
+kind: entity
+id: annual
+physical_name: annual
+source: qcew-sqlite
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary: []
+evidence:
+- ev-annual-catalog
+fields:
+- name: area_fips
+  type: TEXT
+  nullable: false
+  meaning: Not written yet.
+- name: own_code
+  type: TEXT
+  nullable: false
+  meaning: Not written yet.
+- name: industry_code
+  type: TEXT
+  nullable: false
+  meaning: Not written yet.
+- name: agglvl_code
+  type: TEXT
+  nullable: false
+  meaning: Not written yet.
+- name: size_code
+  type: TEXT
+  nullable: false
+  meaning: Not written yet.
+- name: year
+  type: TEXT
+  nullable: false
+  meaning: Not written yet.
+- name: qtr
+  type: TEXT
+  nullable: false
+  meaning: Not written yet.
+- name: disclosure_code
+  type: TEXT
+  nullable: true
+  meaning: Not written yet.
+- name: annual_avg_estabs
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: annual_avg_emplvl
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: total_annual_wages
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: taxable_annual_wages
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: annual_contributions
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: annual_avg_wkly_wage
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: avg_annual_pay
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: lq_disclosure_code
+  type: TEXT
+  nullable: true
+  meaning: Not written yet.
+- name: lq_annual_avg_estabs
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: lq_annual_avg_emplvl
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: lq_total_annual_wages
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: lq_taxable_annual_wages
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: lq_annual_contributions
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: lq_annual_avg_wkly_wage
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: lq_avg_annual_pay
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: oty_disclosure_code
+  type: TEXT
+  nullable: true
+  meaning: Not written yet.
+- name: oty_annual_avg_estabs_chg
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: oty_annual_avg_estabs_pct_chg
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: oty_annual_avg_emplvl_chg
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: oty_annual_avg_emplvl_pct_chg
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: oty_total_annual_wages_chg
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: oty_total_annual_wages_pct_chg
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: oty_taxable_annual_wages_chg
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: oty_taxable_annual_wages_pct_chg
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: oty_annual_contributions_chg
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: oty_annual_contributions_pct_chg
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: oty_annual_avg_wkly_wage_chg
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: oty_annual_avg_wkly_wage_pct_chg
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: oty_avg_annual_pay_chg
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: oty_avg_annual_pay_pct_chg
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+records:
+- id: ev-annual-catalog
+  source: qcew-sqlite
+  pin: sqlite:qcew@2026-10-27
+  quote: table annual in qcew
+  status: confirmed
+  read_on: '2026-10-27'
+extensions:
+  draft:
+    from: sqlite:qcew@2026-10-27
+    placeholders:
+    - grain
+    - class
+    - fields.area_fips.meaning
+    - fields.own_code.meaning
+    - fields.industry_code.meaning
+    - fields.agglvl_code.meaning
+    - fields.size_code.meaning
+    - fields.year.meaning
+    - fields.qtr.meaning
+    - fields.disclosure_code.meaning
+    - fields.annual_avg_estabs.meaning
+    - fields.annual_avg_emplvl.meaning
+    - fields.total_annual_wages.meaning
+    - fields.taxable_annual_wages.meaning
+    - fields.annual_contributions.meaning
+    - fields.annual_avg_wkly_wage.meaning
+    - fields.avg_annual_pay.meaning
+    - fields.lq_disclosure_code.meaning
+    - fields.lq_annual_avg_estabs.meaning
+    - fields.lq_annual_avg_emplvl.meaning
+    - fields.lq_total_annual_wages.meaning
+    - fields.lq_taxable_annual_wages.meaning
+    - fields.lq_annual_contributions.meaning
+    - fields.lq_annual_avg_wkly_wage.meaning
+    - fields.lq_avg_annual_pay.meaning
+    - fields.oty_disclosure_code.meaning
+    - fields.oty_annual_avg_estabs_chg.meaning
+    - fields.oty_annual_avg_estabs_pct_chg.meaning
+    - fields.oty_annual_avg_emplvl_chg.meaning
+    - fields.oty_annual_avg_emplvl_pct_chg.meaning
+    - fields.oty_total_annual_wages_chg.meaning
+    - fields.oty_total_annual_wages_pct_chg.meaning
+    - fields.oty_taxable_annual_wages_chg.meaning
+    - fields.oty_taxable_annual_wages_pct_chg.meaning
+    - fields.oty_annual_contributions_chg.meaning
+    - fields.oty_annual_contributions_pct_chg.meaning
+    - fields.oty_annual_avg_wkly_wage_chg.meaning
+    - fields.oty_annual_avg_wkly_wage_pct_chg.meaning
+    - fields.oty_avg_annual_pay_chg.meaning
+    - fields.oty_avg_annual_pay_pct_chg.meaning

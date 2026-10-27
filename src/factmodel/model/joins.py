@@ -94,6 +94,16 @@ class Parts:
     other: tuple[exp.Expr, ...]
 
 
+def _comparison(part: exp.Expr) -> exp.Binary:
+    """The comparison a self-reference conjunct is, under any NOT (``x IS NOT NULL``)."""
+    inner = part
+    while isinstance(inner, exp.Not | exp.Paren):
+        inner = inner.this
+    if not isinstance(inner, exp.Binary):
+        raise JoinError("a self-reference join is a conjunction of comparisons")
+    return inner
+
+
 def _owner(node: exp.Expr) -> set[str]:
     return {col.table for col in node.find_all(exp.Column)}
 
@@ -101,9 +111,9 @@ def _owner(node: exp.Expr) -> set[str]:
 def parts(text: str, source: str, target: str) -> Parts:
     """Split an expression join into its conjuncts (D-017).
 
-    For a self-reference every conjunct must be a comparison: its left operand reads the source
-    row and its right operand the target row; a comparison with columns on one side only is a
-    filter on that end.
+    For a self-reference every conjunct must be a comparison, possibly negated: its left operand
+    reads the source row and its right operand the target row; a comparison with columns on one
+    side only is a filter on that end.
     """
     pairs: list[tuple[exp.Expr, exp.Expr]] = []
     sources: list[exp.Expr] = []
@@ -111,9 +121,8 @@ def parts(text: str, source: str, target: str) -> Parts:
     other: list[exp.Expr] = []
     for part in _conjuncts(_tree(text)):
         if source == target:
-            if not isinstance(part, exp.Binary):
-                raise JoinError("a self-reference join is a conjunction of comparisons")
-            left, right = bool(_owner(part.this)), bool(_owner(part.expression))
+            inner = _comparison(part)
+            left, right = bool(_owner(inner.this)), bool(_owner(inner.expression))
             if left and right and isinstance(part, exp.EQ):
                 pairs.append((part.this, part.expression))
             elif left and right:
@@ -158,11 +167,10 @@ def condition(
         return tree
     out = []
     for part in _conjuncts(_tree(text)):
-        if not isinstance(part, exp.Binary):
-            raise JoinError("a self-reference join is a conjunction of comparisons")
         node = part.copy()
-        node.set("this", _requalify(part.this, source_alias))
-        node.set("expression", _requalify(part.expression, target_alias))
+        inner = _comparison(node)
+        inner.set("this", _requalify(inner.this, source_alias))
+        inner.set("expression", _requalify(inner.expression, target_alias))
         out.append(node)
     return exp.and_(*out)
 

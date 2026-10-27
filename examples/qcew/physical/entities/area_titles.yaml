@@ -1,0 +1,73 @@
+kind: entity
+id: area_titles
+physical_name: area_titles
+source: qcew-sqlite
+grain: One row per line of the BLS area title file; the file repeats most codes (F-0001).
+class: reference
+status: draft
+meaning: The BLS area code list (data.bls.gov copy), loaded unchanged.
+keys:
+  primary:
+  - area_fips
+  current_row_rule:
+evidence:
+- ev-area_titles-catalog
+- ev-doc-title-files
+- ev-row-count-area-titles-2026-10-27
+fields:
+- name: area_fips
+  type: TEXT
+  nullable: true
+  meaning: Area code (see annual.area_fips).
+- name: area_title
+  type: TEXT
+  nullable: true
+  meaning: Area name.
+relationships:
+- key: in-state
+  to: area_titles
+  join: concat(substr(area_titles.area_fips, 1, 2), '000') = area_titles.area_fips AND substr(area_titles.area_fips, 3, 3) <> '000' AND substr(area_titles.area_fips, 1, 1) <= '9'
+  meaning: A county (or the unknown-location code ss999) to its state, by the two-digit state prefix (D-017). Only codes that start with a digit take part; the test is <= '9' because digits sort before letters under binary and linguistic collations alike, where < 'A' does not (PostgreSQL sorts a before A). Many to many as published, because the code list repeats codes (F-0001).
+  mechanism: inferred_join
+  cardinality: many_to_many
+  evidence:
+  - ev-doc-area-codes
+  - ev-join-match-area-titles-in-state-2026-10-27
+- key: in-msa
+  to: area_titles
+  join: area_titles.area_fips = area_titles.area_fips
+  meaning: 'A county to its MSA or MicroSA. Geography is a lattice, not a tree (H1): this link is separate from the county to state link, and an MSA crosses state lines.'
+  mechanism: inferred_join
+  cardinality: many_to_one
+  status: unresolved
+  missing: The BLS County-MSA-CSA crosswalk, which is not in the example; area codes do not encode MSA membership. The join written here is a placeholder.
+  evidence:
+  - ev-doc-h1
+  - ev-doc-msa-codes
+- key: in-csa
+  to: area_titles
+  join: area_titles.area_fips = area_titles.area_fips
+  meaning: A county, through its MSA, to its CSA (H1).
+  mechanism: inferred_join
+  cardinality: many_to_one
+  status: unresolved
+  missing: The BLS County-MSA-CSA crosswalk, which is not in the example. The join written here is a placeholder.
+  evidence:
+  - ev-doc-h1
+- key: in-nation
+  to: area_titles
+  join: area_titles.area_fips = area_titles.area_fips
+  meaning: A state to the national total US000. US000 excludes Puerto Rico and the Virgin Islands while state and county rows include them (H2), so the rollup is not every state.
+  mechanism: inferred_join
+  cardinality: many_to_one
+  status: unresolved
+  missing: The list of areas that US000 covers; the codes alone do not say it. The join written here is a placeholder.
+  evidence:
+  - ev-doc-h2
+records:
+- id: ev-area_titles-catalog
+  source: qcew-sqlite
+  pin: sqlite:qcew@2026-10-27
+  quote: table area_titles in qcew
+  status: confirmed
+  read_on: '2026-10-27'

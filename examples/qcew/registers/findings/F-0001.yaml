@@ -1,0 +1,23 @@
+kind: finding
+id: F-0001
+title: The BLS area code list repeats 4,649 codes
+status: open
+opened_on: '2026-10-27'
+about:
+- area_titles
+- annual.to-area
+- qtrly.to-area
+- area_titles.in-state
+description: >-
+  key_duplicates on the committed area_titles.csv, loaded unchanged, measured 4,649 codes that
+  occur twice (profile.md R1, Q22: 9,458 rows, 4,809 distinct codes, identical titles). Reading
+  the committed file shows the shape: two lists one after the other, the second starting with
+  its own header line, which loads as one row whose code is the text area_fips. A plain join
+  to the list doubles fact rows, so the relationships to it are many_to_many as published. Open
+  until a semantic layer (M3) joins to distinct codes, or BLS answers which copy is meant (the
+  www.bls.gov copy has 4,649 rows, all distinct, profile.md A3).
+evidence:
+- ev-key-duplicates-area-titles-2026-10-27
+- ev-doc-r1
+extensions:
+  probe: key-duplicates-area-titles

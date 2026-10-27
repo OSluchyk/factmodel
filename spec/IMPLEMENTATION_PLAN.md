@@ -412,7 +412,9 @@ Target: show that the universal adapters reach cloud engines without core change
 
 **Deliverables.** A second domain profile (or `retail` reused if it fits without change - the preferred outcome) and an example on a dataset chosen then.
 
-**Acceptance.** `fact check` green; residue 0.
+Chosen (rounds 16 and 17): the BLS QCEW with NAICS, public domain. `retail` does not fit (QCEW has no subject), so `profiles/statistics/` was added, with D-015 to D-017. `examples/qcew/` runs on SQLite, PostgreSQL and DuckDB with a synthetic seed of its two data tables and the real BLS code lists (D-016).
+
+**Acceptance.** `fact check` green; residue 0. For QCEW also: every entity scope `none`; nine findings with evidence; the same probe counts on the three engines.
 
 ### WP2.3 Core freeze review (1 round)
 
@@ -541,7 +543,7 @@ Coverage target for `src/factmodel/core` and `gate`: 90 % lines. Adapters and CL
 | Name: FactModel, package `factmodel`, command `fact` (D-010); GitHub and trademark check still open | WP0.1 |
 | Relationship identity: key only (D-002) | WP0.2 |
 | Fact format: YAML only, or YAML plus generated graph (JSON-LD) | WP0.3 |
-| Second domain dataset (chosen in M2) | WP2.2 |
+| Second domain dataset (chosen in M2: QCEW) | WP2.2 |
 | Equivalence threshold: global or per layer | WP3.2 |
 | Export priority: OSI first or dbt first | WP3.5 |
 

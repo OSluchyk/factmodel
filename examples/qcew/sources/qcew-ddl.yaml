@@ -1,0 +1,12 @@
+kind: source
+id: qcew-ddl
+title: QCEW DDL in this repository
+source_kind: git
+access_mode: agent_read
+adapter: git
+engine: sqlite
+location: ../..
+revision: worktree
+include:
+  - examples/qcew/sources/ddl/sqlite.sql
+access: The framework repository itself; the DDL follows the owner's load.sh layouts (sources/ddl/).

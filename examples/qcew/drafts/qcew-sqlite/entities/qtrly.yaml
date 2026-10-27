@@ -1,0 +1,235 @@
+kind: entity
+id: qtrly
+physical_name: qtrly
+source: qcew-sqlite
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary: []
+evidence:
+- ev-qtrly-catalog
+fields:
+- name: area_fips
+  type: TEXT
+  nullable: false
+  meaning: Not written yet.
+- name: own_code
+  type: TEXT
+  nullable: false
+  meaning: Not written yet.
+- name: industry_code
+  type: TEXT
+  nullable: false
+  meaning: Not written yet.
+- name: agglvl_code
+  type: TEXT
+  nullable: false
+  meaning: Not written yet.
+- name: size_code
+  type: TEXT
+  nullable: false
+  meaning: Not written yet.
+- name: year
+  type: TEXT
+  nullable: false
+  meaning: Not written yet.
+- name: qtr
+  type: TEXT
+  nullable: false
+  meaning: Not written yet.
+- name: disclosure_code
+  type: TEXT
+  nullable: true
+  meaning: Not written yet.
+- name: qtrly_estabs
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: month1_emplvl
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: month2_emplvl
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: month3_emplvl
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: total_qtrly_wages
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: taxable_qtrly_wages
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: qtrly_contributions
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: avg_wkly_wage
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: lq_disclosure_code
+  type: TEXT
+  nullable: true
+  meaning: Not written yet.
+- name: lq_qtrly_estabs
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: lq_month1_emplvl
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: lq_month2_emplvl
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: lq_month3_emplvl
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: lq_total_qtrly_wages
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: lq_taxable_qtrly_wages
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: lq_qtrly_contributions
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: lq_avg_wkly_wage
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: oty_disclosure_code
+  type: TEXT
+  nullable: true
+  meaning: Not written yet.
+- name: oty_qtrly_estabs_chg
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: oty_qtrly_estabs_pct_chg
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: oty_month1_emplvl_chg
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: oty_month1_emplvl_pct_chg
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: oty_month2_emplvl_chg
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: oty_month2_emplvl_pct_chg
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: oty_month3_emplvl_chg
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: oty_month3_emplvl_pct_chg
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: oty_total_qtrly_wages_chg
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: oty_total_qtrly_wages_pct_chg
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: oty_taxable_qtrly_wages_chg
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: oty_taxable_qtrly_wages_pct_chg
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: oty_qtrly_contributions_chg
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: oty_qtrly_contributions_pct_chg
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+- name: oty_avg_wkly_wage_chg
+  type: INTEGER
+  nullable: true
+  meaning: Not written yet.
+- name: oty_avg_wkly_wage_pct_chg
+  type: REAL
+  nullable: true
+  meaning: Not written yet.
+records:
+- id: ev-qtrly-catalog
+  source: qcew-sqlite
+  pin: sqlite:qcew@2026-10-27
+  quote: table qtrly in qcew
+  status: confirmed
+  read_on: '2026-10-27'
+extensions:
+  draft:
+    from: sqlite:qcew@2026-10-27
+    placeholders:
+    - grain
+    - class
+    - fields.area_fips.meaning
+    - fields.own_code.meaning
+    - fields.industry_code.meaning
+    - fields.agglvl_code.meaning
+    - fields.size_code.meaning
+    - fields.year.meaning
+    - fields.qtr.meaning
+    - fields.disclosure_code.meaning
+    - fields.qtrly_estabs.meaning
+    - fields.month1_emplvl.meaning
+    - fields.month2_emplvl.meaning
+    - fields.month3_emplvl.meaning
+    - fields.total_qtrly_wages.meaning
+    - fields.taxable_qtrly_wages.meaning
+    - fields.qtrly_contributions.meaning
+    - fields.avg_wkly_wage.meaning
+    - fields.lq_disclosure_code.meaning
+    - fields.lq_qtrly_estabs.meaning
+    - fields.lq_month1_emplvl.meaning
+    - fields.lq_month2_emplvl.meaning
+    - fields.lq_month3_emplvl.meaning
+    - fields.lq_total_qtrly_wages.meaning
+    - fields.lq_taxable_qtrly_wages.meaning
+    - fields.lq_qtrly_contributions.meaning
+    - fields.lq_avg_wkly_wage.meaning
+    - fields.oty_disclosure_code.meaning
+    - fields.oty_qtrly_estabs_chg.meaning
+    - fields.oty_qtrly_estabs_pct_chg.meaning
+    - fields.oty_month1_emplvl_chg.meaning
+    - fields.oty_month1_emplvl_pct_chg.meaning
+    - fields.oty_month2_emplvl_chg.meaning
+    - fields.oty_month2_emplvl_pct_chg.meaning
+    - fields.oty_month3_emplvl_chg.meaning
+    - fields.oty_month3_emplvl_pct_chg.meaning
+    - fields.oty_total_qtrly_wages_chg.meaning
+    - fields.oty_total_qtrly_wages_pct_chg.meaning
+    - fields.oty_taxable_qtrly_wages_chg.meaning
+    - fields.oty_taxable_qtrly_wages_pct_chg.meaning
+    - fields.oty_qtrly_contributions_chg.meaning
+    - fields.oty_qtrly_contributions_pct_chg.meaning
+    - fields.oty_avg_wkly_wage_chg.meaning
+    - fields.oty_avg_wkly_wage_pct_chg.meaning

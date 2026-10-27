@@ -1,0 +1,47 @@
+{"source": "qcew-sqlite", "pin": "sqlite:qcew@2026-10-27", "environment": "local", "data_quality": "synthetic", "ran_on": "2026-10-27"}
+{"probe": "fan-out-annual-prior-year", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-annual-to-agglevel", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-annual-to-industry", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-annual-to-ownership", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-annual-to-size", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-industry-titles-parent", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-qtrly-prior-year", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-qtrly-to-agglevel", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-qtrly-to-industry", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-qtrly-to-ownership", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-qtrly-to-size", "measurement": {"max_fan_out": 1}}
+{"probe": "join-match-annual-prior-year", "measurement": {"source_rows": 141, "orphans_left": 0, "orphans_right": 141}}
+{"probe": "join-match-annual-to-agglevel", "measurement": {"source_rows": 282, "orphans_left": 0, "orphans_right": 41}}
+{"probe": "join-match-annual-to-area", "measurement": {"source_rows": 282, "orphans_left": 0, "orphans_right": 9442}}
+{"probe": "join-match-annual-to-industry", "measurement": {"source_rows": 282, "orphans_left": 0, "orphans_right": 2662}}
+{"probe": "join-match-annual-to-ownership", "measurement": {"source_rows": 282, "orphans_left": 0, "orphans_right": 3}}
+{"probe": "join-match-annual-to-quarters", "measurement": {"source_rows": 282, "orphans_left": 0, "orphans_right": 8}}
+{"probe": "join-match-annual-to-size", "measurement": {"source_rows": 282, "orphans_left": 0, "orphans_right": 9}}
+{"probe": "join-match-area-titles-in-state", "measurement": {"source_rows": 6785, "orphans_left": 0, "orphans_right": 9352}}
+{"probe": "join-match-industry-titles-parent", "measurement": {"source_rows": 2659, "orphans_left": 53, "orphans_right": 1409}}
+{"probe": "join-match-qtrly-prior-year", "measurement": {"source_rows": 568, "orphans_left": 0, "orphans_right": 568}}
+{"probe": "join-match-qtrly-to-agglevel", "measurement": {"source_rows": 1136, "orphans_left": 0, "orphans_right": 40}}
+{"probe": "join-match-qtrly-to-area", "measurement": {"source_rows": 1136, "orphans_left": 0, "orphans_right": 9442}}
+{"probe": "join-match-qtrly-to-industry", "measurement": {"source_rows": 1136, "orphans_left": 0, "orphans_right": 2662}}
+{"probe": "join-match-qtrly-to-ownership", "measurement": {"source_rows": 1136, "orphans_left": 0, "orphans_right": 3}}
+{"probe": "join-match-qtrly-to-size", "measurement": {"source_rows": 1136, "orphans_left": 0, "orphans_right": 9}}
+{"probe": "key-duplicates-agglevel-titles", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-annual", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-area-titles", "measurement": {"duplicate_keys": 4649}}
+{"probe": "key-duplicates-industry-titles", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-ownership-titles", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-qtrly", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-size-titles", "measurement": {"duplicate_keys": 0}}
+{"probe": "null-rate-annual-annual-avg-emplvl", "measurement": {"row_count": 282, "non_null": 282}}
+{"probe": "null-rate-qtrly-month1-emplvl", "measurement": {"row_count": 1136, "non_null": 1136}}
+{"probe": "row-count-agglevel-titles", "measurement": {"row_count": 56}}
+{"probe": "row-count-annual", "measurement": {"row_count": 282}}
+{"probe": "row-count-area-titles", "measurement": {"row_count": 9458}}
+{"probe": "row-count-industry-titles", "measurement": {"row_count": 2678}}
+{"probe": "row-count-ownership-titles", "measurement": {"row_count": 8}}
+{"probe": "row-count-qtrly", "measurement": {"row_count": 1136}}
+{"probe": "row-count-size-titles", "measurement": {"row_count": 10}}
+{"probe": "value-set-annual-disclosure-code", "measurement": {"distinct_values": 1, "outside_values": 0, "outside_rows": 0}}
+{"probe": "value-set-annual-own-code", "measurement": {"distinct_values": 5, "outside_values": 0, "outside_rows": 0}}
+{"probe": "value-set-qtrly-disclosure-code", "measurement": {"distinct_values": 2, "outside_values": 1, "outside_rows": 2}}
+{"probe": "value-set-qtrly-own-code", "measurement": {"distinct_values": 5, "outside_values": 0, "outside_rows": 0}}

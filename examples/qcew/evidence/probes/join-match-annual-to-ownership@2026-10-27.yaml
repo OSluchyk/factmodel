@@ -1,0 +1,15 @@
+kind: evidence
+records:
+- id: ev-join-match-annual-to-ownership-2026-10-27
+  source: qcew-sqlite
+  pin: sqlite:qcew@2026-10-27
+  measurement:
+    source_rows: 282
+    orphans_left: 0
+    orphans_right: 3
+    match_rate: 1.0
+  status: confirmed
+  read_on: '2026-10-27'
+  probe: join-match-annual-to-ownership
+  environment: local
+  data_quality: synthetic

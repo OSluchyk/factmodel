@@ -1,0 +1,12 @@
+kind: evidence
+records:
+- id: ev-row-count-size-titles-2026-10-27
+  source: qcew-sqlite
+  pin: sqlite:qcew@2026-10-27
+  measurement:
+    row_count: 10
+  status: confirmed
+  read_on: '2026-10-27'
+  probe: row-count-size-titles
+  environment: local
+  data_quality: synthetic

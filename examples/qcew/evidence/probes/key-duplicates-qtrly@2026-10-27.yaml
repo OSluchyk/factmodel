@@ -1,0 +1,12 @@
+kind: evidence
+records:
+- id: ev-key-duplicates-qtrly-2026-10-27
+  source: qcew-sqlite
+  pin: sqlite:qcew@2026-10-27
+  measurement:
+    duplicate_keys: 0
+  status: confirmed
+  read_on: '2026-10-27'
+  probe: key-duplicates-qtrly
+  environment: local
+  data_quality: synthetic

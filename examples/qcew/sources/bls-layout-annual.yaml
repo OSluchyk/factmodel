@@ -1,0 +1,10 @@
+kind: source
+id: bls-layout-annual
+title: BLS QCEW NAICS-based annual layout
+source_kind: document
+access_mode: owner_read
+location: https://www.bls.gov/cew/about-data/downloadable-file-layouts/annual/naics-based-annual-layout.htm
+access: >-
+  Read by the owner in a browser on 2026-10-23 (www.bls.gov refuses command-line requests).
+  Quotes come from the owner's qcew-model profile.md, section A2.
+current_pin: BLS QCEW annual layout@2026-10-23

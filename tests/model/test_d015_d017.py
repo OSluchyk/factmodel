@@ -129,7 +129,7 @@ def test_init_with_a_profile_without_subject_writes_no_anchor(tmp_path: Path) ->
         ("(SELECT 1) = areas.area_fips", "not a query"),
         ("concat(other.area_fips, '000') = areas.area_fips", "must use"),
         ("concat(areas.nothing, '000') = areas.area_fips", "has no field"),
-        ("NOT areas.area_fips IS NULL AND areas.area_fips = areas.area_fips", "comparisons"),
+        ("areas.area_fips IN ('a') AND areas.area_fips = areas.area_fips", "comparisons"),
     ],
 )
 def test_bad_expression_joins_are_reported(tmp_path: Path, join: str, message: str) -> None:
@@ -150,6 +150,10 @@ def test_parts_sort_conjuncts_by_end() -> None:
         ("CONCAT(SUBSTRING(a.code, 1, 2), '000')", "a.code")
     ]
     assert [f.sql() for f in split.source_filters] == ["SUBSTRING(a.code, 3, 3) <> '000'"]
+    negated = joins.parts("a.code = a.parent AND a.change IS NOT NULL", "a", "a")
+    assert [f.sql() for f in negated.source_filters] == ["NOT a.change IS NULL"]
+    on = joins.condition("a.code = a.parent AND a.change IS NOT NULL", "a", "a", "s", "t")
+    assert on.sql() == "s.code = t.parent AND NOT s.change IS NULL"
     other = joins.parts("b.y = a.x AND a.z > b.w AND b.k = 1", "a", "b")
     assert [(left.sql(), right.sql()) for left, right in other.pairs] == [("a.x", "b.y")]
     assert [o.sql() for o in other.other] == ["a.z > b.w"]

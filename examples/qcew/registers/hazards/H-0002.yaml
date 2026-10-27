@@ -1,0 +1,13 @@
+kind: hazard
+id: H-0002
+title: avg_wkly_wage has a documented formula over unrounded values
+status: active
+description: >-
+  avg_wkly_wage is quarterly total wages divided by the mean of the three monthly employment
+  levels, divided by 13, computed from unrounded values (profile.md M1, Q26). Recomputing it from
+  rounded published fields, or averaging it across rows, gives a different number. A semantic
+  layer (M3) must define the measure by the formula, not as an average of the field.
+applies_to:
+- qtrly
+evidence:
+- ev-doc-m1

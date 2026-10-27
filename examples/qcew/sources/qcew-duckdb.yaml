@@ -1,0 +1,12 @@
+kind: source
+id: qcew-duckdb
+title: QCEW on a local DuckDB file
+source_kind: warehouse
+access_mode: agent_read
+adapter: sql
+engine: duckdb
+location: qcew
+dsn_env: FACT_DSN_QCEW_DUCKDB
+access: >-
+  A local DuckDB file created by seed/seed.py; a test fixture, not a platform (D-011). Set
+  FACT_DSN_QCEW_DUCKDB to duckdb:///<path to the file>. Needs the extra [duckdb].

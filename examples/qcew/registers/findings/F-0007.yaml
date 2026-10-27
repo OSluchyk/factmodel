@@ -1,0 +1,19 @@
+kind: finding
+id: F-0007
+title: Suppression breaks every rollup
+status: open
+opened_on: '2026-10-27'
+about:
+- annual
+- qtrly
+- industry_titles.parent
+- area_titles.in-state
+description: >-
+  A parent can be disclosed while its children are suppressed, and the reverse (profile.md H5,
+  Q16): summing children never rebuilds a parent where any cell is N. Inferred from the
+  document; the seed reproduces both directions (Kent County construction suppressed under a
+  disclosed supersector; Montgomery County retail suppressed over disclosed children). A probe
+  that compares a parent with the sum of its children needs a probe kind the framework does
+  not have yet; it is deferred to M3.
+evidence:
+- ev-doc-h5

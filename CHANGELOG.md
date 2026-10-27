@@ -2,6 +2,14 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-27 - Round 17: WP2.2 QCEW example on SQLite, PostgreSQL and DuckDB
+
+**Why.** The core's second domain has to be modelled end to end, defects included, before the schemas freeze. QCEW shows what Chinook cannot: no subject, prefix hierarchies, and real code lists whose flaws must become measured findings.
+
+- Add `examples/qcew/`: DDL for three engines, a deterministic seed, the five BLS code lists (D-016), seven reviewed entities, document evidence, 46 probes with SQLite evidence, findings F-0001 to F-0009 and hazards H-0001, H-0002. Every scope is `none`, residue 0, and PostgreSQL and DuckDB return the same probe counts.
+- Join expressions accept a negated comparison in a self-reference (`x IS NOT NULL`), under D-017.
+- CI runs the QCEW gate; the examples' cross-engine tests cover PostgreSQL and DuckDB.
+
 ## Unreleased - 2026-10-27 - Round 16: WP2.2a D-015 to D-017, statistics profile, hard cases
 
 **Why.** QCEW, the second domain, has a shape Chinook does not: no row is about an individual, its hierarchies are code prefixes rather than equal fields, and its code lists are public data the example needs as they are. The core could not express any of this, so three decisions were recorded first and the core changed only as far as they allow.

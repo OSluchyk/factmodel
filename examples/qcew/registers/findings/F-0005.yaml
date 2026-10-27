@@ -1,0 +1,15 @@
+kind: finding
+id: F-0005
+title: The CSV slice page lists quarterly field 14 as total_qtrly_wages a second time
+status: open
+opened_on: '2026-10-27'
+about:
+- qtrly
+description: >-
+  The CSV slice layout lists total_qtrly_wages twice, the second time described as taxable
+  wages; the quarterly layout page and the file header say taxable_qtrly_wages (profile.md A2).
+  The model follows the header. Open until BLS corrects the page.
+evidence:
+- ev-doc-qtrly-field14
+extensions:
+  fact: qtrly.taxable_qtrly_wages

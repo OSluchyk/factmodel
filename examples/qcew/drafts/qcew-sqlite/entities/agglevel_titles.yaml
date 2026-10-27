@@ -1,0 +1,35 @@
+kind: entity
+id: agglevel_titles
+physical_name: agglevel_titles
+source: qcew-sqlite
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary: []
+evidence:
+- ev-agglevel_titles-catalog
+fields:
+- name: agglvl_code
+  type: TEXT
+  nullable: true
+  meaning: Not written yet.
+- name: agglvl_title
+  type: TEXT
+  nullable: true
+  meaning: Not written yet.
+records:
+- id: ev-agglevel_titles-catalog
+  source: qcew-sqlite
+  pin: sqlite:qcew@2026-10-27
+  quote: table agglevel_titles in qcew
+  status: confirmed
+  read_on: '2026-10-27'
+extensions:
+  draft:
+    from: sqlite:qcew@2026-10-27
+    placeholders:
+    - grain
+    - class
+    - fields.agglvl_code.meaning
+    - fields.agglvl_title.meaning

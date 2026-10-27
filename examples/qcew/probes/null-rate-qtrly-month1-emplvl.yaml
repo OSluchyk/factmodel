@@ -1,0 +1,10 @@
+# written by hand (probe-write): the generator writes null_rate probes for anchor fields only,
+# and QCEW has no anchor. V2: suppressed measures are 0, not NULL (registers/findings/F-0003).
+kind: probe
+id: null-rate-qtrly-month1-emplvl
+probe_kind: null_rate
+entity: qtrly
+fact: qtrly.month1_emplvl
+dialect: sqlite
+sql: SELECT COUNT(*) AS "row_count", COUNT("t"."month1_emplvl") AS "non_null" FROM "qtrly" AS "t"
+note: Counts rows and non-null values of month1_emplvl, suppressed rows included; no range is expected.

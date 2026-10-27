@@ -1,0 +1,10 @@
+# written by hand (probe-write): the generator writes null_rate probes for anchor fields only,
+# and QCEW has no anchor. V2: suppressed measures are 0, not NULL (registers/findings/F-0003).
+kind: probe
+id: null-rate-annual-annual-avg-emplvl
+probe_kind: null_rate
+entity: annual
+fact: annual.annual_avg_emplvl
+dialect: sqlite
+sql: SELECT COUNT(*) AS "row_count", COUNT("t"."annual_avg_emplvl") AS "non_null" FROM "annual" AS "t"
+note: Counts rows and non-null values of annual_avg_emplvl, suppressed rows included; no range is expected.

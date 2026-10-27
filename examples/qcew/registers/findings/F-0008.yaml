@@ -1,0 +1,23 @@
+kind: finding
+id: F-0008
+title: industry_code mixes NAICS codes, ranges, domains and supersectors
+status: open
+opened_on: '2026-10-27'
+about:
+- annual.to-industry
+- qtrly.to-industry
+- industry_titles.parent
+description: >-
+  Code length does not give the level (profile.md V3, Q20). join_match on the prefix hierarchy
+  over the committed industry list found 53 codes with no parent one character shorter: the
+  sector ranges 31-33, 44-45 and 48-49, and the 50 three-digit codes under them. The level is
+  given by the second digit of agglvl_code; the model records that discriminator in the meaning
+  of annual.to-industry and qtrly.to-industry, because the schema allows a discriminator only
+  on a target set. Open until the semantic layer (M3) joins on (agglvl_code, industry_code).
+evidence:
+- ev-join-match-industry-titles-parent-2026-10-27
+- ev-doc-v3
+- ev-doc-industry-field
+extensions:
+  probe: join-match-industry-titles-parent
+  discriminator: agglvl_code

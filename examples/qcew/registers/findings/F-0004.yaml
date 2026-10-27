@@ -1,0 +1,18 @@
+kind: finding
+id: F-0004
+title: The annual layout and the file header name field 14 differently
+status: open
+opened_on: '2026-10-27'
+about:
+- annual
+description: >-
+  The annual layout page names field 14 annual_avg_estabs_count; the 2024 and 2025 file headers
+  say annual_avg_estabs (profile.md A2). Two document records disagree, and ranks decide: the
+  owner's header check (owner-profile, rank 20) outranks the layout page (bls-layout-annual,
+  rank 40), so the model's field is annual_avg_estabs. Open until BLS corrects the page or says
+  which name is meant.
+evidence:
+- ev-doc-field14-header
+- ev-doc-field14-layout
+extensions:
+  fact: annual.annual_avg_estabs

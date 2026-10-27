@@ -1,0 +1,17 @@
+kind: finding
+id: F-0006
+title: The quarterly file pads every key to four quarters with '-' rows
+status: open
+opened_on: '2026-10-27'
+about:
+- qtrly
+description: >-
+  Every key of the quarterly file appears in all four quarters; a quarter without a record gets
+  a row with disclosure_code '-' and every measure 0 (profile.md G2, Q07, Q08: each 2025 quarter
+  has exactly 3,659,997 rows). The seed reproduces it on the MSA detail key in 2025 Q3 and Q4,
+  after BLS stopped publishing MSA detail. Counting keys or averaging over quarters without
+  filtering these rows is wrong. The meaning of '-' is inferred, not documented (F-0002).
+evidence:
+- ev-doc-padding
+- ev-doc-dash
+- ev-value-set-qtrly-disclosure-code-2026-10-27

@@ -1,0 +1,388 @@
+kind: snapshot
+source: qcew-sqlite
+engine: sqlite
+target: qcew
+taken_on: '2026-10-27'
+pin: sqlite:qcew@2026-10-27
+objects:
+- name: agglevel_titles
+  object_type: table
+  fields:
+  - name: agglvl_code
+    type: TEXT
+    type_class: text
+    nullable: true
+  - name: agglvl_title
+    type: TEXT
+    type_class: text
+    nullable: true
+- name: annual
+  object_type: table
+  fields:
+  - name: area_fips
+    type: TEXT
+    type_class: text
+    nullable: false
+  - name: own_code
+    type: TEXT
+    type_class: text
+    nullable: false
+  - name: industry_code
+    type: TEXT
+    type_class: text
+    nullable: false
+  - name: agglvl_code
+    type: TEXT
+    type_class: text
+    nullable: false
+  - name: size_code
+    type: TEXT
+    type_class: text
+    nullable: false
+  - name: year
+    type: TEXT
+    type_class: text
+    nullable: false
+  - name: qtr
+    type: TEXT
+    type_class: text
+    nullable: false
+  - name: disclosure_code
+    type: TEXT
+    type_class: text
+    nullable: true
+  - name: annual_avg_estabs
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: annual_avg_emplvl
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: total_annual_wages
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: taxable_annual_wages
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: annual_contributions
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: annual_avg_wkly_wage
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: avg_annual_pay
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: lq_disclosure_code
+    type: TEXT
+    type_class: text
+    nullable: true
+  - name: lq_annual_avg_estabs
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: lq_annual_avg_emplvl
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: lq_total_annual_wages
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: lq_taxable_annual_wages
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: lq_annual_contributions
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: lq_annual_avg_wkly_wage
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: lq_avg_annual_pay
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: oty_disclosure_code
+    type: TEXT
+    type_class: text
+    nullable: true
+  - name: oty_annual_avg_estabs_chg
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: oty_annual_avg_estabs_pct_chg
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: oty_annual_avg_emplvl_chg
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: oty_annual_avg_emplvl_pct_chg
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: oty_total_annual_wages_chg
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: oty_total_annual_wages_pct_chg
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: oty_taxable_annual_wages_chg
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: oty_taxable_annual_wages_pct_chg
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: oty_annual_contributions_chg
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: oty_annual_contributions_pct_chg
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: oty_annual_avg_wkly_wage_chg
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: oty_annual_avg_wkly_wage_pct_chg
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: oty_avg_annual_pay_chg
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: oty_avg_annual_pay_pct_chg
+    type: REAL
+    type_class: float
+    nullable: true
+- name: area_titles
+  object_type: table
+  fields:
+  - name: area_fips
+    type: TEXT
+    type_class: text
+    nullable: true
+  - name: area_title
+    type: TEXT
+    type_class: text
+    nullable: true
+- name: industry_titles
+  object_type: table
+  fields:
+  - name: industry_code
+    type: TEXT
+    type_class: text
+    nullable: true
+  - name: industry_title
+    type: TEXT
+    type_class: text
+    nullable: true
+- name: ownership_titles
+  object_type: table
+  fields:
+  - name: own_code
+    type: TEXT
+    type_class: text
+    nullable: true
+  - name: own_title
+    type: TEXT
+    type_class: text
+    nullable: true
+- name: qtrly
+  object_type: table
+  fields:
+  - name: area_fips
+    type: TEXT
+    type_class: text
+    nullable: false
+  - name: own_code
+    type: TEXT
+    type_class: text
+    nullable: false
+  - name: industry_code
+    type: TEXT
+    type_class: text
+    nullable: false
+  - name: agglvl_code
+    type: TEXT
+    type_class: text
+    nullable: false
+  - name: size_code
+    type: TEXT
+    type_class: text
+    nullable: false
+  - name: year
+    type: TEXT
+    type_class: text
+    nullable: false
+  - name: qtr
+    type: TEXT
+    type_class: text
+    nullable: false
+  - name: disclosure_code
+    type: TEXT
+    type_class: text
+    nullable: true
+  - name: qtrly_estabs
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: month1_emplvl
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: month2_emplvl
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: month3_emplvl
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: total_qtrly_wages
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: taxable_qtrly_wages
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: qtrly_contributions
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: avg_wkly_wage
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: lq_disclosure_code
+    type: TEXT
+    type_class: text
+    nullable: true
+  - name: lq_qtrly_estabs
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: lq_month1_emplvl
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: lq_month2_emplvl
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: lq_month3_emplvl
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: lq_total_qtrly_wages
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: lq_taxable_qtrly_wages
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: lq_qtrly_contributions
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: lq_avg_wkly_wage
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: oty_disclosure_code
+    type: TEXT
+    type_class: text
+    nullable: true
+  - name: oty_qtrly_estabs_chg
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: oty_qtrly_estabs_pct_chg
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: oty_month1_emplvl_chg
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: oty_month1_emplvl_pct_chg
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: oty_month2_emplvl_chg
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: oty_month2_emplvl_pct_chg
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: oty_month3_emplvl_chg
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: oty_month3_emplvl_pct_chg
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: oty_total_qtrly_wages_chg
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: oty_total_qtrly_wages_pct_chg
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: oty_taxable_qtrly_wages_chg
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: oty_taxable_qtrly_wages_pct_chg
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: oty_qtrly_contributions_chg
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: oty_qtrly_contributions_pct_chg
+    type: REAL
+    type_class: float
+    nullable: true
+  - name: oty_avg_wkly_wage_chg
+    type: INTEGER
+    type_class: integer
+    nullable: true
+  - name: oty_avg_wkly_wage_pct_chg
+    type: REAL
+    type_class: float
+    nullable: true
+- name: size_titles
+  object_type: table
+  fields:
+  - name: size_code
+    type: TEXT
+    type_class: text
+    nullable: true
+  - name: size_title
+    type: TEXT
+    type_class: text
+    nullable: true

@@ -1,0 +1,14 @@
+kind: evidence
+records:
+- id: ev-null-rate-qtrly-month1-emplvl-2026-10-27
+  source: qcew-sqlite
+  pin: sqlite:qcew@2026-10-27
+  measurement:
+    row_count: 1136
+    non_null: 1136
+    null_rate: 0.0
+  status: confirmed
+  read_on: '2026-10-27'
+  probe: null-rate-qtrly-month1-emplvl
+  environment: local
+  data_quality: synthetic

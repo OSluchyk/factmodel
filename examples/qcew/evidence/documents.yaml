@@ -1,0 +1,172 @@
+kind: evidence
+records:
+- id: ev-doc-grain
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: A row's grain is (area, own, industry, size, year, qtr); agglvl_code is derived from it, not part of it. Q05
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-keys-unique
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: no (area, own, industry, size, year, qtr) key repeats in annual_2025 or qtrly_2025.
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-disclosure
+  source: bls-layout-annual
+  pin: BLS QCEW annual layout@2026-10-23
+  quote: Blank, or N = not disclosed
+  status: confirmed
+  read_on: '2026-10-23'
+  note: The layout's description of disclosure_code, as transcribed in profile.md A2; the quarterly layout says the same.
+- id: ev-doc-dash
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: in the 2025 quarterly file there is a third value, `-`, on 47,061 (Q1), 46,370 (Q2), 612,719 (Q3) and 610,230 (Q4) rows. Every measure on those rows is 0. It is not in any layout page I read.
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-suppressed-zero
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: suppressed rows (N) carry 0 in employment and wages, not NULL. `qtrly_estabs` and `annual_avg_estabs` are still filled on N rows
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-field14-layout
+  source: bls-layout-annual
+  pin: BLS QCEW annual layout@2026-10-23
+  quote: names annual field 14 `annual_avg_estabs_count`
+  status: confirmed
+  read_on: '2026-10-23'
+  note: profile.md A2 reports what the annual layout page says.
+- id: ev-doc-field14-header
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: the 2024 and 2025 file headers say `annual_avg_estabs`
+  status: confirmed
+  read_on: '2026-10-23'
+  note: The owner's loader checks every file header against the layout before loading.
+- id: ev-doc-qtrly-field14
+  source: bls-layout-qtrly
+  pin: BLS QCEW quarterly layout@2026-10-23
+  quote: the CSV slice page [S3] lists field 14 of the quarterly layout as `total_qtrly_wages` a second time, described as "Taxable wages"
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-padding
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: The quarterly file pads every key to all four quarters with `disclosure_code = '-'` and zeros. Q07, Q08
+  status: inferred
+  read_on: '2026-10-23'
+  note: "profile.md labels the meaning of '-' an inference (Q08): every '-' row has a real row for the same key in another quarter."
+- id: ev-doc-h5
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: 'Suppression breaks every rollup: parents can be disclosed with all children suppressed and the reverse. Q16'
+  status: inferred
+  read_on: '2026-10-23'
+  note: Reproduced by the seed (Kent County construction, Montgomery County retail); a rollup probe is deferred to M3.
+- id: ev-doc-v3
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: industry_code mixes NAICS (2 to 6 digits), ranges (5 characters), domains (3 digits) and supersectors (4 digits); code length does not give the level. Q20
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-industry-field
+  source: bls-layout-qtrly
+  pin: BLS QCEW quarterly layout@2026-10-23
+  quote: describes the field as "industry code (NAICS, SuperSector)"
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-agglvl
+  source: bls-titles
+  pin: BLS QCEW title files@2026-10-23
+  quote: the two digits are a matrix. First digit = geography / size level (1 national, 2 national by size, 3 CSA, 4 MSA, 5 state, 6 state by size, 7 county, 8 MicroSA).
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-h1
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: 'Geography is a lattice: a county rolls up to its state and, separately, to an MSA or MicroSA and a CSA. Q24, Q34'
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-h2
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: US000 excludes PR and VI while state and county rows include them; USMSA and USCMS also exclude PR. Q11, Q34
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-area-codes
+  source: bls-titles
+  pin: BLS QCEW title files@2026-10-23
+  quote: 'County: 2-digit state FIPS + 3-digit county FIPS (47037). State: state FIPS + `000` (08000).'
+  status: confirmed
+  read_on: '2026-10-23'
+  note: From the area guide, as transcribed in profile.md A7.
+- id: ev-doc-msa-codes
+  source: bls-titles
+  pin: BLS QCEW title files@2026-10-23
+  quote: 'MSA: `C` + first 4 digits of the 5-digit Census CBSA code (C3310).'
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-r1
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: the data.bls.gov area file repeats 4,649 codes twice with identical titles (9,458 rows, 4,809 distinct codes, no conflicting titles). A plain join to it doubles fact rows.
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-supersector
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: The sector-to-supersector mapping in Q21 is mine, typed from the titles; UNKNOWN until checked against the BLS hierarchy crosswalk [S14].
+  status: unresolved
+  read_on: '2026-10-23'
+- id: ev-doc-m4
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: 'Annual averages are not additive: county or 3-digit sums differ from parents by up to the number of children even without suppression. Q14, Q17'
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-m1
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: avg_wkly_wage = total_qtrly_wages / mean(month1..3) / 13, from unrounded values. Q26, [S21]
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-annual-sum
+  source: bls-layout-annual
+  pin: BLS QCEW annual layout@2026-10-23
+  quote: Sum of the four quarterly total wages
+  status: confirmed
+  read_on: '2026-10-23'
+  note: The layout's description of total_annual_wages, as transcribed in profile.md A2.
+- id: ev-doc-annual-avg
+  source: bls-layout-annual
+  pin: BLS QCEW annual layout@2026-10-23
+  quote: Annual average of monthly employment levels
+  status: confirmed
+  read_on: '2026-10-23'
+  note: The layout's description of annual_avg_emplvl, as transcribed in profile.md A2.
+- id: ev-doc-oty
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: over 1,144,147 rows disclosed in both years with oty disclosed, the employment change and wage change equal (2025 minus 2024 from the 2024 annual file) in every row
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-size
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: Size-class grain (size_code 1 to 9) is absent from the singlefiles; it lives in separate Q1-only files. Q04
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-own4
+  source: owner-profile
+  pin: qcew-model profile.md@2026-10-23
+  quote: own_code 4 (International Government, in the title file) does not occur.
+  status: confirmed
+  read_on: '2026-10-23'
+- id: ev-doc-title-files
+  source: bls-titles
+  pin: BLS QCEW title files@2026-10-23
+  quote: industry titles embed the code ("NAICS 31-33 Manufacturing", "1011 Natural resources and mining").
+  status: confirmed
+  read_on: '2026-10-23'

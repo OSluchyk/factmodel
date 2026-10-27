@@ -1,0 +1,18 @@
+kind: finding
+id: F-0009
+title: Geography is a lattice, and US000 excludes Puerto Rico and the Virgin Islands
+status: open
+opened_on: '2026-10-27'
+about:
+- area_titles.in-msa
+- area_titles.in-csa
+- area_titles.in-nation
+description: >-
+  A county rolls up to its state and, separately, to an MSA or MicroSA and a CSA; MSAs cross
+  state lines (profile.md H1, Q24, Q34). US000 excludes PR and VI while state and county rows
+  include them, and USMSA and USCMS exclude PR (H2, Q11). The area codes encode only the county
+  to state link (area_titles.in-state). The other links stay unresolved until the BLS
+  County-MSA-CSA crosswalk and the coverage of each national code are in the model.
+evidence:
+- ev-doc-h1
+- ev-doc-h2

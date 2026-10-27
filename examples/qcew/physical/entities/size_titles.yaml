@@ -1,0 +1,33 @@
+kind: entity
+id: size_titles
+physical_name: size_titles
+source: qcew-sqlite
+grain: One row per establishment size class.
+class: reference
+status: draft
+meaning: The BLS size class code list, loaded unchanged.
+keys:
+  primary:
+  - size_code
+  current_row_rule:
+evidence:
+- ev-size_titles-catalog
+- ev-doc-title-files
+- ev-key-duplicates-size-titles-2026-10-27
+- ev-row-count-size-titles-2026-10-27
+fields:
+- name: size_code
+  type: TEXT
+  nullable: true
+  meaning: Establishment size class code.
+- name: size_title
+  type: TEXT
+  nullable: true
+  meaning: Size class name.
+records:
+- id: ev-size_titles-catalog
+  source: qcew-sqlite
+  pin: sqlite:qcew@2026-10-27
+  quote: table size_titles in qcew
+  status: confirmed
+  read_on: '2026-10-27'

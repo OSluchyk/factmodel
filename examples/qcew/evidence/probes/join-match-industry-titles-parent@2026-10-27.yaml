@@ -1,0 +1,15 @@
+kind: evidence
+records:
+- id: ev-join-match-industry-titles-parent-2026-10-27
+  source: qcew-sqlite
+  pin: sqlite:qcew@2026-10-27
+  measurement:
+    source_rows: 2659
+    orphans_left: 53
+    orphans_right: 1409
+    match_rate: 0.980068
+  status: confirmed
+  read_on: '2026-10-27'
+  probe: join-match-industry-titles-parent
+  environment: local
+  data_quality: synthetic

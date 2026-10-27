@@ -1,0 +1,14 @@
+kind: source
+id: qcew-sqlite
+title: QCEW on a local SQLite file
+source_kind: warehouse
+access_mode: agent_read
+adapter: sql
+engine: sqlite
+location: qcew
+dsn_env: FACT_DSN_QCEW_SQLITE
+access: >-
+  A local SQLite file created by seed/seed.py (synthetic annual and qtrly rows, the real BLS
+  code lists); a test fixture, not a platform (D-011). Set FACT_DSN_QCEW_SQLITE to
+  sqlite:///<path to the file>.
+current_pin: sqlite:qcew@2026-10-27

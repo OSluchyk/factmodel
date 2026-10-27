@@ -37,5 +37,7 @@ jobs:
         run: uv run pytest -q
       - name: Chinook gate (M1)
         run: uv run fact check --root examples/chinook
-      - name: Chinook on PostgreSQL (same snapshot parts and probe counts as SQLite)
+      - name: QCEW gate (M2)
+        run: uv run fact check --root examples/qcew
+      - name: Examples on PostgreSQL and DuckDB (same snapshot parts and probe counts as SQLite)
         run: uv run pytest -q tests/examples

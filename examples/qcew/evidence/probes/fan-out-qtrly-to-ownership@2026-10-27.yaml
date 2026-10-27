@@ -1,0 +1,12 @@
+kind: evidence
+records:
+- id: ev-fan-out-qtrly-to-ownership-2026-10-27
+  source: qcew-sqlite
+  pin: sqlite:qcew@2026-10-27
+  measurement:
+    max_fan_out: 1
+  status: confirmed
+  read_on: '2026-10-27'
+  probe: fan-out-qtrly-to-ownership
+  environment: local
+  data_quality: synthetic

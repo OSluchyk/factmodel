@@ -5,7 +5,7 @@ Platform that forced it: QCEW (`examples/qcew`)
 
 ## Context
 
-QCEW is a lattice of aggregates: a state row is the sum of its county rows, a NAICS parent the sum of its children, as long as nothing is suppressed (profile.md M5). Suppression breaks that: a parent can be disclosed over suppressed children and the reverse (H5, finding F-0007), and annual averages differ from sums by rounding (H-0001). A `join_match` probe only shows that a child finds its parent; it says nothing about whether the numbers add up, so a hierarchy relationship was "confirmed" without its arithmetic ever being measured. F-0007 was left open with "a rollup probe is deferred to M3".
+QCEW is a lattice of aggregates: a state row is the sum of its county rows, a NAICS parent the sum of its children, as long as nothing is suppressed (profiling notes M5). Suppression breaks that: a parent can be disclosed over suppressed children and the reverse (profiling notes H5, finding F-0007), and annual averages differ from sums by rounding (H-0001). A `join_match` probe only shows that a child finds its parent; it says nothing about whether the numbers add up, so a hierarchy relationship was "confirmed" without its arithmetic ever being measured. F-0007 was left open until the arithmetic could be measured.
 
 ## Decision
 
@@ -21,9 +21,9 @@ QCEW is a lattice of aggregates: a state row is the sum of its county rows, a NA
 
 - Vocabulary: `rollup` in `probe_kind`, with its row in the probe table; the layer schema gains the optional measure key `rollups`; the `layers` stage checks it.
 - The QCEW seed is generated bottom-up, so its parents are sums of their children, as in the real files.
-- F-0007 cites the measured result; M5 is confirmed where nothing is suppressed, and H-0001 is measured on annual averages.
+- F-0007 cites the measured result; profiling notes M5 is confirmed where nothing is suppressed, and H-0001 is measured on annual averages.
 
 ## Evidence
 
 - Maintainer decision, 2026-10-27.
-- `examples/qcew/registers/findings/F-0007.yaml`; profile.md M4, M5, H5, Q13, Q16, Q17.
+- `examples/qcew/registers/findings/F-0007.yaml`; the QCEW profiling notes (`profile.md`) M4, M5, H5, Q13, Q16, Q17.

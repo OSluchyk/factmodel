@@ -30,9 +30,9 @@ class Migration:
     apply: Callable[[Path], list[Path]] | None = None
 
 
-# The registry ``fact migrate`` reads, oldest first. No migration has been written yet (M3
-# answer Q6): the slot below documents the one breaking change so far, and the first real
-# migration goes here with its ``apply``.
+# The registry ``fact migrate`` reads, oldest first. No migration has been written yet: the
+# slot below documents the one breaking change so far, and the first real migration goes here
+# with its ``apply``.
 MIGRATIONS: tuple[Migration, ...] = (
     Migration(
         "1.0.0",

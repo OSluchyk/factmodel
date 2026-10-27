@@ -5,7 +5,7 @@ Platform that forced it: none
 
 ## Context
 
-The framework will be a public repository that companies adopt and extend. The plan left the choice open between Apache 2.0 and MIT.
+The framework will be a public repository that companies adopt and extend. It needs a permissive license.
 
 ## Decision
 
@@ -15,8 +15,7 @@ The framework is licensed under the Apache License 2.0, copyright 2026 Oleksandr
 
 - Users get an explicit patent grant, which companies often require before adopting a framework.
 - Redistributors keep `NOTICE` and state changes to licensed files.
-- Models built with Plumbline are the work of their owners and stay private to them; the license covers the framework only.
-- The owner may switch to MIT before the first public push. That would be a new decision record that supersedes this one, not an edit of it.
+- Models built with FactModel are the work of their owners and stay private to them; the license covers the framework only.
 
 ## Evidence
 

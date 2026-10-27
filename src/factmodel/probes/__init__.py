@@ -1,4 +1,4 @@
-"""Probe generator, rendering per dialect, and the probe files of a model (WP1.7).
+"""Probe generator, rendering per dialect, and the probe files of a model.
 
 ``generate`` turns model facts into probe documents (``kind: probe``), each with a stable ID,
 the fact it tests, an expected range when there is one, and SQL in the source's dialect.

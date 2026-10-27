@@ -20,7 +20,7 @@ Only the facts that scope is computed from are authored:
 
 - The scope closure (`spec/ALGORITHMS.md`, algorithm 2) reads `anchor_reference` and `scope_admission` only.
 - The entity schema rejects `subject_scope`, `subject_scoped` and `scope_basis`.
-- The plan's `orders.yaml` example, WP0.4 algorithm 2 and WP1.2, the spec's entity row and `spec/VOCABULARY.md` sections 5 and 6 are updated.
+- The spec's entity row and `spec/VOCABULARY.md` sections 5 and 6 are updated.
 - The `scope` gate stage checks admissions and reachability, not a claim against the closure.
 
 ## Evidence

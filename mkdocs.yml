@@ -2,6 +2,7 @@
 # build (into docs/_site/pages, gitignored except .gitkeep). Build: uv run mkdocs build --strict
 site_name: FactModel
 site_description: Evidence-grounded semantic models of data platforms, built and checked by AI agents.
+site_url: https://osluchyk.github.io/factmodel/
 repo_url: https://github.com/OSluchyk/factmodel
 docs_dir: docs/_site/pages
 site_dir: site

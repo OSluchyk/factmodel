@@ -648,7 +648,7 @@ Probe kinds:
 | `value_set` | A field against its declared `values`. | Count of distinct values, of distinct values outside the declared set (`outside_values`), and of rows holding one (`outside_rows`); nulls are never outside; never the values. |
 | `rollup` | A hierarchy relationship and a layer measure (D-020): each parent row against the sum of its children at one level, other key fields equal. | `parents_compared`, `exact`, `within_rounding` (at most one unit per child), `beyond` (among parents with nothing suppressed), `parents_with_suppressed_child`, `suppressed_parents_disclosed_children`. Confirms a hierarchy for aggregation. |
 
-All seven are built in M1. Each probe is a sqlglot AST rendered per dialect with quoted identifiers; a probe that needs a construct a dialect lacks (a nested path outside BigQuery) lists it under `unsupported_on_dialect` and is never rendered for it.
+All seven are built in. Each probe is a sqlglot AST rendered per dialect with quoted identifiers; a probe that needs a construct a dialect lacks (a nested path outside BigQuery) lists it under `unsupported_on_dialect` and is never rendered for it.
 
 **Dialect knowledge for probes.** Which dialects can read a nested path, how a query is wrapped to print one JSON object, and which shell command runs a statement: all of it lives here, not in code (D-011). A dialect missing from a block gets the neutral behaviour: nested-path probes are not rendered for it, the SQL is not wrapped, and the owner must set `RUN_SQL`. The code implements two wrap strategies: `json_object_pairs` (`SELECT json_object('k', "k", ...) FROM (<sql>) AS q`) and `row_to_json` (`SELECT row_to_json(q) FROM (<sql>) AS q`).
 

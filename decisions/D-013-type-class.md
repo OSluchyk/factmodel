@@ -12,7 +12,7 @@ Snapshot fields carry the engine's own type text (`INT64`, `integer`, `NUMBER(38
 - Snapshot fields get an optional `type_class` from a new vocabulary block: `integer, decimal, float, boolean, text, date, time, timestamp, interval, binary, json, array, struct, geography, other`.
 - `type` keeps the engine's own text, unchanged.
 - Each adapter maps engine types to a class; an unknown type maps to `other`.
-- Drift (WP1.6) treats a change of `type_class` as a type change, and a change of `type` text within the same class as "no effect, listed".
+- Drift treats a change of `type_class` as a type change, and a change of `type` text within the same class as "no effect, listed".
 
 ## Consequences
 

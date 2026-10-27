@@ -100,6 +100,4 @@ Coverage target for `src/factmodel/core` and the gate: 90 % lines. Adapters and 
 | Question | Status |
 | --- | --- |
 | Format of facts: YAML only, or YAML plus a generated graph file (for example JSON-LD) for graph consumers | open |
-| Name: trademark check | open |
 | Ossie: move to 0.2.0 when it is released, or when a JSON Schema is published | open |
-| A cloud-engine run by an adopter (BigQuery) | not yet |

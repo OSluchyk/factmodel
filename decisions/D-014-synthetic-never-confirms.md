@@ -1,7 +1,7 @@
 # D-014 Synthetic data never confirms a fact about a platform
 
 Date: 2026-10-23 · Status: accepted
-Platform that forced it: none (review of the M1 core)
+Platform that forced it: none (review of the core)
 
 ## Context
 

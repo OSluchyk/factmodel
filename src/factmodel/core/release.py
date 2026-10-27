@@ -1,4 +1,4 @@
-"""Release partition (spec/ALGORITHMS.md, algorithm 3). Pure; the release command is WP3.4."""
+"""Release partition (spec/ALGORITHMS.md, algorithm 3). Pure; ``factmodel.release`` builds on it."""
 
 from collections.abc import Sequence
 from dataclasses import dataclass

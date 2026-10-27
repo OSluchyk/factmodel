@@ -5,7 +5,7 @@ Platform that forced it: QCEW and Chinook (`examples/qcew`, `examples/chinook`)
 
 ## Context
 
-The layer and consumer schemas of 1.0.0 were placeholders ("details come in M3"): a layer had flat `filters`, concepts on one field, measures on one field with an aggregation name. QCEW cannot be served by that shape. A correct QCEW answer applies the disclosure filter and the level discriminator on every query, joins to distinct area codes, and computes measures from monthly levels by a documented formula, never as a sum of annual averages. Chinook needs measures over joined entities (revenue is price times quantity). A consumer must be able to read all of this from the layer, and the gate must be able to check it.
+The layer and consumer schemas of 1.0.0 were placeholders: a layer had flat `filters`, concepts on one field, measures on one field with an aggregation name. QCEW cannot be served by that shape. A correct QCEW answer applies the disclosure filter and the level discriminator on every query, joins to distinct area codes, and computes measures from monthly levels by a documented formula, never as a sum of annual averages. Chinook needs measures over joined entities (revenue is price times quantity). A consumer must be able to read all of this from the layer, and the gate must be able to check it.
 
 ## Decision
 

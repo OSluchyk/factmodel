@@ -1,4 +1,4 @@
-"""Exporters (WP3.5): a semantic layer written for another tool.
+"""Exporters: a semantic layer written for another tool.
 
 Each exporter returns the files it writes and a list of warnings for what the target cannot
 express; nothing is dropped silently. Evidence status travels as metadata where the target has

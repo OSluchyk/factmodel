@@ -5,7 +5,7 @@ Platform that forced it: none (the framework's own probes and adapters)
 
 ## Context
 
-The M2 freeze review (`spec/CORE-CHANGES.md`) found three contract changes without a decision record: snapshot `pin` keys, the optional probe `expected` with the probe keys `entity` and `note`, and the field key `values`. Each only adds an optional key. The rule "every core change needs a decision record" stopped the freeze over changes that cannot break a model, while it did not say what a defect fix needs.
+The freeze review before schema 1.0.0 (`spec/CORE-CHANGES.md`) found three contract changes without a decision record: snapshot `pin` keys, the optional probe `expected` with the probe keys `entity` and `note`, and the field key `values`. Each only adds an optional key. The rule "every core change needs a decision record" stopped the freeze over changes that cannot break a model, while it did not say what a defect fix needs.
 
 ## Decision
 
@@ -14,13 +14,13 @@ The M2 freeze review (`spec/CORE-CHANGES.md`) found three contract changes witho
    - A decision record is required when a contract change removes or renames a key, changes the meaning of an existing key or value, or changes an algorithm's result.
    - Adding an optional key, a vocabulary value or a probe kind needs a `CHANGELOG.md` entry and a line in the current core-change ledger, nothing more.
    - A fix that makes code obey the existing schema is a defect fix, not a core change; it needs a `CHANGELOG.md` entry only.
-3. An owner brief is not a decision record. When a brief decides something this rule classes as a decision, the round records it in `decisions/`.
+3. A request for a change is not a decision record. When a request decides something this rule classes as a decision, the change records it in `decisions/`.
 
 ## Consequences
 
 - `spec/CORE-CHANGES.md` cites D-018 for the three rows and states the rule at the top.
 - `spec/VERSIONING.md` and `AGENTS.md` rule 6 state the rule.
-- The schemas freeze at 1.0.0 in the same round.
+- The schemas freeze at 1.0.0 in the same change.
 
 ## Evidence
 

@@ -12,7 +12,7 @@ description: >-
   no NULL in month1_emplvl (1,136 of 1,136 rows) or annual_avg_emplvl (282 of 282), suppressed
   rows included. A sum or average over these fields counts suppressed cells as zero; a consumer
   must filter on disclosure_code first. Open: the platform behaves this way by design, and the
-  semantic layer (M3) has to encode the filter.
+  semantic layer has to encode the filter.
 evidence:
 - ev-doc-suppressed-zero
 - ev-null-rate-qtrly-month1-emplvl-2026-10-27

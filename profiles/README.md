@@ -6,4 +6,4 @@ A profile names the role of its subjects (`subject: customer`); the model binds 
 
 | Profile | Subject | Use |
 | --- | --- | --- |
-| `retail` | `customer` | Retail and e-commerce; first used on the Chinook example (M1). |
+| `retail` | `customer` | Retail and e-commerce; first used on the Chinook example. |

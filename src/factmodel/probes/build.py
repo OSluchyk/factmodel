@@ -1,4 +1,4 @@
-"""Probe queries as neutral sqlglot ASTs (WP1.7).
+"""Probe queries as neutral sqlglot ASTs.
 
 Every probe returns counts only, under fixed column aliases that become measurement keys. No
 query selects a value or an identifier from the data. Identifiers are always quoted when

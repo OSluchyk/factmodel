@@ -1,6 +1,6 @@
 # Chinook example
 
-A full FactModel model of the Chinook schema (a digital media store), the reference example of M1 (D-011). It runs on two local reference engines, SQLite and PostgreSQL, with synthetic rows; no cloud engine and no credentials.
+A full FactModel model of the Chinook schema (a digital media store), the reference example (D-011). It runs on two local reference engines, SQLite and PostgreSQL, with synthetic rows; no cloud engine and no credentials.
 
 ## What is here
 

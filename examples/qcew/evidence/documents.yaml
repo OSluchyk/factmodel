@@ -64,7 +64,7 @@ records:
   quote: 'Suppression breaks every rollup: parents can be disclosed with all children suppressed and the reverse. Q16'
   status: inferred
   read_on: '2026-10-23'
-  note: Reproduced by the seed (Kent County construction, Montgomery County retail); a rollup probe is deferred to M3.
+  note: Reproduced by the seed (Kent County construction, Montgomery County retail); measured by the rollup probes (D-020).
 - id: ev-doc-v3
   source: owner-profile
   pin: qcew-model profile.md@2026-10-23

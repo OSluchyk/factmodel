@@ -4,7 +4,7 @@ Decisions that shape the framework are recorded here, one file per decision: `D-
 
 These are decisions about the framework itself. A model repository keeps its own decisions in its `registers/` with four-digit IDs (`D-0001`).
 
-After M2 the core is frozen: a change that removes or renames a key, changes the meaning of a key or value, or changes an algorithm's result needs a record that names the platform that forced it. Adding an optional key, a vocabulary value or a probe kind needs a CHANGELOG entry and a ledger line; a defect fix needs a CHANGELOG entry (D-018).
+Since schema 1.0.0 the core is frozen: a change that removes or renames a key, changes the meaning of a key or value, or changes an algorithm's result needs a record that names the platform that forced it. Adding an optional key, a vocabulary value or a probe kind needs a CHANGELOG entry and a ledger line; a defect fix needs a CHANGELOG entry (D-018).
 
 ## Format
 
@@ -20,14 +20,15 @@ Platform that forced it: none | <example or engine>
 ## Evidence
 ```
 
+The records were curated once, for the first public release; the development history before that release is not public. From that release on, a record is never edited to reverse it.
+
 ## Index
 
 | ID | Title | Status | Date |
 | --- | --- | --- | --- |
 | [D-001](D-001-license.md) | License: Apache 2.0 | accepted | 2026-10-23 |
 | [D-002](D-002-relationship-identity.md) | Relationship identity: an author-set key | accepted | 2026-10-23 |
-| [D-003](D-003-name-check.md) | Name check: distribution name `plumbline-model` | name part superseded by D-010 | 2026-10-23 |
-| [D-004](D-004-source-layout.md) | Source layout: `src/plumbline/` | accepted | 2026-10-23 |
+| [D-004](D-004-source-layout.md) | Source layout: `src/factmodel/` | accepted | 2026-10-23 |
 | [D-005](D-005-toolchain.md) | Toolchain | accepted | 2026-10-23 |
 | [D-006](D-006-data-quality.md) | Data quality instead of a boolean | accepted | 2026-10-23 |
 | [D-007](D-007-scope-derived.md) | Subject scope is derived, not authored | accepted | 2026-10-23 |

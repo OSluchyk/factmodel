@@ -14,7 +14,7 @@ description: >-
   the committed file shows the shape: two lists one after the other, the second starting with
   its own header line, which loads as one row whose code is the text area_fips. A plain join
   to the list doubles fact rows, so the relationships to it are many_to_many as published. Open
-  until a semantic layer (M3) joins to distinct codes, or BLS answers which copy is meant (the
+  until a semantic layer joins to distinct codes, or BLS answers which copy is meant (the
   www.bls.gov copy has 4,649 rows, all distinct, profile.md A3).
 evidence:
 - ev-key-duplicates-area-titles-2026-10-27

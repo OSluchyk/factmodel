@@ -72,6 +72,8 @@ The first public release: a model of a data platform built from evidence, checke
 - `uv build` gives a wheel and an sdist that pass `twine check`; extras `[sql]`, `[postgres]` and `[duckdb]`. A test installs the wheel alone outside the repository and runs the Chinook loop.
 - A documentation site (MkDocs Material) assembled from the repository: specification, decisions, guides, one page per skill, a CLI reference generated from the code and a schema reference generated from the schemas. A strict build runs in CI.
 - A quickstart and a Chinook tutorial from an empty folder to a release and two exports; tests run every command of both on the installed package.
+- Package metadata names the homepage, repository, documentation site and changelog, and the status is Alpha; the site sets its own URL. Readers of the package index can find the project.
+- The decision records were curated once for this release (`decisions/README.md`): the record about the earlier working name is removed, and wording that named the development process, work packages or milestones is gone. The specification, the roadmap and the examples name milestones only in the roadmap, and their open questions are the two that are still open, so a reader sees the product, not a to-do list.
 
 ## 0.0.1 - 2026-10-23
 

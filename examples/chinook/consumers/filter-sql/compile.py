@@ -1,4 +1,4 @@
-"""Reference consumer for the Chinook layer customer-purchases (WP3.3): a filter request
+"""Reference consumer for the Chinook layer customer-purchases: a filter request
 becomes SQL in the neutral dialect. No model, no network.
 
 Requests:

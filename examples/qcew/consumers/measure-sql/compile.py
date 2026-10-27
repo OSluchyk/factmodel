@@ -1,4 +1,4 @@
-"""Reference consumer for the QCEW layer employment-wages (WP3.3): a structured request
+"""Reference consumer for the QCEW layer employment-wages: a structured request
 becomes SQL in the neutral dialect. No model, no network.
 
 Request keys: ``measure`` (a layer measure id), ``area`` (one code) or ``areas`` (``{kind:

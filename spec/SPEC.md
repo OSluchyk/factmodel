@@ -118,7 +118,7 @@ flowchart TD
 | Exporters | OSI / Apache Ossie, dbt semantic models, Cube | `fact export` |
 | Agent layer | `AGENTS.md`, skills, prompt templates | Markdown |
 
-Built-in adapters (D-011): `export` (owner-exported standard `INFORMATION_SCHEMA` views, any engine that has them), `sql` (live reflection through SQLAlchemy, any engine with a SQLAlchemy dialect) and `git` (DDL and text in a repository, any dialect sqlglot parses). The reference engines are SQLite, PostgreSQL and DuckDB (DuckDB since M2, through `sql`; when a SQLAlchemy dialect cannot reflect, `sql` reads the standard `INFORMATION_SCHEMA` views instead); cloud engines are reached through `export` or `sql` by adopters with their own credentials.
+Built-in adapters (D-011): `export` (owner-exported standard `INFORMATION_SCHEMA` views, any engine that has them), `sql` (live reflection through SQLAlchemy, any engine with a SQLAlchemy dialect) and `git` (DDL and text in a repository, any dialect sqlglot parses). The reference engines are SQLite, PostgreSQL and DuckDB (DuckDB through `sql`; when a SQLAlchemy dialect cannot reflect, `sql` reads the standard `INFORMATION_SCHEMA` views instead); cloud engines are reached through `export` or `sql` by adopters with their own credentials.
 
 ## Validation
 
@@ -234,7 +234,7 @@ factmodel/                  framework
   profiles/                 retail/, statistics/, ... (examples)
   agent/                    AGENTS.md template, skills/, prompt templates
   examples/chinook/         a full model of the Chinook schema on SQLite and PostgreSQL
-  examples/qcew/            BLS QCEW: no subject, code-prefix hierarchies, BLS code lists (M2)
+  examples/qcew/            BLS QCEW: no subject, code-prefix hierarchies, BLS code lists
   decisions/                decision records
 
 <platform>-model/           one per platform
@@ -265,7 +265,7 @@ The framework version is pinned in `factmodel.yaml`. A model repository upgrades
 
 ## Roadmap and acceptance
 
-Each milestone ends at a gate. The core schema is frozen only after M2, when a second engine and a second domain pass without changing it.
+Each milestone ends at a gate. The core schema is frozen only after a second engine and a second domain pass without changing it.
 
 | Milestone | Builds | Gate |
 | --- | --- | --- |
@@ -287,13 +287,8 @@ The reference dataset is Chinook, schema only, with synthetic rows generated at 
 
 ## Open questions
 
-- [x] License: Apache 2.0 (D-001). Models built with FactModel stay private to their owners.
-- [x] Package name: `factmodel` for the distribution and the import, command `fact` (D-010).
-- [ ] Name: trademark check before the first public push.
-- [x] Second domain for M2: BLS QCEW, a statistics domain with no subject (D-015).
-- [x] Equivalence threshold: 0.9 by default, per consumer when the owner sets `threshold` (D-021).
-- [x] Export target priority: both; dbt validated with `dbt parse`; Ossie pinned to the released core specification 0.1.1 by default and to the 0.2.0.dev0 draft behind `--spec-version`; structural tests, because no JSON Schema is published.
-- [ ] Format of facts: YAML files only, or YAML plus a generated graph file (for example JSON-LD) for graph consumers.
+- Format of facts: YAML files only, or YAML plus a generated graph file (for example JSON-LD) for graph consumers.
+- Ossie: move to 0.2.0 when it is released, or when a JSON Schema is published.
 
 ## Sources
 

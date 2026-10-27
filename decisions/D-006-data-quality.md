@@ -15,7 +15,7 @@ The `representative` block is renamed `data_quality`, with the values `represent
 
 - One type (a slug string) for the key, in YAML, JSON Schema and Python.
 - `synthetic` names the common case (generated test data) directly instead of `false`.
-- `spec/VOCABULARY.md`, `spec/SPEC.md`, the plan's evidence example and the vocabulary tests are updated.
+- `spec/VOCABULARY.md`, `spec/SPEC.md` and the vocabulary tests are updated.
 
 ## Evidence
 

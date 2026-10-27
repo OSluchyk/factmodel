@@ -1,11 +1,11 @@
 # D-011 Engine-blind core, universal adapters, local reference engines
 
 Date: 2026-10-23 · Status: accepted
-Platform that forced it: none (supersedes the plan's "M1 - Core on BigQuery" framing)
+Platform that forced it: none
 
 ## Context
 
-FactModel must work with many data sources, ideally any. The plan tied M1 to one cloud engine (BigQuery) and one dataset (`thelook_ecommerce`), and therefore to cloud credentials the agent must not have. An earlier, withdrawn draft tried to solve that with an access exception; this record replaces that draft and takes its number.
+FactModel must work with many data sources, ideally any. An earlier draft of the roadmap tied the first milestone to one cloud engine (BigQuery) and one public dataset; this record replaces that. That tie meant cloud credentials the agent must not have.
 
 ## Decision
 
@@ -20,11 +20,11 @@ FactModel must work with many data sources, ideally any. The plan tied M1 to one
 
 ## Consequences
 
-- M1 becomes "Core, engine-neutral", gated on the Chinook example; M2 becomes "Cloud engines by adopters and a second domain" (`spec/ROADMAP.md`, section 3).
-- WP1.5 is rewritten: an adapter protocol, a registry, the `export` and `sql` adapters; drafts are made by one core function (`to_facts`), not by adapters.
+- The core is gated on the Chinook example on local engines; cloud engines are verified by adopters on their own projects (`spec/ROADMAP.md`, section 3).
+- Adapters implement one protocol and register in one registry; drafts are made by one core function (`to_facts`), not by adapters.
 - Engine knowledge that the framework needs (default dialects, which engines enforce foreign keys) lives in vocabulary blocks, not in code.
-- Plan ground rule 7 stays; it gains one sentence about local test engines.
-- Every `thelook` reference leaves the spec, the profiles and the agent rules; fixtures may keep old example values.
+- Roadmap ground rule 7 says that a local engine seeded with synthetic rows is a test fixture, not a platform.
+- The spec, the profiles and the agent rules name no cloud dataset; fixtures may keep old example values.
 
 ## Evidence
 

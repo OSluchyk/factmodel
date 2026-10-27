@@ -1,4 +1,4 @@
-"""Gate stage `triggers`: a fired trigger has no follow-up (WP1.6)."""
+"""Gate stage `triggers`: a fired trigger has no follow-up."""
 
 from factmodel.gate.runner import GateContext
 from factmodel.model.loader import LoadIssue

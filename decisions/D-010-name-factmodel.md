@@ -5,7 +5,7 @@ Platform that forced it: none
 
 ## Context
 
-D-003 found `plumbline` taken on PyPI and chose the distribution name `plumbline-model` with the command `plb`. The name was a metaphor (a builder's tool for checking a wall is true) that needed a paragraph to explain. Nothing has been pushed or published yet, so a rename costs one round.
+The earlier working name, Plumbline, was dropped because `plumbline` is taken on PyPI. It was also a metaphor (a builder's tool for checking a wall is true) that needed a paragraph to explain.
 
 ## Decision
 
@@ -13,18 +13,12 @@ D-003 found `plumbline` taken on PyPI and chose the distribution name `plumbline
 - The Python distribution and import name is `factmodel`.
 - The command is `fact`.
 - The model-config file in a model repository is `factmodel.yaml`.
-- `plumbline-model` and `plb` are retired.
-
-This supersedes the name part of D-003. D-003's PyPI and GitHub findings stay valid history.
 
 ## Consequences
 
-- The package moves from `src/plumbline/` to `src/factmodel/`. Paths in earlier decision records (D-003, D-004, D-005) read as `src/factmodel/` from this commit on; those records are not edited.
-- Earlier decision records keep the old names as history.
+- The package lives in `src/factmodel/`.
 - Environment flags for live adapter tests use the `FACT_` prefix (`FACT_LIVE_BQ`, `FACT_LIVE_PG`).
-- `factmodel` must be registered on PyPI before WP4.1, or this record is superseded.
-- GitHub and trademark checks are still open; the owner checks before the first public push.
-- The folder is renamed by the owner after this commit (`~/AI/semantic/factmodel`).
+- `factmodel` must be registered on PyPI, or this record is superseded.
 
 ## Evidence
 

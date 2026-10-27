@@ -1,57 +1,124 @@
 title: Semantic layer
-description: A named set of concepts, measures and filters for one use case. Details come in M3.
+description: >-
+  A named set of concepts and measures for one use case, built only on physical facts by ID
+  (D-019). semantic/<layer-id>/layer.yaml.
 type: object
 additionalProperties: false
-required: [kind, id, purpose, consumer, status]
+required: [kind, id, purpose, consumer, status, entities]
 properties:
   kind: {$const: "file_kind:layer"}
   id: {$ref: "#/$defs/slug"}
   purpose: {$ref: "#/$defs/text"}
   consumer: {$ref: "#/$defs/slug"}
   status: {$vocab: review_status}
+  entities:
+    description: The physical entities the layer reads.
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required: [entity, current_row_rule]
+      properties:
+        entity: {$ref: "#/$defs/slug"}
+        current_row_rule:
+          description: Copied from the entity by reference; the gate checks it is equal.
+          oneOf:
+            - {$ref: "#/$defs/text"}
+            - {type: "null"}
+        default_filters:
+          description: Ids of this layer's concepts applied by default when the entity is read.
+          type: array
+          items: {$ref: "#/$defs/slug"}
+          uniqueItems: true
   joins:
     description: Physical relationship references only, never free SQL.
     type: array
     items: {$ref: "#/$defs/relationship_ref"}
     uniqueItems: true
-  filters:
-    description: Current-row rules and default filters the consumer must apply.
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [entity, rule]
-      properties:
-        entity: {$ref: "#/$defs/slug"}
-        rule: {$ref: "#/$defs/text"}
-        reason: {$ref: "#/$defs/text"}
   concepts:
     type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [id, meaning, field]
-      properties:
-        id: {$ref: "#/$defs/slug"}
-        meaning: {$ref: "#/$defs/text"}
-        field: {$ref: "#/$defs/field_ref"}
-        values:
-          type: array
-          items: {$ref: "#/$defs/text"}
-          uniqueItems: true
+    items: {$ref: "#/$defs/concept"}
   measures:
     type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [id, meaning, aggregation, field]
-      properties:
-        id: {$ref: "#/$defs/slug"}
-        meaning: {$ref: "#/$defs/text"}
-        aggregation: {$ref: "#/$defs/slug"}
-        field: {$ref: "#/$defs/field_ref"}
-        time_field: {$ref: "#/$defs/field_ref"}
+    items: {$ref: "#/$defs/measure"}
   hazards: {$ref: "#/$defs/hazard_refs"}
   evidence: {$ref: "#/$defs/evidence_refs"}
   records: {$ref: "#/$defs/evidence_records"}
   extensions: {$ref: "#/$defs/extensions"}
+$defs:
+  concept:
+    description: A named filter - a value vocabulary on a field, a predicate, or a distinct rule.
+    type: object
+    additionalProperties: false
+    required: [id, meaning]
+    properties:
+      id: {$ref: "#/$defs/slug"}
+      meaning: {$ref: "#/$defs/text"}
+      field: {$ref: "#/$defs/field_ref"}
+      values:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items:
+          oneOf:
+            - {$ref: "#/$defs/text"}
+            - {type: number}
+      predicate:
+        description: A boolean expression in the D-017 form over the layer's entities.
+        $ref: "#/$defs/text"
+      distinct:
+        description: Fields on which an entity's rows are made distinct before the layer joins to it.
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {$ref: "#/$defs/field_ref"}
+      required:
+        description: Every query must apply this concept.
+        type: boolean
+      evidence: {$ref: "#/$defs/evidence_refs"}
+    oneOf:
+      - required: [field]
+        not: {anyOf: [{required: [predicate]}, {required: [distinct]}]}
+      - required: [predicate]
+        not: {anyOf: [{required: [field]}, {required: [values]}, {required: [distinct]}]}
+      - required: [distinct]
+        not: {anyOf: [{required: [field]}, {required: [values]}, {required: [predicate]}]}
+  measure:
+    type: object
+    additionalProperties: false
+    required: [id, meaning, expression, aggregation, grain]
+    properties:
+      id: {$ref: "#/$defs/slug"}
+      meaning: {$ref: "#/$defs/text"}
+      expression:
+        description: An expression over <entity>.<field> columns, parsed by sqlglot (neutral dialect).
+        $ref: "#/$defs/text"
+      aggregation: {$vocab: measure_aggregation}
+      grain:
+        description: The entity a result row is at, and its key fields.
+        type: object
+        additionalProperties: false
+        required: [entity, fields]
+        properties:
+          entity: {$ref: "#/$defs/slug"}
+          fields:
+            type: array
+            minItems: 1
+            uniqueItems: true
+            items: {$ref: "#/$defs/field_name"}
+      time:
+        type: object
+        additionalProperties: false
+        required: [field, granularity]
+        properties:
+          field: {$ref: "#/$defs/field_ref"}
+          granularity: {$vocab: time_granularity}
+      formula_source:
+        description: The evidence id of the documented formula, where one exists.
+        $ref: "#/$defs/slug"
+      hazards: {$ref: "#/$defs/hazard_refs"}
+      suppressed: {$vocab: suppressed_handling}
+      companion:
+        description: With suppressed exclude, the measure that counts the withheld cells.
+        $ref: "#/$defs/slug"

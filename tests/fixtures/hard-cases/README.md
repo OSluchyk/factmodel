@@ -27,3 +27,7 @@ Small model repositories for what public datasets do not show (plan WP1.8b). Eac
 | [`no-subject`](no-subject/README.md) | - (D-015) | pass |
 | [`expression-join`](expression-join/README.md) | - (D-017) | pass |
 | [`subject-profile-without-anchor`](subject-profile-without-anchor/README.md) | - (D-015) | references |
+| [`layer-minimal`](layer-minimal/README.md) | - (D-019) | pass |
+| [`layer-free-sql-join`](layer-free-sql-join/README.md) | - (D-019) | schema, references |
+| [`layer-missing-hazard`](layer-missing-hazard/README.md) | - (D-019) | layers |
+| [`layer-unresolved-join`](layer-unresolved-join/README.md) | - (D-019) | layers |

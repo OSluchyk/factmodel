@@ -15,9 +15,7 @@ def _layer_entities(layer: Layer, relationships: dict[str, tuple[str, ...]]) -> 
     for ref in layer.joins or []:
         source = ref.partition(".")[0]
         found |= {source, *relationships.get(ref, ())}
-    found |= {f.entity for f in layer.filters or []}
-    found |= {c.field.partition(".")[0] for c in layer.concepts or []}
-    found |= {m.field.partition(".")[0] for m in layer.measures or []}
+    found |= {e.entity for e in layer.entities}
     return found
 
 

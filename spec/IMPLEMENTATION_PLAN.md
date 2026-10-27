@@ -267,6 +267,7 @@ Expected model (to be confirmed by evidence, not assumed):
 | `derived-not-authored` | a derived key appears in an authored file |
 | `projection` | residue > 0 |
 | `scope` | a transitive admission without a basis; a consumer-declared entity unreachable without an owner decision |
+| `layers` (M3, D-019) | a semantic layer breaks its contract: wrong current-row rule, unresolved or outside join, expression outside the layer, unlisted inherited hazard, missing companion, reviewed without an accepted equivalence run |
 | `registers` | closed escalation without answer source and evidence; reused or missing register ID |
 | `generated-fresh` | `generated/` differs from a fresh `fact project` |
 | `privacy` | an evidence or probe-result file contains a value that looks like an email, a personal identifier or a row sample |
@@ -441,6 +442,8 @@ Round 19: D-018 records the three retroactively and sets the rule for what a cha
 **Shape.** A layer has: id, purpose, consumer id, concepts (named filters over physical fields with a value vocabulary), measures (aggregations with grain and time column), joins (references to physical relationship keys only, never free SQL), hazards it inherits, status from `review_status` (`draft | reviewed | deprecated`, D-009).
 
 **Rule.** A layer can only reference physical facts by ID. The gate fails on a join or field not in the physical layer.
+
+Round 20 (D-019): the v1 shape is in `spec/VOCABULARY.md` section 9 (entities with current-row rules and default filters, concepts in three forms, measures with expression, grain, time, formula source, hazards and suppressed handling; consumer `interface`); the gate stage `layers`; schemas 2.0.0.
 
 ### WP3.2 Equivalence harness (1-2 rounds)
 

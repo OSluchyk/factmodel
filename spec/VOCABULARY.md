@@ -543,9 +543,46 @@ Example: `H-0001` "Order status `Returned` is set after refund, so a returned or
 
 ## 9. Semantic layers and consumers
 
-A **semantic layer** is a named set of concepts, measures and filters for one use case, built only on physical facts referenced by ID. It lists every current-row rule and default filter its consumer must apply, and the hazards it inherits. Details come in M3.
+A **semantic layer** is a named set of concepts and measures for one use case, built only on physical facts referenced by ID (D-019). It lives in `semantic/<layer-id>/layer.yaml`, next to its consumer.
 
-A **consumer** is the agent, SQL generator or knowledge base that reads a layer or a release. Each layer names one consumer and an equivalence corpus of synthetic or redacted requests; the layer is correct when the consumer gives the same answers as the platform at an agreed threshold. Details come in M3.
+| Key | Meaning | Example |
+| --- | --- | --- |
+| `entities` | The physical entities the layer reads, each with its `current_row_rule` (copied; the gate checks it equals the entity's) and `default_filters` (concept ids applied by default). | `{entity: qtrly, current_row_rule: null, default_filters: [disclosed]}` |
+| `joins` | Relationship keys only, never SQL; never an `unresolved` relationship; both ends among `entities`. | `qtrly.to-industry` |
+| `concepts` | Named filters. One of: `field` with `values` (a value vocabulary); `predicate` (a D-017 expression over the layer's entities); `distinct` (fields on which an entity's rows are made distinct before the layer joins to it). `required: true`: every query applies it. | `{id: disclosed, predicate: "qtrly.disclosure_code IS NULL", required: true}` |
+| `measures` | `expression` over `<entity>.<field>` columns (sqlglot, neutral dialect), `aggregation`, `grain` (`entity`, `fields`), `time` (`field`, `granularity`), `formula_source` (evidence id), `hazards`, `suppressed` and `companion`. | `{id: total_wages, expression: qtrly.total_qtrly_wages, aggregation: sum}` |
+| `hazards` | Every active hazard the layer inherits: one that applies to an entity or relationship the layer reads, or is listed on a field it uses. | `[H-0001, H-0002]` |
+
+```yaml vocabulary:measure_aggregation
+- sum
+- count
+- count_distinct
+- avg
+- min
+- max
+- none
+```
+
+`none`: the expression is already an aggregate or a ratio of aggregates (for example a weekly wage computed from summed wages and summed employment).
+
+```yaml vocabulary:time_granularity
+- day
+- month
+- quarter
+- year
+```
+
+**Suppressed cells.** What a measure does with rows the platform withheld (QCEW `disclosure_code = 'N'`): `exclude` (the measure applies a concept that leaves them out; `companion` names the measure that counts them), `include` (they count as stored), `not_applicable` (the platform withholds nothing).
+
+```yaml vocabulary:suppressed_handling
+- exclude
+- include
+- not_applicable
+```
+
+A **consumer** is the agent, SQL generator or knowledge base that reads a layer or a release (`semantic/<layer-id>/consumer.yaml`): `layers`, `corpus` (`location` relative to the layer folder, or a `pin` for a corpus kept outside the repository), `threshold` (default 0.9, D-021) and `interface` (`<path>:<function>`, the `compile(request, layer) -> sql` entry point, path relative to the model root). The layer is correct when the consumer gives the same answers as the platform at its threshold.
+
+The gate stage `layers` checks every rule in this section; a layer at `status: reviewed` needs an accepted equivalence run.
 
 **Release.** The readable copy of a model for consumers. Every file in the model repository gets exactly one disposition; a projected file keeps only allowlisted keys, and an undeclared key fails the release.
 

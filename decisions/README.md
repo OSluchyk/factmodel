@@ -42,3 +42,4 @@ Platform that forced it: none | <example or engine>
 | [D-016](D-016-public-domain-code-lists.md) | Public-domain code lists as fixtures | accepted | 2026-10-27 |
 | [D-017](D-017-join-expressions.md) | Join expressions | accepted | 2026-10-27 |
 | [D-018](D-018-additive-keys-ledger.md) | Additive keys need a ledger line, not a decision record | accepted | 2026-10-27 |
+| [D-019](D-019-semantic-layer-contract.md) | Semantic layer contract v1 | accepted | 2026-10-27 |

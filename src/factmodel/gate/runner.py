@@ -11,6 +11,7 @@ from factmodel.core.derived import Derived, derive_model, render
 from factmodel.io.yaml_strict import Document, loads
 from factmodel.model.loader import LoadIssue, LoadResult, Model, inspect_model
 from factmodel.model.types import Entity
+from factmodel.schemas.build import SCHEMA_VERSION
 
 # Loader stages after which the model is not safe to compute from.
 BLOCKING_STAGES = ("yaml", "schema", "derived-not-authored", "references")
@@ -35,6 +36,8 @@ class StageResult:
 @dataclass(frozen=True)
 class GateReport:
     stages: tuple[StageResult, ...]
+    # notes that never fail the gate, for example a schema_version difference
+    warnings: tuple[str, ...] = ()
 
     @property
     def passed(self) -> bool:
@@ -51,6 +54,8 @@ class GateReport:
             yield f"{stage.verdict}  {stage.name}{count}{note}"
             for issue in stage.issues:
                 yield f"      {issue}"
+        for warning in self.warnings:
+            yield f"WARN  {warning}"
         yield "gate: pass" if self.passed else "gate: fail"
 
 
@@ -130,4 +135,19 @@ def run_gate(root: Path, only: str | None = None) -> GateReport:
         else:
             ordered = tuple(sorted(issues, key=lambda i: (i.file, i.line, i.column, i.message)))
             results.append(StageResult(spec.name, FAIL if ordered else PASS, ordered))
-    return GateReport(tuple(results))
+    return GateReport(tuple(results), _version_warnings(ctx))
+
+
+def _version_warnings(ctx: GateContext) -> tuple[str, ...]:
+    """A model whose schema_version differs from the installed schemas while every file
+    validates: the gate passes and says so (spec/VERSIONING.md). Nothing rewrites the key."""
+    config = ctx.model.config
+    recorded = config.schema_version if config is not None else None
+    if recorded is None or recorded == SCHEMA_VERSION:
+        return ()
+    if any(issue.stage in ("yaml", "schema") for issue in ctx.result.issues):
+        return ()
+    return (
+        f"schema_version {recorded} differs from the installed schemas {SCHEMA_VERSION}; "
+        "every file validates (see fact migrate)",
+    )

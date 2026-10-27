@@ -53,8 +53,8 @@ def test_init_writes_the_layout(tmp_path: Path) -> None:
     assert config == {
         "kind": "model-config",
         "id": "shop-model",
-        "framework_version": "0.0.1",
-        "schema_version": "1.0.0",
+        "framework_version": "0.1.0",
+        "schema_version": "2.0.0",
         "profile": "retail",
         "anchor_entity": "customer",
         "treat_synthetic_as_representative": False,
@@ -72,7 +72,7 @@ def test_init_writes_the_layout(tmp_path: Path) -> None:
     ):
         assert (root / rel).is_file(), rel
     workflow = (root / ".github/workflows/fact-check.yml").read_text(encoding="utf-8")
-    assert "factmodel==0.0.1" in workflow and "{version}" not in workflow
+    assert "factmodel==0.1.0" in workflow and "{version}" not in workflow
     assert "retail" in (root / "CHANGELOG.md").read_text(encoding="utf-8")
 
 

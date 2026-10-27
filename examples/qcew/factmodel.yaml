@@ -1,7 +1,7 @@
 kind: model-config
 id: qcew
 framework_version: 0.0.1
-schema_version: 1.0.0
+schema_version: 2.0.0
 profile: statistics
 # QCEW is modelled on a synthetic seed of its two data tables (the code lists are the real BLS
 # files, D-016): probe results on the seed stand in for real data, as in Chinook (D-014).

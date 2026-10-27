@@ -1,0 +1,4 @@
+kind: consumer
+id: orders-sql
+meaning: Turns an order request into SQL.
+layers: [orders]

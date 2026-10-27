@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:profile:1.0.0",
+  "$id": "urn:factmodel:schema:profile:2.0.0",
   "title": "Profile",
   "description": "The domain layer over the core - subject, labels and ordered projection rules.",
   "type": "object",

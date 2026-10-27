@@ -2,6 +2,16 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-27 - Round 20: WP3.1 Semantic layer contract v1 (D-019)
+
+**Why.** M3 needs layers a consumer can rely on. QCEW shows that a layer must carry more than names: the filters every query applies, the level discriminator, the distinct-codes rule, measures defined by expression and documented formula, and the hazards behind them. The 1.0.0 placeholders could not hold that, so D-019 replaces them and the gate checks the new contract.
+
+- D-019; layer and consumer schemas v1; schemas 2.0.0. New vocabulary blocks `measure_aggregation`, `time_granularity` and `suppressed_handling`.
+- Gate stage `layers`, with a failing gate fixture, four hard cases and unit tests for each rule.
+- `fact check` warns, never fails, when a model's `schema_version` differs from the installed schemas while every file validates.
+- Framework version 0.1.0: M2 is closed, and 1.0.0 is M4.
+- `spec/CORE-CHANGES-M3.md` opens the M3 ledger.
+
 ## Unreleased - 2026-10-27 - Round 19: WP2.3 core freeze, schemas 1.0.0 (D-018)
 
 **Why.** Round 18 stopped the freeze over three additive keys without a decision record. The owner decided that only removals, renames and meaning changes need a decision record, so the freeze could close M2 without rewriting history or reverting keys that break no model.

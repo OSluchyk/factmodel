@@ -8,6 +8,7 @@ stages:
   - {name: derived-not-authored, module: factmodel.gate.stages.derived_not_authored, enabled: true}
   - {name: projection, module: factmodel.gate.stages.projection, enabled: true}
   - {name: scope, module: factmodel.gate.stages.scope, enabled: true}
+  - {name: layers, module: factmodel.gate.stages.layers, enabled: true}
   - {name: registers, module: factmodel.gate.stages.registers, enabled: true}
   - {name: triggers, module: factmodel.gate.stages.triggers, enabled: true}
   - {name: generated-fresh, module: factmodel.gate.stages.generated_fresh, enabled: true}

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:evidence:1.0.0",
+  "$id": "urn:factmodel:schema:evidence:2.0.0",
   "title": "Evidence",
   "description": "Standalone evidence records, shared by several files.",
   "type": "object",

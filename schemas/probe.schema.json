@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:probe:1.0.0",
+  "$id": "urn:factmodel:schema:probe:2.0.0",
   "title": "Probe",
   "description": "One generated data check. Returns counts and rates only.",
   "type": "object",

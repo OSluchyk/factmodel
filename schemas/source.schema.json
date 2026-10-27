@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:source:1.0.0",
+  "$id": "urn:factmodel:schema:source:2.0.0",
   "title": "Source",
   "description": "One entry in the source registry. Records how access is obtained, never a secret.",
   "type": "object",

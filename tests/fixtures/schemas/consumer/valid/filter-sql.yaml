@@ -6,3 +6,4 @@ corpus:
   location: semantic/customer-filters/corpus/
   synthetic: true
 threshold: 0.95
+interface: consumers/filter-sql/compile.py:compile

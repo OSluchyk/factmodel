@@ -1,0 +1,26 @@
+kind: layer
+id: employment
+purpose: Employment by area and industry.
+consumer: employment-sql
+status: draft
+entities:
+- entity: employment
+  current_row_rule: null
+- entity: areas
+  current_row_rule: null
+joins:
+- employment.in-region
+concepts:
+- id: area
+  meaning: The area a row is about.
+  field: areas.area_code
+measures:
+- id: employment
+  meaning: Employees, summed over the rows selected.
+  expression: employment.employment
+  aggregation: sum
+  grain: {entity: employment, fields: [area_code, industry_code, year]}
+  time: {field: employment.year, granularity: year}
+  suppressed: not_applicable
+  hazards: [H-0001]
+hazards: [H-0001]

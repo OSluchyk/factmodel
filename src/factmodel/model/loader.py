@@ -489,7 +489,10 @@ class _Checker:
                         self._need_entity(name, doc, ["tenants", i, axis, env, "entities", j], ref)
 
     def _layer(self, name: str, doc: Document) -> None:
+        """IDs a layer names resolve (D-019); the layers gate stage checks the rest."""
         data = doc.data
+        for i, item in enumerate(data.get("entities", []) or []):
+            self._need_entity(name, doc, ["entities", i, "entity"], item.get("entity"))
         for i, ref in enumerate(data.get("joins", []) or []):
             if ref not in self.relationships:
                 self.add(
@@ -499,16 +502,27 @@ class _Checker:
                     ["joins", i],
                     f"relationship {ref!r} not found",
                 )
-        for i, flt in enumerate(data.get("filters", []) or []):
-            self._need_entity(name, doc, ["filters", i, "entity"], flt.get("entity"))
-        for key in ("concepts", "measures"):
-            for i, item in enumerate(data.get(key, []) or []):
-                for fkey in ("field", "time_field"):
-                    ref = item.get(fkey)
-                    if isinstance(ref, str):
-                        entity, _, address = ref.partition(".")
-                        if self._need_entity(name, doc, [key, i, fkey], entity):
-                            self._need_field(name, doc, [key, i, fkey], entity, address)
+        refs: list[tuple[list[str | int], Any]] = []
+        for i, concept in enumerate(data.get("concepts", []) or []):
+            refs.append((["concepts", i, "field"], concept.get("field")))
+            for j, ref in enumerate(concept.get("distinct", []) or []):
+                refs.append((["concepts", i, "distinct", j], ref))
+        for i, measure in enumerate(data.get("measures", []) or []):
+            refs.append(
+                (["measures", i, "time", "field"], (measure.get("time") or {}).get("field"))
+            )
+            grain = measure.get("grain") or {}
+            entity = grain.get("entity")
+            if isinstance(entity, str) and self._need_entity(
+                name, doc, ["measures", i, "grain", "entity"], entity
+            ):
+                for j, fld in enumerate(grain.get("fields", []) or []):
+                    self._need_field(name, doc, ["measures", i, "grain", "fields", j], entity, fld)
+        for loc, ref in refs:
+            if isinstance(ref, str):
+                entity, _, address = ref.partition(".")
+                if self._need_entity(name, doc, loc, entity):
+                    self._need_field(name, doc, loc, entity, address)
 
     def _anchor(self, name: str, doc: Document) -> None:
         """The model binds an anchor exactly when its profile names a subject (D-012, D-015);

@@ -1,5 +1,7 @@
 title: Consumer
-description: The agent, SQL generator or knowledge base that proves a layer. Details come in M3.
+description: >-
+  The agent, SQL generator or knowledge base that proves a layer (D-019).
+  semantic/<layer-id>/consumer.yaml.
 type: object
 additionalProperties: false
 required: [kind, id, meaning, layers]
@@ -13,7 +15,9 @@ properties:
     minItems: 1
     uniqueItems: true
   corpus:
-    description: Where the equivalence corpus is. A real corpus stays outside the repository.
+    description: >-
+      Where the equivalence corpus is: a folder relative to the layer folder, or a pin for a
+      corpus kept outside the repository and read from a path given at run time.
     type: object
     additionalProperties: false
     required: [location]
@@ -22,7 +26,12 @@ properties:
       pin: {$ref: "#/$defs/pin"}
       synthetic: {type: boolean}
   threshold:
+    description: The share of corpus items that must pass (D-021); 0.9 when absent.
     type: number
     minimum: 0
     maximum: 1
+  interface:
+    description: "The compile(request, layer) -> sql entry point: <path>:<function>, path relative to the model root."
+    type: string
+    pattern: "^[^\\s:]+\\.py:[A-Za-z_][A-Za-z0-9_]*$"
   extensions: {$ref: "#/$defs/extensions"}

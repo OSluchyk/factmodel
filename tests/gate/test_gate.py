@@ -19,6 +19,7 @@ PLAN_STAGES = [
     "derived-not-authored",
     "projection",
     "scope",
+    "layers",
     "registers",
     "triggers",
     "generated-fresh",
@@ -84,9 +85,17 @@ def _layer(entity: str) -> dict[str, Any]:
         "purpose": "Sales by day.",
         "consumer": "sales-sql",
         "status": "draft",
+        "entities": [
+            {"entity": entity, "current_row_rule": None},
+            {"entity": "orders", "current_row_rule": None},
+            {"entity": "users", "current_row_rule": None},
+        ],
         "joins": ["orders.placed-by"],
         "concepts": [{"id": "day", "meaning": "The day.", "field": f"{entity}.id"}],
     }
+
+
+CONSUMER = {"kind": "consumer", "id": "sales-sql", "meaning": "Sales SQL.", "layers": ["sales"]}
 
 
 def _unreachable_entity() -> dict[str, Any]:
@@ -121,6 +130,7 @@ def test_unreachable_layer_entity_needs_an_owner_decision(tmp_path: Path) -> Non
     root = _copy_clean(tmp_path)
     _write(root, "physical/entities/daily_sales.yaml", _unreachable_entity())
     _write(root, "semantic/sales/layer.yaml", _layer("daily_sales"))
+    _write(root, "semantic/sales/consumer.yaml", CONSUMER)
     _project(root)
     report = run_gate(root)
     assert report.failed == ["scope"]

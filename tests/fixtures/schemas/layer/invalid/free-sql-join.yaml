@@ -5,20 +5,29 @@ id: customer-filters
 purpose: Select customers by what they ordered.
 consumer: filter-sql
 status: draft
-joins:
-- orders JOIN users ON true
-- order_items.part-of
-filters:
-- entity: orders
-  rule: status != 'Cancelled'
-  reason: Cancelled orders are not purchases.
+entities:
+  - entity: orders
+    current_row_rule: null
+    default_filters: [not-cancelled]
+  - entity: order_items
+    current_row_rule: null
+  - entity: products
+    current_row_rule: null
+joins: ["orders JOIN users ON true", order_items.part-of]
 concepts:
-- id: product-category
-  meaning: The category of a product sold.
-  field: products.category
+  - id: not-cancelled
+    meaning: Cancelled orders are not purchases.
+    predicate: orders.status <> 'Cancelled'
+    required: true
+  - id: product-category
+    meaning: The category of a product sold.
+    field: products.category
+    values: [Jeans, Tops]
 measures:
-- id: order-count
-  meaning: Number of orders.
-  aggregation: count_distinct
-  field: orders.order_id
-  time_field: orders.created_at
+  - id: order-count
+    meaning: Number of orders.
+    expression: orders.order_id
+    aggregation: count_distinct
+    grain: {entity: orders, fields: [order_id]}
+    time: {field: orders.created_at, granularity: day}
+    suppressed: not_applicable

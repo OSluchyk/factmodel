@@ -1,0 +1,19 @@
+# Fails the layers stage only: the current-row rule is not the entity's (null).
+kind: layer
+id: orders
+purpose: Orders by customer.
+consumer: orders-sql
+status: draft
+entities:
+- entity: orders
+  current_row_rule: status <> 'Cancelled'
+- entity: users
+  current_row_rule: null
+joins:
+- orders.placed-by
+measures:
+- id: order-count
+  meaning: Number of orders.
+  expression: orders.id
+  aggregation: count_distinct
+  grain: {entity: orders, fields: [id]}

@@ -1,0 +1,4 @@
+kind: consumer
+id: employment-sql
+meaning: Turns an employment request into SQL.
+layers: [employment]

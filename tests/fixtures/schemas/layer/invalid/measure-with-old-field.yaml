@@ -1,0 +1,34 @@
+# reason: the 1.0.0 measure field is gone (D-019)
+# expect: $.measures[0]
+kind: layer
+id: customer-filters
+purpose: Select customers by what they ordered.
+consumer: filter-sql
+status: draft
+entities:
+  - entity: orders
+    current_row_rule: null
+    default_filters: [not-cancelled]
+  - entity: order_items
+    current_row_rule: null
+  - entity: products
+    current_row_rule: null
+joins: [orders.placed-by, order_items.part-of]
+concepts:
+  - id: not-cancelled
+    meaning: Cancelled orders are not purchases.
+    predicate: orders.status <> 'Cancelled'
+    required: true
+  - id: product-category
+    meaning: The category of a product sold.
+    field: products.category
+    values: [Jeans, Tops]
+measures:
+  - id: order-count
+    meaning: Number of orders.
+    expression: orders.order_id
+    field: orders.order_id
+    aggregation: count_distinct
+    grain: {entity: orders, fields: [order_id]}
+    time: {field: orders.created_at, granularity: day}
+    suppressed: not_applicable

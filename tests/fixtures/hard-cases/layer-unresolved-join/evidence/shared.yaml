@@ -1,0 +1,8 @@
+kind: evidence
+records:
+- id: ev-confirmed
+  source: stats-db
+  pin: postgres:stats.public@2026-11-01
+  quote: catalog read
+  status: confirmed
+  read_on: '2026-11-01'

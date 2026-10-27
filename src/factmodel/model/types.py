@@ -473,25 +473,53 @@ class Profile(Strict):
 # Layers, consumers, release ---------------------------------------------------------------
 
 
-class LayerFilter(Strict):
+class LayerEntity(Strict):
     entity: Slug
-    rule: Text
-    reason: Text | None = None
+    current_row_rule: Text | None
+    default_filters: Annotated[list[Slug], Unique] | None = None
 
 
 class Concept(Strict):
     id: Slug
     meaning: Text
+    field: FieldRef | None = None
+    values: Annotated[list[Text | float], Field(min_length=1), Unique] | None = None
+    predicate: Text | None = None
+    distinct: Annotated[list[FieldRef], Field(min_length=1), Unique] | None = None
+    required: bool | None = None
+    evidence: EvidenceRefs | None = None
+
+    @model_validator(mode="after")
+    def _one_form(self) -> Self:
+        forms = [self.field is not None, self.predicate is not None, self.distinct is not None]
+        if forms.count(True) != 1:
+            raise ValueError("a concept is a field with values, a predicate or a distinct rule")
+        if self.values is not None and self.field is None:
+            raise ValueError("values belong to a field concept")
+        return self
+
+
+class MeasureGrain(Strict):
+    entity: Slug
+    fields: Annotated[list[FieldName], Field(min_length=1), Unique]
+
+
+class MeasureTime(Strict):
     field: FieldRef
-    values: Annotated[list[Text], Unique] | None = None
+    granularity: Annotated[str, _in("time_granularity")]
 
 
 class Measure(Strict):
     id: Slug
     meaning: Text
-    aggregation: Slug
-    field: FieldRef
-    time_field: FieldRef | None = None
+    expression: Text
+    aggregation: Annotated[str, _in("measure_aggregation")]
+    grain: MeasureGrain
+    time: MeasureTime | None = None
+    formula_source: Slug | None = None
+    hazards: HazardRefs | None = None
+    suppressed: Annotated[str, _in("suppressed_handling")] | None = None
+    companion: Slug | None = None
 
 
 class Layer(Strict):
@@ -500,8 +528,8 @@ class Layer(Strict):
     purpose: Text
     consumer: Slug
     status: ReviewStatus
+    entities: Annotated[list[LayerEntity], Field(min_length=1)]
     joins: Annotated[list[RelationshipRef], Unique] | None = None
-    filters: list[LayerFilter] | None = None
     concepts: list[Concept] | None = None
     measures: list[Measure] | None = None
     hazards: HazardRefs | None = None
@@ -523,6 +551,9 @@ class Consumer(Strict):
     layers: Annotated[list[Slug], Field(min_length=1), Unique]
     corpus: Corpus | None = None
     threshold: Annotated[float, Field(ge=0, le=1)] | None = None
+    interface: (
+        Annotated[str, StringConstraints(pattern=r"^[^\s:]+\.py:[A-Za-z_][A-Za-z0-9_]*$")] | None
+    ) = None
     extensions: Extensions | None = None
 
 

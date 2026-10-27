@@ -1,0 +1,17 @@
+kind: evidence
+records:
+- id: ev-rollup-annual-employment-area-titles-in-state-2026-10-27
+  source: qcew-sqlite
+  pin: sqlite:qcew@2026-10-27
+  measurement:
+    parents_compared: 74
+    exact: 47
+    within_rounding: 27
+    beyond: 0
+    parents_with_suppressed_child: 6
+    suppressed_parents_disclosed_children: 0
+  status: confirmed
+  read_on: '2026-10-27'
+  probe: rollup-annual-employment-area-titles-in-state
+  environment: local
+  data_quality: synthetic

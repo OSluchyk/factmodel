@@ -83,3 +83,18 @@ def test_reviewed_with_an_accepted_run_passes(tmp_path: Path) -> None:
         json.dumps({"layers": {"employment": {}}}), encoding="utf-8"
     )
     assert _codes(root) == []
+
+
+@pytest.mark.parametrize(
+    "rollup",
+    [
+        "{hierarchy: employment.in-area, field: nothing}",
+        "{hierarchy: employment.in-area, field: area_code, suppressed: area}",
+    ],
+)
+def test_a_bad_rollup_fails(tmp_path: Path, rollup: str) -> None:
+    root = _model(tmp_path)
+    _edit(
+        root, "  hazards: [H-0001]\nhazards", f"  hazards: [H-0001]\n  rollups: [{rollup}]\nhazards"
+    )
+    assert _codes(root) == ["bad_rollup"]

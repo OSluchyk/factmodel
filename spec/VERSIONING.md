@@ -25,7 +25,7 @@ After the freeze (M2), D-018 says what a change needs:
 
 An owner brief is not a decision record.
 
-Current schema version: **2.0.0** (round 20, D-019: the semantic layer contract v1 removes and renames layer keys). Frozen 1.0.0 was the M2 gate. The next removal or rename of a key is **3.0.0**; additive changes move it to 2.1.0 and on.
+Current schema version: **2.1.0**. 2.0.0 (round 20, D-019) was the semantic layer contract v1, which removes and renames layer keys; 2.1.0 (round 22, D-020) adds the optional measure key `rollups` and the probe kind `rollup`. Frozen 1.0.0 was the M2 gate. The next removal or rename of a key is **3.0.0**.
 
 ## `framework_version` in a model
 

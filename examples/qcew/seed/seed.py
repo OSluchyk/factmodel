@@ -15,7 +15,10 @@ What the seed reproduces, by design (the ids are those of the owner's `profile.m
 - H5: a parent disclosed while a child is suppressed (Kent County construction), and the
   reverse (Montgomery County retail suppressed, its children disclosed).
 - M5: annual values are the averages and sums of the quarterly ones (12-month employment
-  rounded half to even, annual wages the sum of the four quarters).
+  rounded half to even, annual wages the sum of the four quarters); every parent row (state,
+  NAICS parent, domain, total, ownership total, the MSA) is the sum of its children, so
+  monthly levels add up wherever nothing is suppressed, and annual averages only within
+  rounding (H-0001).
 - M1: `avg_wkly_wage` is quarterly wages divided by the mean of the three months, divided
   by 13, rounded half up.
 - size_code is 0 only (G4); own_code 4 never occurs (Q03).
@@ -139,10 +142,67 @@ def _base(rng: random.Random, key: Key) -> Base:
     return months, wages, estabs
 
 
+# Leaves the seed draws; every other row is a sum of these, as in the BLS files (M5).
+LEAF_INDUSTRIES = ("236115", "311811", "445110", "42")
+CHILDREN = {  # parent -> children, private ownership
+    "236": ("236115",),
+    "23": ("236",),
+    "311": ("311811",),
+    "31-33": ("311",),
+    "445": ("445110",),
+    "44-45": ("445",),
+    "1012": ("23",),
+    "1013": ("31-33",),
+    "1021": ("42", "44-45"),
+    "101": ("1012", "1013"),
+    "102": ("1021",),
+    "10": ("101", "102"),
+}
+STATE_OF = {
+    "10001": "10000",
+    "10003": "10000",
+    "10005": "10000",
+    "24015": "24000",
+    "24031": "24000",
+}
+MSA_COUNTIES = ("10003", "24015")
+
+
+def _add(parts: list[Base]) -> Base:
+    months = [sum(p[0][i] for p in parts) for i in range(12)]
+    wages = [sum(p[1][i] for p in parts) for i in range(4)]
+    estabs = [sum(p[2][i] for p in parts) for i in range(4)]
+    return months, wages, estabs
+
+
 def _measures() -> dict[str, dict[Key, Base]]:
-    """Per year and key: monthly employment, quarterly wages, quarterly establishments."""
+    """Per year and key: monthly employment, quarterly wages, quarterly establishments. Leaves
+    are drawn per county; parents (industries, ownership total, states, the MSA) are the sums
+    of their children, so the true values add up even where a row is shown suppressed."""
     rng = random.Random(SEED)
-    return {year: {key: _base(rng, key) for key in [*keys(), MSA_DETAIL]} for year in YEARS}
+    level = {key[:3]: key for key in [*keys(), MSA_DETAIL]}
+    out: dict[str, dict[Key, Base]] = {}
+    for year in YEARS:
+        values: dict[tuple[str, str, str], Base] = {}
+        for county in STATE_OF:
+            for own in ("1", "2", "3"):
+                values[(county, own, "10")] = _base(rng, level[(county, own, "10")])
+            for industry in LEAF_INDUSTRIES:
+                values[(county, "5", industry)] = _base(rng, level[(county, "5", industry)])
+            for parent in CHILDREN:  # in order: children come before their parents
+                parts = [values[(county, "5", child)] for child in CHILDREN[parent]]
+                values[(county, "5", parent)] = _add(parts)
+            totals = [values[(county, own, "10")] for own in ("1", "2", "3", "5")]
+            values[(county, "0", "10")] = _add(totals)
+        for state in sorted(set(STATE_OF.values())):
+            counties = [c for c, s in STATE_OF.items() if s == state]
+            for _, own, industry in [k for k in values if k[0] == counties[0]]:
+                parts = [values[(c, own, industry)] for c in counties]
+                values[(state, own, industry)] = _add(parts)
+        for own in ("0", "5"):
+            values[(MSA, own, "10")] = _add([values[(c, own, "10")] for c in MSA_COUNTIES])
+        out[year] = {key: values[key[:3]] for key in [*keys(), MSA_DETAIL]}
+    return out
 
 
 def _lq(rng: random.Random, n: int) -> list[float]:

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:trigger:2.0.0",
+  "$id": "urn:factmodel:schema:trigger:2.1.0",
   "title": "Trigger",
   "description": "An event and the follow-up it requires.",
   "type": "object",

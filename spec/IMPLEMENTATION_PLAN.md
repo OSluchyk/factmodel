@@ -461,6 +461,8 @@ Round 20 (D-019): the v1 shape is in `spec/VOCABULARY.md` section 9 (entities wi
 
 Round 21: `src/factmodel/equivalence/` (corpus, compare, harness), `fact equivalence run|accept|script`; tables are named by entity id in consumer and reference SQL and bound to physical names by the harness; executed offline on SQLite and DuckDB; outcomes and counts only.
 
+Round 22: layers `employment-wages` (QCEW) and `customer-purchases` (Chinook) at `status: draft`; probe kind `rollup` (D-020), declared on layer measures; the QCEW seed generated bottom-up.
+
 ### WP3.3 Reference consumer for the Chinook example (1-2 rounds)
 
 **Goal.** Prove the loop end to end with a real consumer.

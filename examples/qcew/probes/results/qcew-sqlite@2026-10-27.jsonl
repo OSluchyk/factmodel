@@ -34,6 +34,9 @@
 {"probe": "key-duplicates-size-titles", "measurement": {"duplicate_keys": 0}}
 {"probe": "null-rate-annual-annual-avg-emplvl", "measurement": {"row_count": 282, "non_null": 282}}
 {"probe": "null-rate-qtrly-month1-emplvl", "measurement": {"row_count": 1136, "non_null": 1136}}
+{"probe": "rollup-annual-employment-area-titles-in-state", "measurement": {"parents_compared": 74, "exact": 47, "within_rounding": 27, "beyond": 0, "parents_with_suppressed_child": 6, "suppressed_parents_disclosed_children": 0}}
+{"probe": "rollup-employment-month3-area-titles-in-state", "measurement": {"parents_compared": 296, "exact": 296, "within_rounding": 0, "beyond": 0, "parents_with_suppressed_child": 24, "suppressed_parents_disclosed_children": 0}}
+{"probe": "rollup-employment-month3-industry-titles-parent", "measurement": {"parents_compared": 216, "exact": 216, "within_rounding": 0, "beyond": 0, "parents_with_suppressed_child": 0, "suppressed_parents_disclosed_children": 8}}
 {"probe": "row-count-agglevel-titles", "measurement": {"row_count": 56}}
 {"probe": "row-count-annual", "measurement": {"row_count": 282}}
 {"probe": "row-count-area-titles", "measurement": {"row_count": 9458}}

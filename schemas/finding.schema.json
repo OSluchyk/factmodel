@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:finding:2.0.0",
+  "$id": "urn:factmodel:schema:finding:2.1.0",
   "title": "Finding",
   "description": "A register entry for a problem to fix.",
   "type": "object",

@@ -550,7 +550,7 @@ A **semantic layer** is a named set of concepts and measures for one use case, b
 | `entities` | The physical entities the layer reads, each with its `current_row_rule` (copied; the gate checks it equals the entity's) and `default_filters` (concept ids applied by default). | `{entity: qtrly, current_row_rule: null, default_filters: [disclosed]}` |
 | `joins` | Relationship keys only, never SQL; never an `unresolved` relationship; both ends among `entities`. | `qtrly.to-industry` |
 | `concepts` | Named filters. One of: `field` with `values` (a value vocabulary); `predicate` (a D-017 expression over the layer's entities); `distinct` (fields on which an entity's rows are made distinct before the layer joins to it). `required: true`: every query applies it. | `{id: disclosed, predicate: "qtrly.disclosure_code IS NULL", required: true}` |
-| `measures` | `expression` over `<entity>.<field>` columns (sqlglot, neutral dialect), `aggregation`, `grain` (`entity`, `fields`), `time` (`field`, `granularity`), `formula_source` (evidence id), `hazards`, `suppressed` and `companion`. | `{id: total_wages, expression: qtrly.total_qtrly_wages, aggregation: sum}` |
+| `measures` | `expression` over `<entity>.<field>` columns (sqlglot, neutral dialect), `aggregation`, `grain` (`entity`, `fields`), `time` (`field`, `granularity`), `formula_source` (evidence id), `hazards`, `suppressed` and `companion`; `rollups` (D-020): the hierarchy relationships the measure must add up over, each with the grain field that holds the code and the concept that marks a suppressed row. | `{id: total_wages, expression: qtrly.total_qtrly_wages, aggregation: sum}` |
 | `hazards` | Every active hazard the layer inherits: one that applies to an entity or relationship the layer reads, or is listed on a field it uses. | `[H-0001, H-0002]` |
 
 ```yaml vocabulary:measure_aggregation
@@ -641,6 +641,7 @@ Probe kinds:
 | `row_count` | Presence per tenant and environment. | Number of rows. |
 | `current_row_ties` | A current-row rule. | Keys with more than one row after the rule. |
 | `value_set` | A field against its declared `values`. | Count of distinct values, of distinct values outside the declared set (`outside_values`), and of rows holding one (`outside_rows`); nulls are never outside; never the values. |
+| `rollup` | A hierarchy relationship and a layer measure (D-020): each parent row against the sum of its children at one level, other key fields equal. | `parents_compared`, `exact`, `within_rounding` (at most one unit per child), `beyond` (among parents with nothing suppressed), `parents_with_suppressed_child`, `suppressed_parents_disclosed_children`. Confirms a hierarchy for aggregation. |
 
 All seven are built in M1 (WP1.7). Each probe is a sqlglot AST rendered per dialect with quoted identifiers; a probe that needs a construct a dialect lacks (a nested path outside BigQuery) lists it under `unsupported_on_dialect` and is never rendered for it.
 
@@ -672,6 +673,7 @@ duckdb: 'duckdb -noheader -list "${DUCKDB_DB:?set DUCKDB_DB to the database file
 - row_count
 - current_row_ties
 - value_set
+- rollup
 ```
 
 Example probe result: `probe: join-orders-users`, `measurement: {match_rate: 1.0, orphans_left: 0}`.

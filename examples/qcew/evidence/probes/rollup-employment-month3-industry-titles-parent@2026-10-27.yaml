@@ -1,0 +1,17 @@
+kind: evidence
+records:
+- id: ev-rollup-employment-month3-industry-titles-parent-2026-10-27
+  source: qcew-sqlite
+  pin: sqlite:qcew@2026-10-27
+  measurement:
+    parents_compared: 216
+    exact: 216
+    within_rounding: 0
+    beyond: 0
+    parents_with_suppressed_child: 0
+    suppressed_parents_disclosed_children: 8
+  status: confirmed
+  read_on: '2026-10-27'
+  probe: rollup-employment-month3-industry-titles-parent
+  environment: local
+  data_quality: synthetic

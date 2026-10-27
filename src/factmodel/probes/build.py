@@ -18,6 +18,14 @@ METRICS: dict[str, tuple[str, ...]] = {
     "row_count": ("row_count",),
     "current_row_ties": ("tied_keys",),
     "value_set": ("distinct_values", "outside_values", "outside_rows"),
+    "rollup": (
+        "parents_compared",
+        "exact",
+        "within_rounding",
+        "beyond",
+        "parents_with_suppressed_child",
+        "suppressed_parents_disclosed_children",
+    ),
 }
 
 
@@ -167,3 +175,100 @@ def value_set(physical: str, field: str, values: Sequence[str | float] | None = 
         flag = exp.Case(ifs=[exp.If(this=outside.copy(), true=exp.Literal.number(1))])
         selects.append(exp.alias_(exp.Count(this=flag), "outside_rows"))
     return exp.select(*selects).from_(table(physical, "t"))
+
+
+def _flag(predicate: exp.Expr | None) -> exp.Expr:
+    if predicate is None:
+        return exp.Literal.number(0)
+    one, zero = exp.Literal.number(1), exp.Literal.number(0)
+    return exp.Case(ifs=[exp.If(this=predicate, true=one)], default=zero)
+
+
+def _count_if(condition: exp.Expr, name: str) -> exp.Expr:
+    total = exp.Sum(this=_flag(condition))
+    return exp.alias_(exp.Coalesce(this=total, expressions=[exp.Literal.number(0)]), name)
+
+
+def rollup(
+    physical: str,
+    hierarchy: exp.Expr,
+    code_field: str,
+    equal_fields: Sequence[str],
+    value: exp.Expr,
+    suppressed: exp.Expr | None,
+) -> exp.Select:
+    """Each parent row against the sum of its children at one level (D-020).
+
+    ``hierarchy`` relates a child row ``c`` to its parent row ``p`` through ``code_field``;
+    ``equal_fields`` are the other key fields both share. ``value`` and ``suppressed`` are
+    written over alias ``t`` and requalified for each side. Counts only.
+    """
+
+    def side(node: exp.Expr, alias: str) -> exp.Expr:
+        node = node.copy()
+        for col in node.find_all(exp.Column):
+            col.set("table", exp.to_identifier(alias))
+        return node
+
+    on = exp.and_(
+        hierarchy.copy(),
+        *(exp.EQ(this=column("c", f), expression=column("p", f)) for f in equal_fields),
+    )
+    keys = [column("p", f) for f in [code_field, *equal_fields]]
+    pairs = (
+        exp.select(
+            exp.alias_(exp.Max(this=side(value, "p")), "parent_value"),
+            exp.alias_(
+                exp.Max(this=_flag(side(suppressed, "p") if suppressed else None)),
+                "parent_suppressed",
+            ),
+            exp.alias_(_count(), "children"),
+            exp.alias_(exp.Sum(this=side(value, "c")), "child_sum"),
+            exp.alias_(
+                exp.Sum(this=_flag(side(suppressed, "c") if suppressed else None)),
+                "suppressed_children",
+            ),
+        )
+        .from_(table(physical, "p"))
+        .join(table(physical, "c"), on=on)
+        .group_by(*keys)
+    )
+
+    def col(name: str) -> exp.Expr:
+        return exp.column(name, table="r")
+
+    zero = exp.Literal.number(0)
+    clean = exp.and_(
+        exp.EQ(this=col("parent_suppressed"), expression=zero),
+        exp.EQ(this=col("suppressed_children"), expression=zero.copy()),
+    )
+    diff = exp.Abs(this=exp.Sub(this=col("child_sum"), expression=col("parent_value")))
+    return exp.select(
+        _count_if(clean, "parents_compared"),
+        _count_if(
+            exp.and_(clean.copy(), exp.EQ(this=col("child_sum"), expression=col("parent_value"))),
+            "exact",
+        ),
+        _count_if(
+            exp.and_(
+                clean.copy(),
+                exp.GT(this=diff, expression=zero.copy()),
+                exp.LTE(this=diff.copy(), expression=col("children")),
+            ),
+            "within_rounding",
+        ),
+        _count_if(
+            exp.and_(clean.copy(), exp.GT(this=diff.copy(), expression=col("children"))), "beyond"
+        ),
+        _count_if(
+            exp.GT(this=col("suppressed_children"), expression=zero.copy()),
+            "parents_with_suppressed_child",
+        ),
+        _count_if(
+            exp.and_(
+                exp.EQ(this=col("parent_suppressed"), expression=exp.Literal.number(1)),
+                exp.LT(this=col("suppressed_children"), expression=col("children")),
+            ),
+            "suppressed_parents_disclosed_children",
+        ),
+    ).from_(pairs.subquery("r"))

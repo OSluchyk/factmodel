@@ -14,6 +14,7 @@ A full FactModel model of the Chinook schema (a digital media store), the refere
 | `drafts/` | What `fact draft` proposed from the SQLite catalog, before review. |
 | `physical/entities/` | The reviewed model: classes, grains, meanings, the anchor reference on Invoice, the scope admission on InvoiceLine. |
 | `probes/`, `evidence/probes/` | Generated probes, their results on SQLite, and the evidence intake wrote. |
+| `semantic/customer-purchases/` | The layer (D-019) and its consumer `filter-sql`: revenue, tracks bought and active customers by genre, billing country and period. |
 | `generated/` | Labels, scope and residue from `fact project`. |
 
 ## Expected shape

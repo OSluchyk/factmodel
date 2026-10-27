@@ -44,6 +44,16 @@ def _queries() -> dict[str, str]:
         "row_count": build.row_count("sales.Order"),
         "current_row_ties": build.current_row_ties("sales.CustomerVersion", ["CustomerId"], rule),
         "value_set": build.value_set("sales.Customer", "EmailHash"),
+        "rollup": build.rollup(
+            "sales.Revenue",
+            build.exp.EQ(
+                this=build.column("c", "ParentRegion"), expression=build.column("p", "Region")
+            ),
+            "Region",
+            ["Year"],
+            build.column("t", "Amount"),
+            build.exp.EQ(this=build.column("t", "Flag"), expression=build.exp.Literal.string("N")),
+        ),
     }
 
 

@@ -1,0 +1,55 @@
+# What customers bought: revenue, tracks and active customers by genre, country and period,
+# for a consumer that turns filter requests into SQL.
+kind: layer
+id: customer-purchases
+purpose: Revenue, tracks bought and active customers by genre, billing country and period.
+consumer: filter-sql
+status: draft
+entities:
+- entity: invoice_line
+  current_row_rule: null
+- entity: invoice
+  current_row_rule: null
+- entity: track
+  current_row_rule: null
+- entity: album
+  current_row_rule: null
+- entity: genre
+  current_row_rule: null
+joins:
+- invoice_line.to-invoice
+- invoice_line.to-track
+- track.to-album
+- track.to-genre
+concepts:
+- id: genre
+  meaning: The genre of a track bought; a track without a genre matches no genre.
+  field: genre.Name
+- id: country
+  meaning: The billing country of the invoice.
+  field: invoice.BillingCountry
+- id: period
+  meaning: The invoice date; requests give a range of dates.
+  field: invoice.InvoiceDate
+measures:
+- id: revenue
+  meaning: Money billed for the lines selected, unit price times quantity.
+  expression: invoice_line.UnitPrice * invoice_line.Quantity
+  aggregation: sum
+  grain: {entity: invoice_line, fields: [InvoiceLineId]}
+  time: {field: invoice.InvoiceDate, granularity: day}
+  suppressed: not_applicable
+- id: tracks_bought
+  meaning: Track units bought.
+  expression: invoice_line.Quantity
+  aggregation: sum
+  grain: {entity: invoice_line, fields: [InvoiceLineId]}
+  time: {field: invoice.InvoiceDate, granularity: day}
+  suppressed: not_applicable
+- id: customers_active
+  meaning: Customers with at least one invoice in the selection.
+  expression: invoice.CustomerId
+  aggregation: count_distinct
+  grain: {entity: invoice, fields: [InvoiceId]}
+  time: {field: invoice.InvoiceDate, granularity: day}
+  suppressed: not_applicable

@@ -94,8 +94,8 @@ def test_nine_findings_and_two_hazards_have_evidence() -> None:
     probe_backed = {
         f.id for f in model.findings.values() if any(model.evidence[e].probe for e in f.evidence)
     }
-    # R1 key_duplicates, V1 value_set, V2 null_rate, G2 value_set, V3 join_match
-    assert probe_backed == {"F-0001", "F-0002", "F-0003", "F-0006", "F-0008"}
+    # R1 key_duplicates, V1 value_set, V2 null_rate, G2 value_set, H5 rollup, V3 join_match
+    assert probe_backed == {"F-0001", "F-0002", "F-0003", "F-0006", "F-0007", "F-0008"}
     assert sorted(model.hazards) == ["H-0001", "H-0002"]
     assert all(h.evidence for h in model.hazards.values())
 
@@ -156,7 +156,7 @@ def test_sqlite_snapshot_and_probes_reproduce(tmp_path: Path) -> None:
 def test_generated_probes_are_committed_unchanged() -> None:
     model = load_model(QCEW)
     dialects = {"qcew-sqlite": "sqlite"}
-    docs, _ = generate(model.entities, model.sources, dialects)
+    docs, _ = generate(model.entities, model.sources, dialects, layers=model.layers)
     for doc in docs:
         path = QCEW / "probes" / f"{doc['id']}.yaml"
         assert path.read_text(encoding="utf-8") == GENERATED_HEADER + "\n" + dump_yaml(doc)
@@ -200,3 +200,24 @@ def test_postgres_gives_the_same_answers() -> None:
         with engine.begin() as conn:
             conn.execute(text(f'DROP SCHEMA "{schema}" CASCADE'))
         engine.dispose()
+
+
+def test_rollups_confirm_m5_and_measure_h5_and_h0001() -> None:
+    results = _results()
+    month3 = results["rollup-employment-month3-area-titles-in-state"]
+    assert month3["parents_compared"] == month3["exact"] > 0  # M5: monthly levels add up
+    assert month3["parents_with_suppressed_child"] > 0  # H5 measured
+    industry = results["rollup-employment-month3-industry-titles-parent"]
+    assert industry["exact"] == industry["parents_compared"] > 0
+    assert industry["suppressed_parents_disclosed_children"] > 0
+    annual = results["rollup-annual-employment-area-titles-in-state"]
+    assert annual["within_rounding"] > 0 and annual["beyond"] == 0  # H-0001: rounding only
+
+
+def test_layer_lists_required_concepts_and_hazards() -> None:
+    layer = load_model(QCEW).layers["employment-wages"]
+    required = {c.id for c in layer.concepts or [] if c.required}
+    assert {"disclosed", "level", "distinct_areas"} <= required
+    assert layer.hazards == ["H-0001", "H-0002"]
+    sums = [m for m in layer.measures or [] if m.expression.startswith("annual.")]
+    assert all(m.aggregation != "sum" for m in sums)  # never a sum of annual averages

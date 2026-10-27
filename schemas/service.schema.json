@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:service:2.0.0",
+  "$id": "urn:factmodel:schema:service:2.1.0",
   "title": "Service",
   "description": "One process that reads or writes entities.",
   "type": "object",

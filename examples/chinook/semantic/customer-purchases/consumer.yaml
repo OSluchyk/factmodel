@@ -1,0 +1,10 @@
+kind: consumer
+id: filter-sql
+meaning: >-
+  Turns a filter request (genre, billing country, period) into SQL using only the
+  customer-purchases layer.
+layers: [customer-purchases]
+corpus:
+  location: corpus
+  synthetic: true
+threshold: 0.9

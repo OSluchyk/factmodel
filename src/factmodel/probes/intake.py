@@ -143,7 +143,7 @@ def _cite(root: Path, model: Model, probe: Probe, ev_id: str, written: list[Path
     yaml = _yaml_rt()
     doc = yaml.load(path.read_text(encoding="utf-8"))
     target: Any = doc
-    if rest and probe.probe_kind in ("join_match", "fan_out"):
+    if rest and probe.probe_kind in ("join_match", "fan_out", "rollup"):
         target = next((r for r in doc.get("relationships", []) if r.get("key") == rest), None)
     elif rest:
         target = next(

@@ -340,7 +340,12 @@ def probe_generate(
     entities = {
         k: e for k, e in model.entities.items() if source_id is None or e.source == source_id
     }
-    docs, skipped = probes_module.generate(entities, model.sources, _dialects(model))
+    layers = {
+        k: layer
+        for k, layer in model.layers.items()
+        if source_id is None or any(entities.get(e.entity) for e in layer.entities)
+    }
+    docs, skipped = probes_module.generate(entities, model.sources, _dialects(model), layers=layers)
     changed = 0
     for doc in docs:
         changed += repo.write_text_if_changed(

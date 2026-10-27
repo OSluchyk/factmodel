@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:layer:2.0.0",
+  "$id": "urn:factmodel:schema:layer:2.1.0",
   "title": "Semantic layer",
   "description": "A named set of concepts and measures for one use case, built only on physical facts by ID (D-019). semantic/<layer-id>/layer.yaml.",
   "type": "object",
@@ -473,6 +473,32 @@
         "companion": {
           "description": "With suppressed exclude, the measure that counts the withheld cells.",
           "$ref": "#/$defs/slug"
+        },
+        "rollups": {
+          "description": "Hierarchies the measure must add up over (D-020); fact probe generate writes a rollup probe for each.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "hierarchy",
+              "field"
+            ],
+            "properties": {
+              "hierarchy": {
+                "$ref": "#/$defs/relationship_ref"
+              },
+              "field": {
+                "description": "The grain field that holds the hierarchy's code.",
+                "$ref": "#/$defs/field_name"
+              },
+              "suppressed": {
+                "description": "The layer concept whose predicate marks a suppressed row.",
+                "$ref": "#/$defs/slug"
+              }
+            }
+          }
         }
       }
     },

@@ -2,6 +2,22 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-27 - Round 22: WP3.3a Layers for QCEW and Chinook, rollup probe (D-020)
+
+**Why.** The layer contract has to carry real cases. For QCEW the layer must make the disclosure filter, the level, distinct area codes and formula-based measures impossible to miss. A hierarchy's arithmetic was never measured, so D-020 adds a probe that shows where QCEW's numbers add up and where suppression breaks them.
+
+- Layers:
+  - `examples/qcew/semantic/employment-wages/`, with consumer `measure-sql`;
+  - `examples/chinook/semantic/customer-purchases/`, with consumer `filter-sql`.
+  Both are at `status: draft`.
+- D-020: probe kind `rollup`, declared on layer measures (`rollups`) and cited on the hierarchy relationship. Schemas 2.1.0.
+- The QCEW seed is generated bottom-up, so parents are true sums of their children.
+- Measured on the seed:
+  - monthly levels add up exactly where nothing is suppressed (M5);
+  - annual averages add up only within rounding (H-0001);
+  - suppression shows in 24 and 8 parents (H5, F-0007).
+  F-0007 and H-0001 cite the results.
+
 ## Unreleased - 2026-10-27 - Round 21: WP3.2 Equivalence harness
 
 **Why.** A layer is only as good as the answers a consumer gets from it. The harness runs a consumer over a corpus of requests with known answers and compares the two. It keeps outcomes and counts, never rows, so a layer can be proven, accepted and protected against regressions.

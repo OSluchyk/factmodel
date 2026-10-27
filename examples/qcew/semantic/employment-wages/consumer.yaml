@@ -1,0 +1,10 @@
+kind: consumer
+id: measure-sql
+meaning: >-
+  Turns a structured request (measure, area, industry, ownership, period, level) into SQL
+  using only the employment-wages layer, and reports suppressed cells next to the measure.
+layers: [employment-wages]
+corpus:
+  location: corpus
+  synthetic: true
+threshold: 0.9

@@ -1,0 +1,168 @@
+# Employment and wages from QCEW, for a consumer that turns structured requests into SQL.
+# Every measure applies the disclosure filter and a fixed aggregation level; area names come
+# from distinct codes only; measures come from monthly levels, never sums of annual averages.
+kind: layer
+id: employment-wages
+purpose: Employment, wages and establishments by area, industry, ownership and period, as QCEW publishes them.
+consumer: measure-sql
+status: draft
+entities:
+- entity: qtrly
+  current_row_rule: null
+  default_filters: [disclosed, level]
+- entity: annual
+  current_row_rule: null
+  default_filters: [disclosed_annual, level_annual]
+- entity: area_titles
+  current_row_rule: null
+  default_filters: [distinct_areas]
+- entity: industry_titles
+  current_row_rule: null
+- entity: ownership_titles
+  current_row_rule: null
+joins:
+- qtrly.to-area
+- qtrly.to-industry
+- qtrly.to-ownership
+- annual.to-area
+- annual.to-industry
+- annual.to-ownership
+concepts:
+- id: disclosed
+  meaning: >-
+    Disclosed quarterly cells only. Suppressed cells (N) hold 0, not NULL (F-0003), and '-'
+    rows pad keys to four quarters (F-0002, F-0006); neither is a measured value.
+  predicate: qtrly.disclosure_code IS NULL
+  required: true
+  evidence: [ev-doc-disclosure, ev-doc-suppressed-zero, ev-doc-dash]
+- id: disclosed_annual
+  meaning: Disclosed annual cells only (F-0003).
+  predicate: annual.disclosure_code IS NULL
+  required: true
+  evidence: [ev-doc-disclosure, ev-doc-suppressed-zero]
+- id: suppressed
+  meaning: Quarterly cells withheld by BLS; counted by suppressed_cells, never summed.
+  predicate: qtrly.disclosure_code = 'N'
+- id: suppressed_annual
+  meaning: Annual cells withheld by BLS; counted by suppressed_cells_annual.
+  predicate: annual.disclosure_code = 'N'
+- id: level
+  meaning: >-
+    Every query fixes the aggregation level: agglvl_code's first digit is the geography, its
+    second the industry and ownership level. The industry code alone does not give the level
+    (F-0008), so mixing levels double counts.
+  field: qtrly.agglvl_code
+  required: true
+  evidence: [ev-doc-agglvl, ev-doc-v3]
+- id: level_annual
+  meaning: The aggregation level of annual rows (F-0008).
+  field: annual.agglvl_code
+  required: true
+  evidence: [ev-doc-agglvl, ev-doc-v3]
+- id: ownership
+  meaning: Ownership; 0 is the total of 1, 2, 3 and 5, so never add 0 to the others.
+  field: qtrly.own_code
+  values: ['0', '1', '2', '3', '5']
+- id: area_kind_county
+  meaning: Counties (and the unknown-location code ss999) by code shape.
+  predicate: substr(qtrly.area_fips, 3, 3) <> '000' AND substr(qtrly.area_fips, 1, 1) <= '9'
+- id: area_kind_state
+  meaning: States by code shape (state FIPS followed by 000).
+  predicate: substr(qtrly.area_fips, 3, 3) = '000' AND substr(qtrly.area_fips, 1, 1) <= '9'
+- id: area_kind_msa
+  meaning: MSAs and MicroSAs (C followed by four characters, not CS).
+  predicate: substr(qtrly.area_fips, 1, 1) = 'C' AND substr(qtrly.area_fips, 2, 1) <> 'S'
+- id: period
+  meaning: The quarter of a year a quarterly row is for.
+  field: qtrly.qtr
+  values: ['1', '2', '3', '4']
+- id: distinct_areas
+  meaning: >-
+    The area code list repeats 4,649 codes (F-0001); a join to it is a join to distinct
+    codes, or every row counts twice.
+  distinct: [area_titles.area_fips, area_titles.area_title]
+  required: true
+  evidence: [ev-doc-r1, ev-key-duplicates-area-titles-2026-10-27]
+measures:
+- id: employment_month3
+  meaning: Employment in the third month of the quarter.
+  expression: qtrly.month3_emplvl
+  aggregation: sum
+  grain: {entity: qtrly, fields: [area_fips, own_code, industry_code, size_code, year, qtr]}
+  time: {field: qtrly.qtr, granularity: quarter}
+  suppressed: exclude
+  companion: suppressed_cells
+  rollups:
+  - {hierarchy: area_titles.in-state, field: area_fips, suppressed: suppressed}
+  - {hierarchy: industry_titles.parent, field: industry_code, suppressed: suppressed}
+- id: employment_avg
+  meaning: Average employment over the three months of the quarter.
+  expression: (qtrly.month1_emplvl + qtrly.month2_emplvl + qtrly.month3_emplvl) / 3.0
+  aggregation: sum
+  grain: {entity: qtrly, fields: [area_fips, own_code, industry_code, size_code, year, qtr]}
+  time: {field: qtrly.qtr, granularity: quarter}
+  suppressed: exclude
+  companion: suppressed_cells
+- id: total_wages
+  meaning: Total wages paid in the quarter.
+  expression: qtrly.total_qtrly_wages
+  aggregation: sum
+  grain: {entity: qtrly, fields: [area_fips, own_code, industry_code, size_code, year, qtr]}
+  time: {field: qtrly.qtr, granularity: quarter}
+  suppressed: exclude
+  companion: suppressed_cells
+- id: avg_weekly_wage
+  meaning: >-
+    Average weekly wage by the documented formula: wages over the mean of the three monthly
+    levels, over 13, from summed levels; never an average of avg_wkly_wage (H-0002).
+  expression: >-
+    SUM(qtrly.total_qtrly_wages) / ((SUM(qtrly.month1_emplvl) + SUM(qtrly.month2_emplvl)
+    + SUM(qtrly.month3_emplvl)) / 3.0) / 13
+  aggregation: none
+  grain: {entity: qtrly, fields: [area_fips, own_code, industry_code, size_code, year, qtr]}
+  time: {field: qtrly.qtr, granularity: quarter}
+  formula_source: ev-doc-m1
+  hazards: [H-0002]
+  suppressed: exclude
+  companion: suppressed_cells
+- id: establishments
+  meaning: Establishments in the quarter; filled even on suppressed rows (F-0003).
+  expression: qtrly.qtrly_estabs
+  aggregation: sum
+  grain: {entity: qtrly, fields: [area_fips, own_code, industry_code, size_code, year, qtr]}
+  time: {field: qtrly.qtr, granularity: quarter}
+  suppressed: include
+- id: oty_employment_change
+  meaning: Change in third-month employment against the same quarter a year earlier.
+  expression: qtrly.oty_month3_emplvl_chg
+  aggregation: sum
+  grain: {entity: qtrly, fields: [area_fips, own_code, industry_code, size_code, year, qtr]}
+  time: {field: qtrly.qtr, granularity: quarter}
+  suppressed: exclude
+  companion: suppressed_cells
+- id: suppressed_cells
+  meaning: Quarterly cells in the selection that BLS withheld; reported next to every measure.
+  expression: CASE WHEN qtrly.disclosure_code = 'N' THEN 1 ELSE 0 END
+  aggregation: sum
+  grain: {entity: qtrly, fields: [area_fips, own_code, industry_code, size_code, year, qtr]}
+  suppressed: include
+- id: annual_employment
+  meaning: >-
+    Annual average employment, read at its own grain only. Annual averages do not add up
+    across areas or industries (H-0001); aggregate from monthly levels instead.
+  expression: annual.annual_avg_emplvl
+  aggregation: none
+  grain: {entity: annual, fields: [area_fips, own_code, industry_code, size_code, year, qtr]}
+  time: {field: annual.year, granularity: year}
+  hazards: [H-0001]
+  suppressed: exclude
+  companion: suppressed_cells_annual
+  rollups:
+  - {hierarchy: area_titles.in-state, field: area_fips, suppressed: suppressed_annual}
+- id: suppressed_cells_annual
+  meaning: Annual cells in the selection that BLS withheld.
+  expression: CASE WHEN annual.disclosure_code = 'N' THEN 1 ELSE 0 END
+  aggregation: sum
+  grain: {entity: annual, fields: [area_fips, own_code, industry_code, size_code, year, qtr]}
+  suppressed: include
+hazards: [H-0001, H-0002]

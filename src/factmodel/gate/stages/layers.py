@@ -30,6 +30,9 @@ HINTS = {
     "missing_companion": "name the measure that counts the suppressed cells in companion",
     "missing_evidence": "cite an existing evidence record",
     "not_accepted": "run fact equivalence run and fact equivalence accept, or keep status draft",
+    "bad_rollup": (
+        "name a resolved single-target hierarchy, a grain field and a predicate concept (D-020)"
+    ),
 }
 ACCEPTED = Path("equivalence") / "accepted.json"
 
@@ -177,6 +180,19 @@ def _check(ctx: GateContext, layer: Layer, path: str) -> Iterator[LoadIssue]:
             if hazard not in listed:
                 message = f"measure {measure.id!r} names {hazard}, which the layer does not list"
                 yield issue("measure_hazard", ["measures", i, "hazards", j], message)
+        for j, rollup in enumerate(measure.rollups or []):
+            loc = ["measures", i, "rollups", j]
+            pair = model.relationships.get(rollup.hierarchy)
+            if pair is None or pair[1].status is not None or pair[1].is_target_set:
+                message = f"hierarchy {rollup.hierarchy!r} is missing, unresolved or a target set"
+                yield issue("bad_rollup", [*loc, "hierarchy"], message)
+            if rollup.field not in measure.grain.fields:
+                message = f"rollup field {rollup.field!r} is not a grain field"
+                yield issue("bad_rollup", [*loc, "field"], message)
+            marker = next((c for c in layer.concepts or [] if c.id == rollup.suppressed), None)
+            if rollup.suppressed is not None and (marker is None or marker.predicate is None):
+                message = f"suppressed {rollup.suppressed!r} is not a predicate concept"
+                yield issue("bad_rollup", [*loc, "suppressed"], message)
         if measure.suppressed == "exclude" and measure.companion not in measures:
             message = f"measure {measure.id!r} excludes suppressed cells but names no companion"
             yield issue("missing_companion", ["measures", i], message)

@@ -509,6 +509,12 @@ class MeasureTime(Strict):
     granularity: Annotated[str, _in("time_granularity")]
 
 
+class Rollup(Strict):
+    hierarchy: RelationshipRef
+    field: FieldName
+    suppressed: Slug | None = None
+
+
 class Measure(Strict):
     id: Slug
     meaning: Text
@@ -520,6 +526,7 @@ class Measure(Strict):
     hazards: HazardRefs | None = None
     suppressed: Annotated[str, _in("suppressed_handling")] | None = None
     companion: Slug | None = None
+    rollups: Annotated[list[Rollup], Field(min_length=1)] | None = None
 
 
 class Layer(Strict):

@@ -17,6 +17,7 @@ Source: U.S. Bureau of Labor Statistics, Quarterly Census of Employment and Wage
 | `evidence/documents.yaml` | Quotes from the BLS pages and the owner's profile, each with its query id. |
 | `probes/`, `evidence/probes/` | 44 generated probes and 2 written by hand (`null_rate`, V2), their SQLite results, and the evidence intake wrote. |
 | `registers/` | Findings F-0001 to F-0009, hazards H-0001 and H-0002. |
+| `semantic/employment-wages/` | The layer (D-019) and its consumer `measure-sql`: required concepts `disclosed`, `level` and `distinct_areas`; measures from monthly levels; rollups over county to state and NAICS parent (D-020). |
 | `generated/` | Labels, scope and residue from `fact project`. |
 
 ## Expected shape

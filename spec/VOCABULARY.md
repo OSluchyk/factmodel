@@ -34,7 +34,7 @@ Every model file declares its kind in a top-level `kind:` key. One kind, one sch
 
 | Kind | Meaning | Lives in (model repository) |
 | --- | --- | --- |
-| `model-config` | The root file: framework version, profile, adapters, consumers. | `factmodel.yaml` |
+| `model-config` | The root file: framework version, profile, adapters, consumers. `framework_version` is the release that created or last migrated the model; the schema version is separate (`spec/VERSIONING.md`, `fact migrate`). | `factmodel.yaml` |
 | `source` | One entry in the source registry. | `sources/` |
 | `entity` | One table, view or object on the platform, with its fields and outgoing relationships. | `physical/entities/` |
 | `service` | One process that reads or writes entities. | `physical/services/` |

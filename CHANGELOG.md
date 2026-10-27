@@ -2,6 +2,16 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-27 - Round 18: WP2.3 core-change ledger, versioning, `fact migrate` (freeze stopped)
+
+**Why.** The schemas may freeze only when every core change since M1 has a decision record naming the platform that forced it. The ledger is how that is checked. It found three contract changes without a record, so the freeze waits for the owner instead of being declared.
+
+- `spec/CORE-CHANGES-M2.md`: 26 changes since `74013ed`, each with its record. Three have none: snapshot pins (round 8), optional probe keys (round 11), field `values` (round 14).
+- `spec/VERSIONING.md`: schema and framework versions are separate; semver rules for the schemas; how `framework_version` is used.
+- `fact migrate` reports a model's framework version, the installed schema version and whether every file validates. It writes nothing.
+- `.gitattributes` keeps the BLS code lists byte for byte. Round 17's commit had stored them with LF line endings (`core.autocrlf=input`), so they were not the published files until this round.
+- Schemas stay at 0.1.0.
+
 ## Unreleased - 2026-10-27 - Round 17: WP2.2 QCEW example on SQLite, PostgreSQL and DuckDB
 
 **Why.** The core's second domain has to be modelled end to end, defects included, before the schemas freeze. QCEW shows what Chinook cannot: no subject, prefix hierarchies, and real code lists whose flaws must become measured findings.

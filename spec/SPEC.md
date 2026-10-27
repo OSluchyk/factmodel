@@ -207,6 +207,7 @@ One command, `fact`, with a few verbs. It is a small Python package run through 
 | `fact probe run --source <id>` | Run probes through the `sql` adapter where the source names a `dsn_env` (counts only) |
 | `fact probe intake <file>` | Turn probe output into evidence and findings |
 | `fact check` | Run the gate; exit 0 only when every stage passes |
+| `fact migrate` | Report the schema version a model uses and whether the installed framework reads it (`spec/VERSIONING.md`) |
 | `fact project` | Recompute derived values (labels, scope, generated tables) |
 | `fact release --out <dir>` | Build the readable release copy |
 | `fact export --to osi\|dbt\|cube` | Export a semantic layer to another tool |

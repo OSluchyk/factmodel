@@ -1,0 +1,3 @@
+# Public-domain code lists are committed byte for byte as published (D-016); BLS files use
+# CRLF line endings, so git must not convert them.
+examples/*/sources/codelists/*.csv -text

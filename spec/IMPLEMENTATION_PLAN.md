@@ -424,6 +424,8 @@ Chosen (rounds 16 and 17): the BLS QCEW with NAICS, public domain. `retail` does
 - Bump schemas to `1.0.0`; write `spec/VERSIONING.md` (semver for schemas: removing or renaming a key is major; adding an optional key is minor; fixing a description is patch).
 - Add `fact migrate` stub that reports which schema version a model uses.
 
+Round 18: `spec/CORE-CHANGES-M2.md` (the ledger), `spec/VERSIONING.md` and `fact migrate` are done. The bump to 1.0.0 waits: the ledger found three contract changes without a decision record (snapshot pins, optional probe keys, field `values`), which the brief makes a stop condition.
+
 **Acceptance (M2 gate).** No core change without a decision record naming the platform that forced it; both examples green on the frozen schemas.
 
 ---

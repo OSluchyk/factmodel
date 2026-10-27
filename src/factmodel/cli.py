@@ -6,7 +6,7 @@ from typing import Annotated, Any
 
 import typer
 
-from factmodel import __version__, repo, vocabulary
+from factmodel import __version__, migrate, repo, vocabulary
 from factmodel import probes as probes_module
 from factmodel import status as status_module
 from factmodel import sync as sync_module
@@ -173,6 +173,16 @@ def source_add(
         typer.echo(str(error), err=True)
         raise typer.Exit(1) from error
     typer.echo(f"wrote {path.relative_to(root).as_posix()}")
+
+
+@app.command("migrate")
+def migrate_command(root: RootOption = Path(".")) -> None:
+    """Report the model's framework version, the installed schema version, and compatibility."""
+    result = migrate.report(root)
+    for line in result.lines():
+        typer.echo(line)
+    if not result.compatible:
+        raise typer.Exit(1)
 
 
 @app.command("status")

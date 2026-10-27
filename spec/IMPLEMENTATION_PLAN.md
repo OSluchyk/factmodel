@@ -15,7 +15,7 @@ Companion to `spec/SPEC.md`. Where the two disagree, the spec wins and this plan
 
 1. **Clean room.** No code, schema names, tickets, data or documents from any employer or client. Concepts only, written from scratch. Examples use public datasets.
 2. **English everywhere:** code, comments, docs, commit messages.
-3. **No data in the repository.** Test fixtures are synthetic or exported metadata from public datasets. Probe outputs are counts only.
+3. **No data in the repository.** Test fixtures are synthetic or exported metadata from public datasets. Probe outputs are counts only. One exception (D-016): a public-domain code list under 1 MB may be committed unchanged under `examples/<model>/sources/codelists/`, with a `SOURCES.md` line giving its URL, read date and required citation, when it holds no personal data.
 4. **Deterministic core.** The core package does no network or database I/O. Adapters do I/O and write files; the core reads files.
 5. **Schemas are normative.** JSON Schema files in `schemas/` define every file kind. Python models are checked against them in tests, never the other way round.
 6. **Every gate stage has a failing fixture.** A check that has never failed is not trusted.

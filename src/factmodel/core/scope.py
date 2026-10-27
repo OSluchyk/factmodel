@@ -1,10 +1,15 @@
-"""Subject scope closure (spec/ALGORITHMS.md, algorithm 2; D-007)."""
+"""Subject scope closure (spec/ALGORITHMS.md, algorithm 2; D-007).
+
+A model whose profile names no subject has no anchor (D-015): every entity is ``none`` and
+reachability does not apply.
+"""
 
 from collections import deque
 from collections.abc import Mapping
 from dataclasses import dataclass
 
 from factmodel.core.status import effective_status, usable
+from factmodel.model import joins
 from factmodel.model.types import Entity, EvidenceRecord, Relationship
 
 
@@ -14,7 +19,8 @@ class ScopeRow:
     subject_scope: str
     basis: str | None
     via: tuple[str, ...]
-    reachable: bool
+    # None when the model has no anchor (D-015)
+    reachable: bool | None
 
     @property
     def scoped(self) -> bool:
@@ -69,6 +75,16 @@ def _rejection(
         return "no_current_row_rule"
     if admission.basis == "unique_target" and rel.cardinality not in ("many_to_one", "one_to_one"):
         return "non_unique_target"
+    if admission.basis == "unique_target" and isinstance(rel.join, str) and target is not None:
+        keys = [target.keys.primary, *(target.keys.unique or [])]
+        try:
+            unique = not joins.parse(rel.join).expression or joins.unique_right_side(
+                rel.join, source.id, target.id, keys
+            )
+        except joins.JoinError:  # reported by the loader
+            unique = False
+        if not unique:
+            return "non_unique_target"
     return None
 
 
@@ -105,9 +121,12 @@ def _reachable(
 
 
 def compute_scope(
-    entities: Mapping[str, Entity], evidence: Mapping[str, EvidenceRecord], anchor: str
+    entities: Mapping[str, Entity], evidence: Mapping[str, EvidenceRecord], anchor: str | None
 ) -> ScopeResult:
     """Compute subject scope, via-path, basis and reachability for every entity."""
+    if anchor is None:
+        rows = {e: ScopeRow(e, "none", None, (), None) for e in sorted(entities)}
+        return ScopeResult(rows, ())
     rejections: list[Rejection] = []
     level: dict[str, int] = {}
     via: dict[str, tuple[str, ...]] = {}

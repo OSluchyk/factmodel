@@ -2,6 +2,15 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-27 - Round 16: WP2.2a D-015 to D-017, statistics profile, hard cases
+
+**Why.** QCEW, the second domain, has a shape Chinook does not: no row is about an individual, its hierarchies are code prefixes rather than equal fields, and its code lists are public data the example needs as they are. The core could not express any of this, so three decisions were recorded first and the core changed only as far as they allow.
+
+- D-015: a profile may have no subject; the model then binds no anchor, every entity is `none`, and `anchor_reference`, `scope_admission` and subject facets are loader errors. `fact init` writes no anchor for such a profile.
+- D-016: public-domain code lists under 1 MB may be committed unchanged in an example, with a source line and citation (plan ground rule 3).
+- D-017: a join may be a boolean SQL expression over the two ends; the loader parses and checks it, probes render it per dialect with one-end conjuncts as filters, and `unique_target` needs a target key on the target side.
+- New `statistics` profile (labels `dimension`, `hierarchy`, `lineage`, `representation`, `unresolved`) and hard cases `no-subject`, `expression-join`, `subject-profile-without-anchor`.
+
 ## Unreleased - 2026-10-27 - Round 15: WP2.1 Adopter guides, plugin packaging, DuckDB
 
 **Why.** M2 asks whether the core holds beyond the engines it was built on. Adopters need a written path to BigQuery that never hands the agent a credential, third parties need a proven way to add an adapter, and a third local engine tests the `sql` adapter on a dialect nobody tuned it for.

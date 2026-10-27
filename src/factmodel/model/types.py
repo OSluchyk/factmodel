@@ -151,7 +151,7 @@ class ModelConfig(Strict):
     title: Text | None = None
     framework_version: Annotated[str, StringConstraints(pattern=r"^[0-9]+\.[0-9]+\.[0-9]+$")]
     profile: Slug
-    anchor_entity: Slug
+    anchor_entity: Slug | None = None
     adapters: Slugs | None = None
     consumers: Slugs | None = None
     environments: Slugs | None = None
@@ -458,7 +458,7 @@ class Profile(Strict):
     kind: Literal["profile"]
     id: Slug
     meaning: Text | None = None
-    subject: Text
+    subject: Text | None = None
     labels: Annotated[list[Slug], Field(min_length=1), Unique, AfterValidator(_no_withheld)]
     vocabularies: dict[Slug, Annotated[list[Slug], Field(min_length=1), Unique]] | None = None
     rules: Annotated[list[Rule], Field(min_length=1)]

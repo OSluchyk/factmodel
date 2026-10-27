@@ -374,9 +374,9 @@
       "uniqueItems": true
     },
     "join": {
-      "description": "<entity>.<field> = <entity>.<field>, joined with AND for composite keys",
+      "description": "<entity>.<field> = <entity>.<field>, joined with AND for composite keys; or a boolean SQL expression in sqlglot's neutral dialect whose columns are all qualified by the source and target entity ids (D-017). One line; the loader parses it.",
       "type": "string",
-      "pattern": "^[^\\s=]+\\.[^\\s=]+ = [^\\s=]+\\.[^\\s=]+( AND [^\\s=]+\\.[^\\s=]+ = [^\\s=]+\\.[^\\s=]+)*$"
+      "pattern": "^\\S(.*\\S)?$"
     },
     "measurement": {
       "description": "Counts and rates only, never values or identifiers.",

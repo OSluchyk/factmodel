@@ -85,7 +85,7 @@ The model is plain files (YAML and Markdown) in git. Six concepts carry it. Ever
 
 **Registers.** Findings (problems to fix), escalations (questions for people, closed only by an answer with evidence), hazards (permanent behaviour a reader must know), decisions (why the model is the way it is, including retractions).
 
-**Profile.** The domain layer over the neutral core: the anchor entity (customer, patient, account), vocabularies, and ordered projection rules that turn facets into domain labels. Example profiles: retail, healthcare payer, banking.
+**Profile.** The domain layer over the neutral core: the subject (customer, patient, account; the model binds the anchor entity that holds it, D-012), vocabularies, and ordered projection rules that turn facets into domain labels. A profile may have no subject when no row is about an individual (D-015). Example profiles: retail, statistics, healthcare payer, banking.
 
 ## Architecture
 
@@ -223,7 +223,7 @@ factmodel/                  framework
   spec/                     this specification, versioned
   schemas/                  JSON Schema per file kind
   src/factmodel/            Python package: core, projection, gate, probe, release, export, adapters
-  profiles/                 retail/, healthcare-payer/, ... (examples)
+  profiles/                 retail/, statistics/, ... (examples)
   agent/                    AGENTS.md template, skills/, prompt templates
   examples/chinook/         a full model of the Chinook schema on SQLite and PostgreSQL
   decisions/, rounds/       decision records; briefs and reports

@@ -16,6 +16,7 @@ from pydantic import ValidationError
 
 from factmodel import vocabulary
 from factmodel.io.yaml_strict import Document, YamlLoadError, load, loads
+from factmodel.model import joins
 from factmodel.model import types as t
 from factmodel.resources import framework_text
 from factmodel.schemas.build import schema_for
@@ -46,7 +47,14 @@ HINTS = {
     "unknown_label": "add the label to the profile's labels",
     "anchor_class": "bind anchor_entity to the entity of class data that holds the subjects",
     "missing_dialect": "set dialect on the source to a sqlglot dialect name",
-    "bad_join": "write <source>.<field> = <target>.<field> with fields of both entities",
+    "bad_join": (
+        "write <source>.<field> = <target>.<field>, or a condition whose columns are all "
+        "<entity>.<field> of the two ends (D-017)"
+    ),
+    "missing_anchor": "set anchor_entity to the entity that holds the profile's subjects (D-012)",
+    "anchor_without_subject": "remove anchor_entity; the profile names no subject (D-015)",
+    "no_subject": "remove it; the profile names no subject, so nothing is scoped (D-015)",
+    "subject_facet": "remove the facet; the profile names no subject (D-015)",
 }
 
 
@@ -228,13 +236,6 @@ def _walk_refs(node: Any, location: list[str | int]) -> Iterator[tuple[list[str 
             yield from _walk_refs(item, [*location, i])
 
 
-def _join_sides(join: str) -> Iterable[tuple[str, str]]:
-    for condition in join.split(" AND "):
-        for side in condition.split(" = "):
-            entity_id, _, address = side.partition(".")
-            yield entity_id, address
-
-
 class _Checker:
     """Reference checks over the raw data of every file that has a known kind."""
 
@@ -300,6 +301,10 @@ class _Checker:
         return index
 
     def run(self, profile: dict[str, Any] | None) -> None:
+        # Whether the profile names a subject (D-015); unknown without a profile.
+        self.has_subject: bool | None = None
+        if profile is not None and isinstance(profile["doc"].data, dict):
+            self.has_subject = profile["doc"].data.get("subject") is not None
         for name, doc in self.docs:
             if not isinstance(doc.data, dict) or doc.data.get("kind") == "profile":
                 continue
@@ -409,6 +414,9 @@ class _Checker:
         anchor = data.get("anchor_reference")
         if isinstance(anchor, dict) and isinstance(anchor.get("field"), str):
             self._need_field(name, doc, ["anchor_reference", "field"], entity_id, anchor["field"])
+        if anchor is not None and self.has_subject is False:
+            message = "anchor_reference in a model whose profile names no subject"
+            self.add("no_subject", name, doc, ["anchor_reference"], message)
         seen: set[str] = set()
         for i, rel in enumerate(data.get("relationships", []) or []):
             key = rel.get("key")
@@ -421,6 +429,9 @@ class _Checker:
                     f"relationship key {key!r} repeats in {entity_id!r}",
                 )
             seen.add(key)
+            if rel.get("scope_admission") is not None and self.has_subject is False:
+                message = "scope_admission in a model whose profile names no subject"
+                self.add("no_subject", name, doc, ["relationships", i, "scope_admission"], message)
             to = rel.get("to")
             targets = [to] if isinstance(to, str) else list(to or [])
             joins = rel.get("join")
@@ -450,14 +461,20 @@ class _Checker:
     def _join(
         self, name: str, doc: Document, loc: list[str | int], join: str, source: str, target: str
     ) -> None:
-        sides = list(_join_sides(join))
-        used = {entity for entity, _ in sides}
+        try:
+            parsed = joins.parse(join)
+            if source == target and parsed.expression:
+                joins.condition(join, source, target, "s", "t")
+        except joins.JoinError as error:
+            self.add("bad_join", name, doc, loc, f"join {join!r}: {error}")
+            return
+        used = parsed.entities
         if not used <= {source, target} or (source != target and used != {source, target}):
             self.add(
                 "bad_join", name, doc, loc, f"join {join!r} must use {source!r} and {target!r}"
             )
             return
-        for entity, address in sides:
+        for entity, address in dict.fromkeys(parsed.columns):
             self._need_field(name, doc, loc, entity, address)
 
     def _tenants(self, name: str, doc: Document) -> None:
@@ -492,8 +509,16 @@ class _Checker:
                             self._need_field(name, doc, [key, i, fkey], entity, address)
 
     def _anchor(self, name: str, doc: Document) -> None:
-        """The model's anchor names an existing data entity (D-012), once there are entities."""
+        """The model binds an anchor exactly when its profile names a subject (D-012, D-015);
+        the anchor names an existing data entity, once there are entities."""
         anchor = doc.data.get("anchor_entity")
+        if self.has_subject is True and anchor is None:
+            message = "the profile names a subject; bind anchor_entity"
+            self.add("missing_anchor", name, doc, [], message)
+        elif self.has_subject is False and anchor is not None:
+            message = "the profile names no subject; anchor_entity must be absent"
+            self.add("anchor_without_subject", name, doc, ["anchor_entity"], message)
+            return
         if not self.entities or not isinstance(anchor, str):
             return
         if anchor not in self.entities:
@@ -517,6 +542,8 @@ class _Checker:
         data = doc.data
         labels = set(data.get("labels", []))
         for i, rule in enumerate(data.get("rules", [])):
+            if self.has_subject is False:
+                self._subject_facets(name, doc, i, rule.get("when") or {})
             if rule.get("label") not in labels:
                 self.add(
                     "unknown_label",
@@ -524,6 +551,23 @@ class _Checker:
                     doc,
                     ["rules", i, "label"],
                     f"label {rule.get('label')!r} is not in the profile's labels",
+                )
+
+    def _subject_facets(self, name: str, doc: Document, i: int, when: dict[str, Any]) -> None:
+        """A profile without a subject cannot test subject scope (D-015)."""
+        loc: list[str | int] = ["rules", i, "when"]
+        for facet in ("any_end_subject_scoped", "all_ends_subject_scoped"):
+            if facet in when:
+                self.add("subject_facet", name, doc, [*loc, facet], f"{facet} needs a subject")
+        for j, pattern in enumerate(when.get("all_ends_match") or []):
+            if isinstance(pattern, dict) and "subject_scoped" in pattern:
+                message = "subject_scoped needs a subject"
+                self.add(
+                    "subject_facet",
+                    name,
+                    doc,
+                    [*loc, "all_ends_match", j, "subject_scoped"],
+                    message,
                 )
 
 

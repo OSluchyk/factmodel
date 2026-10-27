@@ -290,7 +290,7 @@ Example: `status: draft` on an entity an agent just scaffolded.
 
 ### Subject scope
 
-The **anchor entity** is the entity whose rows are the subjects of the domain (customers, patients, accounts); the profile names it. **Subject scope** says how an entity's rows reach the anchor. It is derived, never authored (D-007): `fact project` computes it from two authored facts and writes it to `generated/scope.tsv`.
+The **anchor entity** is the entity whose rows are the subjects of the domain (customers, patients, accounts); the model binds it (D-012). A domain may have no subject (statistics, where every row is an aggregate): its profile names none, the model binds no anchor, every entity is `none`, and `anchor_reference` and `scope_admission` are errors (D-015). **Subject scope** says how an entity's rows reach the anchor. It is derived, never authored (D-007): `fact project` computes it from two authored facts and writes it to `generated/scope.tsv`.
 
 - **`anchor_reference`** on an entity: `{field: <field name or nested path>, evidence: [...]}` when that field holds the anchor's key. It makes the entity `direct`. Example: `anchor_reference: {field: user_id, evidence: [ev-orders-users-match]}` on `orders`.
 - **`scope_admission`** on a relationship: `{basis: <scope basis>, evidence: [...]}`. It lets scope pass from the target to the source entity. Example: `scope_admission: {basis: unique_target, evidence: [ev-orders-pk]}` on `order_items.part-of`.
@@ -334,7 +334,7 @@ A **relationship** is an authored link from one entity (the one whose file holds
 | `key` | Slug, unique within the source entity (D-002). | `placed-by` |
 | `to` | One target entity, or a **target set**: a list of at least two targets, chosen per row by a discriminator or per tenant. | `users` |
 | `discriminator` | Only with a target set: the field that selects the target per row. Without it, the target is chosen per tenant. | `owner_type` |
-| `join` | The join condition, in `<entity>.<field> = <entity>.<field>` form. For a target set, a map from each target to its join. | `orders.user_id = users.id` |
+| `join` | The join condition, in `<entity>.<field> = <entity>.<field>` form (`AND` for composite keys), or a boolean SQL expression in sqlglot's neutral dialect whose columns are all `<entity>.<field>` of the source and the target (D-017); for a self-reference, the left operand of each top-level comparison is the source row. For a target set, a map from each target to its join. | `orders.user_id = users.id`; `substr(industry.industry_code, 1, 2) = sector.industry_code` |
 | `meaning` | One sentence on what the link means. | `The customer who placed the order.` |
 | `mechanism` | How the link exists (see below). | `inferred_join` |
 | `cardinality` | Rows on each side (see below). | `many_to_one` |
@@ -487,8 +487,8 @@ Example: `orders.placed-by	customer_scoped` is a row in `generated/labels.tsv`.
 
 A **profile** is the domain layer over the core.
 
-- **Subject**: the role of the rows the domain is about, in plain words. Example: `subject: customer`.
-- **Anchor entity**: the entity that holds the subjects. A model binds it in `factmodel.yaml`, not in the profile, so one profile fits many platforms (D-012). Example: `anchor_entity: customer`.
+- **Subject**: the role of the rows the domain is about, in plain words. Example: `subject: customer`. Optional: a profile without a subject (for example `statistics`) labels from class and mechanism alone and may not use the facets `any_end_subject_scoped`, `all_ends_subject_scoped` or `subject_scoped` (D-015).
+- **Anchor entity**: the entity that holds the subjects. A model binds it in `factmodel.yaml`, not in the profile, so one profile fits many platforms (D-012). Example: `anchor_entity: customer`. Required when the profile names a subject, absent when it names none (D-015).
 - **Label vocabulary**: the labels the profile may assign. Example: `[customer_scoped, configuration, administrative, lineage, representation, unresolved]`. `withheld` is reserved by the core and is never in a label vocabulary.
 - **Facet**: a property of a relationship or its ends that a rule can test: evidence status, mechanism, the class of each end, whether each end is subject-scoped.
 - **Rules**: an ordered list of `when` (facets) and `label`. Rules are evaluated in order; the first match wins.
@@ -588,7 +588,7 @@ Probe kinds:
 | Kind | Tests | Returns |
 | --- | --- | --- |
 | `key_duplicates` | A declared key. | Number of key values with more than one row. |
-| `join_match` | A join, in both directions. | Match rate and orphan count per side. |
+| `join_match` | A join, in both directions. An expression join (D-017) is rendered through sqlglot; its one-end conjuncts filter the rows of that end. | Match rate and orphan count per side. |
 | `fan_out` | Cardinality and transitive scope. | Rows per source row; source rows that reach more than one anchor. |
 | `null_rate` | A field. | Share of null values. |
 | `row_count` | Presence per tenant and environment. | Number of rows. |

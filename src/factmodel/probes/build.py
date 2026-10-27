@@ -65,19 +65,35 @@ def join_match(source: str, target: str, pairs: Sequence[tuple[str, str]]) -> ex
     """Source rows with a key, source rows that match no target row, and target rows no source
     row points to. ``pairs`` holds (source field, target field)."""
     on = exp.and_(*(exp.EQ(this=column("s", a), expression=column("t", b)) for a, b in pairs))
-    keyed = _not_null([column("s", a) for a, _ in pairs])
+    return join_match_on(source, target, on, [column("s", a) for a, _ in pairs])
+
+
+def join_match_on(
+    source: str,
+    target: str,
+    on: exp.Expr,
+    source_keys: Sequence[exp.Expr],
+    source_filters: Sequence[exp.Expr] = (),
+    target_filters: Sequence[exp.Expr] = (),
+) -> exp.Select:
+    """``join_match`` for any join condition over aliases ``s`` and ``t`` (D-017). A source row
+    counts when every column in ``source_keys`` is not null and every source filter holds; a
+    target row counts for ``orphans_right`` when every target filter holds."""
+    keyed = exp.and_(_not_null(source_keys), *(f.copy() for f in source_filters))
     any_target = exp.select(exp.Literal.number(1)).from_(table(target, "t")).where(on)
-    any_source = exp.select(exp.Literal.number(1)).from_(table(source, "s")).where(on)
+    any_source = exp.select(exp.Literal.number(1)).from_(table(source, "s")).where(on.copy())
     source_rows = exp.select(_count()).from_(table(source, "s")).where(keyed)
     orphans_left = (
         exp.select(_count())
         .from_(table(source, "s"))
-        .where(exp.and_(keyed, exp.Not(this=exp.Exists(this=any_target))))
+        .where(exp.and_(keyed.copy(), exp.Not(this=exp.Exists(this=any_target))))
     )
     orphans_right = (
         exp.select(_count())
         .from_(table(target, "t"))
-        .where(exp.Not(this=exp.Exists(this=any_source)))
+        .where(
+            exp.and_(*(f.copy() for f in target_filters), exp.Not(this=exp.Exists(this=any_source)))
+        )
     )
     return exp.select(
         _scalar(source_rows, "source_rows"),
@@ -88,12 +104,19 @@ def join_match(source: str, target: str, pairs: Sequence[tuple[str, str]]) -> ex
 
 def fan_out(target: str, fields: Sequence[str]) -> exp.Select:
     """The most target rows that share one join-key value: how many rows a source row meets."""
-    cols = [column("t", f) for f in fields]
+    return fan_out_on(target, [column("t", f) for f in fields])
+
+
+def fan_out_on(
+    target: str, keys: Sequence[exp.Expr], filters: Sequence[exp.Expr] = ()
+) -> exp.Select:
+    """``fan_out`` grouped by any target-side expressions over alias ``t``, counting target rows
+    where every filter holds (D-017)."""
     per_key = (
         exp.select(exp.alias_(_count(), "n"))
         .from_(table(target, "t"))
-        .where(_not_null(cols))
-        .group_by(*cols)
+        .where(exp.and_(_not_null(keys), *(f.copy() for f in filters)))
+        .group_by(*(k.copy() for k in keys))
     )
     most = exp.Coalesce(
         this=exp.Max(this=exp.column("n", table="f")), expressions=[exp.Literal.number(0)]

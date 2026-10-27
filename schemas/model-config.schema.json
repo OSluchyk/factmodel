@@ -9,8 +9,7 @@
     "kind",
     "id",
     "framework_version",
-    "profile",
-    "anchor_entity"
+    "profile"
   ],
   "properties": {
     "kind": {
@@ -30,7 +29,7 @@
       "$ref": "#/$defs/slug"
     },
     "anchor_entity": {
-      "description": "The entity that holds the profile's subjects (D-012).",
+      "description": "The entity that holds the profile's subjects (D-012). Required when the profile names a subject, absent when it names none (D-015); the loader checks this.",
       "$ref": "#/$defs/slug"
     },
     "adapters": {

@@ -82,6 +82,8 @@ Scope is derived, never authored (D-007). Projection (algorithm 1) reads its res
 
 **Input.** Entities, relationships, evidence records, and the model's `anchor_entity` from `factmodel.yaml` (D-012).
 
+**No anchor (D-015).** When the profile names no subject, the model has no anchor. Every entity is `none`, with no basis and no via-path; `reachable` is `-` (not applicable); there are no rejections, because `anchor_reference` and `scope_admission` are loader errors in such a model.
+
 **Admitted step.** A relationship `r` on entity `S` with target `T` is an admitted step when all of these hold. If `r` has a `scope_admission` but one of them fails, the admission is rejected with the reason in brackets (`vocabulary:admission_rejection`):
 
 1. `r` has `scope_admission`. Without it, scope does not pass, and nothing is rejected - there was no claim.
@@ -90,7 +92,7 @@ Scope is derived, never authored (D-007). Projection (algorithm 1) reads its res
 4. Neither `S` nor `T` has class `reference` (`reference_end`).
 5. `r` and its `scope_admission` are both usable (`weak_evidence`).
 6. If the basis is `current_row_rule`, `T` has a `current_row_rule` that is not null (`no_current_row_rule`).
-7. If the basis is `unique_target`, the cardinality is `many_to_one` or `one_to_one`, so each source row meets at most one target row (`non_unique_target`). A target whose key repeats needs `current_row_rule` or `measured_fanout`.
+7. If the basis is `unique_target`, the cardinality is `many_to_one` or `one_to_one`, so each source row meets at most one target row (`non_unique_target`). A target whose key repeats needs `current_row_rule` or `measured_fanout`. For an expression join (D-017) this is not enough: every top-level conjunct that compares the two ends must be an equality whose target operand is a bare column of `T`, and the set of those columns must equal the primary key or a `unique` key of `T` (`non_unique_target` otherwise). Conjuncts that read one end only are filters and do not count. Example: `concat(substr(county.area_fips, 1, 2), '000') = state.area_fips` qualifies when `area_fips` is the key of `state`; `substr(industry.industry_code, 1, 2) = substr(sector.industry_code, 1, 2)` does not.
 
 **Steps.**
 
@@ -110,7 +112,7 @@ Scope is derived, never authored (D-007). Projection (algorithm 1) reads its res
 | `subject_scope` | `direct`, `transitive` or `none` |
 | `basis` | Basis of the first step for `transitive`, else `-` |
 | `via` | Relationship references from the entity to a direct entity, joined with ` > `, else `-` |
-| `reachable` | `true` or `false` |
+| `reachable` | `true` or `false`; `-` when the model has no anchor (D-015) |
 
 Rejections are a second output (`generated/scope-rejections.tsv`: `fact`, `reason`), where `fact` is a relationship reference or `<entity-id>.anchor_reference`. An `anchor_reference` that is not usable is rejected with `weak_evidence`. The gate's `scope` stage fails on any row.
 

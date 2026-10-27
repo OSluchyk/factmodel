@@ -50,7 +50,7 @@ def run(ctx: GateContext) -> list[LoadIssue] | None:
             continue
         for entity_id in sorted(_layer_entities(f.obj, targets)):
             row = rows.get(entity_id)
-            if row is not None and not row.reachable and entity_id not in decided:
+            if row is not None and row.reachable is False and entity_id not in decided:
                 message = f"layer {f.obj.id!r} uses {entity_id!r}, not reachable from the anchor"
                 issues.append(ctx.issue(STAGE, "unreachable", f.path, ["id"], message, REACH_HINT))
     return issues

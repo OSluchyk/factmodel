@@ -69,23 +69,27 @@ def init(
 ) -> list[Path]:
     """Create a model repository in ``target`` and return the files written.
 
-    The anchor entity defaults to the slug of the profile's subject (D-012).
+    The anchor entity defaults to the slug of the profile's subject (D-012). A profile without
+    a subject gives a model without an anchor (D-015).
     """
     if (target / CONFIG_FILE).exists():
         raise RepoError(f"{target / CONFIG_FILE} already exists")
     profile_text = bundled_profile(profile)
     if profile_text is None:
         raise RepoError(f"unknown profile {profile!r}; see profiles/ in the framework")
-    subject = str(loads(profile_text, profile).data.get("subject", "subject"))
-    config = {
+    subject = loads(profile_text, profile).data.get("subject")
+    if subject is None and anchor is not None:
+        raise RepoError(f"profile {profile!r} names no subject, so the model has no anchor")
+    config: dict[str, Any] = {
         "kind": "model-config",
         "id": model_id or _slug(target.resolve().name),
         "framework_version": __version__,
         "profile": profile,
-        "anchor_entity": anchor or _slug(subject),
-        # written explicitly so the setting is visible; only example models set it true (D-014)
-        "treat_synthetic_as_representative": False,
     }
+    if subject is not None:
+        config["anchor_entity"] = anchor or _slug(str(subject))
+    # written explicitly so the setting is visible; only example models set it true (D-014)
+    config["treat_synthetic_as_representative"] = False
     _check("model-config", config)
     target.mkdir(parents=True, exist_ok=True)
     written: list[Path] = []

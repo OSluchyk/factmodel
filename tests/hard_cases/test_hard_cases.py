@@ -76,3 +76,47 @@ def test_every_plan_case_is_present() -> None:
         "retraction",
     }
     assert plan <= set(CASES)
+
+
+EXPRESSION = CASES_DIR / "expression-join"
+
+
+@pytest.mark.parametrize("dialect", ["sqlite", "postgres"])
+def test_expression_join_probes_render_as_expected(dialect: str) -> None:
+    from factmodel.model.loader import load_model
+    from factmodel.probes import generate
+
+    model = load_model(EXPRESSION)
+    docs, skipped = generate(model.entities, model.sources, {"stats-db": dialect})
+    assert skipped == []
+    got = {d["id"]: d["sql"] + "\n" for d in docs if d["probe_kind"] in ("join_match", "fan_out")}
+    folder = EXPRESSION / "expected" / "probes" / dialect
+    assert got == {p.stem: p.read_text(encoding="utf-8") for p in folder.glob("*.sql")}
+
+
+def test_expression_join_probes_count_on_sqlite(tmp_path: Path) -> None:
+    import sqlite3
+
+    from factmodel.model.loader import load_model
+    from factmodel.model.types import Probe
+    from factmodel.probes import generate, render
+
+    model = load_model(EXPRESSION)
+    docs, _ = generate(model.entities, model.sources, {"stats-db": "sqlite"})
+    rows = ["01000", "02000", "01001", "01003", "02001", "03001"]
+    results = {}
+    with sqlite3.connect(":memory:") as conn:
+        # the entity's physical name is stats.areas: a schema named stats
+        conn.execute("ATTACH DATABASE ':memory:' AS stats")
+        conn.execute("CREATE TABLE stats.areas (area_fips TEXT NOT NULL, area_title TEXT)")
+        conn.executemany("INSERT INTO stats.areas VALUES (?, 'x')", [(r,) for r in rows])
+        for doc in docs:
+            if doc["probe_kind"] in ("join_match", "fan_out"):
+                cursor = conn.execute(render(Probe.model_validate(doc), "sqlite") or "")
+                names = [c[0] for c in cursor.description]
+                results[doc["id"]] = dict(zip(names, cursor.fetchone(), strict=True))
+    # four counties, one without its state (03001); no county points to a county
+    assert results == {
+        "join-match-areas-in-state": {"source_rows": 4, "orphans_left": 1, "orphans_right": 4},
+        "fan-out-areas-in-state": {"max_fan_out": 1},
+    }

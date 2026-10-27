@@ -1,0 +1,22 @@
+kind: entity
+id: orders
+physical_name: stats.orders
+source: stats-db
+grain: one row per orders row
+class: data
+status: draft
+keys:
+  primary:
+  - id
+  current_row_rule: null
+evidence:
+- ev-confirmed
+fields:
+- name: id
+  type: INTEGER
+  nullable: false
+  meaning: Id.
+- name: customer_id
+  type: INTEGER
+  nullable: true
+  meaning: Customer id.

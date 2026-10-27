@@ -16,6 +16,7 @@ from sqlglot import exp
 
 from factmodel import vocabulary
 from factmodel.core.drafts import slug
+from factmodel.model import joins
 from factmodel.model.types import Entity, Probe, Source
 from factmodel.probes import build
 
@@ -55,6 +56,42 @@ def _pairs(join: str, source: str, target: str) -> list[tuple[str, str]] | None:
         else:
             return None
     return pairs
+
+
+def _expression_queries(
+    join: str, source: str, target: Entity, physical: str
+) -> tuple[exp.Select, exp.Select | None]:
+    """``join_match`` and ``fan_out`` for an expression join (D-017).
+
+    Conjuncts that read one end only filter that end's rows. ``fan_out`` groups the target by
+    the target side of each equality between the ends; a join that compares the ends in any
+    other way gets no ``fan_out``.
+    """
+    on = joins.condition(join, source, target.id, "s", "t")
+    split = joins.parts(join, source, target.id)
+    source_filters = joins.aliased(split.source_filters, "s")
+    target_filters = joins.aliased(split.target_filters, "t")
+    # source columns that take part in the comparison must not be null for a row to count
+    sides = [left for left, _ in split.pairs]
+    sides += [o.this if source == target.id else o for o in split.other]
+    keyed = {
+        c.name
+        for node in sides
+        for c in node.find_all(exp.Column)
+        if source == target.id or c.table == source
+    }
+    match = build.join_match_on(
+        physical,
+        target.physical_name,
+        on,
+        [build.column("s", k) for k in sorted(keyed)],
+        source_filters,
+        target_filters,
+    )
+    if not split.pairs or split.other:
+        return match, None
+    target_keys = joins.aliased(tuple(right for _, right in split.pairs), "t")
+    return match, build.fan_out_on(target.physical_name, target_keys, target_filters)
 
 
 def _doc(
@@ -193,34 +230,48 @@ def generate(
                 skipped.append(Skipped(ref, "target sets and unresolved links get no probe in v1"))
                 continue
             target = entities.get(rel.targets[0])
-            pairs = _pairs(rel.join, entity_id, rel.targets[0]) if target else None
-            if target is None or pairs is None:
-                skipped.append(Skipped(ref, "the join is not an equality between the two ends"))
+            if target is None:
+                skipped.append(Skipped(ref, "the target entity is not in the model"))
                 continue
-            nested = any("." in a or "." in b for a, b in pairs)
-            if nested and dialect not in nested_dialects():
-                skipped.append(Skipped(ref, "nested field on this dialect"))
-                continue
+            parsed = joins.parse(rel.join)
+            if parsed.expression:
+                try:
+                    match, fan = _expression_queries(rel.join, entity_id, target, name)
+                except joins.JoinError as error:
+                    skipped.append(Skipped(ref, str(error)))
+                    continue
+                nested = False
+            else:
+                pairs = _pairs(rel.join, entity_id, rel.targets[0])
+                if pairs is None:
+                    skipped.append(Skipped(ref, "the join is not an equality between the two ends"))
+                    continue
+                nested = any("." in a or "." in b for a, b in pairs)
+                if nested and dialect not in nested_dialects():
+                    skipped.append(Skipped(ref, "nested field on this dialect"))
+                    continue
+                match = build.join_match(name, target.physical_name, pairs)
+                fan = build.fan_out(target.physical_name, [b for _, b in pairs])
             probes.append(
                 _doc(
                     "join_match",
                     probe_id("join_match", entity_id, rel.key),
                     entity_id,
                     ref,
-                    build.join_match(name, target.physical_name, pairs),
+                    match,
                     dialect,
                     {"orphans_left": {"max": 0}},
                     nested,
                 )
             )
-            if rel.cardinality in ("many_to_one", "one_to_one"):
+            if rel.cardinality in ("many_to_one", "one_to_one") and fan is not None:
                 probes.append(
                     _doc(
                         "fan_out",
                         probe_id("fan_out", entity_id, rel.key),
                         entity_id,
                         ref,
-                        build.fan_out(target.physical_name, [b for _, b in pairs]),
+                        fan,
                         dialect,
                         {"max_fan_out": {"max": 1}},
                         nested,

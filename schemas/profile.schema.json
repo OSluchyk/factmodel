@@ -2,13 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:factmodel:schema:profile:0.1.0",
   "title": "Profile",
-  "description": "The domain layer over the core - anchor entity, labels and ordered projection rules.",
+  "description": "The domain layer over the core - subject, labels and ordered projection rules.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "kind",
     "id",
-    "subject",
     "labels",
     "rules"
   ],
@@ -23,7 +22,7 @@
       "$ref": "#/$defs/text"
     },
     "subject": {
-      "description": "The role of the rows this domain is about, for example customer (D-012).",
+      "description": "The role of the rows this domain is about, for example customer (D-012). Absent when the domain has no subject; the model then binds no anchor (D-015).",
       "$ref": "#/$defs/text"
     },
     "labels": {

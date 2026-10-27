@@ -1,6 +1,4 @@
-# reason: missing anchor entity
-# expect: $
 kind: model-config
-id: thelook
+id: hard-case
 framework_version: 0.0.1
 profile: retail

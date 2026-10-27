@@ -1,0 +1,12 @@
+kind: profile
+id: statistics
+labels: [dimension, hierarchy, lineage, unresolved]
+rules:
+  - when: {evidence_status: unresolved}
+    label: unresolved
+  - when: {mechanism: derivation}
+    label: lineage
+  - when: {all_ends_class: reference}
+    label: hierarchy
+  - when: {all_ends_match: [{class: data}, {class: reference}]}
+    label: dimension

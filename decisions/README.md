@@ -38,3 +38,6 @@ Platform that forced it: none | <example or engine>
 | [D-012](D-012-model-binds-anchor.md) | The model binds the anchor, the profile names the subject | accepted | 2026-10-23 |
 | [D-013](D-013-type-class.md) | Neutral type class on snapshot fields | accepted | 2026-10-23 |
 | [D-014](D-014-synthetic-never-confirms.md) | Synthetic data never confirms a fact about a platform | accepted | 2026-10-23 |
+| [D-015](D-015-profile-without-subject.md) | A profile may have no subject | accepted | 2026-10-27 |
+| [D-016](D-016-public-domain-code-lists.md) | Public-domain code lists as fixtures | accepted | 2026-10-27 |
+| [D-017](D-017-join-expressions.md) | Join expressions | accepted | 2026-10-27 |

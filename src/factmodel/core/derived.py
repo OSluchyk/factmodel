@@ -27,7 +27,7 @@ def derive(
     entities: Mapping[str, Entity],
     evidence: Mapping[str, EvidenceRecord],
     profile: Profile,
-    anchor: str,
+    anchor: str | None,
 ) -> Derived:
     """Run scope closure from the model's anchor (D-012), then projection (which reads it)."""
     scope = compute_scope(entities, evidence, anchor)
@@ -67,7 +67,7 @@ def render(derived: Derived) -> dict[str, str]:
             row.subject_scope,
             _cell(row.basis),
             _cell(" > ".join(row.via)),
-            "true" if row.reachable else "false",
+            EMPTY if row.reachable is None else ("true" if row.reachable else "false"),
         ]
         for row in derived.scope.rows.values()
     ]

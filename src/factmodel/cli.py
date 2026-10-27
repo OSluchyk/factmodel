@@ -106,7 +106,10 @@ def init(
     model_id: Annotated[str | None, typer.Option("--id", help="Model ID (a slug).")] = None,
     anchor: Annotated[
         str | None,
-        typer.Option("--anchor", help="Anchor entity ID; default: the profile's subject."),
+        typer.Option(
+            "--anchor",
+            help="Anchor entity ID; default: the profile's subject. Not allowed without one.",
+        ),
     ] = None,
 ) -> None:
     """Create a model repository: config, layout, agent files, CI and generated/."""

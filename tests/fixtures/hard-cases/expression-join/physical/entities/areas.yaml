@@ -1,0 +1,31 @@
+kind: entity
+id: areas
+physical_name: stats.areas
+source: stats-db
+grain: one row per areas row
+class: reference
+status: draft
+keys:
+  primary:
+  - area_fips
+  current_row_rule: null
+evidence:
+- ev-confirmed
+fields:
+- name: area_fips
+  type: TEXT
+  nullable: false
+  meaning: Five-digit area code; a state is its two-digit prefix followed by 000.
+- name: area_title
+  type: TEXT
+  nullable: false
+  meaning: Area title.
+relationships:
+- key: in-state
+  to: areas
+  join: "concat(substr(areas.area_fips, 1, 2), '000') = areas.area_fips AND substr(areas.area_fips, 3, 3) <> '000'"
+  meaning: A county to its state, by the two-digit prefix of the code (D-017).
+  mechanism: inferred_join
+  cardinality: many_to_one
+  evidence:
+  - ev-confirmed

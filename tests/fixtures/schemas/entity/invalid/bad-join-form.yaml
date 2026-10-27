@@ -1,4 +1,4 @@
-# reason: bad join form
+# reason: a join is one line (the loader checks its form, D-017)
 # expect: $.relationships[0].join
 kind: entity
 id: orders
@@ -31,7 +31,7 @@ fields:
 relationships:
 - key: placed-by
   to: users
-  join: user_id = id
+  join: "orders.user_id\n  = users.id"
   meaning: The customer who placed the order.
   mechanism: inferred_join
   cardinality: many_to_one

@@ -1,0 +1,29 @@
+# Statistics profile: published aggregates with no subject (D-015). No row is about a person or
+# any other individual, so there is no anchor and every entity's subject scope is none; labels
+# come from entity class and mechanism alone. Rules are evaluated in order; the first match wins.
+# Mechanism rules come before class rules, as in retail, so a derivation between two data
+# entities is lineage, not hierarchy.
+kind: profile
+id: statistics
+meaning: Official statistics and other published aggregates over code lists, with no subject.
+labels: [dimension, hierarchy, lineage, representation, unresolved]
+rules:
+  - when: {evidence_status: unresolved}
+    label: unresolved
+    note: Nothing else is known about a link that is not resolved.
+  - when: {mechanism: derivation}
+    label: lineage
+    note: One table computed from another, or a row from earlier rows of the same table.
+  - when: {mechanism: representation}
+    label: representation
+  - when: {all_ends_class: reference}
+    label: hierarchy
+    note: A code list to itself or another code list, for example a county to its state.
+  - when: {all_ends_class: data}
+    label: hierarchy
+    note: Data to data at another level of aggregation.
+  - when:
+      all_ends_match: [{class: data}, {class: reference}]
+      any_end_class: reference
+    label: dimension
+    note: Data to the code list that names one of its key values.

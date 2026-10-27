@@ -150,6 +150,9 @@ class ModelConfig(Strict):
     id: Slug
     title: Text | None = None
     framework_version: Annotated[str, StringConstraints(pattern=r"^[0-9]+\.[0-9]+\.[0-9]+$")]
+    schema_version: (
+        Annotated[str, StringConstraints(pattern=r"^[0-9]+\.[0-9]+\.[0-9]+$")] | None
+    ) = None
     profile: Slug
     anchor_entity: Slug | None = None
     adapters: Slugs | None = None
@@ -226,7 +229,8 @@ class Relationship(Strict):
     key: Slug
     to: Slug | Annotated[list[Slug], Field(min_length=2), Unique]
     discriminator: FieldName | None = None
-    join: Join | Annotated[dict[Slug, Join], Field(min_length=1)]
+    # absent only on an unresolved relationship
+    join: Join | Annotated[dict[Slug, Join], Field(min_length=1)] | None = None
     meaning: Text
     mechanism: Mechanism
     cardinality: Cardinality
@@ -238,9 +242,10 @@ class Relationship(Strict):
 
     @model_validator(mode="after")
     def _rules(self) -> Self:
-        if isinstance(self.to, str):
-            if self.discriminator is not None:
-                raise ValueError("a discriminator is only allowed with a target set")
+        if self.join is None:
+            if self.status is None:
+                raise ValueError("a relationship needs a join unless it is unresolved")
+        elif isinstance(self.to, str):
             if not isinstance(self.join, str):
                 raise ValueError("a single target has one join")
         elif not isinstance(self.join, dict):

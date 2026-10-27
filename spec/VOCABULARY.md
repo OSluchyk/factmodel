@@ -333,8 +333,8 @@ A **relationship** is an authored link from one entity (the one whose file holds
 | --- | --- | --- |
 | `key` | Slug, unique within the source entity (D-002). | `placed-by` |
 | `to` | One target entity, or a **target set**: a list of at least two targets, chosen per row by a discriminator or per tenant. | `users` |
-| `discriminator` | Only with a target set: the field that selects the target per row. Without it, the target is chosen per tenant. | `owner_type` |
-| `join` | The join condition, in `<entity>.<field> = <entity>.<field>` form (`AND` for composite keys), or a boolean SQL expression in sqlglot's neutral dialect whose columns are all `<entity>.<field>` of the source and the target (D-017); for a self-reference, the left operand of each top-level comparison is the source row. For a target set, a map from each target to its join. | `orders.user_id = users.id`; `substr(industry.industry_code, 1, 2) = sector.industry_code` |
+| `discriminator` | A field of the source. With a target set, it selects the target per row; without it, the target is chosen per tenant. With a single target, it names the source field the target's meaning depends on (QCEW: `agglvl_code` gives the level of `industry_code`). The loader checks that the field exists on the source. | `owner_type`, `agglvl_code` |
+| `join` | The join condition, in `<entity>.<field> = <entity>.<field>` form (`AND` for composite keys), or a boolean SQL expression in sqlglot's neutral dialect whose columns are all `<entity>.<field>` of the source and the target (D-017); for a self-reference, the left operand of each top-level comparison is the source row. For a target set, a map from each target to its join. Required, except on an `unresolved` relationship, which may omit it when the join is not known. | `orders.user_id = users.id`; `substr(industry.industry_code, 1, 2) = sector.industry_code` |
 | `meaning` | One sentence on what the link means. | `The customer who placed the order.` |
 | `mechanism` | How the link exists (see below). | `inferred_join` |
 | `cardinality` | Rows on each side (see below). | `many_to_one` |
@@ -606,11 +606,13 @@ bigquery: true
 ```yaml vocabulary-map:dialect_json_wrap
 sqlite: json_object_pairs
 postgres: row_to_json
+duckdb: json_object_pairs
 ```
 
 ```yaml vocabulary-map:dialect_runner
 sqlite: 'sqlite3 "${SQLITE_DB:?set SQLITE_DB to the database file}"'
 postgres: 'psql "${FACT_PG_DSN:?set FACT_PG_DSN}" -At -v ON_ERROR_STOP=1'
+duckdb: 'duckdb -noheader -list "${DUCKDB_DB:?set DUCKDB_DB to the database file}"'
 ```
 
 **Running probes.** `fact probe generate` writes `probes/<probe-id>.yaml`. The owner runs them from `fact probe render --dialect <d>` (a plain shell script per source), or `fact probe run --source <id>` runs them through the `sql` adapter where the source names a `dsn_env`; a local engine seeded with synthetic rows is a test fixture, not a platform (D-011). Both write JSON lines: a header `{source, pin, environment, data_quality, ran_on}`, then `{probe, measurement}` or `{probe, error}` per probe. `fact probe intake <file>` keeps numbers only, writes `evidence/probes/<probe-id>@<date>.yaml`, cites an in-range result from the fact it tests and opens a finding for an out-of-range one. The record is `confirmed`, and so the fact, only on representative data; on synthetic or unknown data it is `inferred` (D-014). Rates (`match_rate`, `null_rate`) are computed at intake, never in SQL.

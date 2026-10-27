@@ -2,6 +2,7 @@ kind: model-config
 id: thelook
 title: thelook_ecommerce public dataset
 framework_version: 0.0.1
+schema_version: 1.0.0
 profile: retail
 anchor_entity: users
 adapters: [export, git]

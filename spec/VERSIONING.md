@@ -17,14 +17,20 @@ Semantic versioning, applied to the contract:
 - **Minor**: adding an optional key, a file kind or a vocabulary value; relaxing a rule. Every model valid before stays valid.
 - **Patch**: fixing a description or an example. Validation does not change.
 
-After the freeze (M2), every minor or major change needs a decision record that names the platform that forced it (`decisions/README.md`).
+After the freeze (M2), D-018 says what a change needs:
 
-Current schema version: **0.1.0**. The freeze to 1.0.0 is the M2 gate. It waits for the owner's decision on the three changes without a record in `spec/CORE-CHANGES-M2.md`.
+- A **decision record** naming the platform that forced it, when a contract change removes or renames a key, changes the meaning of an existing key or value, or changes an algorithm's result.
+- A **`CHANGELOG.md` entry and a core-change ledger line**, when it adds an optional key, a vocabulary value or a probe kind.
+- A **`CHANGELOG.md` entry** only, for a defect fix: code made to obey the existing schema.
+
+An owner brief is not a decision record.
+
+Current schema version: **1.0.0** (frozen in round 19, the M2 gate). The next removal or rename of a key is **2.0.0**; additive changes move it to 1.1.0 and on.
 
 ## `framework_version` in a model
 
-`factmodel.yaml` carries `framework_version`, the framework release that created the model or last migrated it. `fact init` writes the installed version.
+`factmodel.yaml` carries `framework_version`, the framework release that created the model or last migrated it, and since 1.0.0 the optional `schema_version`, the schema version its files were last checked against. `fact init` writes both from the installed framework.
 
 - The loader does not reject a model whose `framework_version` differs from the installed one; it validates the files against the installed schemas, and that verdict is what counts.
-- `fact migrate --root <dir>` reports the model's `framework_version`, the installed framework and schema versions, and whether every model file validates against the installed schemas (`compatible`) or not (`not compatible`, with the files that fail). It changes nothing yet: migrations come with the first major schema change.
-- Update `framework_version` by hand, or with a future `fact migrate --apply`, only when the model has been checked with the newer framework.
+- `fact migrate --root <dir>` reports the model's `framework_version` and `schema_version`, the installed framework and schema versions, the difference between the two schema versions (or that the model records none), and whether every model file validates against the installed schemas (`compatible`) or not (`not compatible`, with the files that fail). A model at 0.1.0 whose files validate is compatible. It changes nothing yet: migrations come with the first major schema change after 1.0.0.
+- Update `framework_version` and `schema_version` by hand, or with a future `fact migrate --apply`, only when the model has been checked with the newer framework.

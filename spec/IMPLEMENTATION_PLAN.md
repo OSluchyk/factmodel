@@ -48,7 +48,7 @@ Companion to `spec/SPEC.md`. Where the two disagree, the spec wins and this plan
 | --- | --- | --- | --- |
 | M0 - Specification | Repository bootstrapped; every file kind specified with JSON Schema and worked examples; algorithms written as pseudo-code with test vectors | Spec review; schema test suite green | 3-4 |
 | M1 - Core, engine-neutral | Core package, gate, CLI, adapter protocol and registry, `export`, `sql` and `git` adapters, sync, probe generator v1 rendered per dialect, hard-case fixtures, retail profile, `examples/chinook` on SQLite and PostgreSQL | Gate green on `examples/chinook` and on every hard-case fixture; expected scopes hold; residue 0; the same probes give the same counts on SQLite and PostgreSQL | 12-14 |
-| M2 - Cloud engines by adopters and a second domain | BigQuery `export` and `sql` paths verified by an adopter on their own project; third-party adapter packaging guide; second domain profile with a dataset chosen then; core frozen at schema 1.0.0 | No core change, or each change has a decision record naming the platform that forced it | 4-5 |
+| M2 - Cloud engines by adopters and a second domain | BigQuery `export` and `sql` paths verified by an adopter on their own project; third-party adapter packaging guide; second domain profile with a dataset chosen then; core frozen at schema 1.0.0 | No core change, or each change has a decision record naming the platform that forced it | 4-5 (done: rounds 15 to 19; BigQuery adopter run owner-pending) |
 | M3 - Semantic layers | Layer contract, consumer equivalence harness, reference consumer, exports (OSI, dbt), release projection | One consumer meets its threshold on a corpus | 6-8 |
 | M4 - Release 1.0 | Packaging, docs site, tutorial, upgrade policy, external pilot | Someone else sets up a model from scratch using only the docs | 3-4 |
 
@@ -424,7 +424,9 @@ Chosen (rounds 16 and 17): the BLS QCEW with NAICS, public domain. `retail` does
 - Bump schemas to `1.0.0`; write `spec/VERSIONING.md` (semver for schemas: removing or renaming a key is major; adding an optional key is minor; fixing a description is patch).
 - Add `fact migrate` stub that reports which schema version a model uses.
 
-Round 18: `spec/CORE-CHANGES-M2.md` (the ledger), `spec/VERSIONING.md` and `fact migrate` are done. The bump to 1.0.0 waits: the ledger found three contract changes without a decision record (snapshot pins, optional probe keys, field `values`), which the brief makes a stop condition.
+Round 18: `spec/CORE-CHANGES-M2.md` (the ledger), `spec/VERSIONING.md` and `fact migrate` are done. The bump to 1.0.0 waited: the ledger found three contract changes without a decision record (snapshot pins, optional probe keys, field `values`), which the brief made a stop condition.
+
+Round 19: D-018 records the three retroactively and sets the rule for what a change needs; the schemas froze at 1.0.0. **M2 done.**
 
 **Acceptance (M2 gate).** No core change without a decision record naming the platform that forced it; both examples green on the frozen schemas.
 

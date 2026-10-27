@@ -2,6 +2,18 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-27 - Round 19: WP2.3 core freeze, schemas 1.0.0 (D-018)
+
+**Why.** Round 18 stopped the freeze over three additive keys without a decision record. The owner decided that only removals, renames and meaning changes need a decision record, so the freeze could close M2 without rewriting history or reverting keys that break no model.
+
+- D-018: additive keys need a CHANGELOG entry and a ledger line, a defect fix a CHANGELOG entry, and a removal, rename or meaning change a decision record; the three round-18 gaps are recorded retroactively. `AGENTS.md` rule 6, `decisions/README.md` and `spec/VERSIONING.md` say so.
+- Defect fix: `fact probe intake` names the entity in a finding's `about` for a field probe and keeps the field in `extensions.fact`, so the gate reads what intake writes.
+- Freeze: `SCHEMA_VERSION` 1.0.0. `factmodel.yaml` may record `schema_version` (written by `fact init`), and `fact migrate` names the difference to the installed schemas. M2 is done.
+- Owner answers:
+  - a single-target relationship may carry a discriminator (QCEW `agglvl_code`);
+  - an unresolved relationship may omit its join (QCEW's placeholders removed);
+  - DuckDB has a JSON wrap and a default runner for rendered probe scripts.
+
 ## Unreleased - 2026-10-27 - Round 18: WP2.3 core-change ledger, versioning, `fact migrate` (freeze stopped)
 
 **Why.** The schemas may freeze only when every core change since M1 has a decision record naming the platform that forced it. The ledger is how that is checked. It found three contract changes without a record, so the freeze waits for the owner instead of being declared.

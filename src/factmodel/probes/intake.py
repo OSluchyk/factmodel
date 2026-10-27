@@ -176,15 +176,20 @@ def _finding(
     numbers = [int(f.id[2:]) for f in model.findings.values()]
     number = max(numbers, default=0) + 1
     expected = {k: v.model_dump(exclude_none=True) for k, v in (probe.expected or {}).items()}
+    # `about` holds an entity or a relationship (schema); a field goes to extensions.fact
+    about, extensions = probe.fact, {"probe": probe.id}
+    if "." in probe.fact and probe.fact not in model.relationships:
+        about = probe.fact.partition(".")[0]
+        extensions["fact"] = probe.fact
     doc = {
         "kind": "finding",
         "id": f"F-{number:04d}",
         "title": f"Probe {probe.id} out of range",
         "status": "open",
         "opened_on": day,
-        "about": [probe.fact],
+        "about": [about],
         "description": f"Measured {measurement}; expected {expected}. Evidence {ev_id}.",
-        "extensions": {"probe": probe.id},
+        "extensions": extensions,
     }
     _write(root / "registers" / "findings" / f"F-{number:04d}.yaml", _dump(doc), written)
 

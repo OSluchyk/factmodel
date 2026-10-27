@@ -35,33 +35,30 @@ relationships:
   - ev-join-match-area-titles-in-state-2026-10-27
 - key: in-msa
   to: area_titles
-  join: area_titles.area_fips = area_titles.area_fips
   meaning: 'A county to its MSA or MicroSA. Geography is a lattice, not a tree (H1): this link is separate from the county to state link, and an MSA crosses state lines.'
   mechanism: inferred_join
   cardinality: many_to_one
   status: unresolved
-  missing: The BLS County-MSA-CSA crosswalk, which is not in the example; area codes do not encode MSA membership. The join written here is a placeholder.
+  missing: The BLS County-MSA-CSA crosswalk, which is not in the example; area codes do not encode MSA membership.
   evidence:
   - ev-doc-h1
   - ev-doc-msa-codes
 - key: in-csa
   to: area_titles
-  join: area_titles.area_fips = area_titles.area_fips
   meaning: A county, through its MSA, to its CSA (H1).
   mechanism: inferred_join
   cardinality: many_to_one
   status: unresolved
-  missing: The BLS County-MSA-CSA crosswalk, which is not in the example. The join written here is a placeholder.
+  missing: The BLS County-MSA-CSA crosswalk, which is not in the example.
   evidence:
   - ev-doc-h1
 - key: in-nation
   to: area_titles
-  join: area_titles.area_fips = area_titles.area_fips
   meaning: A state to the national total US000. US000 excludes Puerto Rico and the Virgin Islands while state and county rows include them (H2), so the rollup is not every state.
   mechanism: inferred_join
   cardinality: many_to_one
   status: unresolved
-  missing: The list of areas that US000 covers; the codes alone do not say it. The join written here is a placeholder.
+  missing: The list of areas that US000 covers; the codes alone do not say it.
   evidence:
   - ev-doc-h2
 records:

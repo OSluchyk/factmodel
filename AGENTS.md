@@ -9,7 +9,7 @@ Rules for agents working on this repository (the FactModel framework). Invariant
 3. **No data, no secrets** in the repository.
 4. **One commit per round, never push** (D-008). At the end of a round, commit once on the branch the brief names. Never push, never amend or rewrite history, never add attribution lines (no co-author or tool trailers). The owner reviews the log and pushes.
 5. **Every change has a `CHANGELOG.md` entry** that says why.
-6. **Decisions go to `decisions/`** in the format of `decisions/README.md`. A decision record is never edited to reverse it; write a new one that supersedes it.
+6. **Decisions go to `decisions/`** in the format of `decisions/README.md`. A decision record is never edited to reverse it; write a new one that supersedes it. A record is required when a contract change removes or renames a key, changes the meaning of a key or value, or changes an algorithm's result; adding an optional key, a vocabulary value or a probe kind needs a CHANGELOG entry and a core-change ledger line; a defect fix needs a CHANGELOG entry (D-018). An owner brief is not a record.
 7. **The vocabulary has one source:** `spec/VOCABULARY.md`. Code reads it through `factmodel.vocabulary`; never copy an enumeration into code by hand.
 8. **Checks pass before a round is reported done:**
    `uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy src`, `uv run pytest -q`.

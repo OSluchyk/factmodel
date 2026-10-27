@@ -87,7 +87,7 @@ $defs:
     type: object
     additionalProperties: false
     $forbid: derived_value
-    required: [key, to, join, meaning, mechanism, cardinality]
+    required: [key, to, meaning, mechanism, cardinality]
     properties:
       key: {$ref: "#/$defs/slug"}
       to:
@@ -130,9 +130,6 @@ $defs:
           properties: {to: {type: string}}
         then:
           properties:
-            discriminator:
-              description: A discriminator is only allowed with a target set.
-              not: {}
             join: {type: string}
       - if:
           required: [to]
@@ -143,4 +140,4 @@ $defs:
       - if:
           not: {required: [status]}
         then:
-          required: [evidence]
+          required: [evidence, join]

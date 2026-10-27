@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:layer:0.1.0",
+  "$id": "urn:factmodel:schema:layer:1.0.0",
   "title": "Semantic layer",
   "description": "A named set of concepts, measures and filters for one use case. Details come in M3.",
   "type": "object",

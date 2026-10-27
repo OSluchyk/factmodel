@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:escalation:0.1.0",
+  "$id": "urn:factmodel:schema:escalation:1.0.0",
   "title": "Escalation",
   "description": "A register entry for a question to people; closed only by an answer with evidence.",
   "type": "object",

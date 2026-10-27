@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:decision:0.1.0",
+  "$id": "urn:factmodel:schema:decision:1.0.0",
   "title": "Decision",
   "description": "A register entry for why the model is the way it is, including retractions.",
   "type": "object",

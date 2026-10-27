@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:consumer:0.1.0",
+  "$id": "urn:factmodel:schema:consumer:1.0.0",
   "title": "Consumer",
   "description": "The agent, SQL generator or knowledge base that proves a layer. Details come in M3.",
   "type": "object",

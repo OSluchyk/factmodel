@@ -4,7 +4,7 @@ Decisions that shape the framework are recorded here, one file per decision: `D-
 
 These are decisions about the framework itself. A model repository keeps its own decisions in its `registers/` with four-digit IDs (`D-0001`).
 
-After M2 the core is frozen: any change to it needs a record that names the platform that forced it.
+After M2 the core is frozen: a change that removes or renames a key, changes the meaning of a key or value, or changes an algorithm's result needs a record that names the platform that forced it. Adding an optional key, a vocabulary value or a probe kind needs a CHANGELOG entry and a ledger line; a defect fix needs a CHANGELOG entry (D-018).
 
 ## Format
 
@@ -41,3 +41,4 @@ Platform that forced it: none | <example or engine>
 | [D-015](D-015-profile-without-subject.md) | A profile may have no subject | accepted | 2026-10-27 |
 | [D-016](D-016-public-domain-code-lists.md) | Public-domain code lists as fixtures | accepted | 2026-10-27 |
 | [D-017](D-017-join-expressions.md) | Join expressions | accepted | 2026-10-27 |
+| [D-018](D-018-additive-keys-ledger.md) | Additive keys need a ledger line, not a decision record | accepted | 2026-10-27 |

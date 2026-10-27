@@ -1,6 +1,7 @@
 kind: model-config
 id: chinook
 framework_version: 0.0.1
+schema_version: 1.0.0
 profile: retail
 anchor_entity: customer
 # Chinook is a synthetic example platform: its probe results stand in for real data (D-014).

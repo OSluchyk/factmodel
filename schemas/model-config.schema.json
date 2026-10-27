@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:model-config:0.1.0",
+  "$id": "urn:factmodel:schema:model-config:1.0.0",
   "title": "Model config",
   "description": "The root file of a model repository (factmodel.yaml).",
   "type": "object",
@@ -22,6 +22,11 @@
       "$ref": "#/$defs/text"
     },
     "framework_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "schema_version": {
+      "description": "The schema version the model's files were last checked against (spec/VERSIONING.md); fact init writes the installed one. Models written before 1.0.0 may lack it.",
       "type": "string",
       "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
     },

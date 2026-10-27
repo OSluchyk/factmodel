@@ -16,7 +16,7 @@ from factmodel.io.yaml_strict import loads
 from factmodel.model.loader import CONFIG_FILE, bundled_profile, inspect_model, load_model
 from factmodel.model.types import Snapshot, Source
 from factmodel.resources import framework_file, framework_text
-from factmodel.schemas.build import pattern, schema_for
+from factmodel.schemas.build import SCHEMA_VERSION, pattern, schema_for
 
 LAYOUT = (
     "sources/snapshots",
@@ -84,6 +84,7 @@ def init(
         "kind": "model-config",
         "id": model_id or _slug(target.resolve().name),
         "framework_version": __version__,
+        "schema_version": SCHEMA_VERSION,
         "profile": profile,
     }
     if subject is not None:

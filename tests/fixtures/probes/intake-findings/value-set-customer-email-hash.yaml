@@ -1,0 +1,13 @@
+kind: finding
+id: F-NNNN
+title: Probe value-set-customer-email-hash out of range
+status: open
+opened_on: '2026-10-23'
+about:
+- customer
+description: "Measured {'distinct_values': 3, 'outside_values': 2, 'outside_rows':
+  3}; expected {'outside_values': {'max': 0.0}, 'outside_rows': {'max': 0.0}}. Evidence
+  ev-value-set-customer-email-hash-2026-10-23."
+extensions:
+  probe: value-set-customer-email-hash
+  fact: customer.EmailHash

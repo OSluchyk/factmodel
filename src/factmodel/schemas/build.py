@@ -28,7 +28,7 @@ from factmodel import vocabulary
 from factmodel.io.yaml_strict import loads
 
 DIALECT = "https://json-schema.org/draft/2020-12/schema"
-SCHEMA_VERSION = "0.1.0"
+SCHEMA_VERSION = "1.0.0"
 COMMON = "_common"
 REF_PREFIX = "#/$defs/"
 # A key that must not appear. ``not: {}`` instead of ``false`` so validators report the

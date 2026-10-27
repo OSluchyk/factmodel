@@ -1,5 +1,3 @@
-# reason: discriminator with single target
-# expect: $.relationships[0].discriminator
 kind: entity
 id: orders
 physical_name: thelook_ecommerce.orders

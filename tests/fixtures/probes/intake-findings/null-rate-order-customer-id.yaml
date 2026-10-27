@@ -1,0 +1,12 @@
+kind: finding
+id: F-NNNN
+title: Probe null-rate-order-customer-id out of range
+status: open
+opened_on: '2026-10-23'
+about:
+- order
+description: "Measured {'row_count': 6, 'non_null': 5, 'null_rate': 0.166667}; expected
+  {'null_rate': {'max': 0.0}}. Evidence ev-null-rate-order-customer-id-2026-10-23."
+extensions:
+  probe: null-rate-order-customer-id
+  fact: order.CustomerId

@@ -22,48 +22,48 @@ PROBE = Probe.model_validate(
         "id": "row-count-orders",
         "probe_kind": "row_count",
         "fact": "orders",
-        "dialect": "duckdb",
-        "sql": build.row_count("orders").sql(dialect="duckdb", identify=True),
+        "dialect": "trino",
+        "sql": build.row_count("orders").sql(dialect="trino", identify=True),
     }
 )
 
 
 @pytest.fixture()
-def duckdb_in_maps(monkeypatch: pytest.MonkeyPatch) -> None:
+def trino_in_maps(monkeypatch: pytest.MonkeyPatch) -> None:
     maps: dict[str, Any] = copy.deepcopy(vocabulary.load_maps())
-    maps["dialect_json_wrap"]["duckdb"] = "row_to_json"
-    maps["dialect_runner"]["duckdb"] = 'duckdb "${DUCKDB_FILE:?set DUCKDB_FILE}" -json'
-    maps["dialect_nested_paths"]["duckdb"] = True
+    maps["dialect_json_wrap"]["trino"] = "row_to_json"
+    maps["dialect_runner"]["trino"] = 'trino "${TRINO_URL:?set TRINO_URL}" --output-format JSON'
+    maps["dialect_nested_paths"]["trino"] = True
     monkeypatch.setattr(vocabulary, "load_maps", lambda: maps)
 
 
 def _nested_ids() -> set[str]:
     model = load_model(HARD / "nested-field")
-    docs, _ = generate(model.entities, model.sources, {}, default_dialect="duckdb")
+    docs, _ = generate(model.entities, model.sources, {}, default_dialect="trino")
     return {d["id"] for d in docs}
 
 
 def test_without_maps_the_behaviour_is_neutral() -> None:
-    assert json_wrapped(PROBE, "duckdb") == PROBE.sql
-    text, _ = script("shop", "duckdb", [PROBE])
+    assert json_wrapped(PROBE, "trino") == PROBE.sql
+    text, _ = script("shop", "trino", [PROBE])
     assert 'RUN_SQL="${RUN_SQL:?' in text
     assert "join-match-web-events-by-user" not in _nested_ids()
 
 
-@pytest.mark.usefixtures("duckdb_in_maps")
+@pytest.mark.usefixtures("trino_in_maps")
 def test_a_dialect_added_to_the_maps_changes_rendering() -> None:
-    assert json_wrapped(PROBE, "duckdb") == f"SELECT row_to_json(q) FROM ({PROBE.sql}) AS q"
-    text, _ = script("shop", "duckdb", [PROBE])
-    assert 'RUN_SQL="${RUN_SQL:-duckdb "${DUCKDB_FILE:?set DUCKDB_FILE}" -json}"' in text
+    assert json_wrapped(PROBE, "trino") == f"SELECT row_to_json(q) FROM ({PROBE.sql}) AS q"
+    text, _ = script("shop", "trino", [PROBE])
+    assert 'RUN_SQL="${RUN_SQL:-trino "${TRINO_URL:?set TRINO_URL}" --output-format JSON}"' in text
     assert "join-match-web-events-by-user" in _nested_ids()
 
 
 def test_an_unknown_wrap_strategy_fails(monkeypatch: pytest.MonkeyPatch) -> None:
     maps: dict[str, Any] = copy.deepcopy(vocabulary.load_maps())
-    maps["dialect_json_wrap"]["duckdb"] = "to_json_magic"
+    maps["dialect_json_wrap"]["trino"] = "to_json_magic"
     monkeypatch.setattr(vocabulary, "load_maps", lambda: maps)
     with pytest.raises(ValueError, match="unknown strategy"):
-        json_wrapped(PROBE, "duckdb")
+        json_wrapped(PROBE, "trino")
 
 
 def test_dialect_knowledge_is_not_in_the_code() -> None:

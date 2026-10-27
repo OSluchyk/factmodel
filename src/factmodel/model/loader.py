@@ -441,6 +441,8 @@ class _Checker:
                     name, doc, loc if isinstance(to, str) else [*loc, j], target
                 ):
                     continue
+                if joins is None and rel.get("status") is not None:
+                    continue  # an unresolved link may omit its join; `to` is still checked
                 join = joins if isinstance(joins, str) else (joins or {}).get(target)
                 join_loc: list[str | int] = ["relationships", i, "join"]
                 if isinstance(to, list):

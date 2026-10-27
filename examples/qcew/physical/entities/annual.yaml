@@ -228,8 +228,9 @@ relationships:
   - ev-join-match-annual-to-ownership-2026-10-27
 - key: to-industry
   to: industry_titles
+  discriminator: agglvl_code
   join: annual.industry_code = industry_titles.industry_code
-  meaning: 'The industry the row aggregates over. The code alone does not give its level: the second digit of agglvl_code does, and ranges such as 31-33 are sector codes (F-0008).'
+  meaning: 'The industry the row aggregates over. The code alone does not give its level: the second digit of agglvl_code does (the discriminator), and ranges such as 31-33 are sector codes (F-0008).'
   mechanism: inferred_join
   cardinality: many_to_one
   evidence:

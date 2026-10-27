@@ -25,7 +25,7 @@ After the freeze (M2), D-018 says what a change needs:
 
 An owner brief is not a decision record.
 
-Current schema version: **2.1.0**. 2.0.0 (round 20, D-019) was the semantic layer contract v1, which removes and renames layer keys; 2.1.0 (round 22, D-020) adds the optional measure key `rollups` and the probe kind `rollup`. Frozen 1.0.0 was the M2 gate. The next removal or rename of a key is **3.0.0**.
+Current schema version: **2.2.0**. 2.0.0 (round 20, D-019) was the semantic layer contract v1, which removes and renames layer keys; 2.1.0 (round 22, D-020) added the optional measure key `rollups` and the probe kind `rollup`; 2.2.0 (round 26) adds the concept form `values_table`. Frozen 1.0.0 was the M2 gate. The next removal or rename of a key is **3.0.0**.
 
 ## `framework_version` in a model
 
@@ -33,5 +33,5 @@ Current schema version: **2.1.0**. 2.0.0 (round 20, D-019) was the semantic laye
 
 - The loader does not reject a model whose `framework_version` differs from the installed one; it validates the files against the installed schemas, and that verdict is what counts.
 - `fact check` passes with a warning when a model's `schema_version` differs from the installed schemas and every file validates; nothing rewrites `schema_version` (only a future `fact migrate --apply` will).
-- `fact migrate --root <dir>` reports the model's `framework_version` and `schema_version`, the installed framework and schema versions, the difference between the two schema versions (or that the model records none), and whether every model file validates against the installed schemas (`compatible`) or not (`not compatible`, with the files that fail). A model at 0.1.0 whose files validate is compatible. It changes nothing yet: migrations come with the first major schema change after 1.0.0.
+- `fact migrate --root <dir>` reports the model's `framework_version` and `schema_version`, the installed framework and schema versions, the difference between the two schema versions (or that the model records none), and whether every model file validates against the installed schemas (`compatible`) or not (`not compatible`, with the files that fail). A model at 0.1.0 whose files validate is compatible. It changes nothing yet; it lists the registered steps between the two versions (`factmodel.migrate.MIGRATIONS`, one documented slot for 1.0.0 to 2.0.0 with no automatic step), and the first real migration goes there.
 - Update `framework_version` and `schema_version` by hand, or with a future `fact migrate --apply`, only when the model has been checked with the newer framework.

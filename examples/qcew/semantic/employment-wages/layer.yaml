@@ -59,6 +59,53 @@ concepts:
   field: annual.agglvl_code
   required: true
   evidence: [ev-doc-agglvl, ev-doc-v3]
+- id: level_matrix
+  meaning: >-
+    The A4 aggregation-level matrix: geography (nation, CSA, MSA, state, county, MicroSA),
+    industry level and ownership give agglvl_code. A consumer looks the level up here
+    instead of deriving it. The special codes 91 to 96 are not in the matrix.
+  values_table:
+    columns: [geography, industry_level, ownership, agglvl_code]
+    rows:
+    - [nation, total, total, '10']
+    - [nation, total, by_ownership, '11']
+    - [nation, domain, by_ownership, '12']
+    - [nation, supersector, by_ownership, '13']
+    - [nation, sector, by_ownership, '14']
+    - [nation, naics3, by_ownership, '15']
+    - [nation, naics4, by_ownership, '16']
+    - [nation, naics5, by_ownership, '17']
+    - [nation, naics6, by_ownership, '18']
+    - [msa, total, total, '40']
+    - [msa, total, by_ownership, '41']
+    - [msa, domain, by_ownership, '42']
+    - [msa, supersector, by_ownership, '43']
+    - [msa, sector, by_ownership, '44']
+    - [msa, naics3, by_ownership, '45']
+    - [msa, naics4, by_ownership, '46']
+    - [msa, naics5, by_ownership, '47']
+    - [msa, naics6, by_ownership, '48']
+    - [state, total, total, '50']
+    - [state, total, by_ownership, '51']
+    - [state, domain, by_ownership, '52']
+    - [state, supersector, by_ownership, '53']
+    - [state, sector, by_ownership, '54']
+    - [state, naics3, by_ownership, '55']
+    - [state, naics4, by_ownership, '56']
+    - [state, naics5, by_ownership, '57']
+    - [state, naics6, by_ownership, '58']
+    - [county, total, total, '70']
+    - [county, total, by_ownership, '71']
+    - [county, domain, by_ownership, '72']
+    - [county, supersector, by_ownership, '73']
+    - [county, sector, by_ownership, '74']
+    - [county, naics3, by_ownership, '75']
+    - [county, naics4, by_ownership, '76']
+    - [county, naics5, by_ownership, '77']
+    - [county, naics6, by_ownership, '78']
+    - [csa, total, total, '30']
+    - [micro, total, total, '80']
+  evidence: [ev-doc-agglvl]
 - id: ownership
   meaning: Ownership; 0 is the total of 1, 2, 3 and 5, so never add 0 to the others.
   field: qtrly.own_code
@@ -116,8 +163,8 @@ measures:
     Average weekly wage by the documented formula: wages over the mean of the three monthly
     levels, over 13, from summed levels; never an average of avg_wkly_wage (H-0002).
   expression: >-
-    SUM(qtrly.total_qtrly_wages) / ((SUM(qtrly.month1_emplvl) + SUM(qtrly.month2_emplvl)
-    + SUM(qtrly.month3_emplvl)) / 3.0) / 13
+    SUM(qtrly.total_qtrly_wages) / SUM((qtrly.month1_emplvl + qtrly.month2_emplvl +
+    qtrly.month3_emplvl) / 3.0) / 13
   aggregation: none
   grain: {entity: qtrly, fields: [area_fips, own_code, industry_code, size_code, year, qtr]}
   time: {field: qtrly.qtr, granularity: quarter}

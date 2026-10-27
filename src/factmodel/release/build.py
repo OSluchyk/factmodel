@@ -1,4 +1,8 @@
-"""Build a release folder: complete partition, internal notes stripped, VERSION, notes."""
+"""Build a release folder: complete partition, internal notes stripped, VERSION, notes.
+
+``release/RELEASE_NOTES.md`` in the model repository is the append-only log: ``fact release``
+adds a section for a new version (a version's section is written once, never edited), and the
+release folder gets a copy."""
 
 import datetime
 import shutil
@@ -126,7 +130,9 @@ def build(root: Path, out: Path, version: str, day: str | None = None) -> Releas
     if plan.failures:
         listed = "; ".join(" ".join(filter(None, (f.path, f.reason, f.key))) for f in plan.failures)
         raise ReleaseError(f"the partition fails: {listed}")
-    previous = (out / NOTES).read_text(encoding="utf-8") if (out / NOTES).is_file() else ""
+    # the notes live in the model repository (committed) and are copied into the release
+    notes_path = root / "release" / NOTES
+    previous = notes_path.read_text(encoding="utf-8") if notes_path.is_file() else ""
     if out.exists():
         if any(out.iterdir()) and not (out / VERSION_FILE).is_file():
             raise ReleaseError(f"{out} is not empty and holds no release; choose another folder")
@@ -165,5 +171,8 @@ def build(root: Path, out: Path, version: str, day: str | None = None) -> Releas
             previous or "# Release notes\n\nOne section per release, newest last; never edited.\n"
         )
         notes = notes.rstrip("\n") + "\n\n" + _section(version, day, result, commit, model.layers)
+    if notes != previous:
+        notes_path.parent.mkdir(parents=True, exist_ok=True)
+        notes_path.write_text(notes, encoding="utf-8")
     (out / NOTES).write_text(notes, encoding="utf-8")
     return result

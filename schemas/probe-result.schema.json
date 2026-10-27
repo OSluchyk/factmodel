@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:probe-result:2.1.0",
+  "$id": "urn:factmodel:schema:probe-result:2.2.0",
   "title": "Probe result",
   "description": "The raw output of one probe run. Intake turns it into an evidence record.",
   "type": "object",

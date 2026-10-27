@@ -113,6 +113,11 @@ def test_release_notes_are_append_only(tmp_path: Path) -> None:
     notes = (out / "RELEASE_NOTES.md").read_text(encoding="utf-8")
     assert notes.index("## 0.1.0 - 2026-10-27") < notes.index("## 0.2.0 - 2026-11-01")
     assert check(out, previous=before).passed
+    committed = root / "release" / "RELEASE_NOTES.md"  # the log lives in the model repository
+    assert committed.read_text(encoding="utf-8") == notes
+    build(root, tmp_path / "fresh", "0.3.0", "2026-11-02")  # a fresh folder keeps the history
+    fresh = (tmp_path / "fresh" / "RELEASE_NOTES.md").read_text(encoding="utf-8")
+    assert fresh.startswith(notes.rstrip("\n")) and "## 0.3.0 - 2026-11-02" in fresh
     edited = notes.replace("## 0.1.0 - 2026-10-27", "## 0.1.0 - 2026-10-28")
     (out / "RELEASE_NOTES.md").write_text(edited, encoding="utf-8")
     failed = check(out, previous=before)

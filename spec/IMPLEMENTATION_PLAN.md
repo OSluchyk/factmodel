@@ -503,6 +503,8 @@ Round 25: skills `drift-review`, `layer-build`, `escalation-draft`, `maintenance
 
 ## 9. M4 - Release 1.0
 
+Round 26 (WP4.1): `uv build` gives wheel and sdist (`twine check` passes); a clean-room test installs the wheel alone outside the repository and runs the Chinook loop; the M3 answers (layer join tables, value tables, dbt derived metrics, committed release notes, a migration registry slot).
+
 ### WP4.1 Packaging (1 round)
 
 Re-check the name (D-010); publish `factmodel` with extras `[sql]`, `[postgres]` and further drivers; `fact --version` shows package and schema versions.

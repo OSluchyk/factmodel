@@ -5,7 +5,9 @@ installed). One semantic model per layer entity: a primary entity on its key, a 
 per equality join the layer lists, categorical dimensions for the fields its concepts use, a
 time dimension from a measure's ``time``, and the layer's measures. Every measure becomes a
 simple metric; a required predicate concept that the measure must apply becomes the metric's
-filter. Evidence status, hazards and the layer status travel in ``config.meta``.
+filter. A formula measure (aggregation ``none``) becomes a derived metric when every aggregate
+in it is an exported measure. Evidence status, hazards and the layer status travel in
+``config.meta``.
 
 The project must hold a MetricFlow time spine model (dbt project infrastructure, not part of
 a layer). Round-trip notes (what MetricFlow cannot hold, reported as warnings): a time field
@@ -17,6 +19,9 @@ consumer fixes it per query, for example QCEW ``level``); concept value vocabula
 
 import re
 from typing import Any
+
+import sqlglot
+from sqlglot import exp
 
 from factmodel import vocabulary
 from factmodel.adapters.types import type_class
@@ -104,6 +109,8 @@ def export(model: Model, layer_id: str) -> Export:
                     )
             if concept.predicate:
                 used |= {f for e, f in joins.parse(concept.predicate).columns if e == entity.id}
+            if concept.values_table is not None and item is layer.entities[0]:
+                out.warnings.append(f"concept {concept.id}: a values table has no MetricFlow form")
             if concept.distinct and any(d.startswith(f"{entity.id}.") for d in concept.distinct):
                 out.warnings.append(f"concept {concept.id}: a distinct rule has no MetricFlow form")
         time_dim = None
@@ -190,6 +197,7 @@ def export(model: Model, layer_id: str) -> Export:
         models.append(sm)
     exported = {m["name"] for sm in models for m in sm["measures"]}
     metrics = [m for m in metrics if m["type_params"]["measure"] in exported]
+    metrics += _derived(layer, {m["name"] for m in metrics}, out)
     for hazard in layer.hazards or []:
         found = model.hazards.get(hazard)
         if found is not None:
@@ -199,3 +207,68 @@ def export(model: Model, layer_id: str) -> Export:
     out.files[f"{layer.id}.yml"] = dump_yaml({"semantic_models": models, "metrics": metrics})
     out.warnings = sorted(set(out.warnings))
     return out
+
+
+AGG_NODES = {exp.Sum: "sum", exp.Count: "count", exp.Avg: "avg", exp.Min: "min", exp.Max: "max"}
+
+
+def _signature(node: exp.Expr) -> tuple[str, str] | None:
+    """(aggregation, unqualified inner expression) of an aggregate call, else None."""
+    for kind, agg in AGG_NODES.items():
+        if isinstance(node, kind):
+            inner = node.this
+            if isinstance(inner, exp.Distinct):
+                agg, inner = "count_distinct", inner.expressions[0]
+            return agg, unqualified(inner.sql())
+    return None
+
+
+def _rewrite(tree: exp.Expr, known: dict[tuple[str, str], str]) -> tuple[exp.Expr, list[str], bool]:
+    """Replace each aggregate call by the metric that computes it; report what was used and
+    whether some aggregate had no metric."""
+    used: list[str] = []
+    unmatched = False
+
+    def swap(node: exp.Expr) -> exp.Expr:
+        nonlocal unmatched
+        signature = _signature(node)
+        if signature is None:
+            return node
+        name = known.get(signature)
+        if name is None:
+            unmatched = True
+            return node
+        used.append(name)
+        return exp.column(name)
+
+    return tree.transform(swap), used, unmatched
+
+
+def _derived(layer: Any, available: set[str], out: Export) -> list[dict[str, Any]]:
+    """A derived metric for each formula measure (aggregation none) whose aggregates are all
+    exported measures: each aggregate is replaced by the metric that computes it."""
+    known: dict[tuple[str, str], str] = {}
+    for measure in layer.measures or []:
+        if measure.aggregation in AGG and _name(measure.id) in available:
+            known[(measure.aggregation, unqualified(measure.expression))] = _name(measure.id)
+    derived = []
+    for measure in layer.measures or []:
+        if measure.aggregation != "none":
+            continue
+        rewritten, used, unmatched = _rewrite(sqlglot.parse_one(measure.expression), known)
+        if unmatched or not used or any(rewritten.find_all(*AGG_NODES)):
+            continue  # stays a note from the measure loop
+        derived.append(
+            {
+                "name": _name(measure.id),
+                "label": measure.id,
+                "description": measure.meaning.strip(),
+                "type": "derived",
+                "type_params": {
+                    "expr": rewritten.sql(),
+                    "metrics": [{"name": n} for n in dict.fromkeys(used)],
+                },
+            }
+        )
+        out.warnings = [w for w in out.warnings if not w.startswith(f"measure {measure.id}:")]
+    return derived

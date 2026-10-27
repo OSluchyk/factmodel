@@ -41,6 +41,10 @@ def layer(model: Model, layer_id: str) -> list[str]:
         required = " [required]" if concept.required else ""
         if concept.predicate:
             form = f"predicate {concept.predicate}"
+        elif concept.values_table is not None:
+            table = concept.values_table
+            origin = f"from {table.entity}" if table.entity else f"{len(table.rows or [])} rows"
+            form = f"table ({', '.join(table.columns)}), {origin}"
         elif concept.distinct:
             form = f"distinct on {', '.join(concept.distinct)}"
         else:

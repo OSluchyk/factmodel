@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:entity:2.1.0",
+  "$id": "urn:factmodel:schema:entity:2.2.0",
   "title": "Entity",
   "description": "One table, view or object on the platform, with its fields and outgoing relationships.",
   "type": "object",

@@ -30,6 +30,7 @@ from factmodel.probes import intake as probe_intake_module
 from factmodel.probes import script as probe_script
 from factmodel.release import build as release_build
 from factmodel.release.check import check as release_check
+from factmodel.schemas.build import SCHEMA_VERSION
 
 app = typer.Typer(
     name="fact",
@@ -41,7 +42,7 @@ app = typer.Typer(
 
 def _print_version(value: bool) -> None:
     if value:
-        typer.echo(f"fact {__version__}")
+        typer.echo(f"fact {__version__} (schemas {SCHEMA_VERSION})")
         raise typer.Exit()
 
 
@@ -83,6 +84,7 @@ def project(root: RootOption = Path(".")) -> None:
         raise typer.Exit(1)
     files = derived.render(values)
     changed = derived.write(model.root, files)
+    changed += derived.write_files(model.root, derived.layer_files(model))
     for path in changed:
         typer.echo(f"wrote {path.relative_to(model.root).as_posix()}")
     if not changed:

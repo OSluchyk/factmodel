@@ -7,6 +7,7 @@ when every file parses and validates against the installed schemas, whatever the
 There are no migrations yet: they come with the first major schema change.
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -16,6 +17,39 @@ from factmodel.model.loader import CONFIG_FILE, inspect_model
 from factmodel.schemas.build import SCHEMA_VERSION
 
 READ_STAGES = ("yaml", "schema")
+
+
+@dataclass(frozen=True)
+class Migration:
+    """One schema step. ``apply`` rewrites a model's files from ``source`` to ``target``;
+    None means no automatic step exists and the note says what a model needs."""
+
+    source: str
+    target: str
+    note: str
+    apply: Callable[[Path], list[Path]] | None = None
+
+
+# The registry ``fact migrate`` reads, oldest first. No migration has been written yet (M3
+# answer Q6): the slot below documents the one breaking change so far, and the first real
+# migration goes here with its ``apply``.
+MIGRATIONS: tuple[Migration, ...] = (
+    Migration(
+        "1.0.0",
+        "2.0.0",
+        "layer contract v1 (D-019): flat filters, concept field and measure field/time_field "
+        "were replaced; no model had a layer, so no automatic step was written",
+    ),
+)
+
+
+def path(source: str | None, target: str) -> list[Migration]:
+    """The registered steps from ``source`` towards ``target`` (major version changes)."""
+    if source is None:
+        return []
+    start = int(source.split(".")[0])
+    end = int(target.split(".")[0])
+    return [m for m in MIGRATIONS if start <= int(m.source.split(".")[0]) < end]
 
 
 @dataclass(frozen=True)
@@ -57,7 +91,14 @@ class MigrateReport:
         else:
             out.append(f"not compatible: {len(self.failing)} file(s) do not validate")
             out += [f"  {name}" for name in self.failing]
-        out.append("migrations: none needed" if self.compatible else "migrations: none available")
+        steps = path(self.model_schema_version, self.schema_version)
+        for step in steps:
+            how = "automatic" if step.apply else "no automatic step"
+            out.append(f"migration {step.source} -> {step.target} ({how}): {step.note}")
+        if not steps:
+            out.append(
+                "migrations: none needed" if self.compatible else "migrations: none available"
+            )
         return out
 
 

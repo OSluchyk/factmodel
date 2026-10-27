@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:snapshot:2.1.0",
+  "$id": "urn:factmodel:schema:snapshot:2.2.0",
   "title": "Metadata snapshot",
   "description": "An engine-neutral export of a source's metadata. Not a model file kind; adapters read it.",
   "type": "object",

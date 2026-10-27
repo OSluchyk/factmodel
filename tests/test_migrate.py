@@ -19,7 +19,7 @@ def test_both_examples_are_compatible() -> None:
         result = report(ROOT / "examples" / example)
         assert result.compatible, result.failing
         assert result.model_framework_version == "0.0.1"
-        assert result.model_schema_version == SCHEMA_VERSION == "2.1.0"
+        assert result.model_schema_version == SCHEMA_VERSION == "2.2.0"
         assert (result.framework_version, result.schema_version) == (__version__, SCHEMA_VERSION)
         assert result.difference() == "same"
 
@@ -29,11 +29,11 @@ def test_a_model_at_0_1_0_is_compatible_and_the_difference_is_named(tmp_path: Pa
     shutil.copytree(ROOT / "examples" / "qcew", root)
     config = root / "factmodel.yaml"
     text = config.read_text(encoding="utf-8")
-    config.write_text(text.replace("schema_version: 2.1.0", "schema_version: 0.1.0"), "utf-8")
+    config.write_text(text.replace("schema_version: 2.2.0", "schema_version: 0.1.0"), "utf-8")
     result = runner.invoke(app, ["migrate", "--root", str(root)])
     assert result.exit_code == 0, result.output
     assert "model schema_version: 0.1.0" in result.output
-    assert "schema difference: 0.1.0 -> 2.1.0 (major)" in result.output
+    assert "schema difference: 0.1.0 -> 2.2.0 (major)" in result.output
     assert "compatible: every model file validates" in result.output
 
 
@@ -69,14 +69,29 @@ def test_fact_check_warns_but_passes_on_a_schema_version_difference(tmp_path: Pa
     shutil.copytree(ROOT / "examples" / "chinook", root)
     config = root / "factmodel.yaml"
     text = config.read_text(encoding="utf-8")
-    config.write_text(text.replace("schema_version: 2.1.0", "schema_version: 1.0.0"), "utf-8")
+    config.write_text(text.replace("schema_version: 2.2.0", "schema_version: 1.0.0"), "utf-8")
     result = runner.invoke(app, ["check", "--root", str(root)])
     assert result.exit_code == 0, result.output
     assert (
-        "WARN  schema_version 1.0.0 differs from the installed schemas 2.1.0; "
+        "WARN  schema_version 1.0.0 differs from the installed schemas 2.2.0; "
         "every file validates (see fact migrate)"
     ) in result.output
     assert result.output.strip().endswith("gate: pass")
     assert "schema_version: 1.0.0" in config.read_text(encoding="utf-8")  # never rewritten
     same = runner.invoke(app, ["check", "--root", str(ROOT / "examples" / "chinook")])
     assert "WARN" not in same.output
+
+
+def test_the_registry_names_its_documented_slot(tmp_path: Path) -> None:
+    from factmodel.migrate import MIGRATIONS, path
+
+    assert [(m.source, m.target, m.apply) for m in MIGRATIONS] == [("1.0.0", "2.0.0", None)]
+    assert path("1.0.0", "2.2.0") == list(MIGRATIONS)
+    assert path("2.0.0", "2.2.0") == [] and path(None, "2.2.0") == []
+    root = tmp_path / "model"
+    shutil.copytree(ROOT / "examples" / "chinook", root)
+    config = root / "factmodel.yaml"
+    text = config.read_text(encoding="utf-8")
+    config.write_text(text.replace("schema_version: 2.2.0", "schema_version: 1.0.0"), "utf-8")
+    result = runner.invoke(app, ["migrate", "--root", str(root)])
+    assert "migration 1.0.0 -> 2.0.0 (no automatic step): layer contract v1" in result.output

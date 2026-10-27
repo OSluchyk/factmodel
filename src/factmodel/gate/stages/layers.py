@@ -30,6 +30,7 @@ HINTS = {
     "missing_companion": "name the measure that counts the suppressed cells in companion",
     "missing_evidence": "cite an existing evidence record",
     "not_accepted": "run fact equivalence run and fact equivalence accept, or keep status draft",
+    "bad_values_table": "give every row one value per column, or name a layer entity's fields",
     "bad_rollup": (
         "name a resolved single-target hierarchy, a grain field and a predicate concept (D-020)"
     ),
@@ -167,6 +168,22 @@ def _check(ctx: GateContext, layer: Layer, path: str) -> Iterator[LoadIssue]:
             yield from within(["concepts", i, "distinct", j], ref)
         if concept.predicate:
             yield from expression(["concepts", i, "predicate"], concept.predicate)
+        table = concept.values_table
+        if table is not None:
+            loc = ["concepts", i, "values_table"]
+            for j, row in enumerate(table.rows or []):
+                if len(row) != len(table.columns):
+                    message = f"row {j} has {len(row)} values for {len(table.columns)} columns"
+                    yield issue("bad_values_table", [*loc, "rows", j], message)
+            if table.entity is not None:
+                if table.entity not in entities:
+                    message = f"{table.entity!r} is not among the layer's entities"
+                    yield issue("outside_layer", [*loc, "entity"], message)
+                else:
+                    absent = [c for c in table.columns if c not in _fields(model, table.entity)]
+                    if absent:
+                        message = f"{table.entity} has no field {', '.join(absent)}"
+                        yield issue("bad_values_table", [*loc, "columns"], message)
     measures = {m.id for m in layer.measures or []}
     listed = set(layer.hazards or [])
     for i, measure in enumerate(layer.measures or []):

@@ -26,25 +26,40 @@ def _quote(value: str) -> str:
     return "'" + str(value).replace("'", "''") + "'"
 
 
-def level(area: str, industry: str, ownership: str) -> str:
-    """agglvl_code from the A4 matrix: geography digit, then industry and ownership level."""
-    if area.startswith("C") and not area.startswith("CS"):
-        geo = "4"
-    elif area[2:] == "000":
-        geo = "5"
-    else:
-        geo = "7"
+def _geography(area: str) -> str:
+    if area.startswith("CS"):
+        return "csa"
+    if area.startswith("C"):
+        return "msa"
+    if area.startswith("US"):
+        return "nation"
+    return "state" if area[2:] == "000" else "county"
+
+
+def _industry_level(industry: str) -> str:
     if industry == "10":
-        ind = "0" if ownership == "0" else "1"
-    elif industry in ("101", "102"):
-        ind = "2"
-    elif len(industry) == 4 and industry.startswith("10"):
-        ind = "3"
-    elif "-" in industry or len(industry) == 2:
-        ind = "4"
-    else:
-        ind = str(len(industry) + 2)  # 3 to 6 digits: levels 5 to 8
-    return geo + ind
+        return "total"
+    if industry in ("101", "102"):
+        return "domain"
+    if len(industry) == 4 and industry.startswith("10"):
+        return "supersector"
+    if "-" in industry or len(industry) == 2:
+        return "sector"
+    return f"naics{len(industry)}"
+
+
+def level(layer: Any, area: str, industry: str, ownership: str) -> str:
+    """agglvl_code looked up in the layer's level matrix (the A4 table)."""
+    table = _get(layer.concepts, "level_matrix").values_table
+    industry_level = _industry_level(industry)
+    owner = "total" if industry_level == "total" and ownership == "0" else "by_ownership"
+    wanted = {"geography": _geography(area), "industry_level": industry_level, "ownership": owner}
+    columns = table.columns
+    for row in table.rows:
+        cells = dict(zip(columns, row, strict=True))
+        if all(cells[k] == v for k, v in wanted.items()):
+            return str(cells["agglvl_code"])
+    raise ValueError(f"no aggregation level for {wanted}")
 
 
 def compile(request: dict[str, Any], layer: Any) -> str:
@@ -62,7 +77,7 @@ def compile(request: dict[str, Any], layer: Any) -> str:
     if "areas" in request:
         return _by_area(request, layer, measure, disclosed, companion, entity, filters)
     area = request["area"]
-    lvl = request.get("level") or level(area, request["industry"], request["ownership"])
+    lvl = request.get("level") or level(layer, area, request["industry"], request["ownership"])
     where = " AND ".join(
         [f"{entity}.area_fips = {_quote(area)}", *filters, f"{entity}.agglvl_code = {_quote(lvl)}"]
     )
@@ -93,7 +108,7 @@ def _by_area(
     kind = _get(layer.concepts, "area_kind_county")
     distinct = _get(layer.concepts, "distinct_areas")
     fields = ", ".join(distinct.distinct)
-    lvl = request.get("level") or level("00001", request["industry"], request["ownership"])
+    lvl = request.get("level") or level(layer, "00001", request["industry"], request["ownership"])
     where = " AND ".join(
         [
             kind.predicate.replace("qtrly.", f"{entity}."),

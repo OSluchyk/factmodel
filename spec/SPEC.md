@@ -209,6 +209,7 @@ One command, `fact`, with a few verbs. It is a small Python package run through 
 | `fact check` | Run the gate; exit 0 only when every stage passes |
 | `fact migrate` | Report the schema version a model uses and whether the installed framework reads it (`spec/VERSIONING.md`) |
 | `fact project` | Recompute derived values (labels, scope, generated tables) |
+| `fact --version` | The framework version and the schema version it reads |
 | `fact release --out <dir> --version <v>` | Build the readable release copy: complete partition, internal notes stripped, `VERSION`, append-only `RELEASE_NOTES.md`; refused on a failing gate or an equivalence drop |
 | `fact check --release <dir> [--previous <dir>]` | The reduced gate for a release: yaml, schema, references, privacy, and the release stage |
 | `fact lookup --layer\|--entity\|--hazard <id>` | Print a layer with its joins resolved, an entity or a hazard, from a model or a release |

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:release-allowlist:2.1.0",
+  "$id": "urn:factmodel:schema:release-allowlist:2.2.0",
   "title": "Release allowlist",
   "description": "File dispositions and per-kind key allowlists for a release. Fail-closed.",
   "type": "object",

@@ -48,7 +48,9 @@ properties:
   extensions: {$ref: "#/$defs/extensions"}
 $defs:
   concept:
-    description: A named filter - a value vocabulary on a field, a predicate, or a distinct rule.
+    description: >-
+      A named filter or lookup - a value vocabulary on a field, a predicate, a distinct rule,
+      or a table of values.
     type: object
     additionalProperties: false
     required: [id, meaning]
@@ -73,17 +75,60 @@ $defs:
         minItems: 1
         uniqueItems: true
         items: {$ref: "#/$defs/field_ref"}
+      values_table:
+        description: >-
+          A table of named columns: rows written here, or the columns of a code-list entity the
+          layer reads (for example a level matrix a consumer looks codes up in).
+        type: object
+        additionalProperties: false
+        required: [columns]
+        properties:
+          columns:
+            type: array
+            minItems: 1
+            uniqueItems: true
+            items: {$ref: "#/$defs/field_name"}
+          rows:
+            type: array
+            minItems: 1
+            items:
+              type: array
+              items:
+                oneOf:
+                  - {$ref: "#/$defs/text"}
+                  - {type: number}
+          entity: {$ref: "#/$defs/slug"}
+        oneOf:
+          - required: [rows]
+          - required: [entity]
       required:
         description: Every query must apply this concept.
         type: boolean
       evidence: {$ref: "#/$defs/evidence_refs"}
     oneOf:
       - required: [field]
-        not: {anyOf: [{required: [predicate]}, {required: [distinct]}]}
+        not: {anyOf: [{required: [predicate]}, {required: [distinct]}, {required: [values_table]}]}
       - required: [predicate]
-        not: {anyOf: [{required: [field]}, {required: [values]}, {required: [distinct]}]}
+        not:
+          anyOf:
+            - {required: [field]}
+            - {required: [values]}
+            - {required: [distinct]}
+            - {required: [values_table]}
       - required: [distinct]
-        not: {anyOf: [{required: [field]}, {required: [values]}, {required: [predicate]}]}
+        not:
+          anyOf:
+            - {required: [field]}
+            - {required: [values]}
+            - {required: [predicate]}
+            - {required: [values_table]}
+      - required: [values_table]
+        not:
+          anyOf:
+            - {required: [field]}
+            - {required: [values]}
+            - {required: [predicate]}
+            - {required: [distinct]}
   measure:
     type: object
     additionalProperties: false

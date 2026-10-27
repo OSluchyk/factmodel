@@ -479,6 +479,18 @@ class LayerEntity(Strict):
     default_filters: Annotated[list[Slug], Unique] | None = None
 
 
+class ValuesTable(Strict):
+    columns: Annotated[list[FieldName], Field(min_length=1), Unique]
+    rows: Annotated[list[list[Text | float]], Field(min_length=1)] | None = None
+    entity: Slug | None = None
+
+    @model_validator(mode="after")
+    def _one_source(self) -> Self:
+        if (self.rows is None) == (self.entity is None):
+            raise ValueError("a values table has rows or names an entity, not both")
+        return self
+
+
 class Concept(Strict):
     id: Slug
     meaning: Text
@@ -486,14 +498,22 @@ class Concept(Strict):
     values: Annotated[list[Text | float], Field(min_length=1), Unique] | None = None
     predicate: Text | None = None
     distinct: Annotated[list[FieldRef], Field(min_length=1), Unique] | None = None
+    values_table: ValuesTable | None = None
     required: bool | None = None
     evidence: EvidenceRefs | None = None
 
     @model_validator(mode="after")
     def _one_form(self) -> Self:
-        forms = [self.field is not None, self.predicate is not None, self.distinct is not None]
+        forms = [
+            self.field is not None,
+            self.predicate is not None,
+            self.distinct is not None,
+            self.values_table is not None,
+        ]
         if forms.count(True) != 1:
-            raise ValueError("a concept is a field with values, a predicate or a distinct rule")
+            raise ValueError(
+                "a concept is a field with values, a predicate, a distinct rule or a values table"
+            )
         if self.values is not None and self.field is None:
             raise ValueError("values belong to a field concept")
         return self

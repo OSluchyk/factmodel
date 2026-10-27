@@ -2,6 +2,23 @@
 
 Newest first. Every entry says why, not only what.
 
+## Unreleased - 2026-10-27 - Round 26: WP4.1 Packaging, clean-room install, M3 answers
+
+**Why.** Before anyone else can use FactModel, the built package alone has to work with nothing from the source tree. The M3 answers close the gaps the reference consumers found: joins a consumer had to look up, a level matrix it had to derive, a formula dbt could not hold, and release notes that did not survive a fresh build folder.
+
+- Packaging:
+  - `uv build` gives wheel and sdist, and `twine check` (dev dependency) passes;
+  - the sdist no longer ships the owner's root `.claude/`;
+  - `fact --version` prints the schema version.
+- A clean-room test installs the wheel into a fresh environment outside the repository and runs the Chinook loop: check, project, probes, equivalence, release, release check, dbt export.
+- M3 answers:
+  - per-layer derived join tables (Q1);
+  - the concept form `values_table`, used by QCEW's `level_matrix` (Q2);
+  - dbt derived metrics for formula measures (Q4);
+  - committed `release/RELEASE_NOTES.md` (Q5);
+  - a migration registry slot (Q6).
+- Schemas 2.2.0. D-010 gains a dated PyPI check: the name now has a page (200), and the owner decides.
+
 ## Unreleased - 2026-10-27 - Round 25: WP3.5 and WP3.6 Exporters and maintenance skills
 
 **Why.** A proven layer is most useful where teams already work: in dbt's semantic layer and in the open Ossie interchange format. An export that silently loses the disclosure filter or a hazard would carry a wrong answer into those tools, so every exporter lists what its target cannot hold. The maintenance skills close the loop: drift, escalations, scheduled re-measuring and building the next layer.

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:hazard:2.1.0",
+  "$id": "urn:factmodel:schema:hazard:2.2.0",
   "title": "Hazard",
   "description": "Permanent behaviour of the platform a reader must know. Never counted as an issue.",
   "type": "object",

@@ -57,6 +57,7 @@ dev = [
     "factmodel-csvdir",
     "dbt-core>=1.12.6",
     "dbt-duckdb>=1.11.1",
+    "twine>=7.0.0",
 ]
 
 [tool.uv.sources]
@@ -69,6 +70,10 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/factmodel"]
+
+[tool.hatch.build.targets.sdist]
+# The owner's local agent folder at the root is never part of a release (examples keep theirs).
+exclude = ["/.claude", "/dist"]
 
 [tool.hatch.build.targets.wheel.force-include]
 "spec/VOCABULARY.md" = "factmodel/VOCABULARY.md"

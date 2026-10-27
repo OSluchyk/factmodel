@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:tenants:2.1.0",
+  "$id": "urn:factmodel:schema:tenants:2.2.0",
   "title": "Tenants",
   "description": "Tenants and environments. Ingest and presence are separate facts and never merged.",
   "type": "object",

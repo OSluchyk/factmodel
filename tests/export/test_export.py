@@ -49,8 +49,13 @@ def test_dbt_export_shape(example: str) -> None:
             in metrics["employment_month3"]["filter"]
         )
         assert "filter" not in metrics["establishments"]  # suppressed cells included
-        assert "avg_weekly_wage" not in metrics and "annual_employment" not in metrics
-        assert any("avg_weekly_wage: aggregation none" in w for w in result.warnings)
+        assert "annual_employment" not in metrics  # read at its grain: no metric
+        derived = metrics["avg_weekly_wage"]  # a formula over exported metrics (M3 answer Q4)
+        assert derived["type"] == "derived"
+        assert derived["type_params"]["expr"] == "total_wages / employment_avg / 13"
+        assert not any("avg_weekly_wage" in w for w in result.warnings)
+        assert any("annual_employment: aggregation none" in w for w in result.warnings)
+        assert any("level_matrix: a values table" in w for w in result.warnings)
         assert any("distinct_areas" in w for w in result.warnings)
     else:
         assert set(metrics) == {"revenue", "tracks_bought", "customers_active"}

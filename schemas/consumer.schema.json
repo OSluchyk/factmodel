@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:consumer:2.1.0",
+  "$id": "urn:factmodel:schema:consumer:2.2.0",
   "title": "Consumer",
   "description": "The agent, SQL generator or knowledge base that proves a layer (D-019). semantic/<layer-id>/consumer.yaml.",
   "type": "object",

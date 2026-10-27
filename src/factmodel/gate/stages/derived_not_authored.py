@@ -2,12 +2,14 @@
 
 The loader reports derived keys the schema rejects. This stage also finds them anywhere the
 schema allows free keys, such as `extensions`, because a derived value there would still be
-a second, hand-written copy of a computed fact.
+a second, hand-written copy of a computed fact. A layer's derived join table
+(``semantic/<layer>/generated/joins.tsv``) must equal what ``fact project`` writes.
 """
 
 from typing import Any
 
 from factmodel import vocabulary
+from factmodel.core.derived import layer_files
 from factmodel.gate.runner import GateContext
 from factmodel.model.loader import LoadIssue
 
@@ -36,4 +38,10 @@ def run(ctx: GateContext) -> list[LoadIssue]:
         for location in _free_maps(doc.data, [], False):
             message = f"derived key {location[-1]!r} is authored under extensions"
             issues.append(ctx.issue(STAGE, "derived_key", name, location, message, HINT))
+    for rel, text in sorted(layer_files(ctx.model).items()):
+        path = ctx.root / rel
+        if not path.is_file() or path.read_text(encoding="utf-8") != text:
+            message = f"{rel} is missing or differs from what fact project derives"
+            hint = "run fact project; derived files are never edited by hand"
+            issues.append(ctx.issue(STAGE, "derived_file", rel, [], message, hint))
     return issues

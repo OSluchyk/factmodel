@@ -43,6 +43,7 @@ def _project(root: Path) -> None:
     values = derived.derive_model(load_model(root))
     assert values is not None
     derived.write(root, derived.render(values))
+    derived.write_files(root, derived.layer_files(load_model(root)))
 
 
 def test_stage_list_matches_the_plan() -> None:

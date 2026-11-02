@@ -160,7 +160,7 @@ A **source** is one place facts come from. The source registry records how to ob
 | Kind | Meaning | Pin format | Example pin |
 | --- | --- | --- | --- |
 | `git` | A git repository: DDL, configuration, pipeline code. | `<repo>@<sha>:<path>[:<line>]`; the sha is a commit, or the file's blob hash for a read of the working tree | `etl-config@<commit>:loaders/orders.yaml:12` |
-| `warehouse` | An engine's catalog or data, read through an adapter or a probe. | `<engine>:<target>@<YYYY-MM-DD>`, where the target is what was read (a database, a schema, `<project>.<dataset>`) | `postgres:chinook@2026-10-23`, `bigquery:my-project.sales@2026-10-23` |
+| `warehouse` | An engine's catalog or data, read through an adapter or a probe. | `<engine>:<target>@<YYYY-MM-DD>`, where the target is what was read (a database, a schema, `<project>.<dataset>`); a second, different snapshot of the same day gets `_2` after the date, the third `_3`, and so on, so that two reads never share a pin | `postgres:chinook@2026-10-23`, `bigquery:my-project.sales@2026-10-23`, `duckdb:tpch@2026-11-02_2` |
 | `api` | An HTTP API that describes or serves platform objects. | `<host><path>@<YYYY-MM-DD>` | `api.example.com/v2/objects@2026-11-01` |
 | `document` | A vendor or internal document with a version or date. | `<title>@<version or YYYY-MM-DD>` | `Loader guide@4.2` |
 | `ticket` | An issue or change ticket. | `<system>:<key>@<YYYY-MM-DD>` | `tracker:DATA-12@2026-11-01` |
@@ -750,7 +750,7 @@ Example: `source_pin_moved` on the loader repository requires the evidence pinne
 
 ## 12. Metadata snapshots
 
-A **snapshot** is an engine-neutral export of a source's metadata (`fact snapshot --source <id>`), stored in `sources/snapshots/`, so adapters, agents and tests work without credentials. It holds objects, fields with paths and types, declared constraints, partitioning and options - never rows. It is not a model file kind: the gate does not read it. It is the only contract between an adapter and the core (D-011): `fact draft` and `fact sync` read snapshots, and the core never reads `options` or `extensions`, where engine-specific facts go. Its schema is `schemas/snapshot.schema.json`.
+A **snapshot** is an engine-neutral export of a source's metadata (`fact snapshot --source <id>`), stored in `sources/snapshots/` as `<source>@<date>.yaml`, so adapters, agents and tests work without credentials. A second, different read on the same day is written as `<source>@<date>_2.yaml` with `_2` on its pin (the third `_3`, and so on); a read identical to one already stored is kept, not duplicated. `fact draft` and `fact sync` take the latest by date, then by that sequence. It holds objects, fields with paths and types, declared constraints, partitioning and options - never rows. It is not a model file kind: the gate does not read it. It is the only contract between an adapter and the core (D-011): `fact draft` and `fact sync` read snapshots, and the core never reads `options` or `extensions`, where engine-specific facts go. Its schema is `schemas/snapshot.schema.json`.
 
 A snapshot may carry a `pin` (the version read) and each object may carry its own `pin` (for example a DDL file at a commit); drafts cite the object's pin, else the snapshot's.
 

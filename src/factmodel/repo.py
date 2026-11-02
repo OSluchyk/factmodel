@@ -198,15 +198,54 @@ def _write_if_changed(path: Path, text: str) -> bool:
     return True
 
 
-def write_snapshot(root: Path, snap: Snapshot) -> tuple[Path, bool]:
-    """Write ``sources/snapshots/<source-id>@<date>.yaml``; return it and whether it changed."""
-    path = root / "sources" / "snapshots" / f"{snap.source}@{snap.taken_on}.yaml"
-    text = dump_yaml(snap.model_dump(mode="json", exclude_none=True, by_alias=True))
-    return path, _write_if_changed(path, text)
+SNAPSHOT_NAME = re.compile(
+    r"^(?P<source>.+)@(?P<date>\d{4}-\d{2}-\d{2})(?:_(?P<seq>[2-9]|[1-9]\d+))?\.yaml$"
+)
+
+
+def snapshot_sequence(path: Path) -> tuple[str, int]:
+    """The (date, sequence) a snapshot file name carries: ``<source>@<date>.yaml`` is the
+    first read of that day, ``<source>@<date>_<n>.yaml`` the n-th."""
+    match = SNAPSHOT_NAME.match(path.name)
+    if match is None:
+        raise RepoError(f"{path.name} is not a snapshot file name (<source>@<date>[_n].yaml)")
+    return match.group("date"), int(match.group("seq") or 1)
+
+
+def snapshot_files(root: Path, source_id: str) -> list[Path]:
+    """A source's snapshot files, oldest first: by date, then by sequence within the day."""
+    found = (root / "sources" / "snapshots").glob(f"{source_id}@*.yaml")
+    return sorted(found, key=snapshot_sequence)
+
+
+def _sequenced(snap: Snapshot, seq: int) -> Snapshot:
+    """The snapshot with the day's sequence on its pin: ``<pin>_<n>`` from the second read on."""
+    if snap.pin is None or seq == 1:
+        return snap
+    return snap.model_copy(update={"pin": f"{snap.pin}_{seq}"})
+
+
+def write_snapshot(root: Path, snap: Snapshot) -> tuple[Path, bool, Snapshot]:
+    """Write the snapshot as ``sources/snapshots/<source-id>@<date>.yaml``, or as
+    ``<source-id>@<date>_<n>.yaml`` when that day already holds a different read; a file whose
+    content matches is kept. Returns the file, whether it changed and the snapshot as written
+    (its pin carries the sequence, so two reads of one day never share a pin)."""
+    folder = root / "sources" / "snapshots"
+    seq = 1
+    while True:
+        suffix = "" if seq == 1 else f"_{seq}"
+        path = folder / f"{snap.source}@{snap.taken_on}{suffix}.yaml"
+        written = _sequenced(snap, seq)
+        text = dump_yaml(written.model_dump(mode="json", exclude_none=True, by_alias=True))
+        if not path.is_file():
+            return path, _write_if_changed(path, text), written
+        if path.read_text(encoding="utf-8") == text:
+            return path, False, written
+        seq += 1
 
 
 def latest_snapshot(root: Path, source_id: str) -> Path:
-    found = sorted((root / "sources" / "snapshots").glob(f"{source_id}@*.yaml"))
+    found = snapshot_files(root, source_id)
     if not found:
         raise RepoError(f"no snapshot for source {source_id!r}; run fact snapshot first")
     return found[-1]

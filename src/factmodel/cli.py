@@ -250,7 +250,9 @@ def snapshot_command(
     date: Annotated[str | None, typer.Option("--date", help="Date read, YYYY-MM-DD.")] = None,
     root: RootOption = Path("."),
 ) -> None:
-    """Read a source's metadata through its adapter into sources/snapshots/; set current_pin."""
+    """Read a source's metadata through its adapter into sources/snapshots/; set current_pin.
+
+    A second, different read on the same day gets the next file and pin suffix (_2, _3, ...)."""
     source = _source(root, source_id)
     try:
         if from_export is not None:
@@ -259,7 +261,7 @@ def snapshot_command(
             snap = registry.get(source.adapter).snapshot(source, root.resolve())
         if date is not None:
             snap = with_date(snap, date)
-        path, changed = repo.write_snapshot(root, snap)
+        path, changed, snap = repo.write_snapshot(root, snap)
         if snap.pin is not None:
             repo.set_current_pin(root, source.id, snap.pin)
     except (AdapterError, repo.RepoError) as error:

@@ -52,8 +52,9 @@ def warehouse_pin(engine: str, target: str, taken_on: str) -> str:
 
 
 def with_date(snap: Snapshot, taken_on: str) -> Snapshot:
-    """The same snapshot read on another date; the date part of its pin follows."""
+    """The same snapshot read on another date; the date part of its pin follows, and a day
+    sequence on the pin (``_2``) is dropped, because writing the file assigns it."""
     pin = snap.pin
     if pin is not None:
-        pin = re.sub(r"@\d{4}-\d{2}-\d{2}$", f"@{taken_on}", pin)
+        pin = re.sub(r"@\d{4}-\d{2}-\d{2}(_\d+)?$", f"@{taken_on}", pin)
     return snap.model_copy(update={"taken_on": taken_on, "pin": pin})

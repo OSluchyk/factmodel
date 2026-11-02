@@ -79,6 +79,8 @@ Schema version 0.1.0 covers the specification as first written and every change 
 | 2.2.0 | `fact migrate` registry with one documented slot (1.0.0 to 2.0.0, no automatic step) | implementation | - | none |
 | 2.2.0 | `fact --version` prints the schema version | implementation | - | none |
 | 2.2.0 | Ossie export: the released core specification 0.1.1 by default, 0.2.0.dev0 with `fact export --spec-version`; only keys each document names | implementation (the target's format, no framework key) | - | QCEW, Chinook |
+| 2.2.0 | `fact propose keys`, `fact propose joins`: key and join candidates measured on a live source (counts only) into `drafts/<source>/keys.yaml` and `joins.yaml`, never `physical/`; `spec/ALGORITHMS.md` section 4 | additive (a file a command writes under `drafts/`, which the gate never reads) | ledger | TPC-H |
+| 2.2.0 | Vocabulary block `key_type_class` | additive | ledger | TPC-H |
 | 2.2.0 | More than one snapshot per source and day: the second different read of a day is `<source>@<date>_2.yaml` with `_2` on its warehouse pin (then `_3`, ...); `fact draft` and `fact sync` order snapshots by date, then sequence | additive (a file name and a pin suffix; the first read of a day keeps its name and pin) | ledger | TPC-H |
 
 ## Defect fixes (D-018: CHANGELOG entry only)

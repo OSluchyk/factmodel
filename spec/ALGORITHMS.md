@@ -3,7 +3,7 @@
 Author: Oleksandr Sluchyk · Version 0.1 · 2026-10-23
 Companion to `spec/SPEC.md`. Terms are defined in `spec/VOCABULARY.md`; file shapes in `schemas/`.
 
-The core runs three algorithms. All three are pure functions: same input, same output, no I/O, and the order of input files never matters. Test vectors live in `tests/vectors/<algorithm>/<case>.yaml`; each holds the input model files and the expected output.
+The core runs three algorithms. All three are pure functions: same input, same output, no I/O, and the order of input files never matters. Test vectors live in `tests/vectors/<algorithm>/<case>.yaml`; each holds the input model files and the expected output. Section 4 describes the one procedure that reads data, `fact propose`; it is a measurement, not an algorithm of the core, and it writes proposals, never facts.
 
 ## 0. Common definitions
 
@@ -155,3 +155,13 @@ The release is built only when no file fails (`vocabulary:release_failure`). Eve
 | `undeclared-key` | A projected entity with `extensions` that is in neither `keep` nor `drop` fails with `undeclared_key`. |
 
 `fact release` applies this partition to every file of the repository, then writes exported files (internal blocks stripped), projected files (kept keys only) and the `VERSION` and `RELEASE_NOTES.md` files (`spec/VOCABULARY.md`, section 9).
+
+## 4. Key and join proposals (`fact propose`)
+
+`fact propose keys` and `fact propose joins` measure a live source through the `sql` adapter, counts only, and write candidates to `drafts/<source>/keys.yaml` and `drafts/<source>/joins.yaml`. Every candidate carries a measurement record with `status: inferred`, whatever the data quality: a candidate is a proposal, and a person turns it into a key or a relationship (`vocabulary:key_type_class` names the type classes that may carry one).
+
+**Keys.** For every table that declares no primary key, each column of a key type class is a candidate when it has no null and as many distinct values as rows. When `--max-columns 2`, a pair is tried when neither column is a key on its own, both are never null, and the product of their distinct counts reaches the row count; the pair is a candidate when its distinct combinations equal the row count. The output lists minimal keys only.
+
+**Joins.** For every ordered pair of tables and every pair of columns of the same type class where the target column is unique, the inclusion is the share of the source column's distinct non-null values that exist in the target. Inclusion is measured only towards a unique target: a foreign key references a key, and without that rule a constant column would be included in every column that holds its value. A join candidate is therefore a foreign-key candidate, not any overlap of values. A candidate is any inclusion at or above the threshold (`--threshold`, default 0.999); its cardinality follows the uniqueness side only, `many_to_one`, or `one_to_one` when the source column is unique as well. A source with more distinct values than the target divided by the threshold is not measured, because it cannot reach it. Column pairs are tried against the two-column keys of the target (declared, or found by `keys`) when each column is included on its own. Column names play no part: how they relate is written in a `note` for the reader and never used as a criterion. Each record also carries the coverage of the target, so a reader can see that `o_shippriority = 0` reaching a region key covers one key out of five.
+
+This is the method the data-profiling literature calls unique column combination discovery and inclusion dependency discovery, in its brute-force form with two prunings (distinct-count bounds, and pairs only from included singles). It is adequate for tens of tables; it is not an IND-discovery algorithm such as SPIDER or BINDER, which scale to hundreds of tables by sorting or partitioning all columns at once. See Abedjan, Golab and Naumann, "Profiling relational data: a survey", The VLDB Journal 24(4), 2015, https://doi.org/10.1007/s00778-015-0389-y (sections 5.1 and 5.3), and Papenbrock, Kruse, Quiané-Ruiz and Naumann, "Divide & Conquer-based Inclusion Dependency Discovery", PVLDB 8(7), 2015, https://www.vldb.org/pvldb/vol8/p774-papenbrock.pdf (both read 2026-11-02).

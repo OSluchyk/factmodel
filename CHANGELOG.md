@@ -3,9 +3,18 @@
 Newest first. Every entry says what changed and why.
 
 ## Unreleased
+
+### Proposals measured on data
+
+- `fact propose keys` and `fact propose joins`: for a source with a `dsn_env`, measure which columns and column pairs are unique and never null, and which column pairs across tables include one another, and write the candidates to `drafts/<source>/keys.yaml` and `drafts/<source>/joins.yaml` with a measurement record each (`status: inferred`, data quality from the flag). Why: a catalog without declared keys, such as the TPC-H tables DuckDB's extension builds, leaves an agent nothing to draft relationships from; the rows know. Candidates never become keys or relationships by themselves; a person does that. Column names are reported, never used as a criterion. `spec/ALGORITHMS.md` section 4 names the method and its limits; vocabulary block `key_type_class` names the type classes a key may have.
+
 ### Snapshots
 
 - More than one snapshot per source and day. A second, different read of a day is written as `<source>@<date>_2.yaml` and its pin gets `_2` (then `_3`, and so on); an identical read is kept, not duplicated; `fact draft` and `fact sync` order snapshots by date, then sequence. Why: the TPC-H example reads the catalog twice on one day, before and after the kit's constraints, and the second read used to overwrite the first or had to borrow a date.
+
+### Examples and documentation
+
+- The `model-onboard` skill proposes keys and joins where a source can be measured.
 
 ## 0.1.0 - 2026-10-27
 

@@ -1,6 +1,7 @@
 """The `fact` command line."""
 
 import json
+import time
 from pathlib import Path
 from typing import Annotated, Any, cast
 
@@ -8,6 +9,7 @@ import typer
 
 from factmodel import __version__, lookup, migrate, repo, vocabulary
 from factmodel import probes as probes_module
+from factmodel import propose as propose_module
 from factmodel import status as status_module
 from factmodel import sync as sync_module
 from factmodel.adapters import registry
@@ -658,3 +660,120 @@ def export_command(
         f"# Export notes: layer {layer} to {target}\n\nWhat the target cannot hold:\n\n{notes}",
     )
     typer.echo(f"{layer} -> {target}: {len(result.files)} file(s), {len(result.warnings)} note(s)")
+
+
+propose_app = typer.Typer(
+    help="Propose keys and joins measured on data (counts only); candidates go to drafts/.",
+    no_args_is_help=True,
+)
+app.add_typer(propose_app, name="propose")
+
+
+def _propose_setup(
+    root: Path, source_id: str, snapshot: Path | None, date: str | None, data_quality: str
+) -> tuple[Snapshot, propose_module.Session, str, str]:
+    if data_quality not in vocabulary.load()["data_quality"]:
+        typer.echo(f"unknown data quality {data_quality!r}", err=True)
+        raise typer.Exit(2)
+    source = _source(root, source_id)
+    try:
+        path = snapshot or repo.latest_snapshot(root, source_id)
+        snap = Snapshot.model_validate(load(path).data)
+        url = sql_adapter.dsn(source)
+        dialect = dialect_for(source.engine, source.dialect)
+    except (AdapterError, repo.RepoError, ValueError) as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(1) from error
+    day = date or today()
+    pin = warehouse_pin(source.engine or dialect, sql_adapter.target_of(source, url), day)
+    session = propose_module.Session(run=lambda q: sql_adapter.measure(url, q), dialect=dialect)
+    return snap, session, pin, day
+
+
+def _write_proposal(root: Path, source_id: str, name: str, doc: dict[str, Any]) -> str:
+    path = root / "drafts" / source_id / name
+    changed = repo.write_text_if_changed(path, propose_module.HEADER + "\n" + repo.dump_yaml(doc))
+    return f"{'wrote' if changed else 'unchanged'} {path.relative_to(root).as_posix()}"
+
+
+SnapshotOption = Annotated[
+    Path | None, typer.Option("--snapshot", help="Snapshot file; default: the latest.")
+]
+EnvironmentOption = Annotated[str, typer.Option("--environment")]
+DataQualityOption = Annotated[
+    str, typer.Option("--data-quality", help="representative, synthetic or unknown.")
+]
+DateOption = Annotated[str | None, typer.Option("--date", help="YYYY-MM-DD.")]
+
+
+@propose_app.command("keys")
+def propose_keys_command(
+    source_id: Annotated[str, typer.Option("--source", help="A source with a dsn_env.")],
+    snapshot: SnapshotOption = None,
+    max_columns: Annotated[
+        int, typer.Option("--max-columns", min=1, max=2, help="Try single columns, or pairs too.")
+    ] = 2,
+    environment: EnvironmentOption = "prod",
+    data_quality: DataQualityOption = "unknown",
+    date: DateOption = None,
+    root: RootOption = Path("."),
+) -> None:
+    """Measure which columns and column pairs are unique and never null in every table
+    without a primary key; write the candidates to drafts/<source>/keys.yaml."""
+    snap, session, pin, day = _propose_setup(root, source_id, snapshot, date, data_quality)
+    start = time.perf_counter()
+    try:
+        candidates, skipped = propose_module.propose_keys(snap, session, max_columns)
+    except ValueError as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(2) from error
+    meta = {"environment": environment, "data_quality": data_quality}
+    doc = propose_module.keys_document(
+        snap, candidates, skipped, session, pin, day, meta, max_columns
+    )
+    tables = len([o for o in snap.objects if o.object_type == "table"])
+    note = _write_proposal(root, source_id, propose_module.KEYS_FILE, doc)
+    typer.echo(
+        f"{tables} tables, {len(candidates)} key candidates, {session.queries} queries, "
+        f"{time.perf_counter() - start:.1f} s: {note}"
+    )
+    for item in skipped:
+        typer.echo(f"  skipped {item}")
+
+
+@propose_app.command("joins")
+def propose_joins_command(
+    source_id: Annotated[str, typer.Option("--source", help="A source with a dsn_env.")],
+    snapshot: SnapshotOption = None,
+    threshold: Annotated[
+        float, typer.Option("--threshold", min=0.0, max=1.0, help="Least inclusion share.")
+    ] = 0.999,
+    environment: EnvironmentOption = "prod",
+    data_quality: DataQualityOption = "unknown",
+    date: DateOption = None,
+    root: RootOption = Path("."),
+) -> None:
+    """Measure, for every type-compatible column pair across tables, the share of the source
+    column's distinct values that exist in a unique target column; write the candidates at or
+    above the threshold to drafts/<source>/joins.yaml."""
+    snap, session, pin, day = _propose_setup(root, source_id, snapshot, date, data_quality)
+    keys_path = root / "drafts" / source_id / propose_module.KEYS_FILE
+    keys = propose_module.keys_from_document(load(keys_path).data) if keys_path.is_file() else {}
+    start = time.perf_counter()
+    try:
+        candidates, skipped = propose_module.propose_joins(snap, session, threshold, keys)
+    except ValueError as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(2) from error
+    meta = {"environment": environment, "data_quality": data_quality}
+    doc = propose_module.joins_document(
+        snap, candidates, skipped, session, pin, day, meta, threshold
+    )
+    tables = len([o for o in snap.objects if o.object_type == "table"])
+    note = _write_proposal(root, source_id, propose_module.JOINS_FILE, doc)
+    typer.echo(
+        f"{tables} tables, {len(candidates)} join candidates, {session.queries} queries, "
+        f"{time.perf_counter() - start:.1f} s: {note}"
+    )
+    for item in skipped:
+        typer.echo(f"  skipped {item}")

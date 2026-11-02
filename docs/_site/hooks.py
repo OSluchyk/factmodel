@@ -36,6 +36,14 @@ EXAMPLES = {
     "probe render": "fact probe render --root model --dialect duckdb --source shop-db",
     "probe run": "fact probe run --root model --source shop-db --data-quality synthetic",
     "project": "fact project --root examples/chinook",
+    "propose joins": (
+        "fact propose joins --root model --source shop-db --environment local "
+        "--data-quality synthetic"
+    ),
+    "propose keys": (
+        "fact propose keys --root model --source shop-db --environment local "
+        "--data-quality synthetic"
+    ),
     "quote": "fact quote --root model --source ddl --path ddl/schema.sql --line 12",
     "release": "fact release --root examples/chinook --out release/out --version 0.1.0",
     "snapshot": "fact snapshot --root model --source shop-db",

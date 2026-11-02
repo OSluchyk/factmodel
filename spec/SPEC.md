@@ -204,6 +204,7 @@ One command, `fact`, with a few verbs. It is a small Python package run through 
 | `fact snapshot --source <id>` | Write a source's metadata to a snapshot file, so agents and tests work without credentials |
 | `fact quote --source <id> --path <file> --line <n>` | Print a pinned quote from a git source, for an evidence record |
 | `fact draft --source <id>` | Turn the latest snapshot into entity drafts in `drafts/` |
+| `fact propose keys\|joins --source <id>` | Measure a live source (counts only) and write key and join candidates to `drafts/`, each with its measurement as `inferred` evidence (`ALGORITHMS.md`, section 4) |
 | `fact sync [--source <id>]` | Run adapters, write new facts, produce a drift report |
 | `fact probe generate` | Write probe scripts for the facts that need data proof |
 | `fact probe render --dialect <d>` | Write a shell script per source that runs the probes for an owner (counts only) |

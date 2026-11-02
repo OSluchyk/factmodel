@@ -28,14 +28,19 @@ The owner wants a first model of a platform, or of one more source of it. You en
    - DDL in a repository: `fact snapshot --root <dir> --source <id>`.
    Add `--date <YYYY-MM-DD>` when the date read must be fixed.
 4. **Draft entities**: `fact draft --root <dir> --source <id>`. Drafts go to `drafts/<source>/entities/`.
-5. **Check**: `fact check --root <dir>` passes (drafts are not read by the gate).
+5. **Propose keys and joins from the rows**, only where the source has a `dsn_env` and the owner allows measuring it (counts only):
+   `fact propose keys --root <dir> --source <id> --environment <env> --data-quality <quality>`
+   `fact propose joins --root <dir> --source <id> --environment <env> --data-quality <quality>`
+   Candidates go to `drafts/<source>/keys.yaml` and `drafts/<source>/joins.yaml` as `inferred` measurements. A candidate is not a key or a relationship until a person accepts it in `entity-scaffold`; an inclusion between two columns is often a coincidence of value ranges, so read the coverage before you propose it.
+6. **Check**: `fact check --root <dir>` passes (drafts are not read by the gate).
 
 ## Acceptance
 
 - One snapshot per source in `sources/snapshots/`, each source's `current_pin` set.
 - One draft per object; every draft lists its placeholders under `extensions.draft`.
-- `fact check` passes. Running steps 3 and 4 again changes no file.
+- Where a source was measured, `keys.yaml` and `joins.yaml` list candidates with their counts; nothing in `physical/` came from them.
+- `fact check` passes. Running steps 3 to 5 again changes no file.
 
 ## Report
 
-The sources registered (without secrets), the snapshot files, the number of drafts, the placeholders still open, and what the owner must provide next (exports, environment variables, reviews). Next skill: `entity-scaffold` for each draft.
+The sources registered (without secrets), the snapshot files, the number of drafts, the number of key and join candidates measured, the placeholders still open, and what the owner must provide next (exports, environment variables, reviews). Next skill: `entity-scaffold` for each draft.

@@ -24,6 +24,8 @@
 
 **Should drafts keep the engine's constraint names?** Yes, in `extensions.draft.constraint_name`.
 
+**The catalog declares no key. Where do keys come from?** `fact propose keys` and `fact propose joins` measure the rows (counts only) and write candidates to `drafts/`, each with its measurement as `inferred` evidence. A candidate becomes a key or a relationship only when a person accepts it; an inclusion between two columns is often a coincidence of value ranges, so the record also carries the target's coverage (`spec/ALGORITHMS.md`, section 4).
+
 ## Change and versions
 
 **When does a change need a decision record?** When it removes or renames a key, changes the meaning of a key or value, or changes an algorithm's result. Additive changes need a CHANGELOG entry and a ledger line; defect fixes a CHANGELOG entry (D-018).

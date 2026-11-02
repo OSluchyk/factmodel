@@ -794,3 +794,14 @@ Example: a BigQuery primary key on `orders.order_id` is `{constraint_type: prima
 ```
 
 Example: `INT64` (BigQuery), `integer` (PostgreSQL) and `INTEGER` (SQLite) are all `integer`.
+
+**Key type class.** The type classes a column may have to be tried as a key or as a join end by `fact propose` (keys and joins measured on data). Inexact numbers, booleans, structured and binary values are never keys.
+
+```yaml vocabulary:key_type_class
+- integer
+- decimal
+- text
+- date
+- time
+- timestamp
+```

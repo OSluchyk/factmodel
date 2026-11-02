@@ -48,5 +48,7 @@ jobs:
         run: uv run fact check --root examples/chinook
       - name: QCEW gate
         run: uv run fact check --root examples/qcew
+      - name: TPC-H gate
+        run: uv run fact check --root examples/tpch
       - name: Examples on PostgreSQL and DuckDB (same snapshot parts and probe counts as SQLite)
         run: uv run pytest -q tests/examples

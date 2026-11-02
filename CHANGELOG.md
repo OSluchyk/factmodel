@@ -14,6 +14,7 @@ Newest first. Every entry says what changed and why.
 
 ### Examples and documentation
 
+- `examples/tpch`: TPC-H on DuckDB, the example of Part 2 of the article. `scripts/generate.sh` builds the database with the tpch extension (fallback: the reference kit's `.tbl` files and `scripts/schema.sql`); `scripts/apply-constraints.sql` holds the kit's 8 primary and 8 foreign keys translated from `dss.ri`; `scripts/reproduce.sh` rebuilds every committed artifact: the snapshot without keys, the proposals on it, the snapshot with keys, the drift between them and the probe run that confirms the foreign keys.
 - The `model-onboard` skill proposes keys and joins where a source can be measured.
 
 ## 0.1.0 - 2026-10-27

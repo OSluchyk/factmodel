@@ -1,0 +1,17 @@
+name: fact-check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - name: Gate
+        # Pin the framework version this model uses (factmodel.yaml: framework_version).
+        run: uvx --from "factmodel==0.1.0" fact check

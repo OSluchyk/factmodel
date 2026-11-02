@@ -1,0 +1,83 @@
+kind: entity
+id: supplier
+physical_name: supplier
+source: tpch-duckdb
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - s_suppkey
+evidence:
+- ev-supplier-catalog
+- ev-key-duplicates-supplier-2026-11-02
+- ev-row-count-supplier-2026-11-02
+fields:
+- name: s_suppkey
+  type: BIGINT
+  nullable: false
+  meaning: Not written yet.
+- name: s_name
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: s_address
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: s_nationkey
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: s_phone
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: s_acctbal
+  type: DECIMAL(15,2)
+  nullable: false
+  meaning: Not written yet.
+- name: s_comment
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+relationships:
+- key: to-nation
+  to: nation
+  join: supplier.s_nationkey = nation.n_nationkey
+  meaning: Declared foreign key to nation; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-supplier-to-nation
+  - ev-fan-out-supplier-to-nation-2026-11-02
+  - ev-join-match-supplier-to-nation-2026-11-02
+records:
+- id: ev-supplier-catalog
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: table supplier in tpch
+  status: confirmed
+  read_on: '2026-11-02'
+- id: ev-supplier-to-nation
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: foreign key s_nationkey to nation (enforced)
+  status: confirmed
+  read_on: '2026-11-02'
+extensions:
+  draft:
+    from: duckdb:tpch@2026-11-02_2
+    placeholders:
+    - grain
+    - class
+    - fields.s_suppkey.meaning
+    - fields.s_name.meaning
+    - fields.s_address.meaning
+    - fields.s_nationkey.meaning
+    - fields.s_phone.meaning
+    - fields.s_acctbal.meaning
+    - fields.s_comment.meaning
+    - relationships.to-nation.meaning
+    constraint_name:
+      to-nation: supplier_s_nationkey_n_nationkey_fkey

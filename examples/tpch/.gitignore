@@ -1,0 +1,4 @@
+# built by scripts/generate.sh; never committed
+tpch.duckdb
+tpch.duckdb.wal
+*.tbl

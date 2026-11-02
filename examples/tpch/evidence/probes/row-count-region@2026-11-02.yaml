@@ -1,0 +1,12 @@
+kind: evidence
+records:
+- id: ev-row-count-region-2026-11-02
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 5
+  status: confirmed
+  read_on: '2026-11-02'
+  probe: row-count-region
+  environment: local
+  data_quality: synthetic

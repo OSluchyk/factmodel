@@ -1,0 +1,15 @@
+kind: evidence
+records:
+- id: ev-join-match-nation-to-region-2026-11-02
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_rows: 25
+    orphans_left: 0
+    orphans_right: 0
+    match_rate: 1.0
+  status: confirmed
+  read_on: '2026-11-02'
+  probe: join-match-nation-to-region
+  environment: local
+  data_quality: synthetic

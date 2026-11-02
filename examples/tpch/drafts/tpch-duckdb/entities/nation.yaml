@@ -1,0 +1,64 @@
+kind: entity
+id: nation
+physical_name: nation
+source: tpch-duckdb
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - n_nationkey
+evidence:
+- ev-nation-catalog
+fields:
+- name: n_nationkey
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: n_name
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: n_regionkey
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: n_comment
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+relationships:
+- key: to-region
+  to: region
+  join: nation.n_regionkey = region.r_regionkey
+  meaning: Declared foreign key to region; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-nation-to-region
+records:
+- id: ev-nation-catalog
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: table nation in tpch
+  status: confirmed
+  read_on: '2026-11-02'
+- id: ev-nation-to-region
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: foreign key n_regionkey to region (enforced)
+  status: confirmed
+  read_on: '2026-11-02'
+extensions:
+  draft:
+    from: duckdb:tpch@2026-11-02_2
+    placeholders:
+    - grain
+    - class
+    - fields.n_nationkey.meaning
+    - fields.n_name.meaning
+    - fields.n_regionkey.meaning
+    - fields.n_comment.meaning
+    - relationships.to-region.meaning
+    constraint_name:
+      to-region: nation_n_regionkey_r_regionkey_fkey

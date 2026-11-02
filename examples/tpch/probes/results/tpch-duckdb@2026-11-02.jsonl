@@ -1,0 +1,33 @@
+{"source": "tpch-duckdb", "pin": "duckdb:tpch@2026-11-02", "environment": "local", "data_quality": "synthetic", "ran_on": "2026-11-02"}
+{"probe": "fan-out-customer-to-nation", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-lineitem-to-orders", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-lineitem-to-partsupp", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-nation-to-region", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-orders-to-customer", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-partsupp-to-part", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-partsupp-to-supplier", "measurement": {"max_fan_out": 1}}
+{"probe": "fan-out-supplier-to-nation", "measurement": {"max_fan_out": 1}}
+{"probe": "join-match-customer-to-nation", "measurement": {"source_rows": 150000, "orphans_left": 0, "orphans_right": 0}}
+{"probe": "join-match-lineitem-to-orders", "measurement": {"source_rows": 6001215, "orphans_left": 0, "orphans_right": 0}}
+{"probe": "join-match-lineitem-to-partsupp", "measurement": {"source_rows": 6001215, "orphans_left": 0, "orphans_right": 459}}
+{"probe": "join-match-nation-to-region", "measurement": {"source_rows": 25, "orphans_left": 0, "orphans_right": 0}}
+{"probe": "join-match-orders-to-customer", "measurement": {"source_rows": 1500000, "orphans_left": 0, "orphans_right": 50004}}
+{"probe": "join-match-partsupp-to-part", "measurement": {"source_rows": 800000, "orphans_left": 0, "orphans_right": 0}}
+{"probe": "join-match-partsupp-to-supplier", "measurement": {"source_rows": 800000, "orphans_left": 0, "orphans_right": 0}}
+{"probe": "join-match-supplier-to-nation", "measurement": {"source_rows": 10000, "orphans_left": 0, "orphans_right": 0}}
+{"probe": "key-duplicates-customer", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-lineitem", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-nation", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-orders", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-part", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-partsupp", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-region", "measurement": {"duplicate_keys": 0}}
+{"probe": "key-duplicates-supplier", "measurement": {"duplicate_keys": 0}}
+{"probe": "row-count-customer", "measurement": {"row_count": 150000}}
+{"probe": "row-count-lineitem", "measurement": {"row_count": 6001215}}
+{"probe": "row-count-nation", "measurement": {"row_count": 25}}
+{"probe": "row-count-orders", "measurement": {"row_count": 1500000}}
+{"probe": "row-count-part", "measurement": {"row_count": 200000}}
+{"probe": "row-count-partsupp", "measurement": {"row_count": 800000}}
+{"probe": "row-count-region", "measurement": {"row_count": 5}}
+{"probe": "row-count-supplier", "measurement": {"row_count": 10000}}

@@ -1,0 +1,88 @@
+kind: entity
+id: customer
+physical_name: customer
+source: tpch-duckdb
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - c_custkey
+evidence:
+- ev-customer-catalog
+- ev-key-duplicates-customer-2026-11-02
+- ev-row-count-customer-2026-11-02
+fields:
+- name: c_custkey
+  type: BIGINT
+  nullable: false
+  meaning: Not written yet.
+- name: c_name
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: c_address
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: c_nationkey
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: c_phone
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: c_acctbal
+  type: DECIMAL(15,2)
+  nullable: false
+  meaning: Not written yet.
+- name: c_mktsegment
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: c_comment
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+relationships:
+- key: to-nation
+  to: nation
+  join: customer.c_nationkey = nation.n_nationkey
+  meaning: Declared foreign key to nation; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-customer-to-nation
+  - ev-fan-out-customer-to-nation-2026-11-02
+  - ev-join-match-customer-to-nation-2026-11-02
+records:
+- id: ev-customer-catalog
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: table customer in tpch
+  status: confirmed
+  read_on: '2026-11-02'
+- id: ev-customer-to-nation
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: foreign key c_nationkey to nation (enforced)
+  status: confirmed
+  read_on: '2026-11-02'
+extensions:
+  draft:
+    from: duckdb:tpch@2026-11-02_2
+    placeholders:
+    - grain
+    - class
+    - fields.c_custkey.meaning
+    - fields.c_name.meaning
+    - fields.c_address.meaning
+    - fields.c_nationkey.meaning
+    - fields.c_phone.meaning
+    - fields.c_acctbal.meaning
+    - fields.c_mktsegment.meaning
+    - fields.c_comment.meaning
+    - relationships.to-nation.meaning
+    constraint_name:
+      to-nation: customer_c_nationkey_n_nationkey_fkey

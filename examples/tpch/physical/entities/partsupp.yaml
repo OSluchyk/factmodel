@@ -1,0 +1,92 @@
+kind: entity
+id: partsupp
+physical_name: partsupp
+source: tpch-duckdb
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - ps_partkey
+  - ps_suppkey
+evidence:
+- ev-partsupp-catalog
+- ev-key-duplicates-partsupp-2026-11-02
+- ev-row-count-partsupp-2026-11-02
+fields:
+- name: ps_partkey
+  type: BIGINT
+  nullable: false
+  meaning: Not written yet.
+- name: ps_suppkey
+  type: BIGINT
+  nullable: false
+  meaning: Not written yet.
+- name: ps_availqty
+  type: BIGINT
+  nullable: false
+  meaning: Not written yet.
+- name: ps_supplycost
+  type: DECIMAL(15,2)
+  nullable: false
+  meaning: Not written yet.
+- name: ps_comment
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+relationships:
+- key: to-part
+  to: part
+  join: partsupp.ps_partkey = part.p_partkey
+  meaning: Declared foreign key to part; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-partsupp-to-part
+  - ev-fan-out-partsupp-to-part-2026-11-02
+  - ev-join-match-partsupp-to-part-2026-11-02
+- key: to-supplier
+  to: supplier
+  join: partsupp.ps_suppkey = supplier.s_suppkey
+  meaning: Declared foreign key to supplier; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-partsupp-to-supplier
+  - ev-fan-out-partsupp-to-supplier-2026-11-02
+  - ev-join-match-partsupp-to-supplier-2026-11-02
+records:
+- id: ev-partsupp-catalog
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: table partsupp in tpch
+  status: confirmed
+  read_on: '2026-11-02'
+- id: ev-partsupp-to-part
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: foreign key ps_partkey to part (enforced)
+  status: confirmed
+  read_on: '2026-11-02'
+- id: ev-partsupp-to-supplier
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: foreign key ps_suppkey to supplier (enforced)
+  status: confirmed
+  read_on: '2026-11-02'
+extensions:
+  draft:
+    from: duckdb:tpch@2026-11-02_2
+    placeholders:
+    - grain
+    - class
+    - fields.ps_partkey.meaning
+    - fields.ps_suppkey.meaning
+    - fields.ps_availqty.meaning
+    - fields.ps_supplycost.meaning
+    - fields.ps_comment.meaning
+    - relationships.to-part.meaning
+    - relationships.to-supplier.meaning
+    constraint_name:
+      to-part: partsupp_ps_partkey_p_partkey_fkey
+      to-supplier: partsupp_ps_suppkey_s_suppkey_fkey

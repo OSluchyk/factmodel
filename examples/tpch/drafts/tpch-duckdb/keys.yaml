@@ -1,0 +1,707 @@
+# written by fact propose - a proposal, not a model file; the gate never reads drafts/
+proposal: keys
+source: tpch-duckdb
+snapshot_pin: duckdb:tpch@2026-11-02
+proposed_on: '2026-11-02'
+environment: local
+data_quality: synthetic
+max_columns: 2
+queries: 102
+skipped: []
+objects:
+- object: customer
+  entity: customer
+  row_count: 150000
+  candidates:
+  - fields:
+    - c_custkey
+    status: inferred
+    evidence:
+    - ev-propose-key-customer-c-custkey
+  - fields:
+    - c_name
+    status: inferred
+    evidence:
+    - ev-propose-key-customer-c-name
+  - fields:
+    - c_address
+    status: inferred
+    evidence:
+    - ev-propose-key-customer-c-address
+  - fields:
+    - c_phone
+    status: inferred
+    evidence:
+    - ev-propose-key-customer-c-phone
+  - fields:
+    - c_acctbal
+    - c_comment
+    status: inferred
+    evidence:
+    - ev-propose-key-customer-c-acctbal-c-comment
+- object: lineitem
+  entity: lineitem
+  row_count: 6001215
+  candidates:
+  - fields:
+    - l_orderkey
+    - l_linenumber
+    status: inferred
+    evidence:
+    - ev-propose-key-lineitem-l-orderkey-l-linenumber
+- object: nation
+  entity: nation
+  row_count: 25
+  candidates:
+  - fields:
+    - n_nationkey
+    status: inferred
+    evidence:
+    - ev-propose-key-nation-n-nationkey
+  - fields:
+    - n_name
+    status: inferred
+    evidence:
+    - ev-propose-key-nation-n-name
+  - fields:
+    - n_comment
+    status: inferred
+    evidence:
+    - ev-propose-key-nation-n-comment
+- object: orders
+  entity: orders
+  row_count: 1500000
+  candidates:
+  - fields:
+    - o_orderkey
+    status: inferred
+    evidence:
+    - ev-propose-key-orders-o-orderkey
+  - fields:
+    - o_custkey
+    - o_totalprice
+    status: inferred
+    evidence:
+    - ev-propose-key-orders-o-custkey-o-totalprice
+  - fields:
+    - o_custkey
+    - o_comment
+    status: inferred
+    evidence:
+    - ev-propose-key-orders-o-custkey-o-comment
+  - fields:
+    - o_totalprice
+    - o_comment
+    status: inferred
+    evidence:
+    - ev-propose-key-orders-o-totalprice-o-comment
+- object: part
+  entity: part
+  row_count: 200000
+  candidates:
+  - fields:
+    - p_partkey
+    status: inferred
+    evidence:
+    - ev-propose-key-part-p-partkey
+  - fields:
+    - p_name
+    - p_mfgr
+    status: inferred
+    evidence:
+    - ev-propose-key-part-p-name-p-mfgr
+  - fields:
+    - p_name
+    - p_brand
+    status: inferred
+    evidence:
+    - ev-propose-key-part-p-name-p-brand
+  - fields:
+    - p_name
+    - p_type
+    status: inferred
+    evidence:
+    - ev-propose-key-part-p-name-p-type
+  - fields:
+    - p_name
+    - p_size
+    status: inferred
+    evidence:
+    - ev-propose-key-part-p-name-p-size
+  - fields:
+    - p_name
+    - p_container
+    status: inferred
+    evidence:
+    - ev-propose-key-part-p-name-p-container
+  - fields:
+    - p_name
+    - p_retailprice
+    status: inferred
+    evidence:
+    - ev-propose-key-part-p-name-p-retailprice
+  - fields:
+    - p_name
+    - p_comment
+    status: inferred
+    evidence:
+    - ev-propose-key-part-p-name-p-comment
+- object: partsupp
+  entity: partsupp
+  row_count: 800000
+  candidates:
+  - fields:
+    - ps_partkey
+    - ps_suppkey
+    status: inferred
+    evidence:
+    - ev-propose-key-partsupp-ps-partkey-ps-suppkey
+  - fields:
+    - ps_partkey
+    - ps_comment
+    status: inferred
+    evidence:
+    - ev-propose-key-partsupp-ps-partkey-ps-comment
+  - fields:
+    - ps_suppkey
+    - ps_comment
+    status: inferred
+    evidence:
+    - ev-propose-key-partsupp-ps-suppkey-ps-comment
+  - fields:
+    - ps_availqty
+    - ps_comment
+    status: inferred
+    evidence:
+    - ev-propose-key-partsupp-ps-availqty-ps-comment
+  - fields:
+    - ps_supplycost
+    - ps_comment
+    status: inferred
+    evidence:
+    - ev-propose-key-partsupp-ps-supplycost-ps-comment
+- object: region
+  entity: region
+  row_count: 5
+  candidates:
+  - fields:
+    - r_regionkey
+    status: inferred
+    evidence:
+    - ev-propose-key-region-r-regionkey
+  - fields:
+    - r_name
+    status: inferred
+    evidence:
+    - ev-propose-key-region-r-name
+  - fields:
+    - r_comment
+    status: inferred
+    evidence:
+    - ev-propose-key-region-r-comment
+- object: supplier
+  entity: supplier
+  row_count: 10000
+  candidates:
+  - fields:
+    - s_suppkey
+    status: inferred
+    evidence:
+    - ev-propose-key-supplier-s-suppkey
+  - fields:
+    - s_name
+    status: inferred
+    evidence:
+    - ev-propose-key-supplier-s-name
+  - fields:
+    - s_address
+    status: inferred
+    evidence:
+    - ev-propose-key-supplier-s-address
+  - fields:
+    - s_phone
+    status: inferred
+    evidence:
+    - ev-propose-key-supplier-s-phone
+  - fields:
+    - s_comment
+    status: inferred
+    evidence:
+    - ev-propose-key-supplier-s-comment
+records:
+- id: ev-propose-key-customer-c-custkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 150000
+    non_null: 150000
+    null_count: 0
+    distinct: 150000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-customer-c-name
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 150000
+    non_null: 150000
+    null_count: 0
+    distinct: 150000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-customer-c-address
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 150000
+    non_null: 150000
+    null_count: 0
+    distinct: 150000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-customer-c-phone
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 150000
+    non_null: 150000
+    null_count: 0
+    distinct: 150000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-customer-c-acctbal-c-comment
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 150000
+    non_null: 150000
+    null_count: 0
+    distinct: 150000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-lineitem-l-orderkey-l-linenumber
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 6001215
+    non_null: 6001215
+    null_count: 0
+    distinct: 6001215
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-nation-n-nationkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 25
+    non_null: 25
+    null_count: 0
+    distinct: 25
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-nation-n-name
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 25
+    non_null: 25
+    null_count: 0
+    distinct: 25
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-nation-n-comment
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 25
+    non_null: 25
+    null_count: 0
+    distinct: 25
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-orders-o-orderkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 1500000
+    non_null: 1500000
+    null_count: 0
+    distinct: 1500000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-orders-o-custkey-o-totalprice
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 1500000
+    non_null: 1500000
+    null_count: 0
+    distinct: 1500000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-orders-o-custkey-o-comment
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 1500000
+    non_null: 1500000
+    null_count: 0
+    distinct: 1500000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-orders-o-totalprice-o-comment
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 1500000
+    non_null: 1500000
+    null_count: 0
+    distinct: 1500000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-part-p-partkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 200000
+    non_null: 200000
+    null_count: 0
+    distinct: 200000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-part-p-name-p-mfgr
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 200000
+    non_null: 200000
+    null_count: 0
+    distinct: 200000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-part-p-name-p-brand
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 200000
+    non_null: 200000
+    null_count: 0
+    distinct: 200000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-part-p-name-p-type
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 200000
+    non_null: 200000
+    null_count: 0
+    distinct: 200000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-part-p-name-p-size
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 200000
+    non_null: 200000
+    null_count: 0
+    distinct: 200000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-part-p-name-p-container
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 200000
+    non_null: 200000
+    null_count: 0
+    distinct: 200000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-part-p-name-p-retailprice
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 200000
+    non_null: 200000
+    null_count: 0
+    distinct: 200000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-part-p-name-p-comment
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 200000
+    non_null: 200000
+    null_count: 0
+    distinct: 200000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-partsupp-ps-partkey-ps-suppkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 800000
+    non_null: 800000
+    null_count: 0
+    distinct: 800000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-partsupp-ps-partkey-ps-comment
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 800000
+    non_null: 800000
+    null_count: 0
+    distinct: 800000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-partsupp-ps-suppkey-ps-comment
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 800000
+    non_null: 800000
+    null_count: 0
+    distinct: 800000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-partsupp-ps-availqty-ps-comment
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 800000
+    non_null: 800000
+    null_count: 0
+    distinct: 800000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-partsupp-ps-supplycost-ps-comment
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 800000
+    non_null: 800000
+    null_count: 0
+    distinct: 800000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-region-r-regionkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 5
+    non_null: 5
+    null_count: 0
+    distinct: 5
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-region-r-name
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 5
+    non_null: 5
+    null_count: 0
+    distinct: 5
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-region-r-comment
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 5
+    non_null: 5
+    null_count: 0
+    distinct: 5
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-supplier-s-suppkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 10000
+    non_null: 10000
+    null_count: 0
+    distinct: 10000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-supplier-s-name
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 10000
+    non_null: 10000
+    null_count: 0
+    distinct: 10000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-supplier-s-address
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 10000
+    non_null: 10000
+    null_count: 0
+    distinct: 10000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-supplier-s-phone
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 10000
+    non_null: 10000
+    null_count: 0
+    distinct: 10000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-supplier-s-comment
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    row_count: 10000
+    non_null: 10000
+    null_count: 0
+    distinct: 10000
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'

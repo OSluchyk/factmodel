@@ -1,0 +1,43 @@
+kind: entity
+id: region
+physical_name: region
+source: tpch-duckdb
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - r_regionkey
+evidence:
+- ev-region-catalog
+- ev-key-duplicates-region-2026-11-02
+- ev-row-count-region-2026-11-02
+fields:
+- name: r_regionkey
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: r_name
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: r_comment
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+records:
+- id: ev-region-catalog
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: table region in tpch
+  status: confirmed
+  read_on: '2026-11-02'
+extensions:
+  draft:
+    from: duckdb:tpch@2026-11-02_2
+    placeholders:
+    - grain
+    - class
+    - fields.r_regionkey.meaning
+    - fields.r_name.meaning
+    - fields.r_comment.meaning

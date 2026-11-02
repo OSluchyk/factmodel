@@ -4,7 +4,7 @@
 
 1. Fork the repository, or create a branch if you have write access. Never push to `main` directly.
 2. Set up the environment: `uv sync` (Python 3.12+ and [uv](https://docs.astral.sh/uv/)).
-3. Make the change, with tests. The example models (`examples/chinook`, `examples/qcew`) and the hard cases (`tests/fixtures/hard-cases/`) must stay green.
+3. Make the change, with tests. The example models (`examples/chinook`, `examples/qcew`, `examples/tpch`) and the hard cases (`tests/fixtures/hard-cases/`) must stay green.
 4. Run the checks below until they pass.
 5. Open a pull request with the description below.
 
@@ -19,6 +19,7 @@ docker compose up -d --wait
 FACT_PG_DSN=postgresql://postgres@localhost:55432/postgres uv run pytest -q
 uv run fact check --root examples/chinook
 uv run fact check --root examples/qcew
+uv run fact check --root examples/tpch
 ```
 
 `compose.yaml` starts a local PostgreSQL that holds only synthetic rows; without `FACT_PG_DSN`, the PostgreSQL tests are skipped. For the documentation site, run `uv run mkdocs build --strict`.

@@ -1,0 +1,15 @@
+kind: evidence
+records:
+- id: ev-join-match-lineitem-to-partsupp-2026-11-02
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_rows: 6001215
+    orphans_left: 0
+    orphans_right: 459
+    match_rate: 1.0
+  status: confirmed
+  read_on: '2026-11-02'
+  probe: join-match-lineitem-to-partsupp
+  environment: local
+  data_quality: synthetic

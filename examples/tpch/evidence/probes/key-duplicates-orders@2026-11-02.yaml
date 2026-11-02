@@ -1,0 +1,12 @@
+kind: evidence
+records:
+- id: ev-key-duplicates-orders-2026-11-02
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    duplicate_keys: 0
+  status: confirmed
+  read_on: '2026-11-02'
+  probe: key-duplicates-orders
+  environment: local
+  data_quality: synthetic

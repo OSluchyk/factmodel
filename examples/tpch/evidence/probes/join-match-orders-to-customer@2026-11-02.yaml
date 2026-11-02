@@ -1,0 +1,15 @@
+kind: evidence
+records:
+- id: ev-join-match-orders-to-customer-2026-11-02
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_rows: 1500000
+    orphans_left: 0
+    orphans_right: 50004
+    match_rate: 1.0
+  status: confirmed
+  read_on: '2026-11-02'
+  probe: join-match-orders-to-customer
+  environment: local
+  data_quality: synthetic

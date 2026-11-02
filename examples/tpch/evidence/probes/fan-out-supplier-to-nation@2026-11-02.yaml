@@ -1,0 +1,12 @@
+kind: evidence
+records:
+- id: ev-fan-out-supplier-to-nation-2026-11-02
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    max_fan_out: 1
+  status: confirmed
+  read_on: '2026-11-02'
+  probe: fan-out-supplier-to-nation
+  environment: local
+  data_quality: synthetic

@@ -1,0 +1,275 @@
+kind: snapshot
+source: tpch-duckdb
+engine: duckdb
+target: tpch
+taken_on: '2026-11-02'
+pin: duckdb:tpch@2026-11-02
+objects:
+- name: customer
+  object_type: table
+  fields:
+  - name: c_custkey
+    type: BIGINT
+    type_class: integer
+    nullable: false
+  - name: c_name
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: c_address
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: c_nationkey
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: c_phone
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: c_acctbal
+    type: DECIMAL(15,2)
+    type_class: decimal
+    nullable: false
+  - name: c_mktsegment
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: c_comment
+    type: VARCHAR
+    type_class: text
+    nullable: false
+- name: lineitem
+  object_type: table
+  fields:
+  - name: l_orderkey
+    type: BIGINT
+    type_class: integer
+    nullable: false
+  - name: l_partkey
+    type: BIGINT
+    type_class: integer
+    nullable: false
+  - name: l_suppkey
+    type: BIGINT
+    type_class: integer
+    nullable: false
+  - name: l_linenumber
+    type: BIGINT
+    type_class: integer
+    nullable: false
+  - name: l_quantity
+    type: DECIMAL(15,2)
+    type_class: decimal
+    nullable: false
+  - name: l_extendedprice
+    type: DECIMAL(15,2)
+    type_class: decimal
+    nullable: false
+  - name: l_discount
+    type: DECIMAL(15,2)
+    type_class: decimal
+    nullable: false
+  - name: l_tax
+    type: DECIMAL(15,2)
+    type_class: decimal
+    nullable: false
+  - name: l_returnflag
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: l_linestatus
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: l_shipdate
+    type: DATE
+    type_class: date
+    nullable: false
+  - name: l_commitdate
+    type: DATE
+    type_class: date
+    nullable: false
+  - name: l_receiptdate
+    type: DATE
+    type_class: date
+    nullable: false
+  - name: l_shipinstruct
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: l_shipmode
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: l_comment
+    type: VARCHAR
+    type_class: text
+    nullable: false
+- name: nation
+  object_type: table
+  fields:
+  - name: n_nationkey
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: n_name
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: n_regionkey
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: n_comment
+    type: VARCHAR
+    type_class: text
+    nullable: false
+- name: orders
+  object_type: table
+  fields:
+  - name: o_orderkey
+    type: BIGINT
+    type_class: integer
+    nullable: false
+  - name: o_custkey
+    type: BIGINT
+    type_class: integer
+    nullable: false
+  - name: o_orderstatus
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: o_totalprice
+    type: DECIMAL(15,2)
+    type_class: decimal
+    nullable: false
+  - name: o_orderdate
+    type: DATE
+    type_class: date
+    nullable: false
+  - name: o_orderpriority
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: o_clerk
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: o_shippriority
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: o_comment
+    type: VARCHAR
+    type_class: text
+    nullable: false
+- name: part
+  object_type: table
+  fields:
+  - name: p_partkey
+    type: BIGINT
+    type_class: integer
+    nullable: false
+  - name: p_name
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: p_mfgr
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: p_brand
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: p_type
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: p_size
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: p_container
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: p_retailprice
+    type: DECIMAL(15,2)
+    type_class: decimal
+    nullable: false
+  - name: p_comment
+    type: VARCHAR
+    type_class: text
+    nullable: false
+- name: partsupp
+  object_type: table
+  fields:
+  - name: ps_partkey
+    type: BIGINT
+    type_class: integer
+    nullable: false
+  - name: ps_suppkey
+    type: BIGINT
+    type_class: integer
+    nullable: false
+  - name: ps_availqty
+    type: BIGINT
+    type_class: integer
+    nullable: false
+  - name: ps_supplycost
+    type: DECIMAL(15,2)
+    type_class: decimal
+    nullable: false
+  - name: ps_comment
+    type: VARCHAR
+    type_class: text
+    nullable: false
+- name: region
+  object_type: table
+  fields:
+  - name: r_regionkey
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: r_name
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: r_comment
+    type: VARCHAR
+    type_class: text
+    nullable: false
+- name: supplier
+  object_type: table
+  fields:
+  - name: s_suppkey
+    type: BIGINT
+    type_class: integer
+    nullable: false
+  - name: s_name
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: s_address
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: s_nationkey
+    type: INTEGER
+    type_class: integer
+    nullable: false
+  - name: s_phone
+    type: VARCHAR
+    type_class: text
+    nullable: false
+  - name: s_acctbal
+    type: DECIMAL(15,2)
+    type_class: decimal
+    nullable: false
+  - name: s_comment
+    type: VARCHAR
+    type_class: text
+    nullable: false

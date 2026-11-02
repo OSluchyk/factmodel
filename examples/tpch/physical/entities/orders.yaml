@@ -1,0 +1,93 @@
+kind: entity
+id: orders
+physical_name: orders
+source: tpch-duckdb
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - o_orderkey
+evidence:
+- ev-orders-catalog
+- ev-key-duplicates-orders-2026-11-02
+- ev-row-count-orders-2026-11-02
+fields:
+- name: o_orderkey
+  type: BIGINT
+  nullable: false
+  meaning: Not written yet.
+- name: o_custkey
+  type: BIGINT
+  nullable: false
+  meaning: Not written yet.
+- name: o_orderstatus
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: o_totalprice
+  type: DECIMAL(15,2)
+  nullable: false
+  meaning: Not written yet.
+- name: o_orderdate
+  type: DATE
+  nullable: false
+  meaning: Not written yet.
+- name: o_orderpriority
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: o_clerk
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: o_shippriority
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: o_comment
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+relationships:
+- key: to-customer
+  to: customer
+  join: orders.o_custkey = customer.c_custkey
+  meaning: Declared foreign key to customer; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-orders-to-customer
+  - ev-fan-out-orders-to-customer-2026-11-02
+  - ev-join-match-orders-to-customer-2026-11-02
+records:
+- id: ev-orders-catalog
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: table orders in tpch
+  status: confirmed
+  read_on: '2026-11-02'
+- id: ev-orders-to-customer
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: foreign key o_custkey to customer (enforced)
+  status: confirmed
+  read_on: '2026-11-02'
+extensions:
+  draft:
+    from: duckdb:tpch@2026-11-02_2
+    placeholders:
+    - grain
+    - class
+    - fields.o_orderkey.meaning
+    - fields.o_custkey.meaning
+    - fields.o_orderstatus.meaning
+    - fields.o_totalprice.meaning
+    - fields.o_orderdate.meaning
+    - fields.o_orderpriority.meaning
+    - fields.o_clerk.meaning
+    - fields.o_shippriority.meaning
+    - fields.o_comment.meaning
+    - relationships.to-customer.meaning
+    constraint_name:
+      to-customer: orders_o_custkey_c_custkey_fkey

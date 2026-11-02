@@ -1,0 +1,13 @@
+kind: source
+id: tpch-duckdb
+title: TPC-H on a local DuckDB file
+source_kind: warehouse
+access_mode: agent_read
+adapter: sql
+engine: duckdb
+location: tpch
+dsn_env: FACT_DSN_TPCH_DUCKDB
+access: >-
+  A local DuckDB file built by scripts/generate.sh with the tpch extension (generated rows); a
+  test fixture, not a platform (D-011). Set FACT_DSN_TPCH_DUCKDB to duckdb:///<path to the file>.
+current_pin: duckdb:tpch@2026-11-02_2

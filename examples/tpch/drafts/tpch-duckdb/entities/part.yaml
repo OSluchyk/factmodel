@@ -1,0 +1,71 @@
+kind: entity
+id: part
+physical_name: part
+source: tpch-duckdb
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - p_partkey
+evidence:
+- ev-part-catalog
+fields:
+- name: p_partkey
+  type: BIGINT
+  nullable: false
+  meaning: Not written yet.
+- name: p_name
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: p_mfgr
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: p_brand
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: p_type
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: p_size
+  type: INTEGER
+  nullable: false
+  meaning: Not written yet.
+- name: p_container
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: p_retailprice
+  type: DECIMAL(15,2)
+  nullable: false
+  meaning: Not written yet.
+- name: p_comment
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+records:
+- id: ev-part-catalog
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: table part in tpch
+  status: confirmed
+  read_on: '2026-11-02'
+extensions:
+  draft:
+    from: duckdb:tpch@2026-11-02_2
+    placeholders:
+    - grain
+    - class
+    - fields.p_partkey.meaning
+    - fields.p_name.meaning
+    - fields.p_mfgr.meaning
+    - fields.p_brand.meaning
+    - fields.p_type.meaning
+    - fields.p_size.meaning
+    - fields.p_container.meaning
+    - fields.p_retailprice.meaning
+    - fields.p_comment.meaning

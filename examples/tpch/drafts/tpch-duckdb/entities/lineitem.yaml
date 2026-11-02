@@ -1,0 +1,142 @@
+kind: entity
+id: lineitem
+physical_name: lineitem
+source: tpch-duckdb
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary:
+  - l_orderkey
+  - l_linenumber
+evidence:
+- ev-lineitem-catalog
+fields:
+- name: l_orderkey
+  type: BIGINT
+  nullable: false
+  meaning: Not written yet.
+- name: l_partkey
+  type: BIGINT
+  nullable: false
+  meaning: Not written yet.
+- name: l_suppkey
+  type: BIGINT
+  nullable: false
+  meaning: Not written yet.
+- name: l_linenumber
+  type: BIGINT
+  nullable: false
+  meaning: Not written yet.
+- name: l_quantity
+  type: DECIMAL(15,2)
+  nullable: false
+  meaning: Not written yet.
+- name: l_extendedprice
+  type: DECIMAL(15,2)
+  nullable: false
+  meaning: Not written yet.
+- name: l_discount
+  type: DECIMAL(15,2)
+  nullable: false
+  meaning: Not written yet.
+- name: l_tax
+  type: DECIMAL(15,2)
+  nullable: false
+  meaning: Not written yet.
+- name: l_returnflag
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: l_linestatus
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: l_shipdate
+  type: DATE
+  nullable: false
+  meaning: Not written yet.
+- name: l_commitdate
+  type: DATE
+  nullable: false
+  meaning: Not written yet.
+- name: l_receiptdate
+  type: DATE
+  nullable: false
+  meaning: Not written yet.
+- name: l_shipinstruct
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: l_shipmode
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+- name: l_comment
+  type: VARCHAR
+  nullable: false
+  meaning: Not written yet.
+relationships:
+- key: to-orders
+  to: orders
+  join: lineitem.l_orderkey = orders.o_orderkey
+  meaning: Declared foreign key to orders; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-lineitem-to-orders
+- key: to-partsupp
+  to: partsupp
+  join: lineitem.l_partkey = partsupp.ps_partkey AND lineitem.l_suppkey = 
+    partsupp.ps_suppkey
+  meaning: Declared foreign key to partsupp; meaning not written yet.
+  mechanism: declared_fk
+  cardinality: many_to_one
+  evidence:
+  - ev-lineitem-to-partsupp
+records:
+- id: ev-lineitem-catalog
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: table lineitem in tpch
+  status: confirmed
+  read_on: '2026-11-02'
+- id: ev-lineitem-to-orders
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: foreign key l_orderkey to orders (enforced)
+  status: confirmed
+  read_on: '2026-11-02'
+- id: ev-lineitem-to-partsupp
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02_2
+  quote: foreign key l_partkey, l_suppkey to partsupp (enforced)
+  status: confirmed
+  read_on: '2026-11-02'
+extensions:
+  draft:
+    from: duckdb:tpch@2026-11-02_2
+    placeholders:
+    - grain
+    - class
+    - fields.l_orderkey.meaning
+    - fields.l_partkey.meaning
+    - fields.l_suppkey.meaning
+    - fields.l_linenumber.meaning
+    - fields.l_quantity.meaning
+    - fields.l_extendedprice.meaning
+    - fields.l_discount.meaning
+    - fields.l_tax.meaning
+    - fields.l_returnflag.meaning
+    - fields.l_linestatus.meaning
+    - fields.l_shipdate.meaning
+    - fields.l_commitdate.meaning
+    - fields.l_receiptdate.meaning
+    - fields.l_shipinstruct.meaning
+    - fields.l_shipmode.meaning
+    - fields.l_comment.meaning
+    - relationships.to-orders.meaning
+    - relationships.to-partsupp.meaning
+    constraint_name:
+      to-orders: lineitem_l_orderkey_o_orderkey_fkey
+      to-partsupp: lineitem_l_partkey_l_suppkey_ps_partkey_ps_suppkey_fkey

@@ -1,0 +1,915 @@
+# written by fact propose - a proposal, not a model file; the gate never reads drafts/
+proposal: joins
+source: tpch-duckdb
+snapshot_pin: duckdb:tpch@2026-11-02
+proposed_on: '2026-11-02'
+environment: local
+data_quality: synthetic
+threshold: 0.999
+queries: 385
+skipped: []
+candidates:
+- from: customer
+  fields:
+  - c_custkey
+  to: part
+  to_fields:
+  - p_partkey
+  join: customer.c_custkey = part.p_partkey
+  mechanism: inferred_join
+  cardinality: one_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-customer-c-custkey-part-p-partkey
+- from: customer
+  fields:
+  - c_nationkey
+  to: nation
+  to_fields:
+  - n_nationkey
+  join: customer.c_nationkey = nation.n_nationkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names share the suffix nationkey (reported, not a criterion)
+  evidence:
+  - ev-propose-join-customer-c-nationkey-nation-n-nationkey
+- from: lineitem
+  fields:
+  - l_linenumber
+  to: customer
+  to_fields:
+  - c_custkey
+  join: lineitem.l_linenumber = customer.c_custkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-lineitem-l-linenumber-customer-c-custkey
+- from: lineitem
+  fields:
+  - l_linenumber
+  to: nation
+  to_fields:
+  - n_nationkey
+  join: lineitem.l_linenumber = nation.n_nationkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-lineitem-l-linenumber-nation-n-nationkey
+- from: lineitem
+  fields:
+  - l_linenumber
+  to: orders
+  to_fields:
+  - o_orderkey
+  join: lineitem.l_linenumber = orders.o_orderkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-lineitem-l-linenumber-orders-o-orderkey
+- from: lineitem
+  fields:
+  - l_linenumber
+  to: part
+  to_fields:
+  - p_partkey
+  join: lineitem.l_linenumber = part.p_partkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-lineitem-l-linenumber-part-p-partkey
+- from: lineitem
+  fields:
+  - l_linenumber
+  to: supplier
+  to_fields:
+  - s_suppkey
+  join: lineitem.l_linenumber = supplier.s_suppkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-lineitem-l-linenumber-supplier-s-suppkey
+- from: lineitem
+  fields:
+  - l_orderkey
+  to: orders
+  to_fields:
+  - o_orderkey
+  join: lineitem.l_orderkey = orders.o_orderkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names share the suffix orderkey (reported, not a criterion)
+  evidence:
+  - ev-propose-join-lineitem-l-orderkey-orders-o-orderkey
+- from: lineitem
+  fields:
+  - l_partkey
+  to: part
+  to_fields:
+  - p_partkey
+  join: lineitem.l_partkey = part.p_partkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names share the suffix partkey (reported, not a criterion)
+  evidence:
+  - ev-propose-join-lineitem-l-partkey-part-p-partkey
+- from: lineitem
+  fields:
+  - l_partkey
+  - l_suppkey
+  to: partsupp
+  to_fields:
+  - ps_partkey
+  - ps_suppkey
+  join: lineitem.l_partkey = partsupp.ps_partkey AND lineitem.l_suppkey = 
+    partsupp.ps_suppkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names share the suffix partkey (reported, not a criterion); names share 
+    the suffix suppkey (reported, not a criterion)
+  evidence:
+  - ev-propose-join-lineitem-l-partkey-l-suppkey-partsupp-p_9b64171a
+- from: lineitem
+  fields:
+  - l_suppkey
+  to: customer
+  to_fields:
+  - c_custkey
+  join: lineitem.l_suppkey = customer.c_custkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-lineitem-l-suppkey-customer-c-custkey
+- from: lineitem
+  fields:
+  - l_suppkey
+  to: part
+  to_fields:
+  - p_partkey
+  join: lineitem.l_suppkey = part.p_partkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-lineitem-l-suppkey-part-p-partkey
+- from: lineitem
+  fields:
+  - l_suppkey
+  to: supplier
+  to_fields:
+  - s_suppkey
+  join: lineitem.l_suppkey = supplier.s_suppkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names share the suffix suppkey (reported, not a criterion)
+  evidence:
+  - ev-propose-join-lineitem-l-suppkey-supplier-s-suppkey
+- from: nation
+  fields:
+  - n_regionkey
+  to: region
+  to_fields:
+  - r_regionkey
+  join: nation.n_regionkey = region.r_regionkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names share the suffix regionkey (reported, not a criterion)
+  evidence:
+  - ev-propose-join-nation-n-regionkey-region-r-regionkey
+- from: orders
+  fields:
+  - o_custkey
+  to: customer
+  to_fields:
+  - c_custkey
+  join: orders.o_custkey = customer.c_custkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names share the suffix custkey (reported, not a criterion)
+  evidence:
+  - ev-propose-join-orders-o-custkey-customer-c-custkey
+- from: orders
+  fields:
+  - o_custkey
+  to: part
+  to_fields:
+  - p_partkey
+  join: orders.o_custkey = part.p_partkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-orders-o-custkey-part-p-partkey
+- from: orders
+  fields:
+  - o_shippriority
+  to: nation
+  to_fields:
+  - n_nationkey
+  join: orders.o_shippriority = nation.n_nationkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-orders-o-shippriority-nation-n-nationkey
+- from: orders
+  fields:
+  - o_shippriority
+  to: region
+  to_fields:
+  - r_regionkey
+  join: orders.o_shippriority = region.r_regionkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-orders-o-shippriority-region-r-regionkey
+- from: part
+  fields:
+  - p_size
+  to: customer
+  to_fields:
+  - c_custkey
+  join: part.p_size = customer.c_custkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-part-p-size-customer-c-custkey
+- from: part
+  fields:
+  - p_size
+  to: supplier
+  to_fields:
+  - s_suppkey
+  join: part.p_size = supplier.s_suppkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-part-p-size-supplier-s-suppkey
+- from: partsupp
+  fields:
+  - ps_availqty
+  to: customer
+  to_fields:
+  - c_custkey
+  join: partsupp.ps_availqty = customer.c_custkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-partsupp-ps-availqty-customer-c-custkey
+- from: partsupp
+  fields:
+  - ps_availqty
+  to: part
+  to_fields:
+  - p_partkey
+  join: partsupp.ps_availqty = part.p_partkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-partsupp-ps-availqty-part-p-partkey
+- from: partsupp
+  fields:
+  - ps_availqty
+  to: supplier
+  to_fields:
+  - s_suppkey
+  join: partsupp.ps_availqty = supplier.s_suppkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-partsupp-ps-availqty-supplier-s-suppkey
+- from: partsupp
+  fields:
+  - ps_partkey
+  to: part
+  to_fields:
+  - p_partkey
+  join: partsupp.ps_partkey = part.p_partkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names share the suffix partkey (reported, not a criterion)
+  evidence:
+  - ev-propose-join-partsupp-ps-partkey-part-p-partkey
+- from: partsupp
+  fields:
+  - ps_suppkey
+  to: customer
+  to_fields:
+  - c_custkey
+  join: partsupp.ps_suppkey = customer.c_custkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-partsupp-ps-suppkey-customer-c-custkey
+- from: partsupp
+  fields:
+  - ps_suppkey
+  to: part
+  to_fields:
+  - p_partkey
+  join: partsupp.ps_suppkey = part.p_partkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-partsupp-ps-suppkey-part-p-partkey
+- from: partsupp
+  fields:
+  - ps_suppkey
+  to: supplier
+  to_fields:
+  - s_suppkey
+  join: partsupp.ps_suppkey = supplier.s_suppkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names share the suffix suppkey (reported, not a criterion)
+  evidence:
+  - ev-propose-join-partsupp-ps-suppkey-supplier-s-suppkey
+- from: region
+  fields:
+  - r_regionkey
+  to: nation
+  to_fields:
+  - n_nationkey
+  join: region.r_regionkey = nation.n_nationkey
+  mechanism: inferred_join
+  cardinality: one_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-region-r-regionkey-nation-n-nationkey
+- from: supplier
+  fields:
+  - s_nationkey
+  to: nation
+  to_fields:
+  - n_nationkey
+  join: supplier.s_nationkey = nation.n_nationkey
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names share the suffix nationkey (reported, not a criterion)
+  evidence:
+  - ev-propose-join-supplier-s-nationkey-nation-n-nationkey
+- from: supplier
+  fields:
+  - s_suppkey
+  to: customer
+  to_fields:
+  - c_custkey
+  join: supplier.s_suppkey = customer.c_custkey
+  mechanism: inferred_join
+  cardinality: one_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-supplier-s-suppkey-customer-c-custkey
+- from: supplier
+  fields:
+  - s_suppkey
+  to: part
+  to_fields:
+  - p_partkey
+  join: supplier.s_suppkey = part.p_partkey
+  mechanism: inferred_join
+  cardinality: one_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-supplier-s-suppkey-part-p-partkey
+records:
+- id: ev-propose-join-customer-c-custkey-part-p-partkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 150000
+    included: 150000
+    inclusion: 1.0
+    target_distinct: 200000
+    coverage: 0.75
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-customer-c-nationkey-nation-n-nationkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 25
+    included: 25
+    inclusion: 1.0
+    target_distinct: 25
+    coverage: 1.0
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-lineitem-l-linenumber-customer-c-custkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 7
+    included: 7
+    inclusion: 1.0
+    target_distinct: 150000
+    coverage: 4.7e-05
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-lineitem-l-linenumber-nation-n-nationkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 7
+    included: 7
+    inclusion: 1.0
+    target_distinct: 25
+    coverage: 0.28
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-lineitem-l-linenumber-orders-o-orderkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 7
+    included: 7
+    inclusion: 1.0
+    target_distinct: 1500000
+    coverage: 5e-06
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-lineitem-l-linenumber-part-p-partkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 7
+    included: 7
+    inclusion: 1.0
+    target_distinct: 200000
+    coverage: 3.5e-05
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-lineitem-l-linenumber-supplier-s-suppkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 7
+    included: 7
+    inclusion: 1.0
+    target_distinct: 10000
+    coverage: 0.0007
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-lineitem-l-orderkey-orders-o-orderkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 1500000
+    included: 1500000
+    inclusion: 1.0
+    target_distinct: 1500000
+    coverage: 1.0
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-lineitem-l-partkey-part-p-partkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 200000
+    included: 200000
+    inclusion: 1.0
+    target_distinct: 200000
+    coverage: 1.0
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-lineitem-l-partkey-l-suppkey-partsupp-p_9b64171a
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 799541
+    included: 799541
+    inclusion: 1.0
+    target_distinct: 800000
+    coverage: 0.999426
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-lineitem-l-suppkey-customer-c-custkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 10000
+    included: 10000
+    inclusion: 1.0
+    target_distinct: 150000
+    coverage: 0.066667
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-lineitem-l-suppkey-part-p-partkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 10000
+    included: 10000
+    inclusion: 1.0
+    target_distinct: 200000
+    coverage: 0.05
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-lineitem-l-suppkey-supplier-s-suppkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 10000
+    included: 10000
+    inclusion: 1.0
+    target_distinct: 10000
+    coverage: 1.0
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-nation-n-regionkey-region-r-regionkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 5
+    included: 5
+    inclusion: 1.0
+    target_distinct: 5
+    coverage: 1.0
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-orders-o-custkey-customer-c-custkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 99996
+    included: 99996
+    inclusion: 1.0
+    target_distinct: 150000
+    coverage: 0.66664
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-orders-o-custkey-part-p-partkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 99996
+    included: 99996
+    inclusion: 1.0
+    target_distinct: 200000
+    coverage: 0.49998
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-orders-o-shippriority-nation-n-nationkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 1
+    included: 1
+    inclusion: 1.0
+    target_distinct: 25
+    coverage: 0.04
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-orders-o-shippriority-region-r-regionkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 1
+    included: 1
+    inclusion: 1.0
+    target_distinct: 5
+    coverage: 0.2
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-part-p-size-customer-c-custkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 50
+    included: 50
+    inclusion: 1.0
+    target_distinct: 150000
+    coverage: 0.000333
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-part-p-size-supplier-s-suppkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 50
+    included: 50
+    inclusion: 1.0
+    target_distinct: 10000
+    coverage: 0.005
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-partsupp-ps-availqty-customer-c-custkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 9999
+    included: 9999
+    inclusion: 1.0
+    target_distinct: 150000
+    coverage: 0.06666
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-partsupp-ps-availqty-part-p-partkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 9999
+    included: 9999
+    inclusion: 1.0
+    target_distinct: 200000
+    coverage: 0.049995
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-partsupp-ps-availqty-supplier-s-suppkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 9999
+    included: 9999
+    inclusion: 1.0
+    target_distinct: 10000
+    coverage: 0.9999
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-partsupp-ps-partkey-part-p-partkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 200000
+    included: 200000
+    inclusion: 1.0
+    target_distinct: 200000
+    coverage: 1.0
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-partsupp-ps-suppkey-customer-c-custkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 10000
+    included: 10000
+    inclusion: 1.0
+    target_distinct: 150000
+    coverage: 0.066667
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-partsupp-ps-suppkey-part-p-partkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 10000
+    included: 10000
+    inclusion: 1.0
+    target_distinct: 200000
+    coverage: 0.05
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-partsupp-ps-suppkey-supplier-s-suppkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 10000
+    included: 10000
+    inclusion: 1.0
+    target_distinct: 10000
+    coverage: 1.0
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-region-r-regionkey-nation-n-nationkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 5
+    included: 5
+    inclusion: 1.0
+    target_distinct: 25
+    coverage: 0.2
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-supplier-s-nationkey-nation-n-nationkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 25
+    included: 25
+    inclusion: 1.0
+    target_distinct: 25
+    coverage: 1.0
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-supplier-s-suppkey-customer-c-custkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 10000
+    included: 10000
+    inclusion: 1.0
+    target_distinct: 150000
+    coverage: 0.066667
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-supplier-s-suppkey-part-p-partkey
+  source: tpch-duckdb
+  pin: duckdb:tpch@2026-11-02
+  measurement:
+    source_distinct: 10000
+    included: 10000
+    inclusion: 1.0
+    target_distinct: 200000
+    coverage: 0.05
+  status: inferred
+  read_on: '2026-11-02'
+  environment: local
+  data_quality: synthetic
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'

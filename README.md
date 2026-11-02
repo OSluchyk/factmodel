@@ -2,6 +2,24 @@
 
 FactModel builds a model of a data platform in which every fact carries its evidence: a source, a pin and a status, with every derived value computed by code and checked by a gate. On top of that physical layer, semantic layers serve one use case each, and a layer counts as correct only when its consumer answers a corpus of questions the way the platform does. AI agents read sources, draft facts and write probes; people with access to the platform run them.
 
+## Start here
+
+```bash
+pip install "factmodel[sql,duckdb]"
+fact init tpch --profile statistics
+fact check --root tpch
+```
+
+The last line prints `gate: pass` on an empty model. The [quickstart](docs/quickstart.md) fills it: nine steps from the eight TPC-H tables, which DuckDB builds without a single key, to proposed keys and joins and a green gate. Python 3.12 or later; add `[postgres]` for PostgreSQL.
+
+- **Snapshots** read a source's metadata into one engine-neutral file, through the `export`, `sql` or `git` adapter ([spec](spec/SPEC.md), [adapter packaging](docs/adapters/packaging.md), [BigQuery adopters](docs/adopters/bigquery.md)).
+- **Drafts and proposals** turn a snapshot into entity drafts, and measure a live source for key and join candidates when the catalog declares none ([algorithms, section 4](spec/ALGORITHMS.md)).
+- **The gate** checks every file against its schema and twelve rules, from evidence to privacy ([vocabulary](spec/VOCABULARY.md)).
+- **Probes** generate data checks from the model, render them per dialect and turn counts into evidence ([tutorial](docs/tutorial/chinook.md)).
+- **Sync and drift** compare snapshots with each other and with the model, and classify every change ([TPC-H example](examples/tpch)).
+- **Semantic layers** are proven by a consumer against a corpus, then released and exported to dbt and Apache Ossie ([exporters](docs/exporters/round-trip-notes.md), [decisions](decisions/README.md)).
+- **Three example models**: [Chinook](examples/chinook) (retail, SQLite and PostgreSQL), [QCEW](examples/qcew) (BLS employment and wages: no subject, code hierarchies, suppressed cells) and [TPC-H](examples/tpch) (DuckDB: keys proposed from the rows, then declared and confirmed).
+
 ## What 0.1.0 contains
 
 - **An engine-neutral core.** A loader, projection and scope, and a gate with twelve stages, all reading model files and metadata snapshots only.
@@ -11,38 +29,11 @@ FactModel builds a model of a data platform in which every fact carries its evid
 - **Semantic layers and the equivalence harness.** A layer contract the gate checks, and a harness that proves a layer by running its consumer against reference SQL.
 - **Release projection.** A pinned, checked, readable copy of a model for consumers, with append-only release notes.
 - **Exporters.** dbt semantic models and metrics, and Apache Ossie 0.1.1. Each export lists what its target cannot hold.
-- **Two example models.**
-  - [Chinook](examples/chinook) (retail, on SQLite and PostgreSQL);
-  - [QCEW](examples/qcew) (BLS employment and wages: no subject, code hierarchies, suppressed cells).
-
-## Install
-
-```bash
-pip install "factmodel[sql,duckdb]"
-```
-
-or, in a uv project, `uv add "factmodel[sql,duckdb]"`. Python 3.12 or later. Add `[postgres]` for PostgreSQL.
-
-## Quickstart
-
-From an empty folder to a green gate (you need the `sqlite3` command line):
-
-```bash
-fact init shop --profile statistics
-sqlite3 shop.db "CREATE TABLE region (code TEXT PRIMARY KEY, name TEXT); CREATE TABLE sales (region_code TEXT REFERENCES region (code), year INTEGER, amount INTEGER, PRIMARY KEY (region_code, year));"
-export FACT_DSN_SHOP="sqlite:///$PWD/shop.db"
-fact source add --root shop --id shop-db --title "Shop database" --kind warehouse --access-mode agent_read --engine sqlite --adapter sql --dsn-env FACT_DSN_SHOP
-fact snapshot --root shop --source shop-db --date 2026-10-27
-fact draft --root shop --source shop-db
-cp shop/drafts/shop-db/entities/*.yaml shop/physical/entities/
-fact project --root shop
-fact check --root shop
-```
-
-The last line prints `gate: pass`. The [quickstart](docs/quickstart.md) explains each step. The [tutorial](docs/tutorial/chinook.md) goes on to probes, a proven layer, a release and two exports.
+- **Two example models**, [Chinook](examples/chinook) and [QCEW](examples/qcew); the TPC-H example and `fact propose` came after 0.1.0 (`CHANGELOG.md`).
 
 ## Documentation
 
+- [Quickstart](docs/quickstart.md) (TPC-H) and [quickstart on SQLite](docs/quickstart-sqlite.md); [tutorial](docs/tutorial/chinook.md); [FAQ](docs/faq.md)
 - [Specification](spec/SPEC.md) and [vocabulary](spec/VOCABULARY.md)
 - [Algorithms](spec/ALGORITHMS.md), [versioning](spec/VERSIONING.md) and the [core-change ledger](spec/CORE-CHANGES.md)
 - [Roadmap](spec/ROADMAP.md)

@@ -24,6 +24,7 @@ validation:
 nav:
   - Home: index.md
   - Quickstart: docs/quickstart.md
+  - Quickstart on SQLite: docs/quickstart-sqlite.md
   - Tutorial: docs/tutorial/chinook.md
   - FAQ: docs/faq.md
   - Specification:

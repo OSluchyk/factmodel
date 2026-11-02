@@ -56,23 +56,50 @@ def test_site_builds_strictly(tmp_path: Path) -> None:
     assert "D-021" in decisions and "Equivalence threshold" in decisions
 
 
+def _command_lines(text: str) -> list[str]:
+    return [
+        line
+        for block in text.split("```bash")[1:]
+        for line in block.split("```")[0].splitlines()
+        if line.strip()
+    ]
+
+
+def _tpch_extension_installs() -> bool:
+    try:
+        import duckdb
+
+        duckdb.connect().execute("INSTALL tpch; LOAD tpch;")
+    except Exception:  # no duckdb, or no route to the extension repository
+        return False
+    return True
+
+
 @pytest.mark.skipif(shutil.which("sqlite3") is None, reason="sqlite3 CLI not installed")
+def test_sqlite_quickstart_commands_give_what_they_promise(tmp_path: Path) -> None:
+    text = (ROOT / "docs" / "quickstart-sqlite.md").read_text(encoding="utf-8")
+    env = {k: v for k, v in os.environ.items() if not k.startswith("FACT_")}
+    outputs = run(text, tmp_path, env)
+    assert "gate: pass" in outputs[0]
+    assert len(_command_lines(text)) == 10
+
+
+@pytest.mark.skipif(not _tpch_extension_installs(), reason="DuckDB tpch extension unavailable")
 def test_quickstart_commands_give_what_they_promise(tmp_path: Path) -> None:
     text = (ROOT / "docs" / "quickstart.md").read_text(encoding="utf-8")
     env = {k: v for k, v in os.environ.items() if not k.startswith("FACT_")}
     outputs = run(text, tmp_path, env)
-    assert "gate: pass" in outputs[0]
-    assert (
-        len(
-            [
-                line
-                for block in text.split("```bash")[1:]
-                for line in block.split("```")[0].splitlines()
-                if line.strip()
-            ]
-        )
-        == 10
-    )
+    joined = "\n".join(outputs)
+    assert "gate: pass" in joined
+    assert "wrote drafts/tpch-db/keys.yaml" in joined
+    assert "wrote drafts/tpch-db/joins.yaml" in joined
+    # nine steps: init, build, register (two lines), snapshot, keys, joins, draft (two lines),
+    # project, check
+    assert len(_command_lines(text)) == 11
+    assert text.count("**") // 2 == 9
+    assert (tmp_path / "tpch" / "drafts" / "tpch-db" / "joins.yaml").is_file()
+    assert not (tmp_path / "tpch" / "physical" / "entities" / "keys.yaml").exists()
+    print(joined)  # the real outputs, for the Output blocks of the page (pytest -s)
 
 
 @needs_uv

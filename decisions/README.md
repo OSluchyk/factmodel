@@ -46,3 +46,5 @@ The records were curated once, for the first public release; the development his
 | [D-020](D-020-rollup-probe.md) | Rollup probe kind | accepted | 2026-10-27 |
 | [D-021](D-021-equivalence-threshold.md) | Equivalence threshold | accepted | 2026-10-27 |
 | [D-022](D-022-examples-keep-agent-files.md) | Example models keep their agent files in the public tree | accepted | 2026-11-02 |
+
+D-003 and D-008 were withdrawn before the first release.

@@ -55,6 +55,11 @@ def test_site_builds_strictly(tmp_path: Path) -> None:
     assert (tmp_path / "site" / "reference" / "cli" / "index.html").is_file()
     decisions = (tmp_path / "site" / "decisions" / "index.html").read_text(encoding="utf-8")
     assert "D-021" in decisions and "Equivalence threshold" in decisions
+    assert "withdrawn before the first release" in decisions
+    assert 'href="D-021/"' in decisions  # the index links the records, pages of their own
+    assert 'id="d-021-equivalence-threshold"' not in decisions
+    record = (tmp_path / "site" / "decisions" / "D-021" / "index.html").read_text(encoding="utf-8")
+    assert 'id="d-021-equivalence-threshold"' in record
 
 
 def _command_lines(text: str) -> list[str]:

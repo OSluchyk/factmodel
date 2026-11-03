@@ -1,6 +1,7 @@
 """MkDocs hook: assemble the documentation site from the repository before every build.
 
-The site is generated, never written by hand: the spec, the decisions, `docs/`, one page per
+The site is generated, never written by hand: the spec, the decisions (the index in the
+navigation, one page per record at `/decisions/D-NNN/`), `docs/`, one page per
 skill (from `agent/skills/*/SKILL.md`), a CLI reference generated from the Typer app and a
 schema reference generated from `schemas/*.schema.json`. A link to a repository file that is
 not a page of the site becomes a link to the file on GitHub, so `mkdocs build --strict` checks
@@ -65,6 +66,9 @@ def _site_path(repo: str) -> str | None:
     match = re.fullmatch(r"agent/skills/([^/]+)/SKILL\.md", repo)
     if match:
         return f"skills/{match.group(1)}.md"
+    match = re.fullmatch(r"decisions/(D-\d{3})-[^/]+\.md", repo)
+    if match:
+        return f"decisions/{match.group(1)}.md"  # one page per record, at /decisions/D-NNN/
     if repo.startswith(("spec/", "decisions/")) and repo.endswith(".md"):
         return repo
     if repo.startswith("docs/") and repo.endswith(".md") and not repo.startswith("docs/_site/"):
@@ -233,18 +237,6 @@ def assemble() -> None:
     for repo in sources:
         if _site_path(repo) is not None:
             _copy(repo)
-    # Decisions on one page: the index, then every record (headings one level down)
-    index = SITE / "decisions" / "README.md"
-    records = []
-    for path in sorted((ROOT / "decisions").glob("D-*.md")):
-        text = _rewrite(
-            path.read_text(encoding="utf-8"), f"decisions/{path.name}", "decisions/README.md"
-        )
-        records.append(re.sub(r"^(#+) ", r"#\1 ", text, flags=re.MULTILINE))
-    index.write_text(
-        index.read_text(encoding="utf-8").rstrip("\n") + "\n\n## Records\n\n" + "\n".join(records),
-        encoding="utf-8",
-    )
     (SITE / "reference").mkdir(exist_ok=True)
     (SITE / "reference" / "cli.md").write_text(cli_reference(), encoding="utf-8")
     for name, text in schema_pages().items():

@@ -20,6 +20,10 @@ jobs:
           --health-retries 30
     env:
       FACT_PG_DSN: postgresql://postgres@localhost:5432/postgres
+      # tests/examples/test_tpch.py builds TPC-H at scale factor 0.01 here (both pytest steps).
+      # Scale factor 1 is the example's documented run (examples/tpch/README.md) and is
+      # reproduced locally with examples/tpch/scripts/reproduce.sh.
+      FACT_TPCH_SF: "0.01"
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6

@@ -2,6 +2,10 @@
 
 Newest first. Every entry says what changed and why.
 
+## Unreleased
+
+- CI runs `tests/examples/test_tpch.py` at scale factor 0.01 (`FACT_TPCH_SF`). Why: scale factor 1 is the example's documented run and is reproduced locally; the test checks the keys, the foreign keys and the listed coincidences at any scale, and the small build keeps the job short.
+
 ## 0.1.0 - 2026-11-03
 
 The first public release: a model of a data platform built from evidence, checked by a gate, kept current by sync and probes, and served to consumers through semantic layers that a consumer proves.

@@ -2,6 +2,12 @@
 
 Newest first. Every entry says what changed and why.
 
+## Unreleased
+
+- The site gives every decision record its own page (`/decisions/D-NNN/`); `/decisions/` is the index, the only entry in the navigation, and says that D-003 and D-008 were withdrawn before the first release. Why: one page of twenty records had no address per record. The records are unchanged.
+- CI and the site build use `actions/checkout@v7` and `astral-sh/setup-uv@v10.3.2` (setup-uv publishes no major tag since v8). Why: the v4 and v6 releases run on Node.js 20, which GitHub's runners are retiring.
+- `docs/article-support.md`: the commands and outputs Part 2 of the article shows, copied from `examples/tpch` and the quickstart, one block per article section, each with the file it was taken from; `tests/docs/test_article_support.py` checks every block against the repository. Why: the article and the repository cannot drift. The page is not in the site navigation and nothing links to it.
+
 ## 0.1.0 - 2026-11-03
 
 The first public release: a model of a data platform built from evidence, checked by a gate, kept current by sync and probes, and served to consumers through semantic layers that a consumer proves.

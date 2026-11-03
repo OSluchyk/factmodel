@@ -2,7 +2,9 @@
 
 Newest first. Every entry says what changed and why.
 
-## Unreleased
+## 0.1.0 - 2026-11-03
+
+The first public release: a model of a data platform built from evidence, checked by a gate, kept current by sync and probes, and served to consumers through semantic layers that a consumer proves.
 
 ### Proposals measured on data
 
@@ -19,10 +21,6 @@ Newest first. Every entry says what changed and why.
 - README: a "Start here" block of three commands, one sentence per capability, the 0.1.0 contents below.
 - D-022: example models keep `AGENTS.md`, `agent/` and `.claude/skills/`; a test keeps the skill copies identical to `agent/skills/`.
 - The `model-onboard` skill proposes keys and joins where a source can be measured.
-
-## 0.1.0 - 2026-10-27
-
-The first public release: a model of a data platform built from evidence, checked by a gate, kept current by sync and probes, and served to consumers through semantic layers that a consumer proves.
 
 ### Specification and vocabulary
 

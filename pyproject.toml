@@ -79,8 +79,9 @@ build-backend = "hatchling.build"
 packages = ["src/factmodel"]
 
 [tool.hatch.build.targets.sdist]
-# The owner's local agent folder at the root is never part of a release (examples keep theirs).
-exclude = ["/.claude", "/dist"]
+# The owner's local agent folder at the root is never part of a release (examples keep theirs);
+# neither is a database an example built, however it is ignored.
+exclude = ["/.claude", "/dist", "**/*.duckdb", "**/*.duckdb.wal", "**/*.tbl"]
 
 [tool.hatch.build.targets.wheel.force-include]
 "spec/VOCABULARY.md" = "factmodel/VOCABULARY.md"

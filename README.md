@@ -5,12 +5,12 @@ FactModel builds a model of a data platform in which every fact carries its evid
 ## Start here
 
 ```bash
-pip install "factmodel[sql,duckdb]"
+pip install "factmodel[sql,duckdb] @ git+https://github.com/OSluchyk/factmodel@v0.1.0"
 fact init tpch --profile statistics
 fact check --root tpch
 ```
 
-The last line prints `gate: pass` on an empty model. The [quickstart](docs/quickstart.md) fills it: nine steps from the eight TPC-H tables, which DuckDB builds without a single key, to proposed keys and joins and a green gate. Python 3.12 or later; add `[postgres]` for PostgreSQL.
+After the release on PyPI the first line becomes `pip install "factmodel[sql,duckdb]"`. The last line prints `gate: pass` on an empty model. The [quickstart](docs/quickstart.md) fills it: nine steps from the eight TPC-H tables, which DuckDB builds without a single key, to proposed keys and joins and a green gate. Python 3.12 or later; add `[postgres]` for PostgreSQL.
 
 - **Snapshots** read a source's metadata into one engine-neutral file, through the `export`, `sql` or `git` adapter ([spec](spec/SPEC.md), [adapter packaging](docs/adapters/packaging.md), [BigQuery adopters](docs/adopters/bigquery.md)).
 - **Drafts and proposals** turn a snapshot into entity drafts, and measure a live source for key and join candidates when the catalog declares none ([algorithms, section 4](spec/ALGORITHMS.md)).
@@ -29,7 +29,9 @@ The last line prints `gate: pass` on an empty model. The [quickstart](docs/quick
 - **Semantic layers and the equivalence harness.** A layer contract the gate checks, and a harness that proves a layer by running its consumer against reference SQL.
 - **Release projection.** A pinned, checked, readable copy of a model for consumers, with append-only release notes.
 - **Exporters.** dbt semantic models and metrics, and Apache Ossie 0.1.1. Each export lists what its target cannot hold.
-- **Two example models**, [Chinook](examples/chinook) and [QCEW](examples/qcew); the TPC-H example and `fact propose` came after 0.1.0 (`CHANGELOG.md`).
+- **Three example models**, [Chinook](examples/chinook), [QCEW](examples/qcew) and [TPC-H](examples/tpch).
+- **Proposals measured on data.** `fact propose keys` and `fact propose joins` write key and join candidates with their counts to `drafts/`; a person turns a candidate into a key or a relationship.
+- **More than one snapshot per source and day**, the second read as `<source>@<date>_2.yaml`.
 
 ## Documentation
 

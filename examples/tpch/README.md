@@ -23,7 +23,7 @@ Source: TPC Benchmark H, Transaction Processing Performance Council, specificati
 
 ## Counts
 
-Measured at scale factor 1 (`scripts/summary.py`, 2026-11-02).
+Measured at scale factor 1 on 2026-11-02 (`scripts/summary.py`).
 
 | What | Count |
 | --- | --- |
@@ -34,7 +34,7 @@ Measured at scale factor 1 (`scripts/summary.py`, 2026-11-02).
 | Join candidates proposed on A at threshold 0.999 | 31, 385 queries |
 | Kit foreign keys among the candidates | 8 of 8, all `many_to_one` |
 | Specification foreign keys the kit leaves out (`lineitem` to `part`, `lineitem` to `supplier`) | 2 of 2 |
-| Other inclusions above the threshold | 21; see below |
+| Other inclusions above the threshold | 21, all the dense-range effect described under "Why there are inclusions that are not foreign keys" below |
 | Probes run on B | 32, none out of range (8 `row_count`, 8 `key_duplicates`, 8 `join_match`, 8 `fan_out`) |
 | Runtime at scale factor 1, 4 cores | snapshot 0.6 s; propose keys 6.8 s; propose joins 9.4 s; apply the constraints 19.7 s; 32 probes 1.3 s |
 

@@ -2,10 +2,6 @@
 
 Newest first. Every entry says what changed and why.
 
-## Unreleased
-
-- CI runs `tests/examples/test_tpch.py` at scale factor 0.01 (`FACT_TPCH_SF`). Why: scale factor 1 is the example's documented run and is reproduced locally; the test checks the keys, the foreign keys and the listed coincidences at any scale, and the small build keeps the job short.
-
 ## 0.1.0 - 2026-11-03
 
 The first public release: a model of a data platform built from evidence, checked by a gate, kept current by sync and probes, and served to consumers through semantic layers that a consumer proves.
@@ -21,7 +17,8 @@ The first public release: a model of a data platform built from evidence, checke
 ### Examples and documentation
 
 - `examples/tpch`: TPC-H on DuckDB, the example of Part 2 of the article. `scripts/generate.sh` builds the database with the tpch extension (fallback: the reference kit's `.tbl` files and `scripts/schema.sql`); `scripts/apply-constraints.sql` holds the kit's 8 primary and 8 foreign keys translated from `dss.ri`; `scripts/reproduce.sh` rebuilds every committed artifact: the snapshot without keys, the proposals on it, the snapshot with keys, the drift between them and the probe run that confirms the foreign keys.
-- The quickstart walks through TPC-H (`docs/quickstart.md`); the SQLite walk stays in `docs/quickstart-sqlite.md`.
+- The quickstart walks through TPC-H (`docs/quickstart.md`) at scale factor 0.1 and shows the measured propose lines; the doc test asserts their counts, seconds dropped. The SQLite walk stays in `docs/quickstart-sqlite.md`.
+- CI runs `tests/examples/test_tpch.py` at scale factor 0.01 (`FACT_TPCH_SF`). Why: scale factor 1 is the example's documented run and is reproduced locally; the test checks the keys, the foreign keys and the listed coincidences at any scale, and the small build keeps the job short.
 - README: a "Start here" block of three commands, one sentence per capability, the 0.1.0 contents below.
 - D-022: example models keep `AGENTS.md`, `agent/` and `.claude/skills/`; a test keeps the skill copies identical to `agent/skills/`.
 - The `model-onboard` skill proposes keys and joins where a source can be measured.

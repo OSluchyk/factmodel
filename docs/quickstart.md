@@ -1,6 +1,6 @@
 # Quickstart
 
-From an empty folder to a model of the eight TPC-H tables with a green gate, in nine steps; the database builds in a few seconds and the two measurements take about ten. You need the `fact` command with the DuckDB extra (the install line in the [README](../README.md)) and a route to DuckDB's extension repository (`INSTALL tpch`). The SQLite walk, two tables with declared keys, is in [quickstart-sqlite.md](quickstart-sqlite.md).
+From an empty folder to a model of the eight TPC-H tables with a green gate, in nine steps; the database builds in a few seconds and the two measurements take a few more. You need the `fact` command with the DuckDB extra (the install line in the [README](../README.md)) and a route to DuckDB's extension repository (`INSTALL tpch`). The SQLite walk, two tables with declared keys, is in [quickstart-sqlite.md](quickstart-sqlite.md).
 
 The point of this walk: DuckDB's `tpch` extension builds the eight tables with 61 NOT NULL constraints and not one primary or foreign key, so a snapshot of the catalog shows no key at all. `fact propose` measures the rows and proposes them; a person decides. The model uses the `statistics` profile, which has no subject (D-015), so drafted tables pass the gate as they are. Dates are fixed so the outputs match.
 
@@ -19,8 +19,10 @@ created tpch with 35 files (profile statistics)
 **2. Build the database** at scale factor 0.1: about 600,000 line items and 110 MB on disk. The [example](https://github.com/OSluchyk/factmodel/tree/main/examples/tpch) and the article use scale factor 1; the keys and the foreign keys come out the same, only the number of coincidences changes.
 
 ```bash
-python3 -c "import duckdb; duckdb.connect('tpch.duckdb').execute('INSTALL tpch; LOAD tpch; CALL dbgen(sf = 0.1)')"
+uv run python -c "import duckdb; duckdb.connect('tpch.duckdb').execute('INSTALL tpch; LOAD tpch; CALL dbgen(sf = 0.1)')"
 ```
+
+DuckDB must be installed in the same environment as `fact`; the `[duckdb]` extra does that.
 
 **3. Register the source.** The connection string stays in the environment variable and never enters a file.
 
@@ -56,10 +58,10 @@ fact propose keys --root tpch --source tpch-db --environment local --data-qualit
 Output:
 
 ```text
-wrote drafts/tpch-db/keys.yaml
+8 tables, 33 key candidates, 92 queries, 1.4 s: wrote drafts/tpch-db/keys.yaml
 ```
 
-The line before it counts the candidates and the queries. The reference kit's primary key is among the candidates for every table, next to columns and pairs that happen to be unique at this scale; `drafts/tpch-db/keys.yaml` lists each one with its row count, distinct count and null count. At scale factor 1 the example finds 34 candidates over the eight tables with 102 queries, and for `lineitem` the only one is the key pair `(l_orderkey, l_linenumber)`.
+The counts before the colon are the candidates and the queries. The reference kit's primary key is among the candidates for every table, next to columns and pairs that happen to be unique at this scale; `drafts/tpch-db/keys.yaml` lists each one with its row count, distinct count and null count. On generated data, names, addresses and comments are unique too: at this scale `customer` has five single-column candidates (`c_custkey`, `c_name`, `c_address`, `c_phone`, `c_comment`), which is why a proposal on synthetic data stays inferred (D-014) and a person picks the key. At scale factor 1 the example finds 34 candidates over the eight tables with 102 queries, and for `lineitem` the only one is the key pair `(l_orderkey, l_linenumber)`.
 
 **6. Propose joins from the rows.** Every type-compatible column pair across tables whose target is unique is measured for inclusion.
 
@@ -70,7 +72,7 @@ fact propose joins --root tpch --source tpch-db --environment local --data-quali
 Output:
 
 ```text
-wrote drafts/tpch-db/joins.yaml
+8 tables, 30 join candidates, 436 queries, 4.1 s: wrote drafts/tpch-db/joins.yaml
 ```
 
 Ten of the candidates are foreign keys: the eight of the reference kit and the two the specification lists but the kit leaves out (`lineitem` to `part`, `lineitem` to `supplier`). The rest are coincidences of dense key ranges, and each record says so in its coverage: `l_linenumber` (1 to 7) is included in `n_nationkey` (0 to 24) with coverage 0.28, and `o_shippriority`, always 0, is a region key with coverage 0.2. At scale factor 1 the example finds 31 candidates with 385 queries, the ten foreign keys and 21 coincidences, each listed with its reason. Column names were not used: `l_linenumber = n_nationkey` and `n_regionkey = r_regionkey` are measured the same way, and only the note says that the second pair shares a suffix.

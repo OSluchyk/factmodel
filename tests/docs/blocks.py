@@ -2,7 +2,8 @@
 
 Every fenced ``bash`` block runs, in order, in one shell session started in a working folder.
 A fenced ``text`` block right after a line ``Output:`` lists lines that must appear in the
-output of the ``bash`` blocks since the previous check.
+output of the ``bash`` blocks since the previous check. A duration in a promised line, such as
+``1.4 s``, matches any duration: the page shows a real run, the seconds are the machine's.
 """
 
 import re
@@ -11,6 +12,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 FENCE = re.compile(r"^```(\w+)\n(.*?)^```", re.MULTILINE | re.DOTALL)
+DURATION = re.compile(r"\b\d+(?:\.\d+)? s\b")
+
+
+def timeless(text: str) -> str:
+    """The text with every duration replaced by a placeholder."""
+    return DURATION.sub("_ s", text)
 
 
 @dataclass
@@ -49,6 +56,6 @@ def run(markdown: str, cwd: Path, env: dict[str, str]) -> list[str]:
     parts = re.split(r"^@@STEP \d+@@$", done.stdout, flags=re.MULTILINE)[1:]
     for step, output in zip(plan, parts, strict=True):
         for line in step.expected:
-            if line.strip() not in output:
+            if timeless(line.strip()) not in timeless(output):
                 raise AssertionError(f"promised output missing: {line!r}\n--- got ---\n{output}")
     return parts

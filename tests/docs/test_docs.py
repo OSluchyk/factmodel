@@ -4,6 +4,7 @@ installed wheel alone."""
 
 import importlib.util
 import os
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -65,6 +66,18 @@ def _command_lines(text: str) -> list[str]:
     ]
 
 
+PROPOSAL_LINE = re.compile(
+    r"^(?P<counts>\d+ tables, \d+ (?:key|join) candidates, \d+ queries), [\d.]+ s: "
+    r"(?P<wrote>wrote drafts/\S+)$",
+    re.MULTILINE,
+)
+
+
+def _proposal_counts(text: str) -> dict[str, str]:
+    """The counts each propose line promises, keyed by the file it writes, seconds dropped."""
+    return {m["wrote"]: m["counts"] for m in PROPOSAL_LINE.finditer(text)}
+
+
 def _tpch_extension_installs() -> bool:
     try:
         import duckdb
@@ -91,8 +104,10 @@ def test_quickstart_commands_give_what_they_promise(tmp_path: Path) -> None:
     outputs = run(text, tmp_path, env)
     joined = "\n".join(outputs)
     assert "gate: pass" in joined
-    assert "wrote drafts/tpch-db/keys.yaml" in joined
-    assert "wrote drafts/tpch-db/joins.yaml" in joined
+    # the Output blocks carry the counts measured at scale factor 0.1; a run must repeat them
+    promised = _proposal_counts(text)
+    assert set(promised) == {"wrote drafts/tpch-db/keys.yaml", "wrote drafts/tpch-db/joins.yaml"}
+    assert _proposal_counts(joined) == promised
     # nine steps: init, build, register (two lines), snapshot, keys, joins, draft (two lines),
     # project, check
     assert len(_command_lines(text)) == 11

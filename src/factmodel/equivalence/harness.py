@@ -16,6 +16,7 @@ from typing import Any
 
 from factmodel import vocabulary
 from factmodel.equivalence import compare
+from factmodel.equivalence import trace as tracing
 from factmodel.equivalence.corpus import CorpusItem, read_corpus
 from factmodel.model.loader import Model
 from factmodel.model.types import Consumer, Layer
@@ -54,6 +55,10 @@ class RunResult:
     items: list[ItemResult] = field(default_factory=list)
     regressions: list[str] = field(default_factory=list)
     threshold: float = DEFAULT_THRESHOLD
+    # what the corpus exercises of the layer (report only: no verdict reads it)
+    coverage: tracing.Coverage | None = None
+    # item id -> what only one side uses, for items that do not pass
+    differences: dict[str, str] = field(default_factory=dict)
 
     def share(self) -> float:
         """Items passing in same_rows or same_predicate, over items not marked known_gap (D-021)."""
@@ -82,7 +87,7 @@ class RunResult:
         return out
 
     def summary(self) -> dict[str, Any]:
-        return {
+        out = {
             "consumer": self.consumer,
             "source": self.source,
             "dialect": self.dialect,
@@ -94,6 +99,9 @@ class RunResult:
             "unexplained": self.unexplained(),
             "items": {i.id: {"mode": i.mode, "outcome": i.outcome} for i in self.items},
         }
+        if self.coverage is not None:
+            out["coverage"] = self.coverage.summary()
+        return out
 
 
 @dataclass(frozen=True)
@@ -176,12 +184,29 @@ def run(
     for item in s.items:
         result.items.append(_explained(item, _one(fn, item, s, url, dialect)))
     result.regressions = regressions(root, result)
+    _cover(result, s, fn, model)
     return result
 
 
 def _result(s: Setup, source: str, dialect: str, ran_on: str) -> RunResult:
     threshold = s.consumer.threshold if s.consumer.threshold is not None else DEFAULT_THRESHOLD
     return RunResult(s.layer.id, s.consumer.id, source, dialect, ran_on, threshold=threshold)
+
+
+def _cover(result: RunResult, s: Setup, fn: Compile, model: Model) -> None:
+    """Coverage of the layer by the references, and the difference for every item that does
+    not pass. Reads SQL text only, so both the local and the owner-run path give it."""
+    outcomes = {i.id: i.outcome for i in result.items}
+    traced = {i.id: tracing.trace(i.reference, s.layer, model) for i in s.items}
+    result.coverage = tracing.coverage(
+        s.layer, [(outcomes[item_id], t) for item_id, t in traced.items()]
+    )
+    for item in s.items:
+        if outcomes[item.id] == "pass":
+            continue
+        sql = _compile(fn, item, s.layer)
+        mine = tracing.trace(sql, s.layer, model) if sql is not None else None
+        result.differences[item.id] = tracing.difference(mine, traced[item.id])
 
 
 def _explained(item: CorpusItem, result: ItemResult) -> ItemResult:
@@ -312,7 +337,47 @@ def report(result: RunResult) -> str:
         "",
         "Regressions against the accepted run: " + (", ".join(result.regressions) or "none"),
     ]
+    differing = [i for i in result.items if i.id in result.differences]
+    if differing:
+        lines += ["", "## Items that do not pass", ""]
+        for i in differing:
+            lines.append(f"- {i.id}: differs from the reference in: {result.differences[i.id]}")
+    if result.coverage is not None:
+        lines += _coverage_lines(result.coverage)
     return "\n".join(lines) + "\n"
+
+
+def _coverage_lines(cov: tracing.Coverage) -> list[str]:
+    """Coverage of the layer by the corpus references (report only, not part of the verdict)."""
+    lines = [
+        "",
+        "## Coverage",
+        "",
+        "Elements of the layer that the reference SQL of the corpus items uses (report only; "
+        "the verdict does not read it). A measure match is weak: every field of the expression "
+        "occurs and so does its aggregate function.",
+        "",
+        "| Element | Items | Passing |",
+        "| --- | --- | --- |",
+    ]
+    for e in cov.evaluated:
+        lines.append(f"| {e.label} | {e.items} | {e.passing} |")
+    summary = cov.summary()
+    lines += [
+        "",
+        f"{summary['exercised']} of {summary['elements']} elements exercised; "
+        f"items whose reference the trace cannot fully attribute: {cov.unresolved_items}.",
+        "",
+        "### Not exercised",
+        "",
+    ]
+    lines += [
+        f"- {e.label}" + (f" (referred to by {', '.join(e.references)})" if e.references else "")
+        for e in cov.not_exercised
+    ] or ["None."]
+    lines += ["", "### Not evaluated", ""]
+    lines += [f"- {e.label}: form {e.form}" for e in cov.not_evaluated] or ["None."]
+    return lines
 
 
 def write(root: Path, result: RunResult) -> list[Path]:
@@ -412,4 +477,5 @@ def from_results(
     for item in s.items:
         result.items.append(_explained(item, _measured(fn, item, s, measured.get(item.id))))
     result.regressions = regressions(root, result)
+    _cover(result, s, fn, model)
     return result

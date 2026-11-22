@@ -24,6 +24,27 @@
           "pass": 34
         }
       },
+      "coverage": {
+        "elements": 31,
+        "exercised": 21,
+        "not_evaluated": [
+          "concept level_matrix (values_table)",
+          "concept distinct_areas (distinct)"
+        ],
+        "not_exercised": [
+          "entity industry_titles",
+          "entity ownership_titles",
+          "join qtrly.to-industry",
+          "join qtrly.to-ownership",
+          "join annual.to-area",
+          "join annual.to-industry",
+          "join annual.to-ownership",
+          "concept area_kind_county",
+          "concept area_kind_state",
+          "concept area_kind_msa"
+        ],
+        "unresolved_items": 0
+      },
       "dialect": "sqlite",
       "items": {
         "cecil-manufacturing-avg-2025q1": {

@@ -9,6 +9,7 @@ from pathlib import Path
 from types import ModuleType
 
 import pytest
+import sqlglot
 
 from factmodel.equivalence import harness
 from factmodel.equivalence.compare import same_rows
@@ -55,7 +56,11 @@ def test_sqlite_run_reproduces_the_accepted_run_and_report(example: str, tmp_pat
     url = _seed(example).load_sqlite(tmp_path / "db.sqlite")
     result = _run(example, url, source, "sqlite")
     assert result.proven()
-    assert result.summary() == _accepted(example, layer)
+    summary = result.summary()
+    # coverage is report only and newer than the accepted runs; every verdict key is unchanged
+    assert {k: v for k, v in summary.items() if k != "coverage"} == _accepted(example, layer)
+    last = ROOT / "examples" / example / "equivalence" / "last-run.json"
+    assert json.loads(last.read_text(encoding="utf-8"))["layers"][layer] == summary
     report = ROOT / "examples" / example / "generated" / f"equivalence-{layer}.md"
     assert harness.report(result) == report.read_text(encoding="utf-8")
 
@@ -99,3 +104,80 @@ def test_qcew_naive_queries_give_different_answers(tmp_path: Path) -> None:
             # compare the values only: the correct answer also reports suppressed cells
             width = len(naive[0])
             assert not same_rows(naive, [row[:width] for row in correct]), item.id
+
+
+COVERAGE = {
+    "chinook": {
+        "not_exercised": ["entity album", "join track.to-album"],
+        "not_evaluated": [],
+    },
+    "qcew": {
+        "not_exercised": [
+            "entity industry_titles",
+            "entity ownership_titles",
+            "join qtrly.to-industry",
+            "join qtrly.to-ownership",
+            "join annual.to-area",
+            "join annual.to-industry",
+            "join annual.to-ownership",
+            # the references write the area kinds with LIKE, not with the concept's substr form
+            "concept area_kind_county",
+            "concept area_kind_state",
+            "concept area_kind_msa",
+        ],
+        "not_evaluated": [
+            "concept level_matrix (values_table)",
+            "concept distinct_areas (distinct)",
+        ],
+    },
+}
+
+
+@pytest.mark.parametrize("example", sorted(CASES))
+def test_coverage_vectors(example: str) -> None:
+    layer = CASES[example][0]
+    last = ROOT / "examples" / example / "equivalence" / "last-run.json"
+    coverage = json.loads(last.read_text(encoding="utf-8"))["layers"][layer]["coverage"]
+    assert coverage["not_exercised"] == COVERAGE[example]["not_exercised"]
+    assert coverage["not_evaluated"] == COVERAGE[example]["not_evaluated"]
+    assert coverage["unresolved_items"] == 0
+    report = (ROOT / "examples" / example / "generated" / f"equivalence-{layer}.md").read_text(
+        encoding="utf-8"
+    )
+    if example == "qcew":
+        assert (
+            "- entity industry_titles (referred to by rollup of measure employment_month3 "
+            "(industry_titles.parent))" in report
+        )
+        assert "- entity ownership_titles\n" in report
+        # the area join goes through a de-duplicated subquery (F-0001)
+        assert "| join qtrly.to-area | 4 | 4 |" in report
+
+
+def _literals(sql: str) -> set[str]:
+    tree = sqlglot.parse_one(sql)
+    return {
+        lit.this
+        for lit in tree.find_all(sqlglot.exp.Literal)
+        if lit.is_string and len(lit.this) >= 4 and re.search(r"[A-Za-z-]", lit.this)
+    }
+
+
+@pytest.mark.parametrize("example", sorted(CASES))
+def test_no_corpus_literal_in_any_output(example: str) -> None:
+    layer = CASES[example][0]
+    folder = ROOT / "examples" / example / "semantic" / layer / "corpus"
+    items = read_corpus(folder)
+    literals = set().union(*(_literals(i.reference) for i in items))
+    assert "genre-1" in literals or example != "chinook"
+    outputs = [
+        ROOT / "examples" / example / "generated" / f"equivalence-{layer}.md",
+        ROOT / "examples" / example / "equivalence" / "last-run.json",
+        ROOT / "examples" / example / "equivalence" / "accepted.json",
+    ]
+    for path in outputs:
+        text = path.read_text(encoding="utf-8")
+        # item ids are authored names and some spell a value (customers-genre-1-2024q1)
+        for item in sorted(items, key=lambda i: -len(i.id)):
+            text = text.replace(item.id, "")
+        assert not [lit for lit in literals if lit in text], path

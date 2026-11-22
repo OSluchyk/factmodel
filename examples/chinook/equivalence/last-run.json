@@ -24,6 +24,16 @@
           "pass": 29
         }
       },
+      "coverage": {
+        "elements": 15,
+        "exercised": 13,
+        "not_evaluated": [],
+        "not_exercised": [
+          "entity album",
+          "join track.to-album"
+        ],
+        "unresolved_items": 0
+      },
       "dialect": "sqlite",
       "items": {
         "customers-active-by-country-2024": {

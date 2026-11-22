@@ -56,3 +56,66 @@ Unexplained failures: none
 | sussex-total-oty-2025q3 | same_rows | pass | 1 vs 1 rows |  |
 
 Regressions against the accepted run: none
+
+## Items that do not pass
+
+- msa-detail-from-counties-2025q3: differs from the reference in: the consumer gave no SQL
+- nation-from-states-2025q1: differs from the reference in: the consumer gave no SQL
+
+## Coverage
+
+Elements of the layer that the reference SQL of the corpus items uses (report only; the verdict does not read it). A measure match is weak: every field of the expression occurs and so does its aggregate function.
+
+| Element | Items | Passing |
+| --- | --- | --- |
+| entity qtrly | 35 | 33 |
+| entity annual | 3 | 3 |
+| entity area_titles | 4 | 4 |
+| entity industry_titles | 0 | 0 |
+| entity ownership_titles | 0 | 0 |
+| join qtrly.to-area | 4 | 4 |
+| join qtrly.to-industry | 0 | 0 |
+| join qtrly.to-ownership | 0 | 0 |
+| join annual.to-area | 0 | 0 |
+| join annual.to-industry | 0 | 0 |
+| join annual.to-ownership | 0 | 0 |
+| concept disclosed | 31 | 30 |
+| concept disclosed_annual | 3 | 3 |
+| concept suppressed | 30 | 30 |
+| concept suppressed_annual | 3 | 3 |
+| concept level | 33 | 33 |
+| concept level_annual | 3 | 3 |
+| concept ownership | 35 | 33 |
+| concept area_kind_county | 0 | 0 |
+| concept area_kind_state | 0 | 0 |
+| concept area_kind_msa | 0 | 0 |
+| concept period | 35 | 33 |
+| measure (weak) employment_month3 | 26 | 24 |
+| measure (weak) employment_avg | 4 | 4 |
+| measure (weak) total_wages | 6 | 6 |
+| measure (weak) avg_weekly_wage | 2 | 2 |
+| measure (weak) establishments | 3 | 3 |
+| measure (weak) oty_employment_change | 2 | 2 |
+| measure (weak) suppressed_cells | 31 | 30 |
+| measure (weak) annual_employment | 3 | 3 |
+| measure (weak) suppressed_cells_annual | 3 | 3 |
+
+21 of 31 elements exercised; items whose reference the trace cannot fully attribute: 0.
+
+### Not exercised
+
+- entity industry_titles (referred to by rollup of measure employment_month3 (industry_titles.parent))
+- entity ownership_titles
+- join qtrly.to-industry
+- join qtrly.to-ownership
+- join annual.to-area
+- join annual.to-industry
+- join annual.to-ownership
+- concept area_kind_county
+- concept area_kind_state
+- concept area_kind_msa
+
+### Not evaluated
+
+- concept level_matrix: form values_table
+- concept distinct_areas: form distinct

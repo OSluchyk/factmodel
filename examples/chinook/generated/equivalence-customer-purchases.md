@@ -49,3 +49,36 @@ Unexplained failures: none
 | tracks-by-genre-2024 | same_rows | pass | 8 vs 8 rows |  |
 
 Regressions against the accepted run: none
+
+## Coverage
+
+Elements of the layer that the reference SQL of the corpus items uses (report only; the verdict does not read it). A measure match is weak: every field of the expression occurs and so does its aggregate function.
+
+| Element | Items | Passing |
+| --- | --- | --- |
+| entity invoice_line | 31 | 31 |
+| entity invoice | 31 | 31 |
+| entity track | 31 | 31 |
+| entity album | 0 | 0 |
+| entity genre | 31 | 31 |
+| join invoice_line.to-invoice | 31 | 31 |
+| join invoice_line.to-track | 31 | 31 |
+| join track.to-album | 0 | 0 |
+| join track.to-genre | 31 | 31 |
+| concept genre | 20 | 20 |
+| concept country | 15 | 15 |
+| concept period | 31 | 31 |
+| measure (weak) revenue | 10 | 10 |
+| measure (weak) tracks_bought | 12 | 12 |
+| measure (weak) customers_active | 6 | 6 |
+
+13 of 15 elements exercised; items whose reference the trace cannot fully attribute: 0.
+
+### Not exercised
+
+- entity album
+- join track.to-album
+
+### Not evaluated
+
+None.

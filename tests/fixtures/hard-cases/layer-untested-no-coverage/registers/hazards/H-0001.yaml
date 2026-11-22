@@ -1,0 +1,9 @@
+kind: hazard
+id: H-0001
+title: Employment is an annual average
+status: active
+description: Employment is an average of monthly levels; sums across areas are not exact.
+applies_to:
+- employment
+evidence:
+- ev-confirmed

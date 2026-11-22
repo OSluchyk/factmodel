@@ -5,7 +5,7 @@ FactModel builds a model of a data platform in which every fact carries its evid
 ## Start here
 
 ```bash
-pip install "factmodel[sql,duckdb] @ git+https://github.com/OSluchyk/factmodel@v0.1.0"
+pip install "factmodel[sql,duckdb] @ git+https://github.com/OSluchyk/factmodel@v0.2.0"
 fact init tpch --profile statistics
 fact check --root tpch
 ```
@@ -20,7 +20,7 @@ After the release on PyPI the first line becomes `pip install "factmodel[sql,duc
 - **Semantic layers** are proven by a consumer against a corpus, then released and exported to dbt and Apache Ossie ([exporters](docs/exporters/round-trip-notes.md), [decisions](decisions/README.md)).
 - **Three example models**: [Chinook](examples/chinook) (retail, SQLite and PostgreSQL), [QCEW](examples/qcew) (BLS employment and wages: no subject, code hierarchies, suppressed cells) and [TPC-H](examples/tpch) (DuckDB: keys proposed from the rows, then declared and confirmed).
 
-## What 0.1.0 contains
+## What 0.2.0 contains
 
 - **An engine-neutral core.** A loader, projection and scope, and a gate with twelve stages, all reading model files and metadata snapshots only.
 - **Adapters.** `export` (you run the export SQL, the model reads the files), `sql` (SQLAlchemy; tested on SQLite, PostgreSQL and DuckDB) and `git` (DDL at a commit). Third parties can add their own through an entry-point registry.
@@ -28,6 +28,7 @@ After the release on PyPI the first line becomes `pip install "factmodel[sql,duc
 - **Sync and drift.** New snapshots are compared with earlier ones and with the model. Each change is classified; new facts become drafts and lost ones become findings; triggers keep follow-ups from being forgotten.
 - **Semantic layers and the equivalence harness.** A layer contract the gate checks, and a harness that proves a layer by running its consumer against reference SQL.
 - **Release projection.** A pinned, checked, readable copy of a model for consumers, with append-only release notes.
+- **Coverage and recorded reasons.** The harness reports which entities, joins, concepts and measures the corpus tests; a reviewed layer records a reason for every one that no passing item uses (D-023).
 - **Exporters.** dbt semantic models and metrics, and Apache Ossie 0.1.1. Each export lists what its target cannot hold.
 - **Three example models**, [Chinook](examples/chinook), [QCEW](examples/qcew) and [TPC-H](examples/tpch).
 - **Proposals measured on data.** `fact propose keys` and `fact propose joins` write key and join candidates with their counts to `drafts/`; a person turns a candidate into a key or a relationship.

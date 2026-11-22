@@ -59,6 +59,8 @@ class RunResult:
     coverage: tracing.Coverage | None = None
     # item id -> what only one side uses, for items that do not pass
     differences: dict[str, str] = field(default_factory=dict)
+    # (kind, id) of the layer's untested entries (D-023), to mark them in the report
+    reasons: set[tuple[str, str]] = field(default_factory=set)
 
     def share(self) -> float:
         """Items passing in same_rows or same_predicate, over items not marked known_gap (D-021)."""
@@ -198,8 +200,9 @@ def _cover(result: RunResult, s: Setup, fn: Compile, model: Model) -> None:
     not pass. Reads SQL text only, so both the local and the owner-run path give it."""
     outcomes = {i.id: i.outcome for i in result.items}
     traced = {i.id: tracing.trace(i.reference, s.layer, model) for i in s.items}
+    result.reasons = {(u.kind, u.id) for u in s.layer.untested or []}
     result.coverage = tracing.coverage(
-        s.layer, [(outcomes[item_id], t) for item_id, t in traced.items()]
+        s.layer, model, [(outcomes[item_id], t) for item_id, t in traced.items()]
     )
     for item in s.items:
         if outcomes[item.id] == "pass":
@@ -343,38 +346,49 @@ def report(result: RunResult) -> str:
         for i in differing:
             lines.append(f"- {i.id}: differs from the reference in: {result.differences[i.id]}")
     if result.coverage is not None:
-        lines += _coverage_lines(result.coverage)
+        lines += _coverage_lines(result.coverage, result.reasons)
     return "\n".join(lines) + "\n"
 
 
-def _coverage_lines(cov: tracing.Coverage) -> list[str]:
-    """Coverage of the layer by the corpus references (report only, not part of the verdict)."""
+def _coverage_lines(cov: tracing.Coverage, reasons: set[tuple[str, str]]) -> list[str]:
+    """Coverage of the layer by the corpus references. The verdict of the run does not read it;
+    the gate reads it from the accepted run (D-023)."""
     lines = [
         "",
         "## Coverage",
         "",
-        "Elements of the layer that the reference SQL of the corpus items uses (report only; "
-        "the verdict does not read it). A measure match is weak: every field of the expression "
-        "occurs and so does its aggregate function.",
+        "Elements of the layer that the reference SQL of the corpus items uses. Weak matches: "
+        "a measure counts when every field of its expression and its aggregate function occur; "
+        "a join counts as otherwise when both entities occur but not joined by its condition. "
+        "A predicate concept counts only as written.",
         "",
-        "| Element | Items | Passing |",
-        "| --- | --- | --- |",
+        "| Element | Items | Passing | Join as declared | Join otherwise (weak) |",
+        "| --- | --- | --- | --- | --- |",
     ]
     for e in cov.evaluated:
-        lines.append(f"| {e.label} | {e.items} | {e.passing} |")
+        joined = (str(e.as_declared), str(e.otherwise)) if e.kind == "join" else ("", "")
+        lines.append(f"| {e.label} | {e.items} | {e.passing} | {joined[0]} | {joined[1]} |")
     summary = cov.summary()
     lines += [
         "",
         f"{summary['exercised']} of {summary['elements']} elements exercised; "
         f"items whose reference the trace cannot fully attribute: {cov.unresolved_items}.",
-        "",
-        "### Not exercised",
-        "",
     ]
-    lines += [
-        f"- {e.label}" + (f" (referred to by {', '.join(e.references)})" if e.references else "")
-        for e in cov.not_exercised
-    ] or ["None."]
+
+    def listed(title: str, elements: list[tracing.Element]) -> list[str]:
+        out = ["", f"### {title}", ""]
+        for e in elements:
+            notes = []
+            if e.references:
+                notes.append(f"referred to by {', '.join(e.references)}")
+            if (e.kind, e.id) in reasons:
+                notes.append("reason recorded under untested")
+            out.append(f"- {e.label}" + (f" ({'; '.join(notes)})" if notes else ""))
+        return out if elements else [*out, "None."]
+
+    lines += listed("Not exercised", cov.not_exercised)
+    lines += listed("No passing item", cov.no_passing_item)
+    lines += listed("Not found as written", cov.not_found_as_written)
     lines += ["", "### Not evaluated", ""]
     lines += [f"- {e.label}: form {e.form}" for e in cov.not_evaluated] or ["None."]
     return lines

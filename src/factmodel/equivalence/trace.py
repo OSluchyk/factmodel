@@ -6,11 +6,17 @@ CTE is followed to the base columns of the projection it names. A column that ca
 attributed is counted in ``unresolved``, never guessed. The trace holds model identifiers
 only: no literal, no SQL text.
 
+Only what the query reads counts: a CTE or derived table that no read query names, and the
+tables inside it, are not used.
+
 Joins come in two classes. ``as_declared``: the relationship's own condition, written between
-the two base tables. ``otherwise``: both entities occur, but not joined by that condition
-(for example through a derived table). Concepts are evaluated in the ``field`` and
-``predicate`` forms; every other form is reported as not evaluated. The measure match is weak:
-every field of the expression occurs and, when the measure aggregates, its function occurs.
+the two base tables. ``otherwise`` (weak): both entities occur, but not joined by that
+condition, for example through a derived table, or in two unrelated subqueries. A join whose
+relationship is a target set or whose condition the trace cannot read is not evaluated.
+Concepts are evaluated in the ``field`` form, and in the ``predicate`` form as written (an
+equivalent condition written otherwise is not found); every other form is not evaluated. The
+measure match is weak: every field of the expression occurs and, when the measure aggregates,
+its function occurs.
 """
 
 from collections.abc import Iterable, Iterator
@@ -27,7 +33,9 @@ from factmodel.model.types import Concept, Layer, Measure
 
 EVALUATED_FORMS = ("field", "predicate")
 CONCEPT_FORMS = ("field", "predicate", "distinct", "values_table")
-# the aggregate function a measure_aggregation value names; a value not here is not checked
+# the aggregate function a measure_aggregation value names (vocabulary block
+# measure_aggregation); every value is here or in NOT_CHECKED, which a test keeps true
+NOT_CHECKED = ("none",)
 AGGREGATES: dict[str, tuple[type[exp.Expr], bool]] = {
     "sum": (exp.Sum, False),
     "count": (exp.Count, False),
@@ -77,7 +85,25 @@ class Trace:
 
 
 def concept_form(concept: Concept) -> str:
-    return next(f for f in CONCEPT_FORMS if getattr(concept, f) is not None)
+    """The form of a concept; ``unknown`` for a form the trace does not know (not evaluated)."""
+    return next((f for f in CONCEPT_FORMS if getattr(concept, f, None) is not None), "unknown")
+
+
+def join_form(ref: str, model: Model) -> str:
+    """``condition`` when the trace can evaluate the join; otherwise why it cannot:
+    ``target_set``, ``no_join`` (an unresolved relationship), ``unreadable`` or ``missing``."""
+    source_id, _, key = ref.partition(".")
+    owner = model.entities.get(source_id)
+    rel = next((r for r in owner.relationships if r.key == key), None) if owner else None
+    if rel is None:
+        return "missing"
+    if rel.join is None:
+        return "no_join"
+    if not isinstance(rel.join, str):
+        return "target_set"
+    if _layer_condition(rel.join, _Names.of(model)) is None:
+        return "unreadable"
+    return "condition"
 
 
 @dataclass
@@ -91,13 +117,21 @@ class _Names:
     @classmethod
     def of(cls, model: Model) -> "_Names":
         entities = {e.lower(): e for e in model.entities}
+        # a reference may name a table by its physical name, as bind leaves it: read the last
+        # part of the physical name as the entity when no entity id and no other entity has it
+        physical: dict[str, list[str]] = {}
+        for e, entity in model.entities.items():
+            physical.setdefault(entity.physical_name.split(".")[-1].lower(), []).append(e)
+        for name, ids in physical.items():
+            if name not in entities and len(ids) == 1:
+                entities[name] = ids[0]
         fields = {
-            e.lower(): {f.name.lower(): f.name for f in entity.fields}
-            for e, entity in model.entities.items()
+            key: {f.name.lower(): f.name for f in model.entities[e].fields}
+            for key, e in entities.items()
         }
         schema: dict[str, object] = {
-            e.lower(): {f.name.lower(): "TEXT" for f in entity.fields}
-            for e, entity in model.entities.items()
+            key: {f.name.lower(): "TEXT" for f in model.entities[e].fields}
+            for key, e in entities.items()
         }
         return cls(entities, fields, schema)
 
@@ -197,6 +231,26 @@ def _projection_columns(scope: Scope) -> set[int]:
     return {id(c) for p in select.selects for c in p.find_all(exp.Column)}
 
 
+def _read_scopes(scopes: list[Scope]) -> list[Scope]:
+    """The scopes the query reads: the root, the subqueries of a read scope, and the derived
+    tables and CTEs a read scope names as a source."""
+    if not scopes:
+        return []
+    root = scopes[-1]
+    read: dict[int, Scope] = {id(root): root}
+    todo = [root]
+    while todo:
+        scope = todo.pop()
+        # selected_sources: what FROM and JOIN name; sources also lists every CTE in reach
+        children = [s for _, s in scope.selected_sources.values() if isinstance(s, Scope)]
+        children += [*scope.subquery_scopes, *scope.set_operation_scopes, *scope.udtf_scopes]
+        for child in children:
+            if id(child) not in read:
+                read[id(child)] = child
+                todo.append(child)
+    return [s for s in scopes if id(s) in read]
+
+
 def _derived(scope: Scope) -> bool:
     """A scope whose projections are read only when an outer query names them."""
     return scope.is_derived_table or scope.is_cte
@@ -279,14 +333,6 @@ def _conditions(scope: Scope) -> Iterable[exp.Expr]:
             yield on
 
 
-def _aggregates(tree: exp.Expr) -> set[tuple[type[exp.Expr], bool]]:
-    found: set[tuple[type[exp.Expr], bool]] = set()
-    for node in tree.find_all(exp.AggFunc):
-        distinct = isinstance(node.this, exp.Distinct)
-        found.add((type(node), distinct))
-    return found
-
-
 def _measure_used(measure: Measure, fields: set[Column], aggs: set[Any], names: _Names) -> bool:
     try:
         tree = sqlglot.parse_one(measure.expression)
@@ -324,6 +370,7 @@ def trace(sql: str, layer: Layer, model: Model) -> Trace:
         scopes = traverse_scope(qualified)
     except Exception:
         return Trace(parsed=False)
+    scopes = _read_scopes(scopes)
     resolver = _Resolver(names, scopes)
 
     tables: set[str] = set()
@@ -358,23 +405,23 @@ def trace(sql: str, layer: Layer, model: Model) -> Trace:
                 if canonical is not None:
                     direct.add(canonical)
     predicates: set[str] = set()
-    for node in qualified.find_all(exp.Predicate, exp.Not):
-        canonical = _canonical(node, resolver.passthrough)
-        if canonical is not None:
-            predicates.add(canonical)
+    for scope in scopes:
+        for node in scope.find_all(exp.Predicate, exp.Not):
+            canonical = _canonical(node, resolver.passthrough)
+            if canonical is not None:
+                predicates.add(canonical)
 
     layer_entities = {e.entity for e in layer.entities}
     as_declared, otherwise = [], []
     for ref in layer.joins or []:
+        if join_form(ref, model) != "condition":
+            continue  # not evaluated: never counted, never a zero
         source_id, _, key = ref.partition(".")
-        owner = model.entities.get(source_id)
-        rel = next((r for r in owner.relationships if r.key == key), None) if owner else None
-        if rel is None or not isinstance(rel.join, str):
-            continue
+        rel = next(r for r in model.entities[source_id].relationships if r.key == key)
         target = rel.targets[0]
         if source_id not in tables or target not in tables:
             continue
-        parts = _layer_condition(rel.join, names)
+        parts = _layer_condition(str(rel.join), names)
         if parts is not None and set(parts) <= direct:
             as_declared.append(ref)
         else:
@@ -396,7 +443,10 @@ def trace(sql: str, layer: Layer, model: Model) -> Trace:
         if parts is not None and set(parts) <= predicates:
             concepts.append(concept.id)
 
-    aggs = _aggregates(qualified)
+    aggs: set[tuple[type[exp.Expr], bool]] = set()
+    for scope in scopes:
+        for node in scope.find_all(exp.AggFunc):
+            aggs.add((type(node), isinstance(node.this, exp.Distinct)))
     measures = [m.id for m in layer.measures or [] if _measure_used(m, used, aggs, names)]
     return Trace(
         parsed=True,
@@ -419,6 +469,16 @@ KINDS = ("entity", "join", "concept", "measure")
 LABELS = {"entity": "entity", "join": "join", "concept": "concept", "measure": "measure (weak)"}
 
 
+def enforced(kind: str, form: str) -> bool:
+    """Whether D-023 asks a reviewed layer for a reason when no passing item uses the element:
+    entities, joins the trace evaluates, field concepts and measures."""
+    if kind == "join":
+        return form == "condition"
+    if kind == "concept":
+        return form == "field"
+    return True
+
+
 @dataclass(frozen=True)
 class Element:
     kind: str
@@ -428,10 +488,27 @@ class Element:
     items: int = 0
     passing: int = 0
     references: tuple[str, ...] = ()
+    as_declared: int = 0
+    otherwise: int = 0
+
+    @property
+    def as_written(self) -> bool:
+        return self.kind == "concept" and self.form == "predicate"
 
     @property
     def label(self) -> str:
-        return f"{LABELS[self.kind]} {self.id}"
+        return f"{LABELS[self.kind]} {self.id}" + (" (as written)" if self.as_written else "")
+
+    @property
+    def enforced(self) -> bool:
+        return self.evaluated and enforced(self.kind, self.form)
+
+
+def parse_label(label: str) -> tuple[str, str]:
+    """(kind, id) of a label written by ``Element.label``."""
+    kind = label.split(" ", 1)[0]
+    rest = label[len(LABELS.get(kind, kind)) + 1 :]
+    return kind, rest.split(" ", 1)[0]
 
 
 @dataclass(frozen=True)
@@ -445,18 +522,36 @@ class Coverage:
 
     @property
     def not_exercised(self) -> list[Element]:
-        return [e for e in self.evaluated if e.items == 0]
+        """No item uses it (predicate concepts are listed apart, as not found as written)."""
+        return [e for e in self.evaluated if e.items == 0 and not e.as_written]
+
+    @property
+    def not_found_as_written(self) -> list[Element]:
+        return [e for e in self.evaluated if e.items == 0 and e.as_written]
+
+    @property
+    def no_passing_item(self) -> list[Element]:
+        """Some item uses it, no passing item does."""
+        return [e for e in self.evaluated if e.items > 0 and e.passing == 0]
+
+    @property
+    def tested(self) -> list[Element]:
+        return [e for e in self.evaluated if e.passing > 0]
 
     @property
     def not_evaluated(self) -> list[Element]:
         return [e for e in self.elements if not e.evaluated]
 
     def summary(self) -> dict[str, Any]:
-        """The additive ``coverage`` key of last-run.json: model identifiers and counts only."""
+        """The ``coverage`` key of last-run.json: model identifiers and counts only."""
+        exercised = [e for e in self.evaluated if e.items > 0]
         return {
             "elements": len(self.evaluated),
-            "exercised": len(self.evaluated) - len(self.not_exercised),
+            "exercised": len(exercised),
             "not_exercised": [e.label for e in self.not_exercised],
+            "not_found_as_written": [e.label for e in self.not_found_as_written],
+            "no_passing_item": [e.label for e in self.no_passing_item],
+            "tested": [e.label for e in self.tested],
             "not_evaluated": [f"{e.label} ({e.form})" for e in self.not_evaluated],
             "unresolved_items": self.unresolved_items,
         }
@@ -522,28 +617,43 @@ def references(layer: Layer, kind: str, element_id: str) -> tuple[str, ...]:
     return tuple(sorted(set(out)))
 
 
-def coverage(layer: Layer, traced: Iterable[tuple[str, Trace]]) -> Coverage:
+def forms(layer: Layer, model: Model) -> list[tuple[str, str, str]]:
+    """(kind, id, form) of every element of the layer, in layer order."""
+    out = [("entity", e.entity, "") for e in layer.entities]
+    out += [("join", j, join_form(j, model)) for j in layer.joins or []]
+    out += [("concept", c.id, concept_form(c)) for c in layer.concepts or []]
+    out += [("measure", m.id, "") for m in layer.measures or []]
+    return out
+
+
+def evaluated(kind: str, form: str) -> bool:
+    if kind == "join":
+        return form == "condition"
+    if kind == "concept":
+        return form in EVALUATED_FORMS
+    return True
+
+
+def coverage(layer: Layer, model: Model, traced: Iterable[tuple[str, Trace]]) -> Coverage:
     """For every element of the layer, the items whose reference uses it and how many of those
     pass; ``traced`` holds (outcome, trace of the reference) per item."""
     rows = list(traced)
-    ids: list[tuple[str, str, bool, str]] = [("entity", e.entity, True, "") for e in layer.entities]
-    ids += [("join", j, True, "") for j in layer.joins or []]
-    for c in layer.concepts or []:
-        form = concept_form(c)
-        ids.append(("concept", c.id, form in EVALUATED_FORMS, form))
-    ids += [("measure", m.id, True, "") for m in layer.measures or []]
     elements = []
-    for kind, element_id, evaluated, form in ids:
-        using = [outcome for outcome, t in rows if element_id in uses(t, kind)]
+    for kind, element_id, form in forms(layer, model):
+        ok = evaluated(kind, form)
+        using = [(outcome, t) for outcome, t in rows if ok and element_id in uses(t, kind)]
+        outcomes = [outcome for outcome, _ in using]
         elements.append(
             Element(
                 kind,
                 element_id,
-                evaluated,
+                ok,
                 form,
-                len(using) if evaluated else 0,
-                using.count("pass") if evaluated else 0,
+                len(using),
+                outcomes.count("pass"),
                 references(layer, kind, element_id),
+                as_declared=sum(1 for _, t in using if element_id in t.joins_as_declared),
+                otherwise=sum(1 for _, t in using if element_id in t.joins_otherwise),
             )
         )
     unresolved = sum(1 for _, t in rows if not t.parsed or t.unresolved)
@@ -561,7 +671,7 @@ def difference(consumer: Trace | None, reference: Trace) -> str:
 
     def joins(t: Trace) -> set[str]:
         return {f"{j} (as declared)" for j in t.joins_as_declared} | {
-            f"{j} (otherwise)" for j in t.joins_otherwise
+            f"{j} (otherwise, weak)" for j in t.joins_otherwise
         }
 
     parts = []

@@ -241,7 +241,7 @@ purchases: accepted
 gate: pass
 ```
 
-`fact equivalence run` runs the consumer on every corpus question and compares its rows with the reference rows. The layer is proven when the share of passing questions meets the threshold, with no regression against the accepted run. Only then may the layer be `reviewed`: the gate refuses a reviewed layer that no accepted run proves.
+`fact equivalence run` runs the consumer on every corpus question and compares its rows with the reference rows. The layer is proven when the share of passing questions meets the threshold, with no regression against the accepted run. Only then may the layer be `reviewed`: the gate refuses a reviewed layer that no accepted run proves. The run also reports coverage: which entities, joins, concepts and measures the corpus questions use. Every element of a reviewed layer that no passing question uses needs an `untested` entry with the reason (D-023); here the three questions use all of them, so the layer needs none.
 
 ## 8. Release
 

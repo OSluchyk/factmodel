@@ -82,9 +82,15 @@ Schema version 0.1.0 covers the specification as first written and every change 
 | 2.2.0 | `fact propose keys`, `fact propose joins`: key and join candidates measured on a live source (counts only) into `drafts/<source>/keys.yaml` and `joins.yaml`, never `physical/`; `spec/ALGORITHMS.md` section 4 | additive (a file a command writes under `drafts/`, which the gate never reads) | ledger | TPC-H |
 | 2.2.0 | Vocabulary block `key_type_class` | additive | ledger | TPC-H |
 | 2.2.0 | More than one snapshot per source and day: the second different read of a day is `<source>@<date>_2.yaml` with `_2` on its warehouse pin (then `_3`, ...); `fact draft` and `fact sync` order snapshots by date, then sequence | additive (a file name and a pin suffix; the first read of a day keeps its name and pin) | ledger | TPC-H |
-| 2.2.0 | Equivalence coverage: `fact equivalence run` traces every reference and writes a coverage table, "Not exercised" and "Not evaluated" lists and a difference line per non-passing item to `generated/equivalence-<layer>.md`, and a `coverage` key per layer to `equivalence/last-run.json` | additive (new keys and sections in files a command writes; no verdict, threshold or gate rule reads them) | ledger | Chinook, QCEW |
+| 2.3.0 | Optional layer key `untested` (`kind`, `id`, `reason`) and vocabulary block `layer_element_kind` | additive | ledger | Chinook, QCEW |
+| 2.3.0 | Schemas 2.3.0 | version | D-018 (additive) | Chinook, QCEW |
+| 2.3.0 | Equivalence coverage: `fact equivalence run` traces every reference (only what the query reads) and writes to `generated/equivalence-<layer>.md` a coverage table with joins as declared and otherwise (weak) apart, the lists not exercised, no passing item, not found as written (predicate concepts) and not evaluated, and a difference line per non-passing item; a `coverage` key per layer to `equivalence/last-run.json`, copied into `accepted.json` by `fact equivalence accept`, where the gate reads it | algorithm (what coverage reports, and the gate reads it) | D-023 | Chinook, QCEW |
+| 2.3.0 | Gate stage `layers`: `unknown_untested` for every layer; for a reviewed layer `no_coverage`, `missing_reason` and `stale_untested` (D-021 rule 3 extended) | contract (a gate rule; what `status: reviewed` requires) | D-023 | Chinook, QCEW |
+| 2.3.0 | `fact migrate` names reviewed layers whose accepted run holds no coverage | implementation | D-023 | none |
+| 2.3.0 | Framework version 0.2.0 | version | - | none |
 
 ## Defect fixes (D-018: CHANGELOG entry only)
 
+- `fact init` copied every file under the shipped `agent/skills/`, and a Finder `.DS_Store` there made it fail with `UnicodeDecodeError`. Walks over shipped templates, skills and profiles now skip dot files and any file that is not UTF-8.
 - `fact probe intake` wrote a field reference into a finding's `about` when a probe on a field was out of range; the schema allows an entity or a relationship there. Intake now names the entity and keeps the field in `extensions.fact`.
 - `fact equivalence script` wrote `EXCEPT WITH ...` when a reference starts with a CTE; each side of the `EXCEPT` is now a plain `SELECT * FROM (...)`.

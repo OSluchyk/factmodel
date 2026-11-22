@@ -23,7 +23,7 @@ Since schema 1.0.0, D-018 says what a change needs:
 - A **`CHANGELOG.md` entry and a line in `spec/CORE-CHANGES.md`**, when it adds an optional key, a vocabulary value or a probe kind.
 - A **`CHANGELOG.md` entry** only, for a defect fix: code made to obey the existing schema.
 
-Current schema version: **2.2.0**. 2.0.0 (D-019) was the semantic layer contract v1, which removes and renames layer keys; 2.1.0 (D-020) added the optional measure key `rollups` and the probe kind `rollup`; 2.2.0 adds the concept form `values_table`. The next removal or rename of a key is **3.0.0**.
+Current schema version: **2.3.0**. 2.0.0 (D-019) was the semantic layer contract v1, which removes and renames layer keys; 2.1.0 (D-020) added the optional measure key `rollups` and the probe kind `rollup`; 2.2.0 adds the concept form `values_table`; 2.3.0 adds the optional layer key `untested` and the vocabulary block `layer_element_kind` (D-023). A 2.2.0 model validates against 2.3.0, but a reviewed layer whose accepted equivalence run predates coverage fails the gate until it is run and accepted again; `fact migrate` names those layers. The next removal or rename of a key is **3.0.0**.
 
 ## `framework_version` in a model
 

@@ -5,9 +5,10 @@ from pathlib import Path
 
 import pytest
 
+from factmodel import vocabulary
 from factmodel.equivalence import trace as tracing
 from factmodel.model.loader import Model, load_model
-from factmodel.model.types import Layer
+from factmodel.model.types import Layer, Relationship
 
 CASE = Path(__file__).resolve().parents[1] / "fixtures" / "hard-cases" / "layer-minimal"
 
@@ -46,6 +47,12 @@ def _layer(**extra: object) -> Layer:
     }
     doc.update(extra)
     return Layer.model_validate(doc)
+
+
+REFERENCE = (
+    "SELECT a.area_code, SUM(e.employment) FROM employment AS e "
+    "JOIN areas AS a ON e.area_code = a.area_code GROUP BY a.area_code"
+)
 
 
 def _trace(sql: str, model: Model, layer: Layer | None = None) -> tracing.Trace:
@@ -155,25 +162,145 @@ def test_coverage_lists_a_join_no_item_uses(model: Model) -> None:
         "SELECT a.area_title, SUM(e.employment) FROM employment AS e "
         "JOIN areas AS a ON e.area_code = a.area_code GROUP BY a.area_title"
     )
-    cov = tracing.coverage(
-        layer,
-        [("pass", tracing.trace(sql, layer, model)), ("fail", tracing.trace(sql, layer, model))],
-    )
+    traced = tracing.trace(sql, layer, model)
+    cov = tracing.coverage(layer, model, [("pass", traced), ("fail", traced)])
     by = {e.label: e for e in cov.elements}
-    assert (by["join employment.in-area"].items, by["join employment.in-area"].passing) == (2, 1)
-    assert [e.label for e in cov.not_exercised] == [
-        "entity industries",
-        "join employment.in-industry",
-        "concept recent",
-    ]
-    assert [e.label for e in cov.not_evaluated] == ["concept one_area"]
+    join = by["join employment.in-area"]
+    assert (join.items, join.passing, join.as_declared, join.otherwise) == (2, 1, 2, 0)
     assert cov.summary() == {
         "elements": 8,
         "exercised": 5,
-        "not_exercised": ["entity industries", "join employment.in-industry", "concept recent"],
+        "not_exercised": ["entity industries", "join employment.in-industry"],
+        # the predicate concept is not found as written: never a plain zero
+        "not_found_as_written": ["concept recent (as written)"],
+        "no_passing_item": [],
+        "tested": [
+            "entity employment",
+            "entity areas",
+            "join employment.in-area",
+            "concept area",
+            "measure (weak) employment",
+        ],
         "not_evaluated": ["concept one_area (distinct)"],
         "unresolved_items": 0,
     }
+
+
+def test_no_passing_item_lists_elements_only_failing_items_use(model: Model) -> None:
+    layer = _layer()
+    used = _trace(REFERENCE, model, layer)
+    cov = tracing.coverage(layer, model, [("fail", used), ("error", used)])
+    assert cov.summary()["no_passing_item"] == [
+        "entity employment",
+        "entity areas",
+        "join employment.in-area",
+        "concept area",
+        "measure (weak) employment",
+    ]
+    assert cov.summary()["tested"] == []
+
+
+def test_two_unrelated_subqueries_count_a_join_as_otherwise_only(model: Model) -> None:
+    # weak by design: both entities occur, so the join counts as exercised, in class otherwise
+    t = _trace("SELECT (SELECT COUNT(*) FROM employment), (SELECT COUNT(*) FROM areas)", model)
+    assert (t.joins_as_declared, t.joins_otherwise) == ((), ("employment.in-area",))
+    cov = tracing.coverage(_layer(), model, [("pass", t)])
+    join = next(e for e in cov.elements if e.kind == "join")
+    assert (join.items, join.as_declared, join.otherwise) == (1, 0, 1)
+
+
+def test_a_join_the_trace_cannot_read_is_not_evaluated() -> None:
+    model = load_model(CASE)
+    employment = model.entities["employment"]
+    employment.relationships.append(
+        Relationship.model_validate(
+            {
+                "key": "by-place",
+                "to": ["areas", "industries"],
+                "discriminator": "area_code",
+                "join": {
+                    "areas": "employment.area_code = areas.area_code",
+                    "industries": "employment.industry_code = industries.industry_code",
+                },
+                "meaning": "A target set.",
+                "mechanism": "inferred_join",
+                "cardinality": "many_to_one",
+                "evidence": ["ev-shared"],
+            }
+        )
+    )
+    employment.relationships.append(
+        Relationship.model_validate(
+            {
+                "key": "odd",
+                "to": "areas",
+                "join": "employment.no_such_field = areas.area_code",
+                "meaning": "Names a field the entity does not have.",
+                "mechanism": "inferred_join",
+                "cardinality": "many_to_one",
+                "evidence": ["ev-shared"],
+            }
+        )
+    )
+    layer = _layer(joins=["employment.in-area", "employment.by-place", "employment.odd"])
+    assert tracing.join_form("employment.by-place", model) == "target_set"
+    assert tracing.join_form("employment.odd", model) == "unreadable"
+    t = tracing.trace(REFERENCE, layer, model)
+    assert t.joins == ("employment.in-area",)
+    cov = tracing.coverage(layer, model, [("pass", t)])
+    summary = cov.summary()
+    assert summary["not_evaluated"] == [
+        "join employment.by-place (target_set)",
+        "join employment.odd (unreadable)",
+        "concept one_area (distinct)",
+    ]
+    assert not any("by-place" in label or "odd" in label for label in summary["not_exercised"])
+
+
+def test_an_unread_cte_uses_nothing(model: Model) -> None:
+    t = _trace("WITH x AS (SELECT * FROM areas) SELECT e.year FROM employment AS e", model)
+    assert t.entities == ("employment",)
+    assert t.fields == ("employment.year",)
+    # a CTE that is read, through another CTE, still counts
+    read = _trace(
+        "WITH y AS (SELECT * FROM areas), x AS (SELECT * FROM y) SELECT area_code FROM x", model
+    )
+    assert read.entities == ("areas",) and read.fields == ("areas.area_code",)
+    derived = _trace(
+        "SELECT e.year FROM employment AS e WHERE EXISTS (SELECT 1 FROM areas AS a)", model
+    )
+    assert derived.entities == ("areas", "employment")
+
+
+def test_physical_table_names_are_read_as_their_entity(model: Model) -> None:
+    # bind leaves a table that is no entity id as written, so a reference may name stats.areas
+    t = _trace("SELECT a.area_title FROM stats.areas AS a", model)
+    assert t.entities == ("areas",) and t.fields == ("areas.area_title",)
+
+
+def test_every_aggregation_is_mapped_or_named_as_not_checked() -> None:
+    values = set(vocabulary.load()["measure_aggregation"])
+    assert set(tracing.AGGREGATES) | set(tracing.NOT_CHECKED) == values
+    assert not set(tracing.AGGREGATES) & set(tracing.NOT_CHECKED)
+
+
+def test_a_concept_form_the_trace_does_not_know_is_not_evaluated() -> None:
+    class Future:
+        id = "later"
+
+    assert tracing.concept_form(Future()) == "unknown"  # type: ignore[arg-type]
+    assert not tracing.evaluated("concept", "unknown")
+
+
+def test_labels_round_trip() -> None:
+    for kind, element_id in [
+        ("entity", "qtrly"),
+        ("join", "qtrly.to-area"),
+        ("measure", "employment_month3"),
+        ("concept", "area_kind_county"),
+    ]:
+        element = tracing.Element(kind, element_id, form="predicate")
+        assert tracing.parse_label(element.label) == (kind, element_id)
 
 
 def test_references_keep_an_unexercised_element_from_reading_as_unused() -> None:
@@ -189,12 +316,6 @@ def test_references_keep_an_unexercised_element_from_reading_as_unused() -> None
     assert tracing.references(layer, "entity", "areas") == ("concept area", "concept one_area")
 
 
-REFERENCE = (
-    "SELECT a.area_code, SUM(e.employment) FROM employment AS e "
-    "JOIN areas AS a ON e.area_code = a.area_code GROUP BY a.area_code"
-)
-
-
 def test_difference_for_right_wrong_and_outside_consumers(model: Model) -> None:
     reference = _trace(REFERENCE, model)
     right = _trace(REFERENCE.replace("AS e", "AS x").replace("e.", "x."), model)
@@ -203,7 +324,7 @@ def test_difference_for_right_wrong_and_outside_consumers(model: Model) -> None:
         REFERENCE.replace("e.area_code = a.area_code", "e.industry_code = a.area_code"), model
     )
     assert tracing.difference(other_join, reference) == (
-        "consumer only: fields employment.industry_code; joins employment.in-area (otherwise)"
+        "consumer only: fields employment.industry_code; joins employment.in-area (otherwise, weak)"
         " | reference only: fields employment.area_code; joins employment.in-area (as declared)"
     )
     outside = _trace(

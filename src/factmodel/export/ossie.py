@@ -21,7 +21,8 @@ In both, each entity is a dataset (``name``, ``source``, ``primary_key``, ``desc
 for a time field or a concept's field; each equality join to a one side between two layer
 entities is a relationship; each measure is a model-level metric (``dataset.field``). What the
 documents do not name stays in ``ai_context.instructions`` as text (required concepts,
-hazards, evidence status, joins they cannot hold) and in ``custom_extensions`` as JSON.
+hazards, evidence status, joins they cannot hold, untested elements with their reasons, D-023)
+and in ``custom_extensions`` as JSON.
 """
 
 import json
@@ -212,6 +213,9 @@ def _instructions(model: Model, layer: Any, unheld: list[str]) -> str:
             pair = model.relationships.get(ref)
             if pair is not None:
                 lines.append(f"- {ref}: {pair[1].join} ({pair[1].cardinality})")
+    if layer.untested:
+        lines.append("Untested by the equivalence corpus (D-023):")
+        lines += [f"- {u.kind} {u.id}: {u.reason.strip()}" for u in layer.untested]
     for hazard_id in layer.hazards or []:
         hazard = model.hazards.get(hazard_id)
         if hazard is not None:
@@ -317,6 +321,7 @@ def export(model: Model, layer_id: str, spec_version: str = DEFAULT_VERSION) -> 
             "consumer": layer.consumer,
             "required_concepts": [c.id for c in layer.concepts or [] if c.required],
             "hazards": list(layer.hazards or []),
+            **({"untested": [u.model_dump() for u in layer.untested]} if layer.untested else {}),
         },
     )
     if not spec.flat:
@@ -326,7 +331,8 @@ def export(model: Model, layer_id: str, spec_version: str = DEFAULT_VERSION) -> 
     out.warnings += [
         f"pinned to the Ossie core specification {spec.version} ({spec.note}), read "
         f"{spec.read_on}: {spec.url}",
-        "required concepts, hazards and evidence status travel as text in ai_context and as "
+        "required concepts, hazards, evidence status and untested elements travel as text in "
+        "ai_context and as "
         f"JSON in custom_extensions ({where})",
         (
             "dialect names follow sqlglot; OSSIE_SQL_2026 (the only dialect the document "

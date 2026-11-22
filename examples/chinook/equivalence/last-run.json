@@ -25,12 +25,26 @@
         }
       },
       "coverage": {
-        "elements": 15,
+        "elements": 13,
         "exercised": 13,
+        "no_passing_item": [],
         "not_evaluated": [],
-        "not_exercised": [
-          "entity album",
-          "join track.to-album"
+        "not_exercised": [],
+        "not_found_as_written": [],
+        "tested": [
+          "entity invoice_line",
+          "entity invoice",
+          "entity track",
+          "entity genre",
+          "join invoice_line.to-invoice",
+          "join invoice_line.to-track",
+          "join track.to-genre",
+          "concept genre",
+          "concept country",
+          "concept period",
+          "measure (weak) revenue",
+          "measure (weak) tracks_bought",
+          "measure (weak) customers_active"
         ],
         "unresolved_items": 0
       },
@@ -162,7 +176,7 @@
         }
       },
       "proven": true,
-      "ran_on": "2026-10-27",
+      "ran_on": "2026-11-22",
       "share": 1.0,
       "source": "chinook-sqlite",
       "threshold": 0.9,

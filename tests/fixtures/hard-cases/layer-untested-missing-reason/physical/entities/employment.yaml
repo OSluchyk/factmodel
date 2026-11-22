@@ -1,0 +1,61 @@
+kind: entity
+id: employment
+physical_name: stats.employment
+source: stats-db
+grain: one row per employment row
+class: data
+status: draft
+keys:
+  primary:
+  - area_code
+  - industry_code
+  - year
+  current_row_rule: null
+evidence:
+- ev-confirmed
+fields:
+- name: area_code
+  type: TEXT
+  nullable: false
+  meaning: Area code.
+- name: industry_code
+  type: TEXT
+  nullable: false
+  meaning: Industry code.
+- name: year
+  type: INTEGER
+  nullable: false
+  meaning: Year.
+- name: employment
+  type: INTEGER
+  nullable: false
+  meaning: Employees, an aggregate over the key.
+- name: prior_year
+  type: INTEGER
+  nullable: true
+  meaning: The year before, for the change over the year.
+relationships:
+- key: in-area
+  to: areas
+  join: employment.area_code = areas.area_code
+  meaning: The area a row aggregates over.
+  mechanism: inferred_join
+  cardinality: many_to_one
+  evidence:
+  - ev-confirmed
+- key: in-industry
+  to: industries
+  join: employment.industry_code = industries.industry_code
+  meaning: The industry a row aggregates over.
+  mechanism: inferred_join
+  cardinality: many_to_one
+  evidence:
+  - ev-confirmed
+- key: from-prior-year
+  to: employment
+  join: employment.area_code = employment.area_code AND employment.industry_code = employment.industry_code AND employment.prior_year = employment.year
+  meaning: The change over the year is computed from the prior-year row of the same key.
+  mechanism: derivation
+  cardinality: many_to_one
+  evidence:
+  - ev-confirmed

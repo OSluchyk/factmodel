@@ -31,3 +31,8 @@ Small model repositories for what public datasets do not show. Each folder holds
 | [`layer-free-sql-join`](layer-free-sql-join/README.md) | - (D-019) | schema, references |
 | [`layer-missing-hazard`](layer-missing-hazard/README.md) | - (D-019) | layers |
 | [`layer-unresolved-join`](layer-unresolved-join/README.md) | - (D-019) | layers |
+| [`layer-untested`](layer-untested/README.md) | - (D-023) | pass |
+| [`layer-untested-unknown`](layer-untested-unknown/README.md) | - (D-023) | layers |
+| [`layer-untested-no-coverage`](layer-untested-no-coverage/README.md) | - (D-023) | layers |
+| [`layer-untested-missing-reason`](layer-untested-missing-reason/README.md) | - (D-023) | layers |
+| [`layer-untested-stale`](layer-untested-stale/README.md) | - (D-023) | layers |

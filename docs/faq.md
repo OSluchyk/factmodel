@@ -30,7 +30,7 @@
 
 **When does a change need a decision record?** When it removes or renames a key, changes the meaning of a key or value, or changes an algorithm's result. Additive changes need a CHANGELOG entry and a ledger line; defect fixes a CHANGELOG entry (D-018).
 
-**Why are the schemas at 2.x after a 1.0.0 freeze?** The semantic layer contract v1 replaced the 1.0.0 placeholders (D-019, 2.0.0); rollups (2.1.0) and value tables (2.2.0) were added later.
+**Why are the schemas at 2.x after a 1.0.0 freeze?** The semantic layer contract v1 replaced the 1.0.0 placeholders (D-019, 2.0.0); rollups (2.1.0), value tables (2.2.0) and the `untested` layer key (2.3.0, D-023) were added later.
 
 **How do I migrate a model?** `fact migrate` reports versions and compatibility. Its registry holds one documented slot (1.0.0 to 2.0.0, no automatic step); no model has needed a migration yet.
 

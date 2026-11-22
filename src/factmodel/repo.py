@@ -15,7 +15,7 @@ from factmodel.core.drafts import EntityDraft
 from factmodel.io.yaml_strict import loads
 from factmodel.model.loader import CONFIG_FILE, bundled_profile, inspect_model, load_model
 from factmodel.model.types import Snapshot, Source
-from factmodel.resources import framework_file, framework_text
+from factmodel.resources import framework_file, framework_text, shipped_texts
 from factmodel.schemas.build import SCHEMA_VERSION, pattern, schema_for
 
 LAYOUT = (
@@ -125,16 +125,8 @@ def init(
     put(".github/workflows/fact-check.yml", template("templates", "fact-check.yml"))
     skills = framework_file("agent", "skills")
     if skills is not None:
-        for entry in sorted(skills.iterdir(), key=lambda e: e.name):
-            if entry.is_file():
-                put(f".claude/skills/{entry.name}", entry.read_text(encoding="utf-8"))
-            elif entry.is_dir():
-                for item in sorted(entry.iterdir(), key=lambda e: e.name):
-                    if item.is_file():
-                        put(
-                            f".claude/skills/{entry.name}/{item.name}",
-                            item.read_text(encoding="utf-8"),
-                        )
+        for name, text in shipped_texts(skills):
+            put(f".claude/skills/{name}", text)
     values = derived.derive_model(load_model(target))
     assert values is not None
     written += derived.write(target.resolve(), derived.render(values))

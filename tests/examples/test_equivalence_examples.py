@@ -17,7 +17,7 @@ from factmodel.equivalence.corpus import read_corpus
 from factmodel.model.loader import load_model
 
 ROOT = Path(__file__).resolve().parents[2]
-DAY = "2026-10-27"
+DAY = "2026-11-22"
 CASES = {
     "qcew": ("employment-wages", "qcew-sqlite", "qcew-duckdb"),
     "chinook": ("customer-purchases", "chinook-sqlite", "chinook-pg"),
@@ -57,8 +57,7 @@ def test_sqlite_run_reproduces_the_accepted_run_and_report(example: str, tmp_pat
     result = _run(example, url, source, "sqlite")
     assert result.proven()
     summary = result.summary()
-    # coverage is report only and newer than the accepted runs; every verdict key is unchanged
-    assert {k: v for k, v in summary.items() if k != "coverage"} == _accepted(example, layer)
+    assert summary == _accepted(example, layer)  # coverage included (D-023)
     last = ROOT / "examples" / example / "equivalence" / "last-run.json"
     assert json.loads(last.read_text(encoding="utf-8"))["layers"][layer] == summary
     report = ROOT / "examples" / example / "generated" / f"equivalence-{layer}.md"
@@ -108,27 +107,37 @@ def test_qcew_naive_queries_give_different_answers(tmp_path: Path) -> None:
 
 COVERAGE = {
     "chinook": {
-        "not_exercised": ["entity album", "join track.to-album"],
+        "not_exercised": [],
+        "not_found_as_written": [],
+        "no_passing_item": [],
         "not_evaluated": [],
     },
     "qcew": {
+        # each carries an untested entry in the layer (D-023)
         "not_exercised": [
             "entity industry_titles",
-            "entity ownership_titles",
             "join qtrly.to-industry",
-            "join qtrly.to-ownership",
             "join annual.to-area",
-            "join annual.to-industry",
-            "join annual.to-ownership",
-            # the references write the area kinds with LIKE, not with the concept's substr form
-            "concept area_kind_county",
-            "concept area_kind_state",
-            "concept area_kind_msa",
         ],
+        # the references write the area kinds with LIKE, not with the concept's substr form
+        "not_found_as_written": [
+            "concept area_kind_county (as written)",
+            "concept area_kind_state (as written)",
+            "concept area_kind_msa (as written)",
+        ],
+        "no_passing_item": [],
         "not_evaluated": [
             "concept level_matrix (values_table)",
             "concept distinct_areas (distinct)",
         ],
+    },
+}
+REASONS = {
+    "chinook": set(),
+    "qcew": {
+        ("entity", "industry_titles"),
+        ("join", "qtrly.to-industry"),
+        ("join", "annual.to-area"),
     },
 }
 
@@ -136,22 +145,23 @@ COVERAGE = {
 @pytest.mark.parametrize("example", sorted(CASES))
 def test_coverage_vectors(example: str) -> None:
     layer = CASES[example][0]
-    last = ROOT / "examples" / example / "equivalence" / "last-run.json"
-    coverage = json.loads(last.read_text(encoding="utf-8"))["layers"][layer]["coverage"]
-    assert coverage["not_exercised"] == COVERAGE[example]["not_exercised"]
-    assert coverage["not_evaluated"] == COVERAGE[example]["not_evaluated"]
+    coverage = _accepted(example, layer)["coverage"]
+    assert isinstance(coverage, dict)
+    for key, expected in COVERAGE[example].items():
+        assert coverage[key] == expected, key
     assert coverage["unresolved_items"] == 0
+    untested = load_model(ROOT / "examples" / example).layers[layer].untested or []
+    assert {(u.kind, u.id) for u in untested} == REASONS[example]
     report = (ROOT / "examples" / example / "generated" / f"equivalence-{layer}.md").read_text(
         encoding="utf-8"
     )
     if example == "qcew":
         assert (
             "- entity industry_titles (referred to by rollup of measure employment_month3 "
-            "(industry_titles.parent))" in report
+            "(industry_titles.parent); reason recorded under untested)" in report
         )
-        assert "- entity ownership_titles\n" in report
-        # the area join goes through a de-duplicated subquery (F-0001)
-        assert "| join qtrly.to-area | 4 | 4 |" in report
+        # the area join goes through a de-duplicated subquery (F-0001): weak class only
+        assert "| join qtrly.to-area | 4 | 4 | 0 | 4 |" in report
 
 
 def _literals(sql: str) -> set[str]:

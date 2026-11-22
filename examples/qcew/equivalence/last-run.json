@@ -24,6 +24,49 @@
           "pass": 34
         }
       },
+      "coverage": {
+        "elements": 27,
+        "exercised": 21,
+        "no_passing_item": [],
+        "not_evaluated": [
+          "concept level_matrix (values_table)",
+          "concept distinct_areas (distinct)"
+        ],
+        "not_exercised": [
+          "entity industry_titles",
+          "join qtrly.to-industry",
+          "join annual.to-area"
+        ],
+        "not_found_as_written": [
+          "concept area_kind_county (as written)",
+          "concept area_kind_state (as written)",
+          "concept area_kind_msa (as written)"
+        ],
+        "tested": [
+          "entity qtrly",
+          "entity annual",
+          "entity area_titles",
+          "join qtrly.to-area",
+          "concept disclosed (as written)",
+          "concept disclosed_annual (as written)",
+          "concept suppressed (as written)",
+          "concept suppressed_annual (as written)",
+          "concept level",
+          "concept level_annual",
+          "concept ownership",
+          "concept period",
+          "measure (weak) employment_month3",
+          "measure (weak) employment_avg",
+          "measure (weak) total_wages",
+          "measure (weak) avg_weekly_wage",
+          "measure (weak) establishments",
+          "measure (weak) oty_employment_change",
+          "measure (weak) suppressed_cells",
+          "measure (weak) annual_employment",
+          "measure (weak) suppressed_cells_annual"
+        ],
+        "unresolved_items": 0
+      },
       "dialect": "sqlite",
       "items": {
         "cecil-manufacturing-avg-2025q1": {
@@ -180,7 +223,7 @@
         }
       },
       "proven": true,
-      "ran_on": "2026-10-27",
+      "ran_on": "2026-11-22",
       "share": 1.0,
       "source": "qcew-sqlite",
       "threshold": 0.9,

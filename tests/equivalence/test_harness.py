@@ -242,7 +242,7 @@ def test_normalise_ignores_quoting_case_and_conjunct_order() -> None:
 
 @pytest.mark.skipif(shutil.which("sqlite3") is None, reason="sqlite3 CLI not installed")
 def test_owner_run_script_gives_the_same_outcomes(tmp_path: Path) -> None:
-    root, _ = _model(tmp_path, "partial")
+    root, url = _model(tmp_path, "partial")
     text = harness.script(root, load_model(root), "employment", "sqlite")
     assert "count-2025" not in text.split("run_item() {")[1].split("}")[1]  # no SQL, no line
     script = tmp_path / "eq.sh"
@@ -268,6 +268,10 @@ def test_owner_run_script_gives_the_same_outcomes(tmp_path: Path) -> None:
         "total-2024": "pass",
         "total-2025": "error",
     }
+    # coverage reads SQL text only: the owner-run path gives the same as a local run
+    local = _run(root, url)
+    assert owner.summary()["coverage"] == local.summary()["coverage"]
+    assert owner.differences == local.differences
 
 
 @pytest.mark.skipif(
@@ -341,3 +345,19 @@ def test_accept_records_the_verdict_and_the_gate_reads_it(tmp_path: Path) -> Non
     harness.write(root, _run(root, url))
     harness.accept(root, "employment")
     assert run_gate(root).failed == ["layers"]  # accepted, but not proven
+
+
+def test_report_says_where_a_failing_item_differs(tmp_path: Path) -> None:
+    root, url = _model(tmp_path, "wrong")
+    result = _run(root, url)
+    text = harness.report(result)
+    assert "## Items that do not pass" in text
+    # the wrong consumer drops the join to areas and the year filter
+    assert (
+        "- total-2024: differs from the reference in: reference only: entities areas; "
+        "fields areas.area_code, employment.year; joins employment.in-area (as declared)"
+    ) in text
+    assert "A1" not in text
+    coverage = result.summary()["coverage"]
+    assert coverage["not_exercised"] == []
+    assert coverage["unresolved_items"] == 0

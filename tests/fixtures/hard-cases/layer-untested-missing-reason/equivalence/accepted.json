@@ -1,0 +1,24 @@
+{
+  "layers": {
+    "employment": {
+      "coverage": {
+        "elements": 5,
+        "exercised": 2,
+        "no_passing_item": [],
+        "not_evaluated": [],
+        "not_exercised": [
+          "entity areas",
+          "join employment.in-area",
+          "concept area"
+        ],
+        "not_found_as_written": [],
+        "tested": [
+          "entity employment",
+          "measure (weak) employment"
+        ],
+        "unresolved_items": 0
+      },
+      "proven": true
+    }
+  }
+}

@@ -14,7 +14,7 @@ def _tree(folder: Path) -> dict[str, str]:
     return {
         p.relative_to(folder).as_posix(): p.read_text(encoding="utf-8")
         for p in sorted(folder.rglob("*"))
-        if p.is_file()
+        if p.is_file() and not any(part.startswith(".") for part in p.relative_to(folder).parts)
     }
 
 

@@ -18,15 +18,10 @@ entities:
   default_filters: [distinct_areas]
 - entity: industry_titles
   current_row_rule: null
-- entity: ownership_titles
-  current_row_rule: null
 joins:
 - qtrly.to-area
 - qtrly.to-industry
-- qtrly.to-ownership
 - annual.to-area
-- annual.to-industry
-- annual.to-ownership
 concepts:
 - id: disclosed
   meaning: >-
@@ -212,4 +207,26 @@ measures:
   aggregation: sum
   grain: {entity: annual, fields: [area_fips, own_code, industry_code, size_code, year, qtr]}
   suppressed: include
+untested:
+- kind: entity
+  id: industry_titles
+  reason: >-
+    The rollup of employment_month3 over industry_titles.parent needs it (D-020); the probe
+    rollup-employment-month3-industry-titles-parent tests that hierarchy (run on the synthetic
+    seed, so it confirms nothing about BLS data, D-014). No corpus
+    item reports by industry title, and the consumer answers no breakdown by industry; an item
+    that does would test it.
+- kind: join
+  id: qtrly.to-industry
+  reason: >-
+    The only way from a quarterly row to its industry title and to the industry hierarchy of
+    the rollup. No corpus item reports by industry title; an item for employment by
+    supersector with its title would test it, once the consumer answers industry breakdowns.
+- kind: join
+  id: annual.to-area
+  reason: >-
+    The layer's path from annual rows to area titles, as qtrly.to-area is for quarterly rows;
+    annual_employment names a rollup over area_titles.in-state. The consumer answers county
+    breakdowns only for summed measures, and annual_employment is read at its own grain
+    (H-0001); an item for annual employment by county in a state would test it.
 hazards: [H-0001, H-0002]

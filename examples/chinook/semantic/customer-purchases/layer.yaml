@@ -12,14 +12,11 @@ entities:
   current_row_rule: null
 - entity: track
   current_row_rule: null
-- entity: album
-  current_row_rule: null
 - entity: genre
   current_row_rule: null
 joins:
 - invoice_line.to-invoice
 - invoice_line.to-track
-- track.to-album
 - track.to-genre
 concepts:
 - id: genre

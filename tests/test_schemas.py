@@ -85,3 +85,43 @@ def test_check_mode_reports_stale_file(tmp_path: Path) -> None:
     assert build.main([str(tmp_path), "--check"]) == 0
     (tmp_path / "entity.schema.json").write_text("{}\n", encoding="utf-8")
     assert build.main([str(tmp_path), "--check"]) == 1
+
+
+@pytest.mark.parametrize(
+    ("entry", "valid"),
+    [
+        ({"kind": "entity", "id": "orders", "reason": "Why."}, True),
+        ({"kind": "join", "id": "orders.placed-by", "reason": "Why."}, True),
+        ({"kind": "table", "id": "orders", "reason": "Why."}, False),
+        ({"kind": "entity", "id": "orders"}, False),
+        ({"kind": "entity", "id": "orders", "reason": "Why.", "extra": 1}, False),
+        ({"kind": "entity", "id": "", "reason": "Why."}, False),
+    ],
+)
+def test_untested_schema_and_typed_model_agree(entry: dict[str, object], valid: bool) -> None:
+    """D-023: the rendered schema and the typed model accept and reject the same entries."""
+    from pydantic import ValidationError
+
+    from factmodel.model.types import Layer
+
+    doc = load(FIXTURES / "layer" / "valid" / "v1.yaml").data
+    doc["untested"] = [entry]
+    schema_ok = not list(_validator("layer").iter_errors(doc))
+    try:
+        Layer.model_validate(doc)
+        model_ok = True
+    except ValidationError:
+        model_ok = False
+    assert schema_ok == model_ok == valid
+
+
+def test_untested_kinds_come_from_the_vocabulary() -> None:
+    layer = build.schema_for("layer")
+    kind = layer["properties"]["untested"]["items"]["properties"]["kind"]
+    assert kind["enum"] == list(vocabulary.load()["layer_element_kind"])
+
+
+def test_the_schemas_readme_names_the_current_version() -> None:
+    assert (
+        f"Schema version: `{build.SCHEMA_VERSION}`" in (ROOT / "schemas" / "README.md").read_text()
+    )

@@ -549,6 +549,14 @@ class Measure(Strict):
     rollups: Annotated[list[Rollup], Field(min_length=1)] | None = None
 
 
+class UntestedElement(Strict):
+    """A layer element no passing corpus item uses, and why (D-023)."""
+
+    kind: Annotated[str, _in("layer_element_kind")]
+    id: Text
+    reason: Text
+
+
 class Layer(Strict):
     kind: Literal["layer"]
     id: Slug
@@ -559,6 +567,7 @@ class Layer(Strict):
     joins: Annotated[list[RelationshipRef], Unique] | None = None
     concepts: list[Concept] | None = None
     measures: list[Measure] | None = None
+    untested: Annotated[list[UntestedElement], Field(min_length=1)] | None = None
     hazards: HazardRefs | None = None
     evidence: EvidenceRefs | None = None
     records: EvidenceRecords | None = None

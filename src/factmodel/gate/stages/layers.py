@@ -5,12 +5,18 @@ checks what a consumer relies on: the consumer exists; current-row rules match t
 joins are resolved relationships between entities the layer reads; concepts and measures parse
 and use only the layer's fields; every inherited hazard is listed; a measure that excludes
 suppressed cells names its companion; a reviewed layer has an accepted equivalence run.
+
+D-023: every ``untested`` entry names an element of the layer, once. A reviewed layer's
+accepted run holds coverage; every enforced element (entities, evaluated joins, field concepts,
+measures) that no passing item uses has an ``untested`` entry; and no entry names an enforced
+element that a passing item uses.
 """
 
 import json
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from pathlib import Path
 
+from factmodel.equivalence import trace as tracing
 from factmodel.gate.runner import GateContext
 from factmodel.model import joins
 from factmodel.model.loader import LoadIssue, Model
@@ -30,22 +36,89 @@ HINTS = {
     "missing_companion": "name the measure that counts the suppressed cells in companion",
     "missing_evidence": "cite an existing evidence record",
     "not_accepted": "run fact equivalence run and fact equivalence accept, or keep status draft",
+    "unknown_untested": "name an element of this layer, once, with its kind (D-023)",
+    "no_coverage": (
+        "run fact equivalence run and fact equivalence accept again: the accepted run predates "
+        "coverage, or the layer changed since (D-023)"
+    ),
+    "missing_reason": (
+        "add a corpus item that passes and uses the element, remove the element, or add an "
+        "untested entry with the reason (D-023)"
+    ),
+    "stale_untested": "a passing item uses the element now: remove its untested entry (D-023)",
     "bad_values_table": "give every row one value per column, or name a layer entity's fields",
     "bad_rollup": (
         "name a resolved single-target hierarchy, a grain field and a predicate concept (D-020)"
     ),
 }
 ACCEPTED = Path("equivalence") / "accepted.json"
+Issue = Callable[[str, list[str | int], str], LoadIssue]
+
+
+def _runs(root: Path) -> dict[str, dict[str, object]]:
+    path = root / ACCEPTED
+    if not path.is_file():
+        return {}
+    data = json.loads(path.read_text(encoding="utf-8"))
+    layers = (data.get("layers") or {}) if isinstance(data, dict) else {}
+    return {k: v for k, v in layers.items() if isinstance(v, dict)}
 
 
 def _accepted(root: Path) -> set[str]:
     """Layers whose accepted equivalence run proved them (D-021)."""
-    path = root / ACCEPTED
-    if not path.is_file():
-        return set()
-    data = json.loads(path.read_text(encoding="utf-8"))
-    layers = (data.get("layers") or {}) if isinstance(data, dict) else {}
-    return {k for k, v in layers.items() if isinstance(v, dict) and v.get("proven") is True}
+    return {k for k, v in _runs(root).items() if v.get("proven") is True}
+
+
+def accepted_tested(root: Path, layer_id: str) -> set[tuple[str, str]] | None:
+    """(kind, id) of the elements a passing item uses in the layer's accepted run; None when
+    that run holds no coverage of the D-023 form."""
+    coverage = _runs(root).get(layer_id, {}).get("coverage")
+    if not isinstance(coverage, dict) or not isinstance(coverage.get("tested"), list):
+        return None
+    return {tracing.parse_label(str(label)) for label in coverage["tested"]}
+
+
+def _untested(ctx: GateContext, layer: Layer, issue: Issue) -> Iterator[LoadIssue]:
+    """D-023 checks: entries name elements of the layer; a reviewed layer explains every
+    enforced element that its accepted run does not test."""
+    forms = {(kind, element_id): form for kind, element_id, form in tracing.forms(layer, ctx.model)}
+    seen: set[tuple[str, str]] = set()
+    entries = layer.untested or []
+    for i, entry in enumerate(entries):
+        key = (entry.kind, entry.id)
+        if key not in forms:
+            yield issue(
+                "unknown_untested",
+                ["untested", i],
+                f"{entry.kind} {entry.id!r} is not in the layer",
+            )
+        elif key in seen:
+            yield issue(
+                "unknown_untested", ["untested", i], f"{entry.kind} {entry.id!r} is listed twice"
+            )
+        seen.add(key)
+    if layer.status != "reviewed" or layer.id not in _accepted(ctx.root):
+        return
+    tested = accepted_tested(ctx.root, layer.id)
+    if tested is None:
+        message = f"the accepted run of {layer.id!r} holds no coverage (D-023)"
+        yield issue("no_coverage", ["status"], message)
+        return
+    enforced = {
+        k
+        for k, form in forms.items()
+        if tracing.evaluated(k[0], form) and tracing.enforced(k[0], form)
+    }
+    for kind, element_id in sorted(enforced - tested - seen):
+        message = (
+            f"no passing corpus item uses {kind} {element_id!r} and no untested entry says why"
+        )
+        yield issue("missing_reason", ["untested"] if entries else ["id"], message)
+    for i, entry in enumerate(entries):
+        key = (entry.kind, entry.id)
+        if key in enforced and key in tested:
+            message = f"a passing corpus item uses {entry.kind} {entry.id!r}"
+            yield issue("stale_untested", ["untested", i], message)
 
 
 def _columns(text: str) -> list[tuple[str, str]]:
@@ -222,6 +295,7 @@ def _check(ctx: GateContext, layer: Layer, path: str) -> Iterator[LoadIssue]:
     if layer.status == "reviewed" and layer.id not in _accepted(ctx.root):
         message = f"layer {layer.id!r} is reviewed but no accepted equivalence run proves it"
         yield issue("not_accepted", ["status"], message)
+    yield from _untested(ctx, layer, issue)
 
 
 def run(ctx: GateContext) -> list[LoadIssue] | None:

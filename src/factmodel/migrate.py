@@ -5,6 +5,9 @@ and, since 1.0.0, the schema version its files were checked against (``schema_ve
 installed schemas carry their own version (``spec/VERSIONING.md``). The model is compatible
 when every file parses and validates against the installed schemas, whatever the versions say.
 There are no migrations yet: they come with the first major schema change.
+
+Since schemas 2.3.0 (D-023) a reviewed layer needs coverage in its accepted equivalence run; a
+model from before validates, and the report names the layers to run and accept again.
 """
 
 from collections.abc import Callable
@@ -13,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from factmodel import __version__
+from factmodel.gate.stages.layers import accepted_tested
 from factmodel.model.loader import CONFIG_FILE, inspect_model
 from factmodel.schemas.build import SCHEMA_VERSION
 
@@ -59,6 +63,8 @@ class MigrateReport:
     framework_version: str
     schema_version: str
     failing: tuple[str, ...]
+    # reviewed layers whose accepted run holds no coverage (D-023): run and accept again
+    reaccept: tuple[str, ...] = ()
 
     @property
     def compatible(self) -> bool:
@@ -99,6 +105,11 @@ class MigrateReport:
             out.append(
                 "migrations: none needed" if self.compatible else "migrations: none available"
             )
+        for layer in self.reaccept:
+            out.append(
+                f"accept again (D-023): layer {layer} is reviewed and its accepted run holds no "
+                "coverage; run fact equivalence run and fact equivalence accept"
+            )
         return out
 
 
@@ -113,4 +124,11 @@ def report(root: Path) -> MigrateReport:
     config = _config(result)
     versions = [config.get(key) for key in ("framework_version", "schema_version")]
     framework, schema = (str(v) if v is not None else None for v in versions)
-    return MigrateReport(framework, schema, __version__, SCHEMA_VERSION, tuple(failing))
+    reaccept = tuple(
+        sorted(
+            layer.id
+            for layer in result.model.layers.values()
+            if layer.status == "reviewed" and accepted_tested(root, layer.id) is None
+        )
+    )
+    return MigrateReport(framework, schema, __version__, SCHEMA_VERSION, tuple(failing), reaccept)

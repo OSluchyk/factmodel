@@ -1,0 +1,6 @@
+kind: source
+id: stats-db
+title: Statistics database
+source_kind: warehouse
+access_mode: export_file
+engine: postgres

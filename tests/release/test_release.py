@@ -151,3 +151,29 @@ def test_cli_release_and_lookup(tmp_path: Path) -> None:
     assert "disclosed [required]: predicate qtrly.disclosure_code IS NULL" in looked.output
     hazard = runner.invoke(app, ["lookup", "--root", str(out), "--hazard", "H-0002"])
     assert "avg_wkly_wage has a documented formula" in hazard.output
+
+
+def test_untested_entries_travel_with_the_layer_and_count_as_a_key(tmp_path: Path) -> None:
+    # D-023: the reasons are part of the layer a consumer receives
+    root = _copy(tmp_path, "qcew")
+    out = root / "release" / "out"
+    build(root, out, "0.1.0", DAY)
+    layer = load(out / "semantic" / "employment-wages" / "layer.yaml").data
+    assert {(u["kind"], u["id"]) for u in layer["untested"]} == {
+        ("entity", "industry_titles"),
+        ("join", "qtrly.to-industry"),
+        ("join", "annual.to-area"),
+    }
+    # an allowlist that projects layers by key must declare untested
+    allowlist = root / "release" / "allowlist.yaml"
+    text = allowlist.read_text(encoding="utf-8").replace(
+        "- {pattern: semantic/**, disposition: export}",
+        "- {pattern: semantic/*/layer.yaml, disposition: project}\n"
+        "- {pattern: semantic/**, disposition: export}",
+    )
+    keys = "kind, id, purpose, consumer, status, entities, joins, concepts, measures, hazards"
+    allowlist.write_text(text + f"  layer:\n    keep: [{keys}]\n", "utf-8")
+    with pytest.raises(ReleaseError, match="undeclared_key"):
+        build(root, tmp_path / "out2", "0.1.0", DAY)
+    allowlist.write_text(text + f"  layer:\n    keep: [{keys}, untested]\n", "utf-8")
+    build(root, tmp_path / "out3", "0.1.0", DAY)

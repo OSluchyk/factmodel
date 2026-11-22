@@ -1,0 +1,22 @@
+kind: entity
+id: areas
+physical_name: stats.areas
+source: stats-db
+grain: one row per areas row
+class: reference
+status: draft
+keys:
+  primary:
+  - area_code
+  current_row_rule: null
+evidence:
+- ev-confirmed
+fields:
+- name: area_code
+  type: TEXT
+  nullable: false
+  meaning: Area code.
+- name: area_title
+  type: TEXT
+  nullable: false
+  meaning: Area title.

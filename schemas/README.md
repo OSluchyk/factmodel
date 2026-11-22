@@ -1,6 +1,6 @@
 # Schemas
 
-One JSON Schema (Draft 2020-12) per file kind in `vocabulary:file_kind`, plus `snapshot.schema.json` for engine-neutral metadata snapshots. Schema version: `0.1.0` (in each `$id`).
+One JSON Schema (Draft 2020-12) per file kind in `vocabulary:file_kind`, plus `snapshot.schema.json` for engine-neutral metadata snapshots. Schema version: `2.3.0` (in each `$id`; `spec/VERSIONING.md`).
 
 **These files are generated. Do not edit them by hand.**
 

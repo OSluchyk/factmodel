@@ -14,7 +14,8 @@ a layer). Round-trip notes (what MetricFlow cannot hold, reported as warnings): 
 that is not a date; a measure whose
 aggregation is ``none`` (a formula over aggregates, or a value read at its grain); an
 expression join; a distinct rule; a required concept on a field with no fixed value (the
-consumer fixes it per query, for example QCEW ``level``); concept value vocabularies.
+consumer fixes it per query, for example QCEW ``level``); concept value vocabularies; the
+layer's ``untested`` entries (D-023).
 """
 
 import re
@@ -204,6 +205,11 @@ def export(model: Model, layer_id: str) -> Export:
             out.warnings.append(
                 f"hazard {hazard} ({found.title}) travels only in meta of the measures that name it"
             )
+    for entry in layer.untested or []:
+        out.warnings.append(
+            f"untested {entry.kind} {entry.id}: MetricFlow has no place for the reason (D-023); "
+            "not exported"
+        )
     out.files[f"{layer.id}.yml"] = dump_yaml({"semantic_models": models, "metrics": metrics})
     out.warnings = sorted(set(out.warnings))
     return out

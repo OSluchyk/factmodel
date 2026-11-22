@@ -42,6 +42,25 @@ properties:
   measures:
     type: array
     items: {$ref: "#/$defs/measure"}
+  untested:
+    description: >-
+      Elements of the layer that no passing corpus item uses, each with the reason (D-023). A
+      reviewed layer needs one for every entity, evaluated join, field concept and measure its
+      accepted equivalence run does not test.
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required: [kind, id, reason]
+      properties:
+        kind: {$vocab: layer_element_kind}
+        id:
+          description: The entity id, the join ref, the concept id or the measure id.
+          $ref: "#/$defs/text"
+        reason:
+          description: What needs the element and what would test it; may cite a probe or evidence id.
+          $ref: "#/$defs/text"
   hazards: {$ref: "#/$defs/hazard_refs"}
   evidence: {$ref: "#/$defs/evidence_refs"}
   records: {$ref: "#/$defs/evidence_records"}

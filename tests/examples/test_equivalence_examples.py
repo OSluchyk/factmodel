@@ -9,6 +9,7 @@ from pathlib import Path
 from types import ModuleType
 
 import pytest
+import sqlglot
 
 from factmodel.equivalence import harness
 from factmodel.equivalence.compare import same_rows
@@ -16,7 +17,7 @@ from factmodel.equivalence.corpus import read_corpus
 from factmodel.model.loader import load_model
 
 ROOT = Path(__file__).resolve().parents[2]
-DAY = "2026-10-27"
+DAY = "2026-11-22"
 CASES = {
     "qcew": ("employment-wages", "qcew-sqlite", "qcew-duckdb"),
     "chinook": ("customer-purchases", "chinook-sqlite", "chinook-pg"),
@@ -55,7 +56,10 @@ def test_sqlite_run_reproduces_the_accepted_run_and_report(example: str, tmp_pat
     url = _seed(example).load_sqlite(tmp_path / "db.sqlite")
     result = _run(example, url, source, "sqlite")
     assert result.proven()
-    assert result.summary() == _accepted(example, layer)
+    summary = result.summary()
+    assert summary == _accepted(example, layer)  # coverage included (D-023)
+    last = ROOT / "examples" / example / "equivalence" / "last-run.json"
+    assert json.loads(last.read_text(encoding="utf-8"))["layers"][layer] == summary
     report = ROOT / "examples" / example / "generated" / f"equivalence-{layer}.md"
     assert harness.report(result) == report.read_text(encoding="utf-8")
 
@@ -99,3 +103,91 @@ def test_qcew_naive_queries_give_different_answers(tmp_path: Path) -> None:
             # compare the values only: the correct answer also reports suppressed cells
             width = len(naive[0])
             assert not same_rows(naive, [row[:width] for row in correct]), item.id
+
+
+COVERAGE = {
+    "chinook": {
+        "not_exercised": [],
+        "not_found_as_written": [],
+        "no_passing_item": [],
+        "not_evaluated": [],
+    },
+    "qcew": {
+        # each carries an untested entry in the layer (D-023)
+        "not_exercised": [
+            "entity industry_titles",
+            "join qtrly.to-industry",
+            "join annual.to-area",
+        ],
+        # the references write the area kinds with LIKE, not with the concept's substr form
+        "not_found_as_written": [
+            "concept area_kind_county (as written)",
+            "concept area_kind_state (as written)",
+            "concept area_kind_msa (as written)",
+        ],
+        "no_passing_item": [],
+        "not_evaluated": [
+            "concept level_matrix (values_table)",
+            "concept distinct_areas (distinct)",
+        ],
+    },
+}
+REASONS = {
+    "chinook": set(),
+    "qcew": {
+        ("entity", "industry_titles"),
+        ("join", "qtrly.to-industry"),
+        ("join", "annual.to-area"),
+    },
+}
+
+
+@pytest.mark.parametrize("example", sorted(CASES))
+def test_coverage_vectors(example: str) -> None:
+    layer = CASES[example][0]
+    coverage = _accepted(example, layer)["coverage"]
+    assert isinstance(coverage, dict)
+    for key, expected in COVERAGE[example].items():
+        assert coverage[key] == expected, key
+    assert coverage["unresolved_items"] == 0
+    untested = load_model(ROOT / "examples" / example).layers[layer].untested or []
+    assert {(u.kind, u.id) for u in untested} == REASONS[example]
+    report = (ROOT / "examples" / example / "generated" / f"equivalence-{layer}.md").read_text(
+        encoding="utf-8"
+    )
+    if example == "qcew":
+        assert (
+            "- entity industry_titles (referred to by rollup of measure employment_month3 "
+            "(industry_titles.parent); reason recorded under untested)" in report
+        )
+        # the area join goes through a de-duplicated subquery (F-0001): weak class only
+        assert "| join qtrly.to-area | 4 | 4 | 0 | 4 |" in report
+
+
+def _literals(sql: str) -> set[str]:
+    tree = sqlglot.parse_one(sql)
+    return {
+        lit.this
+        for lit in tree.find_all(sqlglot.exp.Literal)
+        if lit.is_string and len(lit.this) >= 4 and re.search(r"[A-Za-z-]", lit.this)
+    }
+
+
+@pytest.mark.parametrize("example", sorted(CASES))
+def test_no_corpus_literal_in_any_output(example: str) -> None:
+    layer = CASES[example][0]
+    folder = ROOT / "examples" / example / "semantic" / layer / "corpus"
+    items = read_corpus(folder)
+    literals = set().union(*(_literals(i.reference) for i in items))
+    assert "genre-1" in literals or example != "chinook"
+    outputs = [
+        ROOT / "examples" / example / "generated" / f"equivalence-{layer}.md",
+        ROOT / "examples" / example / "equivalence" / "last-run.json",
+        ROOT / "examples" / example / "equivalence" / "accepted.json",
+    ]
+    for path in outputs:
+        text = path.read_text(encoding="utf-8")
+        # item ids are authored names and some spell a value (customers-genre-1-2024q1)
+        for item in sorted(items, key=lambda i: -len(i.id)):
+            text = text.replace(item.id, "")
+        assert not [lit for lit in literals if lit in text], path

@@ -82,11 +82,55 @@ def test_reviewed_with_an_accepted_run_passes(tmp_path: Path) -> None:
     (root / "equivalence" / "accepted.json").write_text(
         json.dumps({"layers": {"employment": {"proven": True}}}), encoding="utf-8"
     )
+    # D-023: an accepted run without coverage no longer proves a reviewed layer
+    assert _codes(root) == ["no_coverage"]
+    tested = ["entity employment", "entity areas", "join employment.in-area", "concept area"]
+    coverage = {"tested": [*tested, "measure (weak) employment"]}
+    (root / "equivalence" / "accepted.json").write_text(
+        json.dumps({"layers": {"employment": {"proven": True, "coverage": coverage}}}),
+        encoding="utf-8",
+    )
     assert _codes(root) == []
     (root / "equivalence" / "accepted.json").write_text(
         json.dumps({"layers": {"employment": {"proven": False}}}), encoding="utf-8"
     )
     assert _codes(root) == ["not_accepted"]
+
+
+D023 = {
+    "layer-untested": [],
+    "layer-untested-unknown": ["unknown_untested", "unknown_untested"],
+    "layer-untested-no-coverage": ["no_coverage"],
+    "layer-untested-missing-reason": ["missing_reason"],
+    "layer-untested-stale": ["stale_untested"],
+}
+
+
+@pytest.mark.parametrize("case", sorted(D023))
+def test_each_d023_code_fails_on_its_hard_case(case: str) -> None:
+    root = CASE.parent / case
+    assert _codes(root) == D023[case]
+
+
+def test_a_predicate_concept_needs_no_reason_and_its_entry_is_never_stale(tmp_path: Path) -> None:
+    root = tmp_path / "model"
+    shutil.copytree(CASE.parent / "layer-untested", root)
+    _edit(
+        root,
+        "concepts:\n",
+        "concepts:\n- id: recent\n  meaning: After 2000.\n  predicate: employment.year > 2000\n",
+    )
+    assert _codes(root) == []  # not tested, not enforced
+    _edit(
+        root,
+        "untested:\n",
+        "untested:\n- kind: concept\n  id: recent\n  reason: Written with another form.\n",
+    )
+    accepted = root / "equivalence" / "accepted.json"
+    data = json.loads(accepted.read_text(encoding="utf-8"))
+    data["layers"]["employment"]["coverage"]["tested"].append("concept recent (as written)")
+    accepted.write_text(json.dumps(data), encoding="utf-8")
+    assert _codes(root) == []
 
 
 @pytest.mark.parametrize(
@@ -129,3 +173,24 @@ def test_values_tables(tmp_path: Path, table: str, code: str | None) -> None:
     concept = f"- id: kinds\n  meaning: A lookup table.\n  values_table: {table}\nmeasures:"
     _edit(root, "measures:", concept)
     assert _codes(root) == ([code] if code else [])
+
+
+def test_a_draft_layer_is_exempt_from_the_reviewed_checks(tmp_path: Path) -> None:
+    # D-023 rule 4 binds reviewed layers only; rule 5 binds every layer
+    root = tmp_path / "model"
+    shutil.copytree(CASE.parent / "layer-untested-missing-reason", root)
+    assert _codes(root) == ["missing_reason"]
+    _edit(root, "status: reviewed", "status: draft")
+    assert _codes(root) == []  # accepted and proven, concept area untested, no entry
+    accepted = root / "equivalence" / "accepted.json"
+    data = json.loads(accepted.read_text(encoding="utf-8"))
+    del data["layers"]["employment"]["coverage"]
+    accepted.write_text(json.dumps(data), encoding="utf-8")
+    assert _codes(root) == []  # no coverage: still nothing for a draft
+    _edit(
+        root,
+        "untested:\n",
+        "untested:\n- kind: measure\n  id: employment\n  reason: A passing item uses it.\n"
+        "- kind: entity\n  id: industries\n  reason: Not in the layer.\n",
+    )
+    assert _codes(root) == ["unknown_untested"]  # never stale_untested for a draft

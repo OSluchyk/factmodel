@@ -28,7 +28,7 @@ from factmodel import vocabulary
 from factmodel.io.yaml_strict import loads
 
 DIALECT = "https://json-schema.org/draft/2020-12/schema"
-SCHEMA_VERSION = "2.2.0"
+SCHEMA_VERSION = "2.3.0"
 COMMON = "_common"
 REF_PREFIX = "#/$defs/"
 # A key that must not appear. ``not: {}`` instead of ``false`` so validators report the
@@ -44,7 +44,7 @@ def _templates() -> dict[str, dict[str, Any]]:
     folder = resources.files("factmodel.schemas").joinpath("templates")
     out: dict[str, dict[str, Any]] = {}
     for entry in sorted(folder.iterdir(), key=lambda item: item.name):
-        if entry.name.endswith(".yaml"):
+        if entry.name.endswith(".yaml") and not entry.name.startswith("."):
             name = entry.name.removesuffix(".yaml")
             data = loads(entry.read_text(encoding="utf-8"), entry.name).data
             if not isinstance(data, dict):

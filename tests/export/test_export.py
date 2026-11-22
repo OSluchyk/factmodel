@@ -194,8 +194,9 @@ def test_ossie_export_uses_only_the_pinned_structure(example: str, version: str)
         if concept.required:
             assert f"- {concept.id}:" in instructions
             assert concept.id in extension["required_concepts"]  # type: ignore[operator]
+    joins_text = instructions.split("Untested by the equivalence corpus")[0]  # D-023 reasons
     for ref in found.joins or []:
-        assert (ref in held) != (ref in instructions)  # a key or text, never both or neither
+        assert (ref in held) != (ref in joins_text)  # a key or text, never both or neither
     for hazard in found.hazards or []:
         assert f"Hazard {hazard}" in instructions
     assert "Evidence status:" in instructions
@@ -242,3 +243,21 @@ def test_volatile_set_writes_only_volatile_probes(tmp_path: Path) -> None:
         loads((p).read_text(), p.name).data["probe_kind"] for p in (root / "probes").glob("*.yaml")
     }
     assert kinds == {"key_duplicates", "row_count", "value_set", "rollup"}
+
+
+def test_untested_entries_travel_in_ossie_and_are_named_in_dbt() -> None:
+    # D-023: Ossie has a place for them (ai_context, custom_extensions); MetricFlow has none
+    model = load_model(ROOT / "examples" / "qcew")
+    layer = model.layers["employment-wages"]
+    assert layer.untested
+    text = ossie.export(model, "employment-wages").files["employment-wages.ossie.yaml"]
+    data = loads(text, "employment-wages.ossie.yaml").data
+    doc = data["semantic_model"][0] if "semantic_model" in data else data
+    instructions = doc["ai_context"]["instructions"]
+    for entry in layer.untested:
+        assert f"- {entry.kind} {entry.id}: " in instructions
+    warnings = dbt.export(model, "employment-wages").warnings
+    assert sorted(w for w in warnings if w.startswith("untested ")) == sorted(
+        f"untested {u.kind} {u.id}: MetricFlow has no place for the reason (D-023); not exported"
+        for u in layer.untested
+    )

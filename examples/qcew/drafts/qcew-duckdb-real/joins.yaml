@@ -1,0 +1,458 @@
+# written by fact propose - a proposal, not a model file; the gate never reads drafts/
+proposal: joins
+source: qcew-duckdb-real
+snapshot_pin: duckdb:qcew@2026-11-28
+proposed_on: '2026-11-28'
+environment: local
+data_quality: representative
+threshold: 0.999
+queries: 163
+skipped: []
+targets_not_unique:
+- object: area_titles
+  field: area_fips
+  non_null: 9458
+  distinct: 4809
+  duplicate_rows: 4649
+- object: area_titles
+  field: area_title
+  non_null: 9458
+  distinct: 4805
+  duplicate_rows: 4653
+candidates:
+- from: annual
+  fields:
+  - agglvl_code
+  to: agglevel_titles
+  to_fields:
+  - agglvl_code
+  join: annual.agglvl_code = agglevel_titles.agglvl_code
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: same column name (reported, not a criterion)
+  evidence:
+  - ev-propose-join-annual-agglvl-code-agglevel-titles-agglvl-code
+- from: annual
+  fields:
+  - industry_code
+  to: industry_titles
+  to_fields:
+  - industry_code
+  join: annual.industry_code = industry_titles.industry_code
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: same column name (reported, not a criterion)
+  evidence:
+  - ev-propose-join-annual-industry-code-industry-titles-in_0441a2d1
+- from: annual
+  fields:
+  - own_code
+  to: ownership_titles
+  to_fields:
+  - own_code
+  join: annual.own_code = ownership_titles.own_code
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: same column name (reported, not a criterion)
+  evidence:
+  - ev-propose-join-annual-own-code-ownership-titles-own-code
+- from: annual
+  fields:
+  - own_code
+  to: size_titles
+  to_fields:
+  - size_code
+  join: annual.own_code = size_titles.size_code
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-annual-own-code-size-titles-size-code
+- from: annual
+  fields:
+  - size_code
+  to: ownership_titles
+  to_fields:
+  - own_code
+  join: annual.size_code = ownership_titles.own_code
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-annual-size-code-ownership-titles-own-code
+- from: annual
+  fields:
+  - size_code
+  to: size_titles
+  to_fields:
+  - size_code
+  join: annual.size_code = size_titles.size_code
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: same column name (reported, not a criterion)
+  evidence:
+  - ev-propose-join-annual-size-code-size-titles-size-code
+- from: ownership_titles
+  fields:
+  - own_code
+  to: size_titles
+  to_fields:
+  - size_code
+  join: ownership_titles.own_code = size_titles.size_code
+  mechanism: inferred_join
+  cardinality: one_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-ownership-titles-own-code-size-titles-size-code
+- from: qtrly
+  fields:
+  - agglvl_code
+  to: agglevel_titles
+  to_fields:
+  - agglvl_code
+  join: qtrly.agglvl_code = agglevel_titles.agglvl_code
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: same column name (reported, not a criterion)
+  evidence:
+  - ev-propose-join-qtrly-agglvl-code-agglevel-titles-agglvl-code
+- from: qtrly
+  fields:
+  - industry_code
+  to: industry_titles
+  to_fields:
+  - industry_code
+  join: qtrly.industry_code = industry_titles.industry_code
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: same column name (reported, not a criterion)
+  evidence:
+  - ev-propose-join-qtrly-industry-code-industry-titles-ind_333d5bcc
+- from: qtrly
+  fields:
+  - own_code
+  to: ownership_titles
+  to_fields:
+  - own_code
+  join: qtrly.own_code = ownership_titles.own_code
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: same column name (reported, not a criterion)
+  evidence:
+  - ev-propose-join-qtrly-own-code-ownership-titles-own-code
+- from: qtrly
+  fields:
+  - own_code
+  to: size_titles
+  to_fields:
+  - size_code
+  join: qtrly.own_code = size_titles.size_code
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-qtrly-own-code-size-titles-size-code
+- from: qtrly
+  fields:
+  - qtr
+  to: ownership_titles
+  to_fields:
+  - own_code
+  join: qtrly.qtr = ownership_titles.own_code
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-qtrly-qtr-ownership-titles-own-code
+- from: qtrly
+  fields:
+  - qtr
+  to: size_titles
+  to_fields:
+  - size_code
+  join: qtrly.qtr = size_titles.size_code
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-qtrly-qtr-size-titles-size-code
+- from: qtrly
+  fields:
+  - size_code
+  to: ownership_titles
+  to_fields:
+  - own_code
+  join: qtrly.size_code = ownership_titles.own_code
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: names differ (reported, not a criterion)
+  evidence:
+  - ev-propose-join-qtrly-size-code-ownership-titles-own-code
+- from: qtrly
+  fields:
+  - size_code
+  to: size_titles
+  to_fields:
+  - size_code
+  join: qtrly.size_code = size_titles.size_code
+  mechanism: inferred_join
+  cardinality: many_to_one
+  inclusion: 1.0
+  status: inferred
+  note: same column name (reported, not a criterion)
+  evidence:
+  - ev-propose-join-qtrly-size-code-size-titles-size-code
+records:
+- id: ev-propose-join-annual-agglvl-code-agglevel-titles-agglvl-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_distinct: 40
+    included: 40
+    inclusion: 1.0
+    target_distinct: 56
+    coverage: 0.714286
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-annual-industry-code-industry-titles-in_0441a2d1
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_distinct: 2159
+    included: 2159
+    inclusion: 1.0
+    target_distinct: 2678
+    coverage: 0.806199
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-annual-own-code-ownership-titles-own-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_distinct: 7
+    included: 7
+    inclusion: 1.0
+    target_distinct: 8
+    coverage: 0.875
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-annual-own-code-size-titles-size-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_distinct: 7
+    included: 7
+    inclusion: 1.0
+    target_distinct: 10
+    coverage: 0.7
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-annual-size-code-ownership-titles-own-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_distinct: 1
+    included: 1
+    inclusion: 1.0
+    target_distinct: 8
+    coverage: 0.125
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-annual-size-code-size-titles-size-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_distinct: 1
+    included: 1
+    inclusion: 1.0
+    target_distinct: 10
+    coverage: 0.1
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-ownership-titles-own-code-size-titles-size-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_distinct: 8
+    included: 8
+    inclusion: 1.0
+    target_distinct: 10
+    coverage: 0.8
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-qtrly-agglvl-code-agglevel-titles-agglvl-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_distinct: 40
+    included: 40
+    inclusion: 1.0
+    target_distinct: 56
+    coverage: 0.714286
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-qtrly-industry-code-industry-titles-ind_333d5bcc
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_distinct: 2159
+    included: 2159
+    inclusion: 1.0
+    target_distinct: 2678
+    coverage: 0.806199
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-qtrly-own-code-ownership-titles-own-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_distinct: 7
+    included: 7
+    inclusion: 1.0
+    target_distinct: 8
+    coverage: 0.875
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-qtrly-own-code-size-titles-size-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_distinct: 7
+    included: 7
+    inclusion: 1.0
+    target_distinct: 10
+    coverage: 0.7
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-qtrly-qtr-ownership-titles-own-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_distinct: 4
+    included: 4
+    inclusion: 1.0
+    target_distinct: 8
+    coverage: 0.5
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-qtrly-qtr-size-titles-size-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_distinct: 4
+    included: 4
+    inclusion: 1.0
+    target_distinct: 10
+    coverage: 0.4
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-qtrly-size-code-ownership-titles-own-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_distinct: 1
+    included: 1
+    inclusion: 1.0
+    target_distinct: 8
+    coverage: 0.125
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'
+- id: ev-propose-join-qtrly-size-code-size-titles-size-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_distinct: 1
+    included: 1
+    inclusion: 1.0
+    target_distinct: 10
+    coverage: 0.1
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose joins: distinct non-null source values found in a unique target;
+    a candidate, not a relationship'

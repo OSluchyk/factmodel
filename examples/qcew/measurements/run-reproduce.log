@@ -1,0 +1,154 @@
+
+$ examples/qcew/scripts/load.sh
+annual             110,366
+qtrly              486,100
+agglevel_titles         56
+area_titles          9,458
+industry_titles      2,678
+ownership_titles         8
+size_titles             10
+load: 1.7 s
+
+$ python3 examples/qcew/scripts/check_load.py
+source_table | year | areas | raw_rows | loaded_rows | raw_n | loaded_n | raw_dash | loaded_dash | verdict
+-------------+------+-------+----------+-------------+-------+----------+----------+-------------+--------
+annual       | 2024 | DE    |     7914 |        7914 |  4446 |     4446 |        0 |           0 | equal
+annual       | 2024 | MD    |    37053 |       37053 | 20840 |    20840 |        0 |           0 | equal
+annual       | 2024 | other |    15696 |       15696 | 10509 |    10509 |        0 |           0 | equal
+annual       | 2025 | DE    |     7970 |        7970 |  5270 |     5270 |        0 |           0 | equal
+annual       | 2025 | MD    |    37227 |       37227 | 21035 |    21035 |        0 |           0 | equal
+annual       | 2025 | other |     4506 |        4506 |   667 |      667 |        0 |           0 | equal
+qtrly        | 2024 | DE    |    31656 |       31656 | 16606 |    16606 |      144 |         144 | equal
+qtrly        | 2024 | MD    |   148212 |      148212 | 75310 |    75310 |     2621 |        2621 | equal
+qtrly        | 2024 | other |    62784 |       62784 | 40445 |    40445 |      471 |         471 | equal
+qtrly        | 2025 | DE    |    31880 |       31880 | 19300 |    19300 |      201 |         201 | equal
+qtrly        | 2025 | MD    |   148908 |      148908 | 76387 |    76387 |     2110 |        2110 | equal
+qtrly        | 2025 | other |    62660 |       62660 | 22107 |    22107 |    22377 |       22377 | equal
+
+$ fact snapshot --root examples/qcew --source qcew-duckdb-real --date 2026-11-28
+unchanged sources/snapshots/qcew-duckdb-real@2026-11-28.yaml (7 objects)
+
+$ fact propose keys --root examples/qcew --source qcew-duckdb-real --environment local --data-quality representative --date 2026-11-28 --key annual:area_fips,own_code,industry_code,size_code,year,qtr --key qtrly:area_fips,own_code,industry_code,size_code,year,qtr
+7 tables, 8 key candidates, 307 queries, 7.2 s: unchanged drafts/qcew-duckdb-real/keys.yaml
+  named key annual (area_fips, own_code, industry_code, size_code, year, qtr): unique, 0 duplicate rows, 110366 rows
+  named key qtrly (area_fips, own_code, industry_code, size_code, year, qtr): unique, 0 duplicate rows, 486100 rows
+
+$ fact propose joins --root examples/qcew --source qcew-duckdb-real --environment local --data-quality representative --date 2026-11-28
+7 tables, 15 join candidates, 163 queries, 2.8 s: unchanged drafts/qcew-duckdb-real/joins.yaml
+  skipped target area_titles.area_fips: not unique, 4649 duplicate rows of 9458; no join to it is proposed
+  skipped target area_titles.area_title: not unique, 4653 duplicate rows of 9458; no join to it is proposed
+
+$ python3 examples/qcew/scripts/summary.py examples/qcew
+keys: 8 candidates over 7 tables, 307 queries,
+  single columns and pairs only (max_columns 2)
+  agglevel_titles: (agglvl_code), (agglvl_title); documented (agglvl_code): among them
+  annual: none; documented (area_fips, own_code, industry_code, size_code, year, qtr): not among them
+  area_titles: none; documented (area_fips): not among them
+  industry_titles: (industry_code), (industry_title); documented (industry_code): among them
+  ownership_titles: (own_code), (own_title); documented (own_code): among them
+  qtrly: none; documented (area_fips, own_code, industry_code, size_code, year, qtr): not among them
+  size_titles: (size_code), (size_title); documented (size_code): among them
+  named key annual (area_fips, own_code, industry_code, size_code, year, qtr): unique, 0 duplicate rows, 110366 rows
+  named key qtrly (area_fips, own_code, industry_code, size_code, year, qtr): unique, 0 duplicate rows, 486100 rows
+joins: 15 candidates at threshold 0.999, 163 queries
+  8 of the model's 10 one-column equality joins found
+  not proposed: annual.area_fips = area_titles.area_fips  (annual.to-area)
+  not proposed: qtrly.area_fips = area_titles.area_fips  (qtrly.to-area)
+  target not unique: area_titles.area_fips, 4649 duplicate rows of 9458
+  target not unique: area_titles.area_title, 4653 duplicate rows of 9458
+  7 other inclusions above the threshold, for a reader to judge:
+    annual.own_code = size_titles.size_code  (many_to_one)
+    annual.size_code = ownership_titles.own_code  (many_to_one)
+    ownership_titles.own_code = size_titles.size_code  (one_to_one)
+    qtrly.own_code = size_titles.size_code  (many_to_one)
+    qtrly.qtr = ownership_titles.own_code  (many_to_one)
+    qtrly.qtr = size_titles.size_code  (many_to_one)
+    qtrly.size_code = ownership_titles.own_code  (many_to_one)
+
+$ fact probe generate --root examples/qcew
+47 probes, 0 written, 4 facts skipped
+  skipped area_titles.in-msa: target sets and unresolved links get no probe in v1
+  skipped area_titles.in-csa: target sets and unresolved links get no probe in v1
+  skipped area_titles.in-nation: target sets and unresolved links get no probe in v1
+  skipped industry_titles.to-supersector: target sets and unresolved links get no probe in v1
+
+$ fact probe run --root examples/qcew --source qcew-duckdb-real --environment local --data-quality representative --date 2026-11-28
+49 probes run, 0 failed: probes/results/qcew-duckdb-real@2026-11-28.jsonl
+
+$ fact probe intake --root examples/qcew examples/qcew/probes/results/qcew-duckdb-real@2026-11-28.jsonl
+47 in range, 2 out of range, 0 failed, 0 rejected; 0 files written
+
+$ fact project --root examples/qcew
+generated/ is up to date
+
+$ fact check --root examples/qcew
+PASS  yaml
+PASS  schema
+PASS  references
+PASS  evidence
+PASS  derived-not-authored
+PASS  projection
+PASS  scope
+PASS  layers
+PASS  registers
+PASS  triggers
+PASS  generated-fresh
+PASS  privacy
+gate: pass
+
+$ fact equivalence run --root examples/qcew --layer employment-wages --date 2026-11-28
+employment-wages: 36 pass, 0 fail, 2 error of 38
+share 1.000, threshold 0.9: proven
+
+$ cp examples/qcew/generated/equivalence-employment-wages.md examples/qcew/equivalence/qcew-duckdb-real@2026-11-28.md
+
+$ cp examples/qcew/equivalence/last-run.json examples/qcew/equivalence/qcew-duckdb-real@2026-11-28.json
+
+$ python3 examples/qcew/scripts/measure.py --write
+wrote measurements/annual-average-rollup-differences.txt
+wrote measurements/area-kind-disagreements.txt
+wrote measurements/area-kind-two-ways.txt
+wrote measurements/area-titles-duplicates.txt
+wrote measurements/avg-weekly-wage-average-of-rows.txt
+wrote measurements/avg-weekly-wage-formula.txt
+wrote measurements/cardinality-area-titles.txt
+wrote measurements/crosswalk-c3798.txt
+wrote measurements/crosswalk-coverage.txt
+wrote measurements/grain-by-level.txt
+wrote measurements/grain-mixed-level.txt
+wrote measurements/grain-mixed-level-maryland.txt
+wrote measurements/industry-code-shapes.txt
+wrote measurements/industry-level-by-length.txt
+wrote measurements/industry-level-disagreements.txt
+wrote measurements/industry-level-three-ways.txt
+wrote measurements/industry-level-two-ways.txt
+wrote measurements/key-documented.txt
+wrote measurements/msa-double-count.txt
+wrote measurements/msa-from-counties.txt
+wrote measurements/padding-by-quarter.txt
+wrote measurements/parent-child-examples.txt
+wrote measurements/parent-child-gaps.txt
+wrote measurements/parent-child-gaps-by-year.txt
+wrote measurements/prior-year-orphans.txt
+wrote measurements/prior-year-split.txt
+wrote measurements/rollup-county-state.txt
+wrote measurements/rollup-county-state-rows.txt
+wrote measurements/rollup-naics-parent.txt
+wrote measurements/rollup-naics-parent-rows.txt
+wrote measurements/row-counts.txt
+wrote measurements/suppressed-zero.txt
+wrote measurements/suppression-by-geography.txt
+wrote measurements/suppression-by-level.txt
+wrote measurements/two-ways-summary.txt
+wrote measurements/withheld-by-ownership-year.txt
+wrote measurements/withheld-by-quarter.txt
+wrote measurements/withheld-by-state-year.txt
+
+$ python3 examples/qcew/scripts/measurement_evidence.py
+19 records
+
+$ fact equivalence run --root examples/qcew --layer employment-wages --source qcew-sqlite --date 2026-11-22
+employment-wages: 36 pass, 0 fail, 2 error of 38
+share 1.000, threshold 0.9: proven
+
+reproduce: 57 s in all

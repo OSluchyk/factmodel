@@ -105,7 +105,7 @@ def test_wheel_runs_the_chinook_loop_without_the_source_tree(
         ).stdout.strip()
     )
     text = "\n".join(log)
-    assert log[0].startswith("fact 0.2.0 (schemas ")
+    assert log[0].startswith("fact 0.3.0 (schemas ")
     assert "gate: pass" in log[1]
     assert "customer-purchases: 31 pass, 0 fail, 0 error of 31" in text
     assert "proven" in text and "release 0.1.0:" in text

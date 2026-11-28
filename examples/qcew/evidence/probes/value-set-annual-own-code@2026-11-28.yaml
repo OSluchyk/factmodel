@@ -1,0 +1,14 @@
+kind: evidence
+records:
+- id: ev-value-set-annual-own-code-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    distinct_values: 7
+    outside_values: 0
+    outside_rows: 0
+  status: confirmed
+  read_on: '2026-11-28'
+  probe: value-set-annual-own-code
+  environment: local
+  data_quality: representative

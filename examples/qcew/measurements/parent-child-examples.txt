@@ -1,0 +1,8 @@
+area_fips | industry_title                                            | published_parent | sum_disclosed_children |   gap | gap_pct | children | withheld_children
+----------+-----------------------------------------------------------+------------------+------------------------+-------+---------+----------+------------------
+10000     | NAICS 62 Health care and social assistance                |            81306 |                  69379 | 11927 |    14.7 |        4 |                 2
+10000     | NAICS 72 Accommodation and food services                  |            40458 |                  28288 | 12170 |    30.1 |        4 |                 2
+10000     | NAICS 31-33 Manufacturing                                 |            26595 |                  11502 | 15093 |    56.8 |        4 |                 3
+24000     | NAICS 62 Health care and social assistance                |           413009 |                 409057 |  3952 |       1 |       25 |                 4
+24000     | NAICS 54 Professional, scientific, and technical services |           276138 |                 275326 |   812 |     0.3 |       25 |                 4
+24000     | NAICS 72 Accommodation and food services                  |           217241 |                 214979 |  2262 |       1 |       25 |                 4

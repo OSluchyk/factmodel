@@ -1,8 +1,8 @@
 kind: model-config
 id: qcew
 framework_version: 0.0.1
-schema_version: 2.3.0
+schema_version: 2.4.0
 profile: statistics
-# QCEW is modelled on a synthetic seed of its two data tables (the code lists are the real BLS
-# files, D-016): probe results on the seed stand in for real data, as in Chinook (D-014).
-treat_synthetic_as_representative: true
+# The data tables hold the published BLS rows (source qcew-duckdb-real), so only results on
+# them confirm a fact (D-014). Results on the seeded test fixtures are kept as inferred evidence.
+treat_synthetic_as_representative: false

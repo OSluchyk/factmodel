@@ -88,6 +88,11 @@ Schema version 0.1.0 covers the specification as first written and every change 
 | 2.3.0 | Gate stage `layers`: `unknown_untested` for every layer; for a reviewed layer `no_coverage`, `missing_reason` and `stale_untested` (D-021 rule 3 extended) | contract (a gate rule; what `status: reviewed` requires) | D-023 | Chinook, QCEW |
 | 2.3.0 | `fact migrate` names reviewed layers whose accepted run holds no coverage | implementation | D-023 | none |
 | 2.3.0 | Framework version 0.2.0 | version | - | none |
+| 2.3.0 | `fact propose keys --key <table>:<column>,...`: a named column list measured for uniqueness (row count, duplicate rows) into `named` in `drafts/<source>/keys.yaml`; `fact propose joins` names targets that are not unique (`skipped target`, `targets_not_unique` in `joins.yaml`); `spec/ALGORITHMS.md` section 4 | additive (an optional flag; optional keys in files under `drafts/`, which the gate never reads) | D-024 | QCEW |
+| 2.4.0 | Schemas 2.4.0 | version | D-018 (additive) | QCEW |
+| 2.4.0 | `expected` on a relationship (`orphans_left`, `reason`) and on `keys` (`duplicate_keys`, `reason`); `fact probe generate` writes the number as the probe's `max` instead of 0 | additive (optional keys; without them every probe is as before) | D-025 | QCEW |
+| 2.4.0 | `first_period` on a relationship: for a self-reference, the probe generator leaves out the source rows of the first period, read from the data | additive (an optional key; the join grammar of D-017 is unchanged) | D-026 | QCEW |
+| 2.4.0 | Framework version 0.3.0 | version | - | none |
 
 ## Defect fixes (D-018: CHANGELOG entry only)
 

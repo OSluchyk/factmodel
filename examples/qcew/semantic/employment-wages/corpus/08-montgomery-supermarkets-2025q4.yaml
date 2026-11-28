@@ -8,3 +8,4 @@ request:
   qtr: '4'
 reference: WITH sel AS (SELECT * FROM qtrly WHERE area_fips = '24031' AND industry_code = '445110' AND own_code = '5' AND year = '2025' AND qtr = '4' AND agglvl_code = '78') SELECT SUM(CASE WHEN disclosure_code IS NULL THEN month3_emplvl END) AS value, SUM(CASE WHEN disclosure_code = 'N' THEN 1 ELSE 0 END) AS suppressed_cells FROM sel
 mode: same_rows
+note: "Published BLS row: slice 2025/4/area/24031.csv, own_code 5, industry_code 445110, agglvl_code 78, disclosure_code blank; month3_emplvl 10295."

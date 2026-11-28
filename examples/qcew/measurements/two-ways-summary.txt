@@ -1,0 +1,5 @@
+n | reading                                 | row_count |  agree | disagree
+--+-----------------------------------------+-----------+--------+---------
+1 | industry level: shape of industry_code  |    486100 | 486068 |       32
+2 | industry level: length of industry_code |    486100 | 474756 |    11344
+3 | kind of area: shape of area_fips        |    486100 | 486028 |       72

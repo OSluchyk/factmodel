@@ -75,11 +75,11 @@ Elements of the layer that the reference SQL of the corpus items uses. Weak matc
 | join qtrly.to-area | 4 | 4 | 0 | 4 |
 | join qtrly.to-industry | 0 | 0 | 0 | 0 |
 | join annual.to-area | 0 | 0 | 0 | 0 |
-| concept disclosed (as written) | 31 | 30 |  |  |
+| concept disclosed (as written) | 32 | 30 |  |  |
 | concept disclosed_annual (as written) | 3 | 3 |  |  |
 | concept suppressed (as written) | 30 | 30 |  |  |
 | concept suppressed_annual (as written) | 3 | 3 |  |  |
-| concept level | 33 | 33 |  |  |
+| concept level | 35 | 33 |  |  |
 | concept level_annual | 3 | 3 |  |  |
 | concept ownership | 35 | 33 |  |  |
 | concept area_kind_county (as written) | 0 | 0 |  |  |
@@ -92,7 +92,7 @@ Elements of the layer that the reference SQL of the corpus items uses. Weak matc
 | measure (weak) avg_weekly_wage | 2 | 2 |  |  |
 | measure (weak) establishments | 3 | 3 |  |  |
 | measure (weak) oty_employment_change | 2 | 2 |  |  |
-| measure (weak) suppressed_cells | 31 | 30 |  |  |
+| measure (weak) suppressed_cells | 32 | 30 |  |  |
 | measure (weak) annual_employment | 3 | 3 |  |  |
 | measure (weak) suppressed_cells_annual | 3 | 3 |  |  |
 

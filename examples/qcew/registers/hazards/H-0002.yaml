@@ -3,11 +3,16 @@ id: H-0002
 title: avg_wkly_wage has a documented formula over unrounded values
 status: active
 description: >-
-  avg_wkly_wage is quarterly total wages divided by the mean of the three monthly employment
-  levels, divided by 13, computed from unrounded values (profile.md M1, Q26). Recomputing it from
-  rounded published fields, or averaging it across rows, gives a different number. A semantic
-  layer must define the measure by the formula, not as an average of the field.
+  avg_wkly_wage is quarterly total wages divided by the mean of the three monthly employment levels,
+  divided by 13 (profile.md M1, Q26). The published rows follow the formula: recomputed from the published
+  fields it gives the published value on 206,810 of 206,811 disclosed rows and misses by 1 on one
+  (measurements/avg-weekly-wage-formula.txt), so rounding of the inputs hardly matters here. Averaging
+  the field across rows does: for private employment in Maryland in 2025 Q1 the state row says 1,586,
+  the formula over the summed county rows gives 1,586, and the plain average of the 25 county values
+  is 1,274 (measurements/avg-weekly-wage-average-of-rows.txt). A semantic layer must define the measure
+  by the formula, not as an average of the field.
 applies_to:
 - qtrly
 evidence:
 - ev-doc-m1
+- ev-measure-wage-formula-2026-11-28

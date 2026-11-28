@@ -1,7 +1,7 @@
 kind: entity
 id: area_titles
 physical_name: area_titles
-source: qcew-sqlite
+source: qcew-duckdb-real
 grain: One row per line of the BLS area title file; the file repeats most codes (F-0001).
 class: reference
 status: draft
@@ -14,13 +14,14 @@ evidence:
 - ev-area_titles-catalog
 - ev-doc-title-files
 - ev-row-count-area-titles-2026-10-27
+- ev-row-count-area-titles-2026-11-28
 fields:
 - name: area_fips
-  type: TEXT
+  type: VARCHAR
   nullable: true
   meaning: Area code (see annual.area_fips).
 - name: area_title
-  type: TEXT
+  type: VARCHAR
   nullable: true
   meaning: Area name.
 relationships:
@@ -35,6 +36,9 @@ relationships:
   - ev-join-match-area-titles-in-state-2026-10-27
   - ev-rollup-annual-employment-area-titles-in-state-2026-10-27
   - ev-rollup-employment-month3-area-titles-in-state-2026-10-27
+  - ev-join-match-area-titles-in-state-2026-11-28
+  - ev-rollup-annual-employment-area-titles-in-state-2026-11-28
+  - ev-rollup-employment-month3-area-titles-in-state-2026-11-28
 - key: in-msa
   to: area_titles
   meaning: 'A county to its MSA or MicroSA. Geography is a lattice, not a tree (H1): this link is separate from the county to state link, and an MSA crosses state lines.'
@@ -65,8 +69,8 @@ relationships:
   - ev-doc-h2
 records:
 - id: ev-area_titles-catalog
-  source: qcew-sqlite
-  pin: sqlite:qcew@2026-10-27
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
   quote: table area_titles in qcew
   status: confirmed
-  read_on: '2026-10-27'
+  read_on: '2026-11-28'

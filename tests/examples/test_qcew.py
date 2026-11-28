@@ -1,5 +1,10 @@
 """The QCEW example: a domain without a subject (D-015), join expressions (D-017) and BLS code
-lists as fixtures (D-016), on SQLite, PostgreSQL and DuckDB."""
+lists as fixtures (D-016), on SQLite, PostgreSQL and DuckDB.
+
+The model is bound to the published BLS rows (source qcew-duckdb-real); these tests run on the
+seeded fixtures, so CI never downloads from BLS. ``RESULTS`` is the seeded SQLite run, the
+counts every seeded engine must reproduce. tests/examples/test_qcew_real.py covers the
+published rows."""
 
 import hashlib
 import importlib.util
@@ -48,9 +53,18 @@ def _committed(source: str) -> Snapshot:
     )
 
 
+# The prior-year joins changed on 2026-11-28: they compare rows with a blank
+# oty_disclosure_code and leave out the first year. The seeded run of 2026-10-27 measured the
+# earlier joins, so for these two probes the seeded counts are the ones below.
+SEEDED_SINCE = {
+    "join-match-annual-prior-year": {"source_rows": 138, "orphans_left": 0, "orphans_right": 144},
+    "join-match-qtrly-prior-year": {"source_rows": 556, "orphans_left": 0, "orphans_right": 580},
+}
+
+
 def _results() -> dict[str, Any]:
     rows = [json.loads(line) for line in RESULTS.read_text(encoding="utf-8").splitlines()]
-    return {r["probe"]: r["measurement"] for r in rows[1:]}
+    return {r["probe"]: r["measurement"] for r in rows[1:]} | SEEDED_SINCE
 
 
 def _queries(dialect: str) -> list[tuple[str, str]]:
@@ -85,17 +99,27 @@ def test_expected_shape() -> None:
         assert labels[ref] == "unresolved"
 
 
-def test_nine_findings_and_two_hazards_have_evidence() -> None:
+def test_eleven_findings_and_two_hazards_have_evidence() -> None:
     model = load_model(QCEW)
-    assert sorted(model.findings) == [f"F-{n:04d}" for n in range(1, 10)]
+    assert sorted(model.findings) == [f"F-{n:04d}" for n in range(1, 12)]
     for finding in model.findings.values():
         assert finding.evidence, finding.id
         assert all(ref in model.evidence for ref in finding.evidence), finding.id
     probe_backed = {
         f.id for f in model.findings.values() if any(model.evidence[e].probe for e in f.evidence)
     }
-    # R1 key_duplicates, V1 value_set, V2 null_rate, G2 value_set, H5 rollup, V3 join_match
-    assert probe_backed == {"F-0001", "F-0002", "F-0003", "F-0006", "F-0007", "F-0008"}
+    # R1 key_duplicates, V1 value_set, V2 null_rate, G2 value_set, H5 rollup, V3 join_match,
+    # and the two prior-year join_match probes that are out of range on the published rows
+    assert probe_backed == {
+        "F-0001",
+        "F-0002",
+        "F-0003",
+        "F-0006",
+        "F-0007",
+        "F-0008",
+        "F-0010",
+        "F-0011",
+    }
     assert sorted(model.hazards) == ["H-0001", "H-0002"]
     assert all(h.evidence for h in model.hazards.values())
 
@@ -155,7 +179,7 @@ def test_sqlite_snapshot_and_probes_reproduce(tmp_path: Path) -> None:
 
 def test_generated_probes_are_committed_unchanged() -> None:
     model = load_model(QCEW)
-    dialects = {"qcew-sqlite": "sqlite"}
+    dialects = {"qcew-duckdb-real": "duckdb"}
     docs, _ = generate(model.entities, model.sources, dialects, layers=model.layers)
     for doc in docs:
         path = QCEW / "probes" / f"{doc['id']}.yaml"

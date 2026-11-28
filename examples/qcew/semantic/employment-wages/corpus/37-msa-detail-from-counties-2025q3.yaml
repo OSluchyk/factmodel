@@ -3,11 +3,12 @@ request:
   measure: employment_month3
   areas:
     kind: msa
-    msa: C3798
+    msa: C1258
   industry: '10'
   ownership: '5'
   year: '2025'
   qtr: '3'
-reference: SELECT SUM(CASE WHEN disclosure_code IS NULL THEN month3_emplvl END) AS value FROM qtrly WHERE area_fips IN ('10003', '24015') AND industry_code = '10' AND own_code = '5' AND year = '2025' AND qtr = '3'
+reference: SELECT SUM(CASE WHEN disclosure_code IS NULL THEN month3_emplvl END) AS value FROM qtrly WHERE area_fips IN ('24003', '24005', '24013', '24025', '24027', '24035', '24510') AND industry_code = '10' AND own_code = '5' AND year = '2025' AND qtr = '3' AND agglvl_code = '71'
 mode: same_rows
+note: "Published BLS rows: the seven county slices of Baltimore-Columbia-Towson, MD (C1258) by the BLS County-MSA-CSA crosswalk (ev-doc-crosswalk-baltimore), 2025/3/area/24003.csv, 24005, 24013, 24025, 24027, 24035 and 24510, own_code 5, industry_code 10, agglvl_code 71; none withheld, month3_emplvl summing to 1116468. The same sum equals the published MSA row in 2025 Q1 (1109757) and Q2 (1130287); from 2025 Q3 the MSA's private row is padding (measurements/msa-from-counties.txt)."
 known_gap: MSA detail after 2025 Q2 must be built from counties with the BLS County-MSA-CSA crosswalk, which the model does not hold (F-0009, area_titles.in-msa unresolved).

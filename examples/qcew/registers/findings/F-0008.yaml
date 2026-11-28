@@ -8,16 +8,25 @@ about:
 - qtrly.to-industry
 - industry_titles.parent
 description: >-
-  Code length does not give the level (profile.md V3, Q20). join_match on the prefix hierarchy
-  over the committed industry list found 53 codes with no parent one character shorter: the
-  sector ranges 31-33, 44-45 and 48-49, and the 50 three-digit codes under them. The level is
-  given by the second digit of agglvl_code, recorded as the discriminator of annual.to-industry
-  and qtrly.to-industry (a single-target discriminator, allowed since schemas 1.0.0). Open until
-  the semantic layer joins on (agglvl_code, industry_code).
+  Code length does not give the level (profile.md V3, Q20). join_match on the prefix hierarchy over
+  the committed industry list found 53 codes with no parent one character shorter: the sector ranges
+  31-33, 44-45 and 48-49, and the 50 three-digit codes under them. The relationship states that count
+  as its bound, with the reason (D-025): its probe is in range at 53 and out of range at 54. The published
+  rows use 2,159 industry codes; 18 are not NAICS codes (the total 10, the domains 101 and 102, 12
+  supersectors and the 3 sector ranges), and 44 have no prefix parent (measurements/industry-code-shapes.txt).
+  Reading the level from the length of the code alone misreads 11,344 of the 486,100 quarterly rows,
+  among them every row of those 18 codes (measurements/two-ways-summary.txt, measurements/industry-level-by-length.txt).
+  A rule that knows the shapes agrees with the second digit of agglvl_code on 486,068 rows; the other
+  32 are the special totals at levels 94, 95 and 96 (measurements/industry-level-two-ways.txt). The
+  level is given by the second digit of agglvl_code, recorded as the discriminator of annual.to-industry
+  and qtrly.to-industry (a single-target discriminator, allowed since schemas 1.0.0). Open until the
+  semantic layer joins on (agglvl_code, industry_code).
 evidence:
 - ev-join-match-industry-titles-parent-2026-10-27
 - ev-doc-v3
 - ev-doc-industry-field
+- ev-join-match-industry-titles-parent-2026-11-28
+- ev-measure-industry-codes-2026-11-28
 extensions:
   probe: join-match-industry-titles-parent
   discriminator: agglvl_code

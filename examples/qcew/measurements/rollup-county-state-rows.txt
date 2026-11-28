@@ -1,0 +1,7 @@
+area_fips | area_title                     | agglvl_code | disclosure_code | month3_emplvl
+----------+--------------------------------+-------------+-----------------+--------------
+10000     | Delaware -- Statewide          | 54          |                 |         81306
+10001     | Kent County, Delaware          | 74          | N               |             0
+10003     | New Castle County, Delaware    | 74          |                 |         54098
+10005     | Sussex County, Delaware        | 74          |                 |         15281
+10999     | Unknown Or Undefined, Delaware | 74          | N               |             0

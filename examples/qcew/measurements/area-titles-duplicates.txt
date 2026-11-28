@@ -1,0 +1,3 @@
+row_count | distinct_codes | codes_twice | codes_more_than_twice | codes_with_two_titles | header_rows
+----------+----------------+-------------+-----------------------+-----------------------+------------
+     9458 |           4809 |        4649 |                     0 |                     0 |           1

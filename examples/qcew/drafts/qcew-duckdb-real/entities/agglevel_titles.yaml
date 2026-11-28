@@ -1,0 +1,35 @@
+kind: entity
+id: agglevel_titles
+physical_name: agglevel_titles
+source: qcew-duckdb-real
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary: []
+evidence:
+- ev-agglevel_titles-catalog
+fields:
+- name: agglvl_code
+  type: VARCHAR
+  nullable: true
+  meaning: Not written yet.
+- name: agglvl_title
+  type: VARCHAR
+  nullable: true
+  meaning: Not written yet.
+records:
+- id: ev-agglevel_titles-catalog
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  quote: table agglevel_titles in qcew
+  status: confirmed
+  read_on: '2026-11-28'
+extensions:
+  draft:
+    from: duckdb:qcew@2026-11-28
+    placeholders:
+    - grain
+    - class
+    - fields.agglvl_code.meaning
+    - fields.agglvl_title.meaning

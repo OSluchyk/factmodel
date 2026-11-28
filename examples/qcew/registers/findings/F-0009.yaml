@@ -8,11 +8,29 @@ about:
 - area_titles.in-csa
 - area_titles.in-nation
 description: >-
-  A county rolls up to its state and, separately, to an MSA or MicroSA and a CSA; MSAs cross
-  state lines (profile.md H1, Q24, Q34). US000 excludes PR and VI while state and county rows
-  include them, and USMSA and USCMS exclude PR (H2, Q11). The area codes encode only the county
-  to state link (area_titles.in-state). The other links stay unresolved until the BLS
-  County-MSA-CSA crosswalk and the coverage of each national code are in the model.
+  A county rolls up to its state and, separately, to an MSA or MicroSA and a CSA; MSAs cross state
+  lines (profile.md H1, Q24, Q34). Philadelphia-Camden-Wilmington (C3798) holds eleven counties in
+  four states by the BLS crosswalk: one in Delaware, one in Maryland, four in New Jersey and five
+  in Pennsylvania. On the published rows, total covered employment in March 2025 is 474,808 for Delaware,
+  2,747,673 for Maryland and 2,879,878 for the MSA row. Of the MSA row, New Castle County is 304,770
+  and Cecil County 36,829; the nine counties in Pennsylvania and New Jersey are the other 2,538,279.
+  Someone who adds the Delaware row, the Maryland row and the MSA row gets 6,102,359. The double count
+  in that sum is New Castle plus Cecil, 341,599: the two counties that are in a state row and in the
+  MSA row. The other 2,538,279 is counted once, but it lies in neither state, so the sum is also a
+  sum over another territory (measurements/msa-double-count.txt). Where an MSA lies in one state the
+  county rows rebuild it: the seven counties of Baltimore-Columbia-Towson sum to the published MSA
+  row in 2025 Q1 and Q2 (measurements/msa-from-counties.txt). The shape of the area code tells neither
+  an MSA from a MicroSA nor a special total from its area: 72 quarterly rows read differently from
+  area_fips and from agglvl_code (measurements/area-kind-two-ways.txt). US000 excludes PR and VI while
+  state and county rows include them, and USMSA and USCMS exclude PR (H2, Q11); the slices here hold
+  neither territory, so this part rests on the profiling notes. The area codes encode only the county
+  to state link (area_titles.in-state). The other links stay unresolved until the BLS County-MSA-CSA
+  crosswalk and the coverage of each national code are in the model.
 evidence:
 - ev-doc-h1
 - ev-doc-h2
+- ev-doc-crosswalk
+- ev-doc-crosswalk-baltimore
+- ev-measure-msa-double-count-2026-11-28
+- ev-measure-msa-from-counties-2026-11-28
+- ev-measure-area-kind-2026-11-28

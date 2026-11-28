@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:factmodel:schema:layer:2.3.0",
+  "$id": "urn:factmodel:schema:layer:2.4.0",
   "title": "Semantic layer",
   "description": "A named set of concepts and measures for one use case, built only on physical facts by ID (D-019). semantic/<layer-id>/layer.yaml.",
   "type": "object",

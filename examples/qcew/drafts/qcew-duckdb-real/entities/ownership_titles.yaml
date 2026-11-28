@@ -1,0 +1,35 @@
+kind: entity
+id: ownership_titles
+physical_name: ownership_titles
+source: qcew-duckdb-real
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary: []
+evidence:
+- ev-ownership_titles-catalog
+fields:
+- name: own_code
+  type: VARCHAR
+  nullable: true
+  meaning: Not written yet.
+- name: own_title
+  type: VARCHAR
+  nullable: true
+  meaning: Not written yet.
+records:
+- id: ev-ownership_titles-catalog
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  quote: table ownership_titles in qcew
+  status: confirmed
+  read_on: '2026-11-28'
+extensions:
+  draft:
+    from: duckdb:qcew@2026-11-28
+    placeholders:
+    - grain
+    - class
+    - fields.own_code.meaning
+    - fields.own_title.meaning

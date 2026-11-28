@@ -1,7 +1,7 @@
 kind: entity
 id: annual
 physical_name: annual
-source: qcew-sqlite
+source: qcew-duckdb-real
 grain: One row per area, ownership, industry, size class and year (qtr is A).
 class: data
 status: draft
@@ -21,13 +21,15 @@ evidence:
 - ev-doc-keys-unique
 - ev-key-duplicates-annual-2026-10-27
 - ev-row-count-annual-2026-10-27
+- ev-key-duplicates-annual-2026-11-28
+- ev-row-count-annual-2026-11-28
 fields:
 - name: area_fips
-  type: TEXT
+  type: VARCHAR
   nullable: false
   meaning: 'Area code: a county (state FIPS + county FIPS), a state (state FIPS + 000), an MSA, CSA or MicroSA (C, CS), or a national code (US).'
 - name: own_code
-  type: TEXT
+  type: VARCHAR
   nullable: false
   meaning: Ownership code (0 total covered, 1 federal, 2 state, 3 local government, 5 private, 8 and 9 overlapping totals).
   values:
@@ -42,31 +44,32 @@ fields:
   evidence:
   - ev-doc-own4
   - ev-value-set-annual-own-code-2026-10-27
+  - ev-value-set-annual-own-code-2026-11-28
 - name: industry_code
-  type: TEXT
+  type: VARCHAR
   nullable: false
   meaning: 'Industry code: NAICS 2 to 6 digits, a sector range such as 31-33, a BLS domain (101, 102), supersector (1011 to 1029) or the total 10.'
 - name: agglvl_code
-  type: TEXT
+  type: VARCHAR
   nullable: false
   meaning: 'Aggregation level: first digit geography, second digit industry and ownership level (A4); derived from the key, not part of it.'
   evidence:
   - ev-doc-grain
   - ev-doc-agglvl
 - name: size_code
-  type: TEXT
+  type: VARCHAR
   nullable: false
   meaning: Establishment size class; always 0 (all sizes) in the singlefiles.
 - name: year
-  type: TEXT
+  type: VARCHAR
   nullable: false
   meaning: Reference year.
 - name: qtr
-  type: TEXT
+  type: VARCHAR
   nullable: false
   meaning: Quarter 1 to 4, or A for an annual row.
 - name: disclosure_code
-  type: TEXT
+  type: VARCHAR
   nullable: true
   meaning: Blank (NULL when loaded) when disclosed, N when not disclosed; the quarterly file also holds an undocumented '-' (F-0002).
   values:
@@ -74,8 +77,9 @@ fields:
   evidence:
   - ev-doc-disclosure
   - ev-value-set-annual-disclosure-code-2026-10-27
+  - ev-value-set-annual-disclosure-code-2026-11-28
 - name: annual_avg_estabs
-  type: INTEGER
+  type: BIGINT
   nullable: true
   meaning: Annual average of quarterly establishment counts (the layout page names it annual_avg_estabs_count, F-0004).
   evidence:
@@ -84,125 +88,126 @@ fields:
   hazards:
   - H-0001
 - name: annual_avg_emplvl
-  type: INTEGER
+  type: BIGINT
   nullable: true
   meaning: Annual average of monthly employment levels, rounded half to even.
   evidence:
   - ev-doc-annual-avg
   - ev-doc-suppressed-zero
   - ev-null-rate-annual-annual-avg-emplvl-2026-10-27
+  - ev-null-rate-annual-annual-avg-emplvl-2026-11-28
   hazards:
   - H-0001
 - name: total_annual_wages
-  type: INTEGER
+  type: BIGINT
   nullable: true
   meaning: Sum of the four quarterly total wages.
 - name: taxable_annual_wages
-  type: INTEGER
+  type: BIGINT
   nullable: true
   meaning: Sum of the four quarterly taxable wages.
 - name: annual_contributions
-  type: INTEGER
+  type: BIGINT
   nullable: true
   meaning: Sum of the four quarterly contributions.
 - name: annual_avg_wkly_wage
-  type: INTEGER
+  type: BIGINT
   nullable: true
   meaning: Average weekly wage from the 12 monthly employment levels and total annual wages.
 - name: avg_annual_pay
-  type: INTEGER
+  type: BIGINT
   nullable: true
   meaning: Average annual pay from employment and wage levels.
 - name: lq_disclosure_code
-  type: TEXT
+  type: VARCHAR
   nullable: true
   meaning: 'Disclosure code of the location quotients: blank or N; varies independently of disclosure_code.'
 - name: lq_annual_avg_estabs
-  type: REAL
+  type: DOUBLE
   nullable: true
   meaning: Location quotient of annual_avg_estabs relative to the U.S., rounded to hundredths.
 - name: lq_annual_avg_emplvl
-  type: REAL
+  type: DOUBLE
   nullable: true
   meaning: Location quotient of annual_avg_emplvl relative to the U.S., rounded to hundredths.
 - name: lq_total_annual_wages
-  type: REAL
+  type: DOUBLE
   nullable: true
   meaning: Location quotient of total_annual_wages relative to the U.S., rounded to hundredths.
 - name: lq_taxable_annual_wages
-  type: REAL
+  type: DOUBLE
   nullable: true
   meaning: Location quotient of taxable_annual_wages relative to the U.S., rounded to hundredths.
 - name: lq_annual_contributions
-  type: REAL
+  type: DOUBLE
   nullable: true
   meaning: Location quotient of annual_contributions relative to the U.S., rounded to hundredths.
 - name: lq_annual_avg_wkly_wage
-  type: REAL
+  type: DOUBLE
   nullable: true
   meaning: Location quotient of annual_avg_wkly_wage relative to the U.S., rounded to hundredths.
 - name: lq_avg_annual_pay
-  type: REAL
+  type: DOUBLE
   nullable: true
   meaning: Location quotient of avg_annual_pay relative to the U.S., rounded to hundredths.
 - name: oty_disclosure_code
-  type: TEXT
+  type: VARCHAR
   nullable: true
   meaning: 'Disclosure code of the over-the-year fields: blank or N; varies independently of disclosure_code.'
 - name: oty_annual_avg_estabs_chg
-  type: INTEGER
+  type: BIGINT
   nullable: true
   meaning: Over-the-year change in annual_avg_estabs.
 - name: oty_annual_avg_estabs_pct_chg
-  type: REAL
+  type: DOUBLE
   nullable: true
   meaning: Over-the-year percent change in annual_avg_estabs, rounded to tenths.
 - name: oty_annual_avg_emplvl_chg
-  type: INTEGER
+  type: BIGINT
   nullable: true
   meaning: Over-the-year change in annual_avg_emplvl.
 - name: oty_annual_avg_emplvl_pct_chg
-  type: REAL
+  type: DOUBLE
   nullable: true
   meaning: Over-the-year percent change in annual_avg_emplvl, rounded to tenths.
 - name: oty_total_annual_wages_chg
-  type: INTEGER
+  type: BIGINT
   nullable: true
   meaning: Over-the-year change in total_annual_wages.
 - name: oty_total_annual_wages_pct_chg
-  type: REAL
+  type: DOUBLE
   nullable: true
   meaning: Over-the-year percent change in total_annual_wages, rounded to tenths.
 - name: oty_taxable_annual_wages_chg
-  type: INTEGER
+  type: BIGINT
   nullable: true
   meaning: Over-the-year change in taxable_annual_wages.
 - name: oty_taxable_annual_wages_pct_chg
-  type: REAL
+  type: DOUBLE
   nullable: true
   meaning: Over-the-year percent change in taxable_annual_wages, rounded to tenths.
 - name: oty_annual_contributions_chg
-  type: INTEGER
+  type: BIGINT
   nullable: true
   meaning: Over-the-year change in annual_contributions.
 - name: oty_annual_contributions_pct_chg
-  type: REAL
+  type: DOUBLE
   nullable: true
   meaning: Over-the-year percent change in annual_contributions, rounded to tenths.
 - name: oty_annual_avg_wkly_wage_chg
-  type: INTEGER
+  type: BIGINT
   nullable: true
   meaning: Over-the-year change in annual_avg_wkly_wage.
 - name: oty_annual_avg_wkly_wage_pct_chg
-  type: REAL
+  type: DOUBLE
   nullable: true
   meaning: Over-the-year percent change in annual_avg_wkly_wage, rounded to tenths.
 - name: oty_avg_annual_pay_chg
-  type: INTEGER
+  type: BIGINT
   nullable: true
   meaning: Over-the-year change in avg_annual_pay.
 - name: oty_avg_annual_pay_pct_chg
-  type: REAL
+  type: DOUBLE
   nullable: true
   meaning: Over-the-year percent change in avg_annual_pay, rounded to tenths.
 relationships:
@@ -216,6 +221,7 @@ relationships:
   - ev-doc-area-codes
   - ev-doc-r1
   - ev-join-match-annual-to-area-2026-10-27
+  - ev-join-match-annual-to-area-2026-11-28
 - key: to-ownership
   to: ownership_titles
   join: annual.own_code = ownership_titles.own_code
@@ -226,6 +232,8 @@ relationships:
   - ev-doc-own4
   - ev-fan-out-annual-to-ownership-2026-10-27
   - ev-join-match-annual-to-ownership-2026-10-27
+  - ev-fan-out-annual-to-ownership-2026-11-28
+  - ev-join-match-annual-to-ownership-2026-11-28
 - key: to-industry
   to: industry_titles
   discriminator: agglvl_code
@@ -238,6 +246,8 @@ relationships:
   - ev-doc-v3
   - ev-fan-out-annual-to-industry-2026-10-27
   - ev-join-match-annual-to-industry-2026-10-27
+  - ev-fan-out-annual-to-industry-2026-11-28
+  - ev-join-match-annual-to-industry-2026-11-28
 - key: to-agglevel
   to: agglevel_titles
   join: annual.agglvl_code = agglevel_titles.agglvl_code
@@ -248,6 +258,8 @@ relationships:
   - ev-doc-agglvl
   - ev-fan-out-annual-to-agglevel-2026-10-27
   - ev-join-match-annual-to-agglevel-2026-10-27
+  - ev-fan-out-annual-to-agglevel-2026-11-28
+  - ev-join-match-annual-to-agglevel-2026-11-28
 - key: to-size
   to: size_titles
   join: annual.size_code = size_titles.size_code
@@ -258,6 +270,8 @@ relationships:
   - ev-doc-size
   - ev-fan-out-annual-to-size-2026-10-27
   - ev-join-match-annual-to-size-2026-10-27
+  - ev-fan-out-annual-to-size-2026-11-28
+  - ev-join-match-annual-to-size-2026-11-28
 - key: to-quarters
   to: qtrly
   join: annual.area_fips = qtrly.area_fips AND annual.own_code = qtrly.own_code AND annual.industry_code = qtrly.industry_code AND annual.size_code = qtrly.size_code AND annual.year = qtrly.year
@@ -268,20 +282,24 @@ relationships:
   - ev-doc-annual-sum
   - ev-doc-annual-avg
   - ev-join-match-annual-to-quarters-2026-10-27
+  - ev-join-match-annual-to-quarters-2026-11-28
 - key: prior-year
   to: annual
-  join: annual.area_fips = annual.area_fips AND annual.own_code = annual.own_code AND annual.industry_code = annual.industry_code AND annual.size_code = annual.size_code AND CAST(annual.year AS INTEGER) - 1 = CAST(annual.year AS INTEGER) AND annual.oty_annual_avg_emplvl_chg IS NOT NULL
-  meaning: 'The over-the-year fields (oty_*) compare a row with the row of the same key one year earlier (D-017 self-reference: the left side is the current row). Rows without an over-the-year value are not compared; here that is 2024, whose prior year is not in the example.'
+  join: annual.area_fips = annual.area_fips AND annual.own_code = annual.own_code AND annual.industry_code = annual.industry_code AND annual.size_code = annual.size_code AND CAST(annual.year AS INTEGER) - 1 = CAST(annual.year AS INTEGER) AND annual.oty_disclosure_code IS NULL
+  meaning: 'The over-the-year fields (oty_*) compare a row with the row of the same key one year earlier (D-017 self-reference: the left side is the current row). Only rows that carry an over-the-year value are compared: those with a blank oty_disclosure_code. A row without one holds 0 and the code N, never NULL. Rows of the first year in the source are left out (first_period, D-026): their prior year is not loaded. The first year is read from the data, so loading an earlier year needs no edit here.'
+  first_period: year
   mechanism: derivation
   cardinality: many_to_one
   evidence:
   - ev-doc-oty
   - ev-fan-out-annual-prior-year-2026-10-27
   - ev-join-match-annual-prior-year-2026-10-27
+  - ev-fan-out-annual-prior-year-2026-11-28
+  - ev-join-match-annual-prior-year-2026-11-28
 records:
 - id: ev-annual-catalog
-  source: qcew-sqlite
-  pin: sqlite:qcew@2026-10-27
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
   quote: table annual in qcew
   status: confirmed
-  read_on: '2026-10-27'
+  read_on: '2026-11-28'

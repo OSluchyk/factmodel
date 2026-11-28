@@ -9,15 +9,19 @@ about:
 - qtrly.to-area
 - area_titles.in-state
 description: >-
-  key_duplicates on the committed area_titles.csv, loaded unchanged, measured 4,649 codes that
-  occur twice (profile.md R1, Q22: 9,458 rows, 4,809 distinct codes, identical titles). Reading
-  the committed file shows the shape: two lists one after the other, the second starting with
-  its own header line, which loads as one row whose code is the text area_fips. A plain join
-  to the list doubles fact rows, so the relationships to it are many_to_many as published. Open
-  until a semantic layer joins to distinct codes, or BLS answers which copy is meant (the
-  www.bls.gov copy has 4,649 rows, all distinct, profile.md A3).
+  key_duplicates on the committed area_titles.csv, loaded unchanged, measured 4,649 codes that occur
+  twice (9,458 rows, 4,809 distinct codes, identical titles; profile.md R1, Q22). The file is two
+  lists one after the other, the second starting with its own header line, which loads as one row
+  whose code is the text area_fips. On the published rows a plain join from qtrly to the list returns
+  972,200 rows for 486,100, exactly double, and a join to distinct codes returns 486,100 (measurements/cardinality-area-titles.txt).
+  So the relationships to the list are many_to_many as published, and fact propose joins does not
+  propose them, because the target column is not unique. Open until BLS answers which copy is meant
+  (the www.bls.gov copy has 4,649 rows, all distinct, profile.md A3); the employment-wages layer joins
+  to distinct codes.
 evidence:
 - ev-key-duplicates-area-titles-2026-10-27
 - ev-doc-r1
+- ev-key-duplicates-area-titles-2026-11-28
+- ev-measure-area-titles-join-2026-11-28
 extensions:
   probe: key-duplicates-area-titles

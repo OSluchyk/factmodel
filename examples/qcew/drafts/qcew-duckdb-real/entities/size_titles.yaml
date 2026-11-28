@@ -1,0 +1,35 @@
+kind: entity
+id: size_titles
+physical_name: size_titles
+source: qcew-duckdb-real
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary: []
+evidence:
+- ev-size_titles-catalog
+fields:
+- name: size_code
+  type: VARCHAR
+  nullable: true
+  meaning: Not written yet.
+- name: size_title
+  type: VARCHAR
+  nullable: true
+  meaning: Not written yet.
+records:
+- id: ev-size_titles-catalog
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  quote: table size_titles in qcew
+  status: confirmed
+  read_on: '2026-11-28'
+extensions:
+  draft:
+    from: duckdb:qcew@2026-11-28
+    placeholders:
+    - grain
+    - class
+    - fields.size_code.meaning
+    - fields.size_title.meaning

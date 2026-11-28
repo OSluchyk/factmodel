@@ -1,7 +1,7 @@
 kind: entity
 id: agglevel_titles
 physical_name: agglevel_titles
-source: qcew-sqlite
+source: qcew-duckdb-real
 grain: One row per aggregation level code.
 class: reference
 status: draft
@@ -15,19 +15,21 @@ evidence:
 - ev-doc-title-files
 - ev-key-duplicates-agglevel-titles-2026-10-27
 - ev-row-count-agglevel-titles-2026-10-27
+- ev-key-duplicates-agglevel-titles-2026-11-28
+- ev-row-count-agglevel-titles-2026-11-28
 fields:
 - name: agglvl_code
-  type: TEXT
+  type: VARCHAR
   nullable: true
   meaning: Aggregation level code.
 - name: agglvl_title
-  type: TEXT
+  type: VARCHAR
   nullable: true
   meaning: Aggregation level name.
 records:
 - id: ev-agglevel_titles-catalog
-  source: qcew-sqlite
-  pin: sqlite:qcew@2026-10-27
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
   quote: table agglevel_titles in qcew
   status: confirmed
-  read_on: '2026-10-27'
+  read_on: '2026-11-28'

@@ -1,0 +1,313 @@
+kind: evidence
+records:
+- id: ev-measure-area-titles-join-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    qtrly_rows: 486100
+    plain_join_rows: 972200
+    distinct_join_rows: 486100
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/cardinality-area-titles.sql; each output is the .txt file beside its query.'
+- id: ev-measure-suppressed-zero-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    n_rows: 250155
+    n_rows_employment_and_wages_zero: 250155
+    n_rows_establishments_filled: 250155
+    dash_rows: 27924
+    dash_rows_all_zero: 27924
+    rows_with_null: 0
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/suppressed-zero.sql; each output is the .txt file beside its query.'
+- id: ev-measure-key-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 486100
+    distinct_documented_keys: 486100
+    distinct_keys_without_size_code: 486100
+    distinct_keys_without_qtr: 121525
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/key-documented.sql; each output is the .txt file beside its query.'
+- id: ev-measure-padding-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 486100
+    dash_rows: 27924
+    rows_per_quarter_2024: 60663
+    rows_per_quarter_2025: 60862
+    msa_rows_2025q3: 11166
+    msa_dash_rows_2025q3: 11159
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/padding-by-quarter.sql; each output is the .txt file beside its query.'
+- id: ev-measure-rollup-county-state-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    published_parent: 81306
+    sum_disclosed_children: 69379
+    gap: 11927
+    children: 4
+    suppressed_children: 2
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/rollup-county-state.sql; each output is the .txt file beside its query.'
+- id: ev-measure-rollup-naics-parent-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    published_parent: 43773
+    sum_disclosed_children: 43675
+    gap: 98
+    children: 5
+    suppressed_children: 2
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/rollup-naics-parent.sql; each output is the .txt file beside its query.'
+- id: ev-measure-industry-codes-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    distinct_codes: 2159
+    codes_not_naics: 18
+    codes_without_prefix_parent: 44
+    row_count: 486100
+    level_from_shape_agree: 486068
+    level_from_shape_disagree: 32
+    level_from_length_agree: 474756
+    level_from_length_disagree: 11344
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/industry-code-shapes.sql and measurements/two-ways-summary.sql; each output is the .txt file beside its query.'
+- id: ev-measure-area-kind-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    agree_rows: 486028
+    disagree_rows: 72
+    microsa_rows_read_as_msa: 40
+    special_level_rows: 32
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/area-kind-two-ways.sql and measurements/two-ways-summary.sql; each output is the .txt file beside its query.'
+- id: ev-measure-msa-double-count-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    two_states: 3222481
+    two_states_and_msa: 6102359
+    counted_twice: 341599
+    from_outside_the_two_states: 2538279
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/msa-double-count.sql; each output is the .txt file beside its query.'
+- id: ev-measure-msa-from-counties-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    counties: 7
+    msa_row_2025q1: 1109757
+    sum_of_counties_2025q1: 1109757
+    msa_row_2025q2: 1130287
+    sum_of_counties_2025q2: 1130287
+    sum_of_counties_2025q3: 1116468
+    sum_of_counties_2025q4: 1125681
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/msa-from-counties.sql; each output is the .txt file beside its query.'
+- id: ev-measure-wage-formula-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 206811
+    equal: 206810
+    off_by_one: 1
+    off_by_more: 0
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/avg-weekly-wage-formula.sql; each output is the .txt file beside its query.'
+- id: ev-measure-prior-year-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    rows_2024_without_prior_year_row: 60663
+    rows_2025_without_prior_year_row: 1096
+    rows_2025_without_prior_year_row_oty_blank: 0
+    oty_change_null: 0
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/prior-year-orphans.sql; each output is the .txt file beside its query.'
+- id: ev-measure-annual-rollup-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    keys_compared: 1362
+    exact: 984
+    largest_difference: 3
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/annual-average-rollup-differences.sql; each output is the .txt file beside its query.'
+- id: ev-measure-prior-year-split-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    annual_2024_without_prior_row: 60663
+    annual_2024_without_prior_row_and_oty_value: 23713
+    annual_2024_with_oty_value: 23713
+    annual_2025_without_prior_row: 1096
+    annual_2025_without_prior_row_and_oty_value: 0
+    annual_2025_with_oty_value: 20993
+    qtrly_2024_without_prior_row: 242652
+    qtrly_2024_without_prior_row_and_oty_value: 96905
+    qtrly_2024_with_oty_value: 96905
+    qtrly_2025_without_prior_row: 4844
+    qtrly_2025_without_prior_row_and_oty_value: 0
+    qtrly_2025_with_oty_value: 92967
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/prior-year-split.sql; each output is the .txt file beside its query.'
+- id: ev-measure-parent-child-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    naics_parent_employment_parents: 130999
+    naics_parent_employment_exact: 101073
+    naics_parent_employment_mismatch_withheld_child: 29926
+    naics_parent_employment_mismatch_no_withheld_child: 0
+    naics_parent_wages_parents: 130999
+    naics_parent_wages_exact: 101061
+    naics_parent_wages_mismatch_withheld_child: 29938
+    naics_parent_wages_mismatch_no_withheld_child: 0
+    naics_parent_establishments_parents: 130999
+    naics_parent_establishments_exact: 130999
+    naics_parent_establishments_mismatch_withheld_child: 0
+    naics_parent_establishments_mismatch_no_withheld_child: 0
+    county_state_employment_parents: 27698
+    county_state_employment_exact: 5918
+    county_state_employment_mismatch_withheld_child: 21780
+    county_state_employment_mismatch_no_withheld_child: 0
+    county_state_wages_parents: 27698
+    county_state_wages_exact: 5913
+    county_state_wages_mismatch_withheld_child: 21785
+    county_state_wages_mismatch_no_withheld_child: 0
+    county_state_establishments_parents: 27698
+    county_state_establishments_exact: 27698
+    county_state_establishments_mismatch_withheld_child: 0
+    county_state_establishments_mismatch_no_withheld_child: 0
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/parent-child-gaps.sql; each output is the .txt file beside its query.'
+- id: ev-measure-industry-level-three-ways-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 486100
+    wrong_by_length: 11352
+    wrong_by_shape: 0
+    wrong_by_digit: 32
+    length_and_digit_differ: 11344
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/industry-level-three-ways.sql; each output is the .txt file beside its query.'
+- id: ev-measure-parent-child-by-year-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    naics_parent_2024_parents: 67393
+    naics_parent_2024_exact: 51651
+    naics_parent_2024_mismatch_withheld_child: 15742
+    naics_parent_2024_gap_pct_median: 97.3
+    naics_parent_2025_parents: 63606
+    naics_parent_2025_exact: 49422
+    naics_parent_2025_mismatch_withheld_child: 14184
+    naics_parent_2025_gap_pct_median: 96.9
+    county_state_2024_parents: 13985
+    county_state_2024_exact: 3064
+    county_state_2024_mismatch_withheld_child: 10921
+    county_state_2024_gap_pct_median: 34.9
+    county_state_2025_parents: 13713
+    county_state_2025_exact: 2854
+    county_state_2025_mismatch_withheld_child: 10859
+    county_state_2025_gap_pct_median: 43.1
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/parent-child-gaps-by-year.sql; each output is the .txt file beside its query.'
+- id: ev-measure-withheld-by-quarter-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    de_level_53_pct_2024q4: 19.4
+    de_level_53_pct_2025q1: 34.4
+    de_level_53_pct_2025q4: 28.1
+    de_level_73_pct_2024q4: 24.1
+    de_level_73_pct_2025q1: 48.9
+    de_level_73_pct_2025q4: 48.9
+    md_level_53_pct_2024q4: 22.5
+    md_level_53_pct_2025q1: 35.0
+    md_level_53_pct_2025q4: 24.4
+    md_level_73_pct_2024q4: 21.3
+    md_level_73_pct_2025q1: 31.2
+    md_level_73_pct_2025q4: 29.2
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/withheld-by-quarter.sql; each output is the .txt file beside its query.'
+- id: ev-measure-load-check-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    groups: 12
+    groups_equal: 12
+    raw_rows: 596466
+    loaded_rows: 596466
+    raw_withheld_rows: 312922
+    loaded_withheld_rows: 312922
+    raw_padding_rows: 27924
+    loaded_padding_rows: 27924
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/check_load.py: every slice under data/raw counted with the csv module, against the loaded tables; the output is measurements/load-check.txt.'

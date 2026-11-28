@@ -1,0 +1,12 @@
+kind: evidence
+records:
+- id: ev-row-count-area-titles-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 9458
+  status: confirmed
+  read_on: '2026-11-28'
+  probe: row-count-area-titles
+  environment: local
+  data_quality: representative

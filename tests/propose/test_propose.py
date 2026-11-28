@@ -61,13 +61,14 @@ def _rows(conn: sqlite3.Connection) -> None:
     )
 
 
-def _model(tmp_path: Path, monkeypatch: Any) -> Path:
+def _model(tmp_path: Path, monkeypatch: Any, extra: str = "") -> Path:
     root = tmp_path / "model"
     assert runner.invoke(app, ["init", str(root), "--profile", "statistics"]).exit_code == 0
     db = tmp_path / "shop.db"
     with sqlite3.connect(db) as conn:
         conn.executescript(DDL)
         _rows(conn)
+        conn.executescript(extra)
     monkeypatch.setenv("FACT_DSN_SHOP", f"sqlite:///{db}")
     doc = {
         "kind": "source",
@@ -219,3 +220,107 @@ def test_propose_needs_a_live_source(tmp_path: Path) -> None:
     assert runner.invoke(app, ["init", str(root), "--profile", "statistics"]).exit_code == 0
     done = runner.invoke(app, ["propose", "keys", "--root", str(root), "--source", "nothing"])
     assert done.exit_code == 1 and "not registered" in done.output
+
+
+def test_named_key_is_measured_whatever_its_length(tmp_path: Path, monkeypatch: Any) -> None:
+    root = _model(tmp_path, monkeypatch)
+    done = _propose(
+        root,
+        "keys",
+        "--key",
+        "item:i_nationkey,i_seq,i_rank",
+        "--key",
+        "orphan:o_nationkey",
+        "--key",
+        "item:i_note",
+    )
+    assert done.exit_code == 0, done.output
+    lines = done.output.splitlines()
+    assert (
+        "  named key item (i_nationkey, i_seq, i_rank): unique, 0 duplicate rows, 20 rows" in lines
+    )
+    assert "  named key orphan (o_nationkey): not unique, 4 duplicate rows, 10 rows" in lines
+    assert (
+        "  named key item (i_note): not unique, 10 duplicate rows, 20 rows, 5 rows with a null"
+        in lines
+    )
+    doc = load(root / "drafts" / "shop" / "keys.yaml").data
+    named = {(n["object"], tuple(n["fields"])): n for n in doc["named"]}
+    three = named[("item", ("i_nationkey", "i_seq", "i_rank"))]
+    assert three["unique"] is True and three["row_count"] == 20 and three["duplicate_rows"] == 0
+    assert named[("orphan", ("o_nationkey",))]["unique"] is False
+    record = next(r for r in doc["records"] if r["id"] == three["evidence"][0])
+    assert record["measurement"] == {
+        "row_count": 20,
+        "non_null": 20,
+        "null_count": 0,
+        "distinct": 20,
+        "duplicate_rows": 0,
+    }
+    assert record["status"] == "inferred"  # measured, still a proposal (D-024)
+    for r in doc["records"]:
+        EvidenceRecord.model_validate(r)
+    # the search is unchanged: a named key is never added to the candidates it found
+    assert _candidates(doc)["item"] == [["i_nationkey", "i_seq"]]
+    plain = _propose(root, "keys")
+    assert plain.exit_code == 0 and "named" not in load(root / "drafts" / "shop" / "keys.yaml").data
+
+
+def test_named_key_must_name_what_the_snapshot_holds(tmp_path: Path, monkeypatch: Any) -> None:
+    root = _model(tmp_path, monkeypatch)
+    for text, message in (
+        ("nowhere:a", "no table 'nowhere'"),
+        ("item:i_seq,missing", "item has no column missing"),
+        ("item", "write <table>:<column>"),
+        ("item:i_seq,i_seq", "named twice"),
+    ):
+        done = _propose(root, "keys", "--key", text)
+        assert done.exit_code == 2 and message in done.output, text
+
+
+def test_joins_name_the_target_that_is_not_unique(tmp_path: Path, monkeypatch: Any) -> None:
+    root = _model(tmp_path, monkeypatch)
+    done = _propose(root, "joins")
+    assert done.exit_code == 0, done.output
+    line = "  skipped target orphan.o_nationkey: not unique, 4 duplicate rows of 10; "
+    assert line + "no join to it is proposed" in done.output.splitlines()
+    doc = load(root / "drafts" / "shop" / "joins.yaml").data
+    assert doc["targets_not_unique"] == [
+        {
+            "object": "orphan",
+            "field": "o_nationkey",
+            "non_null": 10,
+            "distinct": 6,
+            "duplicate_rows": 4,
+        }
+    ]
+    # item has no unique column either, but none of its columns comes close to a key
+    assert doc["skipped"] == []
+
+
+STOCK = """
+CREATE TABLE stock (k_part INTEGER NOT NULL, k_supp INTEGER NOT NULL, k_note TEXT NOT NULL);
+INSERT INTO stock VALUES
+  (1, 1, 'a'), (1, 2, 'b'), (2, 1, 'c'), (2, 2, 'd'), (3, 1, 'e'), (3, 2, 'e');
+"""
+
+
+def test_joins_leave_alone_a_table_that_a_pair_can_reference(
+    tmp_path: Path, monkeypatch: Any
+) -> None:
+    """stock has no unique column, and k_note comes close to a key (5 values in 6 rows). The
+    pair (k_part, k_supp) is a key, so the table can be referenced and k_note is not named;
+    TPC-H's partsupp.ps_comment is such a column."""
+    root = _model(tmp_path, monkeypatch, STOCK)
+    assert _propose(root, "keys").exit_code == 0
+    keys = root / "drafts" / "shop" / "keys.yaml"
+    assert ["k_part", "k_supp"] in _candidates(load(keys).data)["stock"]
+    done = _propose(root, "joins")
+    assert done.exit_code == 0, done.output
+    assert "skipped target stock" not in done.output
+    doc = load(root / "drafts" / "shop" / "joins.yaml").data
+    assert [t["object"] for t in doc["targets_not_unique"]] == ["orphan"]
+    # without the key proposals no pair is known, and the column is named
+    keys.unlink()
+    line = "  skipped target stock.k_note: not unique, 1 duplicate rows of 6; "
+    assert line + "no join to it is proposed" in _propose(root, "joins").output.splitlines()

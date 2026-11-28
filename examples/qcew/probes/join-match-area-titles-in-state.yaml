@@ -7,7 +7,7 @@ fact: area_titles.in-state
 expected:
   orphans_left:
     max: 0
-dialect: sqlite
+dialect: duckdb
 sql: SELECT (SELECT COUNT(*) FROM "area_titles" AS "s" WHERE NOT "s"."area_fips"
   IS NULL AND SUBSTRING("s"."area_fips", 3, 3) <> '000' AND 
   SUBSTRING("s"."area_fips", 1, 1) <= '9') AS "source_rows", (SELECT COUNT(*) 

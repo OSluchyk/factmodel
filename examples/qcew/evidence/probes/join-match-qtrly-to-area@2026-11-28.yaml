@@ -1,0 +1,15 @@
+kind: evidence
+records:
+- id: ev-join-match-qtrly-to-area-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_rows: 486100
+    orphans_left: 0
+    orphans_right: 9370
+    match_rate: 1.0
+  status: confirmed
+  read_on: '2026-11-28'
+  probe: join-match-qtrly-to-area
+  environment: local
+  data_quality: representative

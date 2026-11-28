@@ -1,0 +1,7 @@
+year | prior             | oty_disclosure_code | row_count | oty_change_null
+-----+-------------------+---------------------+-----------+----------------
+2024 | no prior-year row | N                   |     36950 |               0
+2024 | no prior-year row | blank               |     23713 |               0
+2025 | no prior-year row | N                   |      1096 |               0
+2025 | prior-year row    | N                   |     27614 |               0
+2025 | prior-year row    | blank               |     20993 |               0

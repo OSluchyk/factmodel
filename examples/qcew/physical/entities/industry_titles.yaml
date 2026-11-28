@@ -1,7 +1,7 @@
 kind: entity
 id: industry_titles
 physical_name: industry_titles
-source: qcew-sqlite
+source: qcew-duckdb-real
 grain: 'One row per industry code: NAICS codes, sector ranges and BLS aggregates.'
 class: reference
 status: draft
@@ -15,13 +15,15 @@ evidence:
 - ev-doc-title-files
 - ev-key-duplicates-industry-titles-2026-10-27
 - ev-row-count-industry-titles-2026-10-27
+- ev-key-duplicates-industry-titles-2026-11-28
+- ev-row-count-industry-titles-2026-11-28
 fields:
 - name: industry_code
-  type: TEXT
+  type: VARCHAR
   nullable: true
   meaning: Industry code (see annual.industry_code).
 - name: industry_title
-  type: TEXT
+  type: VARCHAR
   nullable: true
   meaning: Industry name, with the code embedded in it.
 relationships:
@@ -29,6 +31,9 @@ relationships:
   to: industry_titles
   join: substr(industry_titles.industry_code, 1, length(industry_titles.industry_code) - 1) = industry_titles.industry_code AND length(industry_titles.industry_code) > 2
   meaning: 'A code to the code one character shorter (D-017): NAICS 6 to 5 to 4 to 3 digits, supersector to domain, domain to the total. Sector ranges and the 3-digit codes under them find no parent this way (F-0008).'
+  expected:
+    orphans_left: 53
+    reason: The three sector ranges 31-33, 44-45 and 48-49 and the 50 three-digit codes under them have no code one character shorter; the list is built that way (F-0008).
   mechanism: inferred_join
   cardinality: many_to_one
   evidence:
@@ -36,6 +41,9 @@ relationships:
   - ev-doc-title-files
   - ev-fan-out-industry-titles-parent-2026-10-27
   - ev-rollup-employment-month3-industry-titles-parent-2026-10-27
+  - ev-fan-out-industry-titles-parent-2026-11-28
+  - ev-rollup-employment-month3-industry-titles-parent-2026-11-28
+  - ev-join-match-industry-titles-parent-2026-11-28
 - key: to-supersector
   to: industry_titles
   meaning: A NAICS sector to its BLS supersector (for example 23 to 1012). The two industry rollups share their leaves (H3).
@@ -47,8 +55,8 @@ relationships:
   - ev-doc-supersector
 records:
 - id: ev-industry_titles-catalog
-  source: qcew-sqlite
-  pin: sqlite:qcew@2026-10-27
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
   quote: table industry_titles in qcew
   status: confirmed
-  read_on: '2026-10-27'
+  read_on: '2026-11-28'

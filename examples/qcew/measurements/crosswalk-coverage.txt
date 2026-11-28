@@ -1,0 +1,6 @@
+state_fips | in_area_of_kind | counties | areas | areas_with_a_slice
+-----------+-----------------+----------+-------+-------------------
+10         | MSA             |        2 |     2 |                  2
+10         | MicroSA         |        1 |     1 |                  1
+24         | MSA             |       17 |     6 |                  6
+24         | MicroSA         |        4 |     4 |                  4

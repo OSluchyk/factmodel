@@ -1,0 +1,14 @@
+level_from_code | level_from_agglvl | verdict  | row_count | geography_digits
+----------------+-------------------+----------+-----------+-----------------
+0               | 0                 | agree    |       352 | 1 4 5 7 8
+1               | 1                 | agree    |      1240 | 1 4 5 7
+1               | 4                 | disagree |         8 | 9
+1               | 5                 | disagree |         8 | 9
+1               | 6                 | disagree |        16 | 9
+2               | 2                 | agree    |      1596 | 1 4 5 7
+3               | 3                 | agree    |      6628 | 1 4 5 7
+4               | 4                 | agree    |     10076 | 1 4 5 7
+5               | 5                 | agree    |     33480 | 1 4 5 7
+6               | 6                 | agree    |     84140 | 1 4 5 7
+7               | 7                 | agree    |    152868 | 1 4 5 7
+8               | 8                 | agree    |    195688 | 1 4 5 7

@@ -6,15 +6,17 @@ opened_on: '2026-10-27'
 about:
 - qtrly
 description: >-
-  The layouts document two values of disclosure_code, blank and N. value_set on the seeded
-  qtrly table found one value outside that domain on 2 rows: the '-' padding rows the seed
-  reproduces from profile.md V1 and Q07 (in the real 2025 quarterly file, 47,061 rows in Q1 up
-  to 612,719 in Q3, every measure 0). Open until BLS documents the value; a consumer must
-  treat '-' as "no record in this quarter" (F-0006), not as disclosed.
+  The layouts document two values of disclosure_code, blank and N. value_set on the published quarterly
+  rows found one value outside that domain, '-', on 27,924 of 486,100 rows; the annual rows hold none
+  (110,366 rows). Every measure on a '-' row is 0, the establishment count included (measurements/suppressed-zero.txt).
+  The seeded fixture reproduces it on 2 rows (profile.md V1, Q07). Open until BLS documents the value;
+  a consumer must treat '-' as "no record in this quarter" (F-0006), not as disclosed.
 evidence:
 - ev-value-set-qtrly-disclosure-code-2026-10-27
 - ev-doc-dash
 - ev-doc-disclosure
+- ev-value-set-qtrly-disclosure-code-2026-11-28
+- ev-measure-suppressed-zero-2026-11-28
 extensions:
   probe: value-set-qtrly-disclosure-code
   fact: qtrly.disclosure_code

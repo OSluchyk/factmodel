@@ -43,8 +43,10 @@ concepts:
   predicate: annual.disclosure_code = 'N'
 - id: level
   meaning: >-
-    Every query fixes the aggregation level: agglvl_code's first digit is the geography, its
-    second the industry and ownership level. The industry code alone does not give the level
+    Every query fixes the aggregation level. For levels 10 to 80 the first digit of agglvl_code
+    is the geography and the second the industry and ownership level. Levels 94, 95 and 96 are
+    special totals (all government, all UI covered); their digits mean neither, and their rows
+    sit on a national or state area code. The industry code alone does not give the level
     (F-0008), so mixing levels double counts.
   field: qtrly.agglvl_code
   required: true

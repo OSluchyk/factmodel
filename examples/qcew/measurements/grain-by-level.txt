@@ -1,0 +1,10 @@
+agglvl_code | agglvl_title                                 | row_count | suppressed_rows | employment
+------------+----------------------------------------------+-----------+-----------------+-----------
+51          | State, Total -- by ownership sector          |         1 |               0 |     405199
+52          | State, by Domain -- by ownership sector      |         2 |               0 |     405199
+53          | State, by Supersector -- by ownership sector |        11 |               4 |     363731
+54          | State, NAICS Sector -- by ownership sector   |        20 |               7 |     348761
+55          | State, NAICS 3-digit -- by ownership sector  |        87 |              24 |     350002
+56          | State, NAICS 4-digit -- by ownership sector  |       276 |              75 |     390821
+57          | State, NAICS 5-digit -- by ownership sector  |       571 |             211 |     369684
+58          | State, NAICS 6-digit -- by ownership sector  |       764 |             329 |     366300

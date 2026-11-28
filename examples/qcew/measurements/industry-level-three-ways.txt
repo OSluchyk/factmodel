@@ -1,0 +1,12 @@
+kind_of_code                        | row_count | wrong_by_length | wrong_by_shape | wrong_by_digit | length_and_digit_differ | shape_and_digit_differ
+------------------------------------+-----------+-----------------+----------------+----------------+-------------------------+-----------------------
+1 total (10)                        |      1592 |            1592 |              0 |              0 |                    1592 |                      0
+2 total (10) at levels 94 to 96     |        32 |              32 |              0 |             32 |                      24 |                     32
+3 domain (101, 102)                 |      1596 |            1596 |              0 |              0 |                    1596 |                      0
+4 supersector (10xx)                |      6628 |            6628 |              0 |              0 |                    6628 |                      0
+5 sector written as a range (nn-nn) |      1504 |            1504 |              0 |              0 |                    1504 |                      0
+6 NAICS, 2 digits                   |      8572 |               0 |              0 |              0 |                       0 |                      0
+6 NAICS, 3 digits                   |     33480 |               0 |              0 |              0 |                       0 |                      0
+6 NAICS, 4 digits                   |     84140 |               0 |              0 |              0 |                       0 |                      0
+6 NAICS, 5 digits                   |    152868 |               0 |              0 |              0 |                       0 |                      0
+6 NAICS, 6 digits                   |    195688 |               0 |              0 |              0 |                       0 |                      0

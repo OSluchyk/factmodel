@@ -1,0 +1,35 @@
+kind: entity
+id: area_titles
+physical_name: area_titles
+source: qcew-duckdb-real
+grain: 'Not written yet: one sentence on what one row is.'
+class: data
+status: draft
+keys:
+  primary: []
+evidence:
+- ev-area_titles-catalog
+fields:
+- name: area_fips
+  type: VARCHAR
+  nullable: true
+  meaning: Not written yet.
+- name: area_title
+  type: VARCHAR
+  nullable: true
+  meaning: Not written yet.
+records:
+- id: ev-area_titles-catalog
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  quote: table area_titles in qcew
+  status: confirmed
+  read_on: '2026-11-28'
+extensions:
+  draft:
+    from: duckdb:qcew@2026-11-28
+    placeholders:
+    - grain
+    - class
+    - fields.area_fips.meaning
+    - fields.area_title.meaning

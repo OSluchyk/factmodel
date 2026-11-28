@@ -334,6 +334,8 @@ A **relationship** is an authored link from one entity (the one whose file holds
 | `key` | Slug, unique within the source entity (D-002). | `placed-by` |
 | `to` | One target entity, or a **target set**: a list of at least two targets, chosen per row by a discriminator or per tenant. | `users` |
 | `discriminator` | A field of the source. With a target set, it selects the target per row; without it, the target is chosen per tenant. With a single target, it names the source field the target's meaning depends on (QCEW: `agglvl_code` gives the level of `industry_code`). The loader checks that the field exists on the source. | `owner_type`, `agglvl_code` |
+| `expected` | Optional. A bound that is not zero for the relationship's `join_match` probe: `orphans_left`, the number of source rows known to have no target row, and a required `reason` (D-025). `keys` may carry the same for `duplicate_keys`. | `{orphans_left: 53, reason: ...}` |
+| `first_period` | Optional, for a self-reference to the row one period earlier: the field that holds the period. Rows of the first period in the source are left out of the probes (D-026). | `year` |
 | `join` | The join condition, in `<entity>.<field> = <entity>.<field>` form (`AND` for composite keys), or a boolean SQL expression in sqlglot's neutral dialect whose columns are all `<entity>.<field>` of the source and the target (D-017); for a self-reference, the left operand of each top-level comparison is the source row. For a target set, a map from each target to its join. Required, except on an `unresolved` relationship, which may omit it when the join is not known. | `orders.user_id = users.id`; `substr(industry.industry_code, 1, 2) = sector.industry_code` |
 | `meaning` | One sentence on what the link means. | `The customer who placed the order.` |
 | `mechanism` | How the link exists (see below). | `inferred_join` |
@@ -392,7 +394,7 @@ A nested field has both `name` (its last segment) and `path` (the full dotted pa
 
 ### Entity keys
 
-An entity file has `id`, `physical_name`, `grain`, `class`, `status`, `keys` (`primary`, optional `unique`, `current_row_rule`), optional `anchor_reference`, `fields`, `relationships`, `evidence` (the IDs of the metadata evidence - the DDL or catalog read - for the entity itself and for every field without its own evidence) and optional inline `records`.
+An entity file has `id`, `physical_name`, `grain`, `class`, `status`, `keys` (`primary`, optional `unique`, `current_row_rule`, optional `expected`), optional `anchor_reference`, `fields`, `relationships`, `evidence` (the IDs of the metadata evidence - the DDL or catalog read - for the entity itself and for every field without its own evidence) and optional inline `records`.
 
 Keys that hold a vocabulary kind are named after the block, because `kind` is the file kind: a source has `source_kind`, a service `service_kind`, a probe `probe_kind`.
 
@@ -641,7 +643,7 @@ A `project` file keeps only the top-level keys its kind lists under `keep` in th
 
 ## 10. Probes
 
-A **probe** is a data check generated from the model, written as a readable script for a person or CI with credentials to run. Probes return counts and rates only, never values, identifiers or rows. A result is saved with a pin and becomes evidence; a result outside its expected range opens a finding.
+A **probe** is a data check generated from the model, written as a readable script for a person or CI with credentials to run. Probes return counts and rates only, never values, identifiers or rows. A result is saved with a pin and becomes evidence; a result outside its expected range opens a finding. `key_duplicates` and `join_match` expect at most 0 unless the entity states a bound with its reason (`expected`, D-025). For a self-reference that names `first_period`, `join_match` leaves out the source rows of the first period, which it reads from the data (D-026).
 
 Probe kinds:
 

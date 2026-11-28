@@ -1,0 +1,3 @@
+published_parent | sum_disclosed_children | gap | children | suppressed_children
+-----------------+------------------------+-----+----------+--------------------
+           43773 |                  43675 |  98 |        5 |                   2

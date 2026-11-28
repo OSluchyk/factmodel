@@ -1,0 +1,6 @@
+state_fips | state        | counties | county_list                                                                                                         | in_the_slices
+-----------+--------------+----------+---------------------------------------------------------------------------------------------------------------------+--------------
+10         | Delaware     |        1 | 10003 New Castle County                                                                                             |             1
+24         | Maryland     |        1 | 24015 Cecil County                                                                                                  |             1
+34         | New Jersey   |        4 | 34005 Burlington County; 34007 Camden County; 34015 Gloucester County; 34033 Salem County                           |             0
+42         | Pennsylvania |        5 | 42017 Bucks County; 42029 Chester County; 42045 Delaware County; 42091 Montgomery County; 42101 Philadelphia County |             0

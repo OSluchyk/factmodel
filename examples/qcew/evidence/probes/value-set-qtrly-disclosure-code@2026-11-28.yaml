@@ -1,0 +1,14 @@
+kind: evidence
+records:
+- id: ev-value-set-qtrly-disclosure-code-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    distinct_values: 2
+    outside_values: 1
+    outside_rows: 27924
+  status: confirmed
+  read_on: '2026-11-28'
+  probe: value-set-qtrly-disclosure-code
+  environment: local
+  data_quality: representative

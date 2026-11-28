@@ -26,6 +26,7 @@ nav:
   - Quickstart: docs/quickstart.md
   - Quickstart on SQLite: docs/quickstart-sqlite.md
   - Tutorial: docs/tutorial/chinook.md
+  - Tutorial on QCEW: docs/tutorial/qcew.md
   - FAQ: docs/faq.md
   - Specification:
       - Spec: spec/SPEC.md

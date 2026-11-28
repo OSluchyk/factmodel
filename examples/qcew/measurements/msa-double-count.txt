@@ -1,0 +1,11 @@
+n | what                                                               | agglvl_code | employment
+--+--------------------------------------------------------------------+-------------+-----------
+1 | 10000 Delaware -- Statewide                                        | 50          |     474808
+1 | 10003 New Castle County, Delaware                                  | 70          |     304770
+1 | 24000 Maryland -- Statewide                                        | 50          |    2747673
+1 | 24015 Cecil County, Maryland                                       | 70          |      36829
+1 | C3798 Philadelphia-Camden-Wilmington, PA-NJ-DE-MD MSA              | 40          |    2879878
+2 | sum of the two states                                              | 50          |    3222481
+3 | the two state rows and the MSA row added                           | 50, 40      |    6102359
+4 | counted twice in that sum: New Castle and Cecil                    | 70          |     341599
+5 | in the MSA row, outside the two states: nine counties of PA and NJ | 40 - 70     |    2538279

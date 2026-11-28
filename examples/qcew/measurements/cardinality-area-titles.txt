@@ -1,0 +1,5 @@
+step | rows_of                                                             | row_count
+-----+---------------------------------------------------------------------+----------
+   1 | qtrly                                                               |    486100
+   2 | qtrly JOIN area_titles                                              |    972200
+   3 | qtrly JOIN (SELECT DISTINCT area_fips, area_title FROM area_titles) |    486100

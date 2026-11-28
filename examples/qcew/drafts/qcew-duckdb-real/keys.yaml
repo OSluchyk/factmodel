@@ -1,0 +1,241 @@
+# written by fact propose - a proposal, not a model file; the gate never reads drafts/
+proposal: keys
+source: qcew-duckdb-real
+snapshot_pin: duckdb:qcew@2026-11-28
+proposed_on: '2026-11-28'
+environment: local
+data_quality: representative
+max_columns: 2
+queries: 307
+skipped: []
+objects:
+- object: agglevel_titles
+  entity: agglevel_titles
+  row_count: 56
+  candidates:
+  - fields:
+    - agglvl_code
+    status: inferred
+    evidence:
+    - ev-propose-key-agglevel-titles-agglvl-code
+  - fields:
+    - agglvl_title
+    status: inferred
+    evidence:
+    - ev-propose-key-agglevel-titles-agglvl-title
+- object: industry_titles
+  entity: industry_titles
+  row_count: 2678
+  candidates:
+  - fields:
+    - industry_code
+    status: inferred
+    evidence:
+    - ev-propose-key-industry-titles-industry-code
+  - fields:
+    - industry_title
+    status: inferred
+    evidence:
+    - ev-propose-key-industry-titles-industry-title
+- object: ownership_titles
+  entity: ownership_titles
+  row_count: 8
+  candidates:
+  - fields:
+    - own_code
+    status: inferred
+    evidence:
+    - ev-propose-key-ownership-titles-own-code
+  - fields:
+    - own_title
+    status: inferred
+    evidence:
+    - ev-propose-key-ownership-titles-own-title
+- object: size_titles
+  entity: size_titles
+  row_count: 10
+  candidates:
+  - fields:
+    - size_code
+    status: inferred
+    evidence:
+    - ev-propose-key-size-titles-size-code
+  - fields:
+    - size_title
+    status: inferred
+    evidence:
+    - ev-propose-key-size-titles-size-title
+named:
+- object: annual
+  entity: annual
+  fields:
+  - area_fips
+  - own_code
+  - industry_code
+  - size_code
+  - year
+  - qtr
+  unique: true
+  row_count: 110366
+  duplicate_rows: 0
+  status: inferred
+  evidence:
+  - ev-propose-named-key-annual-area-fips-own-code-industry_860524c6
+- object: qtrly
+  entity: qtrly
+  fields:
+  - area_fips
+  - own_code
+  - industry_code
+  - size_code
+  - year
+  - qtr
+  unique: true
+  row_count: 486100
+  duplicate_rows: 0
+  status: inferred
+  evidence:
+  - ev-propose-named-key-qtrly-area-fips-own-code-industry_ae12436c
+records:
+- id: ev-propose-named-key-annual-area-fips-own-code-industry_860524c6
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 110366
+    non_null: 110366
+    null_count: 0
+    distinct: 110366
+    duplicate_rows: 0
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose keys --key: a named column list, unique and never null on this
+    data; measured, not found'
+- id: ev-propose-named-key-qtrly-area-fips-own-code-industry_ae12436c
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 486100
+    non_null: 486100
+    null_count: 0
+    distinct: 486100
+    duplicate_rows: 0
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose keys --key: a named column list, unique and never null on this
+    data; measured, not found'
+- id: ev-propose-key-agglevel-titles-agglvl-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 56
+    non_null: 56
+    null_count: 0
+    distinct: 56
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-agglevel-titles-agglvl-title
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 56
+    non_null: 56
+    null_count: 0
+    distinct: 56
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-industry-titles-industry-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 2678
+    non_null: 2678
+    null_count: 0
+    distinct: 2678
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-industry-titles-industry-title
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 2678
+    non_null: 2678
+    null_count: 0
+    distinct: 2678
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-ownership-titles-own-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 8
+    non_null: 8
+    null_count: 0
+    distinct: 8
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-ownership-titles-own-title
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 8
+    non_null: 8
+    null_count: 0
+    distinct: 8
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-size-titles-size-code
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 10
+    non_null: 10
+    null_count: 0
+    distinct: 10
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'
+- id: ev-propose-key-size-titles-size-title
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 10
+    non_null: 10
+    null_count: 0
+    distinct: 10
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'fact propose keys: unique and never null on this data; a candidate, not a
+    key'

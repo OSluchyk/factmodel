@@ -1,0 +1,492 @@
+# Data sources
+
+The published rows this example is built on: BLS QCEW open data area slices, one CSV per area
+and period, read by `scripts/fetch.sh`. The files are not in the repository; this page lists
+every URL with the time it was read and the SHA-256 of what BLS served. `scripts/fetch.sh`
+compares a new read with `scripts/checksums.sha256`. The code lists have their own page,
+[codelists/SOURCES.md](codelists/SOURCES.md).
+
+Citation required by BLS: "Source: U.S. Bureau of Labor Statistics, Quarterly Census of
+Employment and Wages." Terms: https://www.bls.gov/opub/copyright-information.htm (read
+2026-10-23). BLS publications are in the public domain.
+
+## Which years
+
+Read on 2026-11-28. The BLS release calendar
+(https://www.bls.gov/cew/release-calendar.htm) dates the fourth quarter of 2025, with the
+preliminary 2025 annual averages, to 2026-06-02, and the first quarter of 2026, with the
+final 2025 data, to 2026-08-28. So 2024 and 2025 are both complete: four quarters and the
+annual averages. The slice layout is the one of
+https://www.bls.gov/cew/additional-resources/open-data/csv-data-slices.htm.
+
+## Which areas
+
+The lines of `scripts/areas.tsv`: the U.S. total, Delaware and Maryland, every code of the
+area list under the two state prefixes, and the metropolitan and micropolitan areas whose
+title names one of the two states. The county to area membership was checked against the BLS
+County-MSA-CSA crosswalk, https://www.bls.gov/cew/classifications/areas/county-msa-csa-crosswalk.htm
+(table "2024 - Current", read 2026-11-28).
+
+## The read
+
+510 requests between 2026-11-28T08:58:33Z and 2026-11-28T09:02:45Z: 440 slices, 92,691,103 bytes, for 44 areas and 10 periods; 70 requests answered 404.
+
+## Not published
+
+BLS answered 404 for these areas in every one of the 10 periods: the code is in the
+area list, and no slice exists for 2024 or 2025.
+
+| Area | Title | Requests answered 404 |
+| --- | --- | --- |
+| `10996` | Overseas Locations -- Delaware | 10 |
+| `10997` | Multicounty, Not Statewide -- Delaware | 10 |
+| `10998` | Out-of-State, Delaware | 10 |
+| `24996` | Overseas Locations -- Maryland | 10 |
+| `24997` | Multicounty, Not Statewide -- Maryland | 10 |
+| `24998` | Out-of-State, Maryland | 10 |
+| `C1568` | California-Lexington Park, MD MSA | 10 |
+
+## Slices
+
+| URL | Read (UTC) | Bytes | SHA-256 |
+| --- | --- | --- | --- |
+| https://data.bls.gov/cew/data/api/2024/a/area/US000.csv | 2026-11-28T08:58:33Z | 847,197 | `48db086828a01798731242c6d3d4957f80f941afe75463a1ff7d43de774bea46` |
+| https://data.bls.gov/cew/data/api/2024/a/area/10000.csv | 2026-11-28T08:58:34Z | 346,019 | `3fe27ea160561c4efbaa113bb2d99379f8f3795c3b582dfb454551080e92b0f4` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24000.csv | 2026-11-28T08:58:34Z | 481,424 | `7959097d11360c84e52f72b92c8354d1bba08aa5cc3fbba7d7370047abcd9fec` |
+| https://data.bls.gov/cew/data/api/2024/a/area/10001.csv | 2026-11-28T08:58:35Z | 203,497 | `5125ef23dfbf996054b76d2dc02f9d87048309821141341cfa5ec22f495be48b` |
+| https://data.bls.gov/cew/data/api/2024/a/area/10003.csv | 2026-11-28T08:58:35Z | 277,689 | `b5a50557c020107a103ff35ef570c870263365de81cc388c7c2b889760aeb1cb` |
+| https://data.bls.gov/cew/data/api/2024/a/area/10005.csv | 2026-11-28T08:58:36Z | 221,192 | `4f0c33f717c60681a05a9d9bcb6d29242e6e287d7926e5365d6fa8d2bc0692e6` |
+| https://data.bls.gov/cew/data/api/2024/a/area/10999.csv | 2026-11-28T08:58:38Z | 117,312 | `294e0f8b1485a5e4b5beee8580a4c3ec2dea3aa6f6af42f7543a695cbf5edb05` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24001.csv | 2026-11-28T08:58:38Z | 157,550 | `b261d3e997e95e2b5f5fadcfeb727f25d378b1dbab432c0f4f1f0586dee1d667` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24003.csv | 2026-11-28T08:58:39Z | 299,928 | `f6531acbefbd0fa9519c42962b35eaf32ab82be261a345c7f7124e9e8326f523` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24005.csv | 2026-11-28T08:58:39Z | 306,848 | `e8011acd5861c5c54be8a1efc0055c929a0ff110642f8f6368166d733e36bc15` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24009.csv | 2026-11-28T08:58:40Z | 157,379 | `96ce47543239b0ee3125f82b735110145b77955c012f47d0bb9bd82d929326ff` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24011.csv | 2026-11-28T08:58:40Z | 109,040 | `008e5c2aabccd9baf76ccb1975677b12a2e30aca673031648b30203fcd9d4f18` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24013.csv | 2026-11-28T08:58:41Z | 206,683 | `aa46e50ae9176cc4e6089d412d909c9b2763e5c2400c0f75d5257ad76449d84c` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24015.csv | 2026-11-28T08:58:41Z | 171,200 | `b8b83f313a9f8b76db6e5b9c366a76587cdacce389c7a9ee342a2feada82dc53` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24017.csv | 2026-11-28T08:58:42Z | 182,457 | `31100e31f975c4f0a12351ee58adb90df5f2791dd49879fb0cefb25ff567e73a` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24019.csv | 2026-11-28T08:58:42Z | 119,504 | `05a7db7514c74d81de4f747348549e401eabf7344469ec53423bf88dea732217` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24021.csv | 2026-11-28T08:58:43Z | 247,386 | `ebcc38fe9109cff934b6fad98d1f985ac2f73eba139f2bd23873343be3da5969` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24023.csv | 2026-11-28T08:58:43Z | 133,036 | `d94fd329eeab4e8b3250c9e1d363200301b68ea60f2af7ac9f7cd8c19468c495` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24025.csv | 2026-11-28T08:58:43Z | 236,855 | `bb99bce689f2d1808c5beee34ff01059b0c2665ac02b84ae3d9bad004daec282` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24027.csv | 2026-11-28T08:58:44Z | 260,442 | `8a32135836a447e926c5b3c996ed704f1849a338acbab60da09ba1e1813fca61` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24029.csv | 2026-11-28T08:58:44Z | 118,530 | `f6541020599dc9dfba7f25d7aa0218e5dc8cfb2d23082a1d7328e3ea4c0fc632` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24031.csv | 2026-11-28T08:58:45Z | 301,567 | `dc60ac0a7e9a87f4c5f58e51f2361933e51601112086eab606d39326ab39da77` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24033.csv | 2026-11-28T08:58:45Z | 291,941 | `4cfe8f69d6938b43464ff0c774b099ecbdee123daf09bff47fefd1c262c5db81` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24035.csv | 2026-11-28T08:58:46Z | 152,798 | `9da3a348c6e14cf84ce95eff422bec7192a5b61b7576c3f71ed6ba5d370c1cde` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24037.csv | 2026-11-28T08:58:46Z | 159,845 | `29fef64ac8e4b50461d411b52226ca7d605363fccbcb86686ee41591a01a5f5f` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24039.csv | 2026-11-28T08:58:47Z | 84,745 | `ba67abeca7b2fa76662fc7659ffed6c09bf9fd568522a356f31a142200205b07` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24041.csv | 2026-11-28T08:58:47Z | 154,932 | `5ae3f925f066e3ab08ddcb2f9a1e76e085d5ad0661321313f087294fe627c539` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24043.csv | 2026-11-28T08:58:48Z | 210,311 | `29ccd15cb4b4fd1a25fecafca4e1d578003a8128e606f4435aad1987540a1a46` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24045.csv | 2026-11-28T08:58:48Z | 180,118 | `8ab62744857072207461400e2e69a34b1d421108ac210b07d4a01e4a3cf315eb` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24047.csv | 2026-11-28T08:58:49Z | 167,353 | `bb0a0e41ff3dfa29f06b2b17bb5db7c9e9749f3fa88360a1701437fcc415d332` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24510.csv | 2026-11-28T08:58:49Z | 300,314 | `6a1068d11ad8c0204e97aa1c3ae2edaf56afd1d24ff4edbe279f2a911b640ba7` |
+| https://data.bls.gov/cew/data/api/2024/a/area/24999.csv | 2026-11-28T08:58:51Z | 320,289 | `f0aa2b0760bfd575a245c682ea66bee5e8a2671f52341022a6e79949067960e7` |
+| https://data.bls.gov/cew/data/api/2024/a/area/C1258.csv | 2026-11-28T08:58:52Z | 248,737 | `1b637928082a9f914ec3da43a317624dca84d45460e59103c5b3b9983dfc7f56` |
+| https://data.bls.gov/cew/data/api/2024/a/area/C2010.csv | 2026-11-28T08:58:53Z | 167,730 | `1a10c1b35eebd78075fab42ee1f18c4a1c6976e7c94fc0faa6b8471ccc3dbbf2` |
+| https://data.bls.gov/cew/data/api/2024/a/area/C2518.csv | 2026-11-28T08:58:53Z | 189,883 | `0ab7c5ffe5f33401041570a591449158e68247cd67532365d4eb5e1924ad9bfe` |
+| https://data.bls.gov/cew/data/api/2024/a/area/C3050.csv | 2026-11-28T08:58:54Z | 154,043 | `1d41cbc4fdba494eeba9d28c259ee854b5460a446fea0cd9a79ac18bd7cfc0c3` |
+| https://data.bls.gov/cew/data/api/2024/a/area/C3798.csv | 2026-11-28T08:58:54Z | 247,370 | `f569fbdee08780a9dfe1b4afe92d735b4ed6ed03fc994de4eb51bde538e20d92` |
+| https://data.bls.gov/cew/data/api/2024/a/area/C4154.csv | 2026-11-28T08:58:55Z | 158,526 | `6aeca30655b2fb1a990148ad69e76deb0f1182fb01c3a1c2ea15e8f65b02c230` |
+| https://data.bls.gov/cew/data/api/2024/a/area/C4790.csv | 2026-11-28T08:58:55Z | 232,412 | `d74bb139909569d82608347c9b10b3f880749658b53bceae58e70c258ba9e094` |
+| https://data.bls.gov/cew/data/api/2024/a/area/C1570.csv | 2026-11-28T08:58:55Z | 1,092 | `0306ca856a81da96a15753203b2533e25b999ebf53f52fb8d18d773ced548dae` |
+| https://data.bls.gov/cew/data/api/2024/a/area/C1906.csv | 2026-11-28T08:58:56Z | 1,094 | `d6845bf0f092df21adfa114170a84c0d4c2a931cd1e468418e29d6ea39fe659e` |
+| https://data.bls.gov/cew/data/api/2024/a/area/C2066.csv | 2026-11-28T08:58:56Z | 1,095 | `e55ef6dfe0f046bc5dcd1df4e1180c7e0ae60e6586795a1a4a186e7cf5bc1073` |
+| https://data.bls.gov/cew/data/api/2024/a/area/C3618.csv | 2026-11-28T08:58:57Z | 1,057 | `63f3f1f9387e6c6cf799e95e42245115061aacdd8051d90cd8c4b949428256ff` |
+| https://data.bls.gov/cew/data/api/2024/a/area/C4258.csv | 2026-11-28T08:58:57Z | 1,061 | `f5a1ea35c8a85790b7f363a7ea2ac119fd8315f0454eb4c19eeb8e72bd3d5b25` |
+| https://data.bls.gov/cew/data/api/2024/1/area/US000.csv | 2026-11-28T08:58:58Z | 916,640 | `f8a0856596e6c4500941f0890a5911cb04b3afee9938412ede060861cc32c669` |
+| https://data.bls.gov/cew/data/api/2024/1/area/10000.csv | 2026-11-28T08:58:58Z | 372,049 | `ec007bdba28bbdaf47c5c21e265def610096da2dccdbe19159a79853d1edcb67` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24000.csv | 2026-11-28T08:58:59Z | 517,014 | `4f601bf907198a3fa99e8e6a443610ea85efabb7de5dc50a4c769dbd46b4358a` |
+| https://data.bls.gov/cew/data/api/2024/1/area/10001.csv | 2026-11-28T08:58:59Z | 220,873 | `0e67f10a72bd65afb73b7f71987fcce51b0f3949e473bf472e39b5f1fe5581ff` |
+| https://data.bls.gov/cew/data/api/2024/1/area/10003.csv | 2026-11-28T08:59:00Z | 298,680 | `617a3d6004bb460d44158dd950fbebc33969ed247a6c257da373c7b20892d8af` |
+| https://data.bls.gov/cew/data/api/2024/1/area/10005.csv | 2026-11-28T08:59:00Z | 238,265 | `041afefaca86064e8260ad3adbfcf0458a9d29179684344d6760f0e70e572e7c` |
+| https://data.bls.gov/cew/data/api/2024/1/area/10999.csv | 2026-11-28T08:59:02Z | 126,067 | `c44992155c4884557dcd5afaf1442304cd648a29c9057baf2ddbc3cd36b4519a` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24001.csv | 2026-11-28T08:59:03Z | 169,445 | `c2b6eac72c4bb0cf38e08d9c6a1ba53a5762095b0f133e082a837b612fad674a` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24003.csv | 2026-11-28T08:59:03Z | 321,657 | `01cab9c09338631e74820d1e34681c516be84f7f4dba08d1c0c789e6f46a31cc` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24005.csv | 2026-11-28T08:59:04Z | 329,058 | `afa1b1d3232655faa2c9aa32bce4da8be0009f9e63a0d5cf9bd082a5fb3d8b6b` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24009.csv | 2026-11-28T08:59:04Z | 168,812 | `c37ef312030e5f55467892873a84ed5ebf61c0b99382b6b07852f478fd6e862b` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24011.csv | 2026-11-28T08:59:05Z | 117,249 | `0cab08b352c841103085cc3d8e16e878297c4e5d7055d8d537cdcbbf5891a649` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24013.csv | 2026-11-28T08:59:05Z | 220,989 | `d8a19a527277eafb25c5fa70a55c3d9043fee9cda7fbfd73b47a48d98629c8a1` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24015.csv | 2026-11-28T08:59:06Z | 183,533 | `2db9e62fc0d3aa9424afe351bf7e2982a59f9aaea8b475f91dc226f0562aeb4f` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24017.csv | 2026-11-28T08:59:06Z | 194,828 | `8b8ba27920c5e030518a198cbc4a7524143cbe32ad2749a7ae23ba2653a0efae` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24019.csv | 2026-11-28T08:59:07Z | 127,243 | `76b97f4c3ca32b1c91fae9f3a0f3f983dc11cbfbe31185ddb71ef812d8b19080` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24021.csv | 2026-11-28T08:59:07Z | 263,678 | `4280632c0cf114ae7f2d5f0070de018f97b59f85b9c2c8220229276450a8b382` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24023.csv | 2026-11-28T08:59:08Z | 143,689 | `075f897a7497aa64683f9c1707d0e85d1c8a45e5ba8e751e202c7294c86245f5` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24025.csv | 2026-11-28T08:59:08Z | 253,604 | `cb83c346cab7a1c073e8f5c088ba238f023ed3e311b6aa14184b8d2e37b7f282` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24027.csv | 2026-11-28T08:59:09Z | 280,620 | `605dc64287eb04a737acca3882498800e83342cd43486d3a1373d9ec83d4bec7` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24029.csv | 2026-11-28T08:59:09Z | 126,915 | `797cee8de47f1f1196042964791a53d9a44d5449d4d88369decd18fb2670e3e6` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24031.csv | 2026-11-28T08:59:10Z | 322,661 | `897a3c4767acd6b98acaa945080edca18986fc7b07adefde4102ca2147f90e85` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24033.csv | 2026-11-28T08:59:10Z | 315,888 | `21e7fbced59a4a57a06eb0517f1bd336d5f312512d325edce117bcf91ee464fc` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24035.csv | 2026-11-28T08:59:11Z | 163,294 | `bf91fc85196db419d81db1704d93f0108ea7bd338c5d4c389d0b9f17e0426e31` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24037.csv | 2026-11-28T08:59:11Z | 171,874 | `f5faebd416a37b2f48b8e455cf29e39746baf3fd916fc6dd87953ec6f7802ddd` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24039.csv | 2026-11-28T08:59:12Z | 91,360 | `8e83eb6a58ba97aabea5484ed2a7df0a0586eb24f8f0e318fa2188612567ec9b` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24041.csv | 2026-11-28T08:59:12Z | 165,971 | `29f933b2b5af9821c747653aebfc92b0abf98c4c6813d51be2b64c20959f7460` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24043.csv | 2026-11-28T08:59:13Z | 226,309 | `eb1e9d6f9165d0f137b6fa092bc94e53bf1abb85c6ca69fd30b456ab74b0f859` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24045.csv | 2026-11-28T08:59:13Z | 193,186 | `da214c785bd214a7fc648712d2888c667fa17c8d1e54205233bcb7ee2ebf56a2` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24047.csv | 2026-11-28T08:59:14Z | 179,256 | `d93e97a02e2c445c3a75be7b6c4941b876c7612424fa46611b4edc87f0456159` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24510.csv | 2026-11-28T08:59:14Z | 322,826 | `3c30a0bfcfaa0daccd631e80edcd30ba6851b046fc8a42affb04ca912b3a62c8` |
+| https://data.bls.gov/cew/data/api/2024/1/area/24999.csv | 2026-11-28T08:59:16Z | 351,995 | `ee7c4efe5cdaff7cd8d6907bcd7374667dfb33849525b2c629fd6f7b5dbdd4ad` |
+| https://data.bls.gov/cew/data/api/2024/1/area/C1258.csv | 2026-11-28T08:59:17Z | 268,555 | `f18bb471270f21535a216ea54d654b475c0d3b38b466d9fe1c6dafd7db954e12` |
+| https://data.bls.gov/cew/data/api/2024/1/area/C2010.csv | 2026-11-28T08:59:18Z | 183,013 | `19c03b11ce580791fbcd8fe80afb0f28c462d1a89ad04294b86ba41a7ba3ff68` |
+| https://data.bls.gov/cew/data/api/2024/1/area/C2518.csv | 2026-11-28T08:59:18Z | 205,451 | `62bba87b5c18bf9e3ca7d16caea900db4df2879e651f88a02a979e1ebbed2470` |
+| https://data.bls.gov/cew/data/api/2024/1/area/C3050.csv | 2026-11-28T08:59:19Z | 165,471 | `c2fe868db51e6a66468b76f21a3b87a1bae6d1a9817f180294196748ec41340d` |
+| https://data.bls.gov/cew/data/api/2024/1/area/C3798.csv | 2026-11-28T08:59:19Z | 268,156 | `abfb11e6c05e16141a592d42c7154bf451d4a967a3e7a416a291fe02caa59715` |
+| https://data.bls.gov/cew/data/api/2024/1/area/C4154.csv | 2026-11-28T08:59:20Z | 171,786 | `b7c037f9de9f3aaec6d7e6314525d7a74042044e4081d949f77695463ca58563` |
+| https://data.bls.gov/cew/data/api/2024/1/area/C4790.csv | 2026-11-28T08:59:20Z | 250,353 | `7e7dda1bde4dab9a49f4c6cb9e04a3096a1bfac2c9c1915c74c8a6bbc980fdea` |
+| https://data.bls.gov/cew/data/api/2024/1/area/C1570.csv | 2026-11-28T08:59:21Z | 1,113 | `58fc9610c9a1c2f7103950e847184e001a26b54ef6bfba471d87d0c1dc5f885d` |
+| https://data.bls.gov/cew/data/api/2024/1/area/C1906.csv | 2026-11-28T08:59:21Z | 1,117 | `8743258257d7e45b1343d99b29c6c84aaf470687beaed7e7319c1d6b48e4cd60` |
+| https://data.bls.gov/cew/data/api/2024/1/area/C2066.csv | 2026-11-28T08:59:21Z | 1,115 | `112634da5af14600dd55694768fc4fd162842a71e92c537cdd669a19287213b6` |
+| https://data.bls.gov/cew/data/api/2024/1/area/C3618.csv | 2026-11-28T08:59:22Z | 1,078 | `f8ae4bfa1c8e65f8d8b85a332a688bd7651c5fbb49aa8cf9833049815b270a75` |
+| https://data.bls.gov/cew/data/api/2024/1/area/C4258.csv | 2026-11-28T08:59:22Z | 1,082 | `f3aa5e1fb2776f9f2641be0099495894c347efb39158bdff49fdc31e6adbe3bb` |
+| https://data.bls.gov/cew/data/api/2024/2/area/US000.csv | 2026-11-28T08:59:23Z | 912,541 | `8176e8582ff82e36721c6ae1a13ad3cb556a4e50a35f1b6695a939c75a6d9d41` |
+| https://data.bls.gov/cew/data/api/2024/2/area/10000.csv | 2026-11-28T08:59:23Z | 370,337 | `2d2505b03492c13a379fce5f00c953444397a34e6137c2a0dbc0f29aca00c648` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24000.csv | 2026-11-28T08:59:24Z | 512,983 | `cbc183efa99f30432207450d4f30de5d8b27e52caae9b4c1797ea87b2e2d0f4f` |
+| https://data.bls.gov/cew/data/api/2024/2/area/10001.csv | 2026-11-28T08:59:25Z | 220,119 | `3834f6b869fbceca1d60a151e75927ccf48e3074332af772b543595059db1ac4` |
+| https://data.bls.gov/cew/data/api/2024/2/area/10003.csv | 2026-11-28T08:59:25Z | 297,417 | `352414f090aaaedded33533c3c3288277957a38009507854043afc2d2cfa82d5` |
+| https://data.bls.gov/cew/data/api/2024/2/area/10005.csv | 2026-11-28T08:59:26Z | 238,981 | `b6d2f1f3c01c853e539df0a5a833480d0f687d56b2c115384c2809e664d882cb` |
+| https://data.bls.gov/cew/data/api/2024/2/area/10999.csv | 2026-11-28T08:59:27Z | 125,512 | `9ce5176158b6ef15bbd0a4847af3667f67862b5c30bc4705e1aa802deeef83d2` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24001.csv | 2026-11-28T08:59:28Z | 168,734 | `d0acf52fd4935dac88dc79cc876663b9d81e6f5b7ffe2d02fb441f7ef5fdd8d2` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24003.csv | 2026-11-28T08:59:28Z | 320,669 | `f9ec82eeb188688aea734314124947e30206f98e0e99b8fcc38a9b9db68158c8` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24005.csv | 2026-11-28T08:59:29Z | 328,373 | `065f2997d8e295770dde4aa00d38ea515b715dbd91b1c868217d93e3113188cb` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24009.csv | 2026-11-28T08:59:29Z | 169,176 | `2701834a534e0df602ca3767ae5ab7cc7e548aedcc427a7ea4a75a6591ede220` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24011.csv | 2026-11-28T08:59:30Z | 117,743 | `456d9621a0c4efd0d5f38e24a1d694994fbdef3907a886dc0d77368f54f96b74` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24013.csv | 2026-11-28T08:59:30Z | 221,149 | `780e539a07690ffa8e9efc8797b83cdb82b9714669f2732138c4baf5985dddcf` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24015.csv | 2026-11-28T08:59:31Z | 184,173 | `80746f7ff1a6934e5925f45b964258df6b67581515c380c415aef7d48a618200` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24017.csv | 2026-11-28T08:59:31Z | 194,856 | `dff20077fbcaf0433fbbb4ba0345f299be269b517005d347b3ddfd8f0777bfd5` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24019.csv | 2026-11-28T08:59:32Z | 127,716 | `814238555f77c54e917952442b7ff7c476b38ff376b46e1a37d7364adbd14a3c` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24021.csv | 2026-11-28T08:59:32Z | 264,316 | `c2968d46b21a9a1de2f4fa5a60b48aca57dd3c26e76662c0fe51a80dd5cb2661` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24023.csv | 2026-11-28T08:59:33Z | 142,540 | `860558828f5d1ebc570c2a21c7485a2100df6643697e4154ffac36c4e0a7777b` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24025.csv | 2026-11-28T08:59:33Z | 252,701 | `d1d15e2bc29eb12a62f74f165cfeb64e5e6160db77fd00f1b972d472c70d92bf` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24027.csv | 2026-11-28T08:59:34Z | 280,181 | `387c361b8f29b2477f786487c6ed6ab8ee11204156fcfeb1a358e6d105dc7b9f` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24029.csv | 2026-11-28T08:59:34Z | 127,061 | `394a91cc8f21008cb797aba57507b34c077ca98edeb07067edd1640a67058080` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24031.csv | 2026-11-28T08:59:35Z | 320,624 | `6751e42efbe8f4267c6b29745f46a876af9649ee6577d7e5d02b432f1e0256b7` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24033.csv | 2026-11-28T08:59:35Z | 314,437 | `c2810c573552fbd1710aacb54adc31b90622654f6a384f5f8201838dd23585ba` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24035.csv | 2026-11-28T08:59:36Z | 163,627 | `89b2b722972cad46a0e9f6a9fb1416b2344fa3a3f1410c07c94965a8a47d462b` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24037.csv | 2026-11-28T08:59:36Z | 170,865 | `506880a62ca915bc6aae3062534650e1604d4ea18926e107799cca9f1ac03271` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24039.csv | 2026-11-28T08:59:37Z | 90,885 | `6a8982e9cbac848f90f74eeb8a93585b2ef80951ebdd0116e2f47ff0cb7120ef` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24041.csv | 2026-11-28T08:59:37Z | 165,703 | `0c87fbfcaf0fbe415b7f8b10e5975938cd9689d56c70120a121dedee7fea4504` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24043.csv | 2026-11-28T08:59:38Z | 227,024 | `0d3c415970003ca4d376b49eb34a5a2cfad8af216224db7e56af8336395cba18` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24045.csv | 2026-11-28T08:59:38Z | 192,439 | `df86a57304037834dd406a56cf89916c8da223afd8e7cca099a3489eeec61b6b` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24047.csv | 2026-11-28T08:59:39Z | 180,556 | `66b1ef5d4f24e6d93f21bdc852fb658f4fb766c6810df447a4118c97db3c4739` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24510.csv | 2026-11-28T08:59:39Z | 320,756 | `eb92b92f9e1448e00500f8a9269928fdefddf214b03c80a2b19052fa2fce4d18` |
+| https://data.bls.gov/cew/data/api/2024/2/area/24999.csv | 2026-11-28T08:59:42Z | 349,396 | `5734f4b80a9a9b24ab08862528796ce83b66d326724c8d5893b12cdfd0e28aee` |
+| https://data.bls.gov/cew/data/api/2024/2/area/C1258.csv | 2026-11-28T08:59:42Z | 269,672 | `b85f2eae847cd2dd006ee53220713c0a1f52971d572bab8c9ebf4304a049181c` |
+| https://data.bls.gov/cew/data/api/2024/2/area/C2010.csv | 2026-11-28T08:59:43Z | 181,950 | `f676d882920fd1c0bbd98fe38d08ce98b1e2a737ea11483220df032f3ab1952d` |
+| https://data.bls.gov/cew/data/api/2024/2/area/C2518.csv | 2026-11-28T08:59:44Z | 205,906 | `463bf056f942535f7707ca7664ba1b2a5033c5ce7a88a2fddbd652755e8ceccf` |
+| https://data.bls.gov/cew/data/api/2024/2/area/C3050.csv | 2026-11-28T08:59:44Z | 165,564 | `71724ac767520fd2f7d0ec7834cebc6142991e1facbe616593b6d37361e1f36c` |
+| https://data.bls.gov/cew/data/api/2024/2/area/C3798.csv | 2026-11-28T08:59:45Z | 268,794 | `10b5f7a2e697411c66d71d5b409f602c591e394d369fb3326942401229d89317` |
+| https://data.bls.gov/cew/data/api/2024/2/area/C4154.csv | 2026-11-28T08:59:45Z | 171,121 | `a6e3198d427cdda2c36ab48d44ba984b1a46f58fa60f0bd4d42e355433ff7d04` |
+| https://data.bls.gov/cew/data/api/2024/2/area/C4790.csv | 2026-11-28T08:59:46Z | 248,454 | `7c5b3bd748d70b0777f09cc37e4b820b5e7fc69c4560f5bc8121bcacc1b20b07` |
+| https://data.bls.gov/cew/data/api/2024/2/area/C1570.csv | 2026-11-28T08:59:46Z | 1,115 | `c75ace40682ed6935359734108e699cbad51ca0b3db060304b3676615c045f7d` |
+| https://data.bls.gov/cew/data/api/2024/2/area/C1906.csv | 2026-11-28T08:59:46Z | 1,113 | `595139d7d77c34d21e8798dd206a514d9f16fc8559f477d19716cc84b646a714` |
+| https://data.bls.gov/cew/data/api/2024/2/area/C2066.csv | 2026-11-28T08:59:47Z | 1,114 | `dc3683e1753da6a24c71138f8d1d65b6a03ff9fd07ab94b9b6f24769bbf78632` |
+| https://data.bls.gov/cew/data/api/2024/2/area/C3618.csv | 2026-11-28T08:59:47Z | 1,077 | `d9031ba70c4323c7819e7adf76bfc28c486699b51f670df99a7ef706f29ca840` |
+| https://data.bls.gov/cew/data/api/2024/2/area/C4258.csv | 2026-11-28T08:59:48Z | 1,082 | `9db07df060ac59a48f9037960326a803808677b14b32e08e3b6475e9c9e7dd65` |
+| https://data.bls.gov/cew/data/api/2024/3/area/US000.csv | 2026-11-28T08:59:48Z | 910,900 | `5b91526ef2da780c5cd46afd2bfe0d860f07b1fa7734ab4f2de40d380930260c` |
+| https://data.bls.gov/cew/data/api/2024/3/area/10000.csv | 2026-11-28T08:59:49Z | 368,915 | `612915575881188512e35bda433ac4b12bfe54598a970247bc42c1ddbab0f745` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24000.csv | 2026-11-28T08:59:49Z | 512,955 | `c30aacafddd5fcaa2909ee97039d39eeb45c55d42def39e228356bb133f5bd16` |
+| https://data.bls.gov/cew/data/api/2024/3/area/10001.csv | 2026-11-28T08:59:50Z | 220,532 | `3db6dc9dab9d85e7bb649f838583b462c4490422e49e01987b42c366ce8dacf4` |
+| https://data.bls.gov/cew/data/api/2024/3/area/10003.csv | 2026-11-28T08:59:50Z | 296,473 | `bcf968b549c9a7460df5e4dcd8a0dcfbf7e8147e325210f7037fb73666795859` |
+| https://data.bls.gov/cew/data/api/2024/3/area/10005.csv | 2026-11-28T08:59:51Z | 239,226 | `bc3a8e5829f0b713ec46da4e0e1a6fc42da6b48904dcfde4287f86a74d72b076` |
+| https://data.bls.gov/cew/data/api/2024/3/area/10999.csv | 2026-11-28T08:59:53Z | 125,256 | `eded0beac053f9eab884879c417f8ce6dc60f07add2b028d35733082618ae576` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24001.csv | 2026-11-28T08:59:53Z | 169,042 | `12e221d74a328e6c143a70e01335d2f58bafa2f1683161e44fb8e7b5ecb7f986` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24003.csv | 2026-11-28T08:59:54Z | 321,111 | `054b7abd7418407783b067dc897383597c67be7660f9acc97a91467bea3c0f9a` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24005.csv | 2026-11-28T08:59:54Z | 328,047 | `585809261ac7b2740f9686453469bd41503a32237ca0194d28e76cc4b46e2ad3` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24009.csv | 2026-11-28T08:59:55Z | 170,459 | `90fdb8addad6b27a41a2ad4003559a513e1f322e91403295cdc526903d5befe9` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24011.csv | 2026-11-28T08:59:55Z | 117,360 | `b0c4e4bf3992765f6757aef04c13e665ff9956ad321ba8de261db3d958a80cd9` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24013.csv | 2026-11-28T08:59:56Z | 221,060 | `ac3ea5383cc192a1158da503a291568ee3af1813d9f6967c6bd901735e5d63fd` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24015.csv | 2026-11-28T08:59:56Z | 183,836 | `ca40864adcb79104ad64951629bf3f6f1c5c97023e10b278c53603c6b8f72ba6` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24017.csv | 2026-11-28T08:59:57Z | 195,393 | `fd63c6c90d960f664f8684673a4690ee621f358c54b42279ddb43106e3bd0ecf` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24019.csv | 2026-11-28T08:59:57Z | 128,400 | `63216470f60071fbcd746660537587c81f2ad8a6218e8761cf72604f4bf07f59` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24021.csv | 2026-11-28T08:59:58Z | 265,206 | `581077f17abce7149cd0b571bd974a93a8ec209985feeeef320ee1cf48c4d3cc` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24023.csv | 2026-11-28T08:59:58Z | 143,528 | `445dfc178575cbf81b7d580a1e6c3ba092ec0ebdf1581f2b6051e768bc9d22f7` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24025.csv | 2026-11-28T08:59:59Z | 253,289 | `0146275a24222872f3eaa3c286c55233686d82ee75baf9a35bcd027e7a36171c` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24027.csv | 2026-11-28T08:59:59Z | 278,475 | `cf17836326c56def2aa33c4c13eb4ac4ba95a2a22ee9b68d4b3203a0c751f7a6` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24029.csv | 2026-11-28T09:00:00Z | 126,978 | `52d80a807adfb76a26bc01b66469666673c72cf34d9fb5e4b37f5e3536925990` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24031.csv | 2026-11-28T09:00:00Z | 322,481 | `7f39ef72d9605bb4c52b455154b2e77c8e61cb8eacfd645b4a1bf8af09f3d55f` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24033.csv | 2026-11-28T09:00:01Z | 314,084 | `a685aca6f5b5501e76cf8ff51bef2610ba9c3c6c22420121946e27885b6c5d92` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24035.csv | 2026-11-28T09:00:01Z | 163,159 | `711946e9107e379791822f2ea410a0f21eb5582e4b1a8e3ce2fb405015a5b705` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24037.csv | 2026-11-28T09:00:02Z | 171,485 | `3a3e21fb56acc0ab3b543a42cce01c057bb9eb8d6bd2be7555eb5648704d56e8` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24039.csv | 2026-11-28T09:00:02Z | 91,114 | `0ed9f21bbf64dd3d7162ceff8d9585ff6dacfab129dd71a3bcadeeeedc7c1818` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24041.csv | 2026-11-28T09:00:03Z | 166,500 | `48a1736cbbe25e690ba4a5ddf06d6afd04c4d5c11e3d9cc23ba3be757aa444ca` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24043.csv | 2026-11-28T09:00:03Z | 226,540 | `257329f21c0c2c415a0bf3a61645cf7a4411744f83dd08c49811f9a1e633b96a` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24045.csv | 2026-11-28T09:00:04Z | 193,611 | `50864c42d064f1b6b2bd3ef0729c8d6984503186c776302d40819b1eec577b8f` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24047.csv | 2026-11-28T09:00:04Z | 180,397 | `4314d1c1ae9bbbea14eccaaa1417aa7d554226f61c4cd14b07a9a0949919fe3a` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24510.csv | 2026-11-28T09:00:05Z | 320,865 | `e12d0b922163defb8000ca6620bca34986dc46cc9d735d55a18da15322f97bb7` |
+| https://data.bls.gov/cew/data/api/2024/3/area/24999.csv | 2026-11-28T09:00:06Z | 348,062 | `e074e800c6c66fe4250f3d5dd51c3d1ac16ce4276a4120d1d33faa1ddf7110e5` |
+| https://data.bls.gov/cew/data/api/2024/3/area/C1258.csv | 2026-11-28T09:00:07Z | 267,847 | `8b10446d960d74e4dea8c9a981ebc874935a7a0fb457ccb2d4cba58685210bfe` |
+| https://data.bls.gov/cew/data/api/2024/3/area/C2010.csv | 2026-11-28T09:00:08Z | 182,435 | `593361571a948afe29c2ea7ed87d36429e481622965adfd90165823c357432c3` |
+| https://data.bls.gov/cew/data/api/2024/3/area/C2518.csv | 2026-11-28T09:00:08Z | 205,053 | `bf59ff6c8e4279b61e2f43f92c7f6517617653f510cb1cde1fb14dd6886ba73a` |
+| https://data.bls.gov/cew/data/api/2024/3/area/C3050.csv | 2026-11-28T09:00:09Z | 165,492 | `74ab69d891374eaabd3b307ac4dbfe27cec53f2fea6a31757d3b42d9a9b97ba9` |
+| https://data.bls.gov/cew/data/api/2024/3/area/C3798.csv | 2026-11-28T09:00:09Z | 268,543 | `a0bcf48d65786663ad87e291d1e5fb88faf8f3f1645fc989592f930e4b68906f` |
+| https://data.bls.gov/cew/data/api/2024/3/area/C4154.csv | 2026-11-28T09:00:10Z | 171,720 | `daee414e6427bcfaa514ef83e80b52ef62876946323238bd1508c34cd40506fa` |
+| https://data.bls.gov/cew/data/api/2024/3/area/C4790.csv | 2026-11-28T09:00:10Z | 248,957 | `6e86884855e00a8651ed3b9368d85edccca789b11d8f74ea8a11f8e233b12119` |
+| https://data.bls.gov/cew/data/api/2024/3/area/C1570.csv | 2026-11-28T09:00:11Z | 1,120 | `2372ea5c236eddf07a1ba0964fe900e2692f6fde70400db0913be94c6fde8fe4` |
+| https://data.bls.gov/cew/data/api/2024/3/area/C1906.csv | 2026-11-28T09:00:11Z | 1,114 | `bf44293527b583fb2959c40ae8e92a030468cb96ff2ef48f7a802a973b46185c` |
+| https://data.bls.gov/cew/data/api/2024/3/area/C2066.csv | 2026-11-28T09:00:12Z | 1,114 | `2f0387d90eb8ee4bbc15fb56173159b1f1e8cf4f9ffc6ae0cd87a0c0d3942df7` |
+| https://data.bls.gov/cew/data/api/2024/3/area/C3618.csv | 2026-11-28T09:00:12Z | 1,077 | `1295f522b574737871669c1d8a72be33b0d5f20e047a32062c6fa4dd4d2e6211` |
+| https://data.bls.gov/cew/data/api/2024/3/area/C4258.csv | 2026-11-28T09:00:13Z | 1,082 | `0e62dc34101d521634141e0b7edf4f9f56091ee1233ef5c9c92168922988fdd9` |
+| https://data.bls.gov/cew/data/api/2024/4/area/US000.csv | 2026-11-28T09:00:13Z | 911,661 | `67dfd608cbcedccd9c1a7b5eeb7fa11a5f4f05819f855f3ca990f4faeae3f1d3` |
+| https://data.bls.gov/cew/data/api/2024/4/area/10000.csv | 2026-11-28T09:00:14Z | 365,374 | `8cad7cd90d3384fe36b0378cdce8268cd721399b7047816ac648799efe30dd01` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24000.csv | 2026-11-28T09:00:14Z | 511,791 | `c232dd3cddf043a04b88e02d106805e58c682cacbe8d7565038501c28443ce53` |
+| https://data.bls.gov/cew/data/api/2024/4/area/10001.csv | 2026-11-28T09:00:15Z | 218,470 | `d4354f829c3b06d37223a6b5cf380a0f14f78fe950599dd70f9b5a9404499d43` |
+| https://data.bls.gov/cew/data/api/2024/4/area/10003.csv | 2026-11-28T09:00:15Z | 294,185 | `57d2e321158858cc5ddf9fc1fd5b388a82dac7f58a1280fbedd72bccbf0c24dc` |
+| https://data.bls.gov/cew/data/api/2024/4/area/10005.csv | 2026-11-28T09:00:16Z | 235,747 | `ae7716794434b3176be7fce44b41179ac3f195967354d13c8e3bebad8db30452` |
+| https://data.bls.gov/cew/data/api/2024/4/area/10999.csv | 2026-11-28T09:00:18Z | 124,945 | `1ea954342b9a50442881b53d4cac80824979440eb0714df565a28ffdc9a9bd1a` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24001.csv | 2026-11-28T09:00:18Z | 168,491 | `846c7ad0912adcb00056e7e3686a85c14007479578bfc85a217793a75ca9fd42` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24003.csv | 2026-11-28T09:00:19Z | 319,039 | `b580f304ea6c1842e31485f973f7c9928124ecc998328999ff1b49286289fe67` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24005.csv | 2026-11-28T09:00:19Z | 326,390 | `b4244f479ec0ecdb9b94faa362ec7acc45416ef97459c0628bc84c7907370b84` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24009.csv | 2026-11-28T09:00:20Z | 167,684 | `82158c1d75bc8feda98226b37d4ebd032908d0dddec9e930ed1d9b66454b9068` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24011.csv | 2026-11-28T09:00:20Z | 116,561 | `e8f7b63ab09f1f904f8a5bca7e771038f975e8e2db28cc3b854c50dbe4e1eec8` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24013.csv | 2026-11-28T09:00:21Z | 219,100 | `44b0f2f97ae9c87903aada7c97cd7330c00f298dca2315187055eae043cc9378` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24015.csv | 2026-11-28T09:00:21Z | 182,140 | `cd0687bb58d0ca1124842768da42b12686ba2a3333a591260aefc9484f3af85f` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24017.csv | 2026-11-28T09:00:22Z | 192,727 | `2cb4e171de373fcfbdeb133f992410027a457bddf29e6f31a0422427cda2051a` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24019.csv | 2026-11-28T09:00:22Z | 127,769 | `ad9e410d5865a9fb4d69ecab86d9a2c7b390f2a57173974b51b6aff417c4949c` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24021.csv | 2026-11-28T09:00:23Z | 261,489 | `b84d50d258ddc25c58b885747d5077b9bef79cdb778d20f0c0f4876dea14b684` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24023.csv | 2026-11-28T09:00:23Z | 141,653 | `bed019b6a284c3805cdfc03b9d5386b61c6f01c85363b5d16ef27e77a92cd807` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24025.csv | 2026-11-28T09:00:24Z | 251,707 | `1bf435e2afe0d3caf3bcd05178f01fd2f5c8a70694a53c47c0c9695dca82e633` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24027.csv | 2026-11-28T09:00:24Z | 275,643 | `3021d9b56e8aa63f3a6cf67443ee60a902a85b4080db56369f2192d5d3caaf46` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24029.csv | 2026-11-28T09:00:25Z | 126,795 | `16849e0b6cee708f97e537a9dc9e1f933590476521e6cfb60c68685aa4265699` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24031.csv | 2026-11-28T09:00:25Z | 319,662 | `7ea4b7b8dc585b485c741761cf3e726449c5b6eb03e318235d9f27a79dc5c1b7` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24033.csv | 2026-11-28T09:00:26Z | 312,176 | `9e1b1e5834f57344b0b2f1c56db9c375da83be12dab45099bc53b8214af97117` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24035.csv | 2026-11-28T09:00:26Z | 161,756 | `4d03df4734223cb54530a98c52685e8178286e2e9d5d004370e5774ac7a76226` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24037.csv | 2026-11-28T09:00:27Z | 170,434 | `7db8cbaeb1a546fee9ec3e608247bff2b9bc41591f585590c8d5432cb0a81925` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24039.csv | 2026-11-28T09:00:27Z | 90,750 | `03b9d822fab34277d66809d2ce975970c7e1a0843e6cd5fbd74d30924870bb37` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24041.csv | 2026-11-28T09:00:28Z | 165,325 | `1922b5a89831cd7f6d3d1b5debf14da339c0ede8b20e3a2641fd16514c2faf5c` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24043.csv | 2026-11-28T09:00:28Z | 223,340 | `17bb04474a91f11aa5d43cbb1ce2557280b3733d6b93a03ed409ad0316e6fef4` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24045.csv | 2026-11-28T09:00:29Z | 192,533 | `575ee82759971cd9bd7161e86e1fa51ed4955dcf19c4b0127e6bcc2d8f287527` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24047.csv | 2026-11-28T09:00:29Z | 178,030 | `db7e3d60236254d89ed630e614eae5f46f23a04266570ee8fdcb38f0b9e2be25` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24510.csv | 2026-11-28T09:00:30Z | 319,016 | `6626adf1d516587164385479f726871652a221899ec62805acc66f4ce1ac9330` |
+| https://data.bls.gov/cew/data/api/2024/4/area/24999.csv | 2026-11-28T09:00:32Z | 342,651 | `53ed45567a832fa79db4c8d1022a0e31146eab995f2657b4a52c14359db3d8f4` |
+| https://data.bls.gov/cew/data/api/2024/4/area/C1258.csv | 2026-11-28T09:00:32Z | 267,461 | `8960531fe97a44fc25a037e0db4b5a3ccfd17af2a283f4a918383217d16c38a9` |
+| https://data.bls.gov/cew/data/api/2024/4/area/C2010.csv | 2026-11-28T09:00:33Z | 180,677 | `8f5d6a8406c5637fc712e6d385636358006b948d8ca8d0813d61e14e4eff1dd3` |
+| https://data.bls.gov/cew/data/api/2024/4/area/C2518.csv | 2026-11-28T09:00:34Z | 203,560 | `df81301973ba7149ee47c515c423eab75698db76819b68d3edff0cb3da620352` |
+| https://data.bls.gov/cew/data/api/2024/4/area/C3050.csv | 2026-11-28T09:00:34Z | 164,982 | `90892fff6a6dfde4e105e7231dcee117faeb6a8e9308e274c755f9d930f96e75` |
+| https://data.bls.gov/cew/data/api/2024/4/area/C3798.csv | 2026-11-28T09:00:35Z | 265,383 | `c03e7af81be1af04ad8e2edb683ba8c5c80571915b0994d91b0b8ade431567b7` |
+| https://data.bls.gov/cew/data/api/2024/4/area/C4154.csv | 2026-11-28T09:00:35Z | 169,860 | `1ae8b5223b5bfb5e2084b2e5fd9898203e54afbe27c67a4c8b687835c9aacea3` |
+| https://data.bls.gov/cew/data/api/2024/4/area/C4790.csv | 2026-11-28T09:00:36Z | 249,087 | `032b36ba4dfdbe559307ffaf4280711986a5286196a488b26c98625f83d45fcc` |
+| https://data.bls.gov/cew/data/api/2024/4/area/C1570.csv | 2026-11-28T09:00:36Z | 1,117 | `3fc8c55fa2f4eafb56b316ca2b915737ad3df40938518297016a574a1d8efd87` |
+| https://data.bls.gov/cew/data/api/2024/4/area/C1906.csv | 2026-11-28T09:00:36Z | 1,113 | `b62777e163b8cca13f7381791513f6aac0ce835033e86955a2f3674dca432027` |
+| https://data.bls.gov/cew/data/api/2024/4/area/C2066.csv | 2026-11-28T09:00:37Z | 1,117 | `5d39e9ca6387f72bd464cc54b22bdce69fd25ea3531a0aed461bd6240af0f80b` |
+| https://data.bls.gov/cew/data/api/2024/4/area/C3618.csv | 2026-11-28T09:00:37Z | 1,076 | `e8168b1da9e94ad05e7fa9e7f415f91321761b90ee949a298ea097272c891d62` |
+| https://data.bls.gov/cew/data/api/2024/4/area/C4258.csv | 2026-11-28T09:00:38Z | 1,080 | `8945c5fddc9f475453cde3d302a1982f1d88be799d3fa04759cad5e1ffa4b541` |
+| https://data.bls.gov/cew/data/api/2025/a/area/US000.csv | 2026-11-28T09:00:38Z | 841,756 | `0b5528f70d66a84ff9729691f365c667a09f854f0af3d841bdd660ef3cb01811` |
+| https://data.bls.gov/cew/data/api/2025/a/area/10000.csv | 2026-11-28T09:00:39Z | 336,603 | `d82d1514587ea159ad9bc6a0421910da26fa13ef9ff555af5968e8f45f314779` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24000.csv | 2026-11-28T09:00:39Z | 474,313 | `a6e0f7fa4c4a392240359bd160f10943c1f51fde5066b6e72c0018ed1b28988a` |
+| https://data.bls.gov/cew/data/api/2025/a/area/10001.csv | 2026-11-28T09:00:40Z | 196,516 | `fc4515b83b7e4c786fa3cbddb3e339c1fbad42d6114c932387f57dca3c56607e` |
+| https://data.bls.gov/cew/data/api/2025/a/area/10003.csv | 2026-11-28T09:00:40Z | 259,925 | `a5cb04876e802d15a1334d63d582aebf9480b379fe1701a8e571f57374928604` |
+| https://data.bls.gov/cew/data/api/2025/a/area/10005.csv | 2026-11-28T09:00:41Z | 205,366 | `912db0be66cbef501f27f658d0d9df066edd2348b9acad6034f21eb4c735126e` |
+| https://data.bls.gov/cew/data/api/2025/a/area/10999.csv | 2026-11-28T09:00:43Z | 117,669 | `4d82390643915a64465804f60a4a55358812951d282ec81d503658fbba6694bd` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24001.csv | 2026-11-28T09:00:44Z | 153,313 | `dfa196052a19101cb46a80a87ecc7e5bce1fd74e4b58c2f98a18649808f1bca2` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24003.csv | 2026-11-28T09:00:44Z | 299,467 | `a9701d8a19b3d99ad7b6a4761d47989e3386400a18a642b01bdc85d6ce42289b` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24005.csv | 2026-11-28T09:00:45Z | 307,432 | `8e26cbe1ec5d93711b0af7a387802d77ae0f04de38e7bfb7eac991e6561c76e9` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24009.csv | 2026-11-28T09:00:45Z | 153,501 | `f0ac31693199f25688e7bf24c684836a2b24b97dca61ecdaf570696b47e52035` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24011.csv | 2026-11-28T09:00:46Z | 107,974 | `8a5e654783e28a325894464ee17e1c2c752135793d163dfe8a11c17b56c93eb1` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24013.csv | 2026-11-28T09:00:46Z | 204,223 | `fc99c64952d0840ea25bdaf50fba8393512a82c4ce2b4eb0afa767ed28cb0b85` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24015.csv | 2026-11-28T09:00:47Z | 170,528 | `67071a4d876ecfc2dda310283beae38104a541d096f0614c4683e66264bd0691` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24017.csv | 2026-11-28T09:00:47Z | 179,811 | `f0e835f6fb039156f15b6f63643be3401b036857447e049aa37e3522db67b181` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24019.csv | 2026-11-28T09:00:48Z | 115,309 | `cea5c8cdaf041f1a45623d203bfe15dbba312684f831b6177e542c0994d558de` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24021.csv | 2026-11-28T09:00:48Z | 246,743 | `c4db212b8ce431d6ef5f3e3b983c5057f76fe210421ecfdfb8bb038456136fde` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24023.csv | 2026-11-28T09:00:49Z | 133,159 | `d360013f114a043bfe8051251d2c1a8f8a173b5c956485e34fd3263763d02259` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24025.csv | 2026-11-28T09:00:49Z | 238,334 | `05c79fac1039b2621ae56f7fa4974f6a1152a29a9045e6c1006da51e0c3881ec` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24027.csv | 2026-11-28T09:00:50Z | 257,084 | `cd45ee905ea3d3fb2acd76905c3bfd22ed5523e922161c24523716cb214cc1e0` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24029.csv | 2026-11-28T09:00:51Z | 113,324 | `c151864c1b6f907e4a725475dfb2a13b8d9aa3e74af3c293720768155f3b0441` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24031.csv | 2026-11-28T09:00:51Z | 301,719 | `2578de32d6386b8971019cc88055a3505dda93e2b3124d035aef8ad38ccd3bf2` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24033.csv | 2026-11-28T09:00:52Z | 292,131 | `78494db835d781fc4b096f4ac17d18b94b9453e6e2cd049609fa0be9a02b0cbd` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24035.csv | 2026-11-28T09:00:52Z | 149,490 | `42529413d3bd4b43f37772b0932fd9343d9433ca7276e0953ee38995ffdbc6a0` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24037.csv | 2026-11-28T09:00:53Z | 161,173 | `5c22d3e07674621d10ab2a07ab5857a3b94c4c7f32a88b5b7a7e9c21a9f1a980` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24039.csv | 2026-11-28T09:00:53Z | 80,875 | `08c83aa6349cbb120eed0d7fcfa8f72661ef4462b3f88b56555ce2dc9b00b48e` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24041.csv | 2026-11-28T09:00:54Z | 152,112 | `41d8a753ea9e057e3da274d6e3033f082755cf5cc4679f57c43a0adf04a4a796` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24043.csv | 2026-11-28T09:00:54Z | 209,870 | `027466f2bb9c7ab867566bcfa69e52fed6d0e1d12522d8f4730ecbdcb16332c4` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24045.csv | 2026-11-28T09:00:55Z | 178,464 | `6b6dca395fc5e477fdda9307a2a43e90810e398ddd6f47a803045a93016d2938` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24047.csv | 2026-11-28T09:00:55Z | 165,071 | `76ebd07e038c870309b01fb4a4ec20a83e355c7dfd701033134eb59122a7eb6d` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24510.csv | 2026-11-28T09:00:56Z | 299,149 | `3bd9b7f813b895435d61722a3be194373f45bb59e1ca3bc85280efd38877134a` |
+| https://data.bls.gov/cew/data/api/2025/a/area/24999.csv | 2026-11-28T09:00:58Z | 329,346 | `572949e628ff7f2169f276237a0d80538b2b90d46f76541e125531e58bf26476` |
+| https://data.bls.gov/cew/data/api/2025/a/area/C1258.csv | 2026-11-28T09:00:58Z | 1,107 | `8ab6364571a2c01ac9a294b6fae094306e898a059722f09c626b2e75f0d8a6bc` |
+| https://data.bls.gov/cew/data/api/2025/a/area/C2010.csv | 2026-11-28T09:00:59Z | 1,097 | `8d608016e65d48b2541bd9fce3a53ba4b87959222d270779ec8bbe1f37afe4bf` |
+| https://data.bls.gov/cew/data/api/2025/a/area/C2518.csv | 2026-11-28T09:00:59Z | 1,094 | `f5c34fb4c29c57ec910349c9d43f19660aa23afc312568ce1008486b110dd490` |
+| https://data.bls.gov/cew/data/api/2025/a/area/C3050.csv | 2026-11-28T09:01:00Z | 1,096 | `c59d552a9b957944b725ceb8b314d9b1fbcd82d26e45c9d71550897704577237` |
+| https://data.bls.gov/cew/data/api/2025/a/area/C3798.csv | 2026-11-28T09:01:00Z | 1,110 | `4574c3682d64fb287d93418c90c8e8daf2d6f87133e6dd1bfd733f9c5dc7ef67` |
+| https://data.bls.gov/cew/data/api/2025/a/area/C4154.csv | 2026-11-28T09:01:01Z | 1,092 | `c453cb97c8901c1f6061bfd96c7b4a0124ef4aee07936620b7908dad9abd3ec4` |
+| https://data.bls.gov/cew/data/api/2025/a/area/C4790.csv | 2026-11-28T09:01:01Z | 1,111 | `2fffb5d31e2eb3f90eba1904a10df21265934273f78ddde55e44fb3c64bcb15f` |
+| https://data.bls.gov/cew/data/api/2025/a/area/C1570.csv | 2026-11-28T09:01:02Z | 1,087 | `87f73a0702deb66e84932d3db9c872849215e1358bac4104798e710b9e26ea21` |
+| https://data.bls.gov/cew/data/api/2025/a/area/C1906.csv | 2026-11-28T09:01:02Z | 1,093 | `6bc0faa420bfc899fae136f42b4a614f096af8b433ea521bf32d52735f8bb9bc` |
+| https://data.bls.gov/cew/data/api/2025/a/area/C2066.csv | 2026-11-28T09:01:03Z | 1,092 | `42d24cbef4a36172f543c0dc64df21f496516eb22d7ea73eb0a6482807dda591` |
+| https://data.bls.gov/cew/data/api/2025/a/area/C3618.csv | 2026-11-28T09:01:03Z | 1,093 | `86741f1dcba03c8aa962908a8adc523291426e7cf71f64d3c75c0b3cdaf54c8b` |
+| https://data.bls.gov/cew/data/api/2025/a/area/C4258.csv | 2026-11-28T09:01:04Z | 1,099 | `e4373f206ef953917a70e9215701a206ef3fd0b372e9e40c32296e996dc3eaad` |
+| https://data.bls.gov/cew/data/api/2025/1/area/US000.csv | 2026-11-28T09:01:04Z | 914,014 | `145d4e67231f2bdbb02dae1a2dc51a00439a67adc3f5daf439dc2f97b5f53768` |
+| https://data.bls.gov/cew/data/api/2025/1/area/10000.csv | 2026-11-28T09:01:05Z | 363,411 | `7a5564865d9d00fab2164a965ea4911628ff92531392286f066c87bd1fb10311` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24000.csv | 2026-11-28T09:01:06Z | 511,385 | `807dd7fb2e7a7a270423ccec2741b229720496507269abf1be767d73bc69e7c7` |
+| https://data.bls.gov/cew/data/api/2025/1/area/10001.csv | 2026-11-28T09:01:06Z | 213,295 | `5a316ae3de1c08352620f40166379b0dfb5c1f8ef38656d943588efbe9933ce2` |
+| https://data.bls.gov/cew/data/api/2025/1/area/10003.csv | 2026-11-28T09:01:07Z | 285,437 | `58b7fd782361165aa4f63523bdf5e0ea9ba904e3d8eb50fb119e190fb59fb9ee` |
+| https://data.bls.gov/cew/data/api/2025/1/area/10005.csv | 2026-11-28T09:01:07Z | 224,382 | `c99bf674f499c9eb6af967cbc3d5a89e12e40cd1f155859c9a4a0c145b1c51a3` |
+| https://data.bls.gov/cew/data/api/2025/1/area/10999.csv | 2026-11-28T09:01:09Z | 126,279 | `924111a18ab2673a95316eabd0fa46482b2ba5c0f77413875f3a5b418b8e838c` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24001.csv | 2026-11-28T09:01:10Z | 166,637 | `fa3fbdbb4e04f5f4bf5c5cbf50c4c3b9143a877e1223ab07d908a58a265ea266` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24003.csv | 2026-11-28T09:01:10Z | 323,095 | `fc98d1a152ced0e12513589b8ad547cc0f2aa3a5fed32ba42056ab4741ad1b4b` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24005.csv | 2026-11-28T09:01:11Z | 332,258 | `f1c03743538bee110b3dfc98bbb057fc5525828ee08690c872569c5a5fc9ed54` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24009.csv | 2026-11-28T09:01:11Z | 166,054 | `19d859e8cc5b6aacc7538b86bc8f344a02044885b7ac225c75aaeaae325f375e` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24011.csv | 2026-11-28T09:01:12Z | 116,554 | `8024a246b2119cd04daf6e09c6b33fe256b798a8af2d56989d3326978508d11c` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24013.csv | 2026-11-28T09:01:12Z | 220,097 | `c2fadbff44b55bcb5be255facb23dce5c412241517a28fa7802cc765aee84c5d` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24015.csv | 2026-11-28T09:01:13Z | 184,564 | `5999b43c6a4ed95489e280ae61124942d6c9c18e411c7d5ba120dda8a3cf734d` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24017.csv | 2026-11-28T09:01:13Z | 194,131 | `a09e50afe1071cc23de690ef3a3c128cbbf06074e6602837e599236c2744ca88` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24019.csv | 2026-11-28T09:01:14Z | 124,492 | `f23f712ccb58a69cfa100eda86ca9d5c47e0c9e77af0a7982835a47d3a94c49d` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24021.csv | 2026-11-28T09:01:14Z | 267,487 | `d5a762392ecaebaf60545386e08b880f9e5bd003dc7e8d5314ba2e08090d2d4e` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24023.csv | 2026-11-28T09:01:15Z | 146,703 | `07174765f2312ae1ad5de4b098fb92941c3fabd035eb47c4e570836c2eb7c3e2` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24025.csv | 2026-11-28T09:01:15Z | 257,966 | `fb0279b97a80260ada2320e29fd7aa4f6dcc180e3de57a1d76e272a638353eb6` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24027.csv | 2026-11-28T09:01:16Z | 277,005 | `bd04b703798d98addb298b50afbe20413f11d55bfb01c29327480e42fb6acd36` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24029.csv | 2026-11-28T09:01:16Z | 122,181 | `a0c94677f4fd84e4d9806b809c04b80ffea2877cacde57df27e2a9eeb809f584` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24031.csv | 2026-11-28T09:01:17Z | 325,868 | `2ea36110ed8cf103a889ad9884e3d93c369426bfa1798b22b07e334e04961511` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24033.csv | 2026-11-28T09:01:17Z | 316,161 | `2615043ef731b9da3217687d9d7fed8a1479c2397b3ca70a4efd92f447180637` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24035.csv | 2026-11-28T09:01:18Z | 162,374 | `fd709f76cdf5808034be11be0bf5ca4414b3edd9cd968248deb50ceba286c076` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24037.csv | 2026-11-28T09:01:18Z | 173,678 | `c55dd2f4926b90275bff4f426b381206415ce9b604fce45b1e6f192c4daaa014` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24039.csv | 2026-11-28T09:01:19Z | 87,145 | `78a73f75574623d870a6b2c7ac03dba120303cbfbcc502f9b9e9c9b37cc263b2` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24041.csv | 2026-11-28T09:01:19Z | 165,848 | `3298d139a6835f966a5f7c715ad9264638267c778f68bc81a16030af69c6082b` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24043.csv | 2026-11-28T09:01:20Z | 228,067 | `4ee0e59a9e15f7d5d4df98cd2e5effd5aacaf738b7f900b775d62bfe06669b72` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24045.csv | 2026-11-28T09:01:20Z | 194,821 | `53f5632def430f26b60da7a0e2d43e111d75c6fe1ef7985b474af9a94a3b7548` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24047.csv | 2026-11-28T09:01:21Z | 178,054 | `84d037919ae9f2e2c0b8dd63f3f361b2dbf7ee5564cb2498a9bef3be7d7001e4` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24510.csv | 2026-11-28T09:01:21Z | 324,911 | `60be1057487cd4fa242aa7d84046c0b3b54261e79804c0079426dd652a388847` |
+| https://data.bls.gov/cew/data/api/2025/1/area/24999.csv | 2026-11-28T09:01:23Z | 358,492 | `67a3dfe65c57be03ce3f8e18440325b2a6bda79e0b4c3840e15c5d9a94d61ba7` |
+| https://data.bls.gov/cew/data/api/2025/1/area/C1258.csv | 2026-11-28T09:01:24Z | 268,035 | `baadb40580a18d1cce18fa9b56332152d2150a35a4b6c09508c2273b2fcadad8` |
+| https://data.bls.gov/cew/data/api/2025/1/area/C2010.csv | 2026-11-28T09:01:25Z | 175,107 | `30328ffd98a1fa2e371e6e705a00349f433b0fa08ef8c67bfbb9b75c189f42f6` |
+| https://data.bls.gov/cew/data/api/2025/1/area/C2518.csv | 2026-11-28T09:01:25Z | 203,571 | `3124fcf9089b6b77a94c46cdb278a887b7c7c46e24d8bb064f609c95bd8cd0be` |
+| https://data.bls.gov/cew/data/api/2025/1/area/C3050.csv | 2026-11-28T09:01:26Z | 170,682 | `1e375ce1c3935ef0876094f8293c334029d21a63f3fac1fd62dfe520753c2d24` |
+| https://data.bls.gov/cew/data/api/2025/1/area/C3798.csv | 2026-11-28T09:01:26Z | 261,492 | `923d5e3aef42f57397204fc35355ca0c2cc5b3fa52d8953b0903a98fdb698e6d` |
+| https://data.bls.gov/cew/data/api/2025/1/area/C4154.csv | 2026-11-28T09:01:27Z | 165,184 | `65fab512dd3a3b50da2b042d96c66dfa984cdee1fb5bd26b2b6be71569dd913d` |
+| https://data.bls.gov/cew/data/api/2025/1/area/C4790.csv | 2026-11-28T09:01:27Z | 246,765 | `9766eb55c416d47609a437e021018c86a26f14a9787df37f69dce9a4dad2a7ac` |
+| https://data.bls.gov/cew/data/api/2025/1/area/C1570.csv | 2026-11-28T09:01:28Z | 1,107 | `ad695cb1b67e5861fd6746d55e3322988bac2247457bc07ea41bb311b717d203` |
+| https://data.bls.gov/cew/data/api/2025/1/area/C1906.csv | 2026-11-28T09:01:28Z | 1,112 | `74cc88accb72741ffd37743b1a98db544fa9cde84dcd0c833ec96357d4cfbcd2` |
+| https://data.bls.gov/cew/data/api/2025/1/area/C2066.csv | 2026-11-28T09:01:29Z | 1,112 | `e7e391a7bac62deda889bb3bb0e2c6112ecd1c588a6d2ff3012d95a93142633a` |
+| https://data.bls.gov/cew/data/api/2025/1/area/C3618.csv | 2026-11-28T09:01:29Z | 1,112 | `5a7642de6454d78c60ba055848b4685846bd341234025aaf3a20c31d8f74de14` |
+| https://data.bls.gov/cew/data/api/2025/1/area/C4258.csv | 2026-11-28T09:01:30Z | 1,123 | `6f43d27be3ac3443e0bf66395bbe95d10073e32b77c2af4c92e5ef582bdc2a94` |
+| https://data.bls.gov/cew/data/api/2025/2/area/US000.csv | 2026-11-28T09:01:30Z | 910,302 | `4d48dd544063899bda2de6c209340f2e2605c899e6a0504dbd5a0f432fddd640` |
+| https://data.bls.gov/cew/data/api/2025/2/area/10000.csv | 2026-11-28T09:01:31Z | 362,825 | `801d4373fc150d8012841798a3e74186fa5d690298ee39bbed6ecc10a821ba0e` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24000.csv | 2026-11-28T09:01:31Z | 510,976 | `e33bca69a3619eb3fabb9da93dd877218edf1e552dd3f94d2b68491097990798` |
+| https://data.bls.gov/cew/data/api/2025/2/area/10001.csv | 2026-11-28T09:01:32Z | 214,318 | `6b1df1b6268b2e77b57404a44387cb0d174112b76eb5ccf618e38db3e231581c` |
+| https://data.bls.gov/cew/data/api/2025/2/area/10003.csv | 2026-11-28T09:01:32Z | 283,479 | `b1128f97d4c8544014103c073d54ea6c11887d34ea38ac5e5053f3df88ead838` |
+| https://data.bls.gov/cew/data/api/2025/2/area/10005.csv | 2026-11-28T09:01:33Z | 224,769 | `8cd12ee7d1cfc9cd8e93be2b41015d1d87ee70e7c93b5c17bbd0f2b03707a024` |
+| https://data.bls.gov/cew/data/api/2025/2/area/10999.csv | 2026-11-28T09:01:35Z | 126,805 | `87ced61f68b3c8cbf517a0ac31d6887677423d789c87523ad21e1879d1a18116` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24001.csv | 2026-11-28T09:01:35Z | 167,205 | `36a9fe3d134dab35c3f3adb077bd45dfe9543073b4741895d1c00cf8faaeb0c2` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24003.csv | 2026-11-28T09:01:36Z | 322,111 | `d7643f423202a721db7716827c787b9dc70d3746fd6e9ad09107a16f81174169` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24005.csv | 2026-11-28T09:01:36Z | 330,530 | `024e04c45000d6c3648117167d772a5255efe143fabfeb26047e1f4376b76410` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24009.csv | 2026-11-28T09:01:37Z | 165,439 | `7df3bc663cead5dfb08a7c0e90ca09b339f1996c6dfe7d808342bc1217184e2d` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24011.csv | 2026-11-28T09:01:37Z | 116,867 | `a45848e3e3c195605024440c4b74d826b3d541d800822fa5615dfe96117874b0` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24013.csv | 2026-11-28T09:01:38Z | 219,910 | `31b5340ed664b09548554b0f7a85a23b03546ebcde26bdd5bbe692f5544dd5ce` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24015.csv | 2026-11-28T09:01:38Z | 184,126 | `da5a76a6193fca29a01c0d7b933c532bf4efedc9476ca49f4eccbfa54e421d5e` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24017.csv | 2026-11-28T09:01:39Z | 192,944 | `aed1bfd65c12a5198ca17b9495b2cb7096100abf9fb457daef887a13d177a442` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24019.csv | 2026-11-28T09:01:39Z | 125,110 | `8752e148bbf4c6cce81779554dc6d5b25e6b8d10e1a13f8e8784aadff99e268d` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24021.csv | 2026-11-28T09:01:40Z | 266,206 | `eba0ce21f2ff309e042576064bdc73f059b6937aac99f9361cc7f7d42f200bbe` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24023.csv | 2026-11-28T09:01:40Z | 145,831 | `c95fff6e01d3f22c74229b740ef6f7c9b8234c713361b76c31e57dfd2d30aff8` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24025.csv | 2026-11-28T09:01:41Z | 255,759 | `a74b882c5f0c3ef0c4e5139a70864e6b31542ea7401b2813d59e063542fe1c0c` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24027.csv | 2026-11-28T09:01:41Z | 277,546 | `d330979c09bb3d84fb34af805acae85bb053156a16943ad7dfd8a34929d7663f` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24029.csv | 2026-11-28T09:01:42Z | 122,448 | `715f7da7ad6b98a1eae6d3830be450a0b1b641fd93d8be3c1226070242137bcf` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24031.csv | 2026-11-28T09:01:42Z | 324,863 | `8049b5e8e64ae5db835156d10b725102df1cb4273359aecc9c665352aedc9ed1` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24033.csv | 2026-11-28T09:01:43Z | 315,461 | `efa554406384d796ecb1084b082ebaf5ac5c191c9377a3fcee379699ee95c974` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24035.csv | 2026-11-28T09:01:43Z | 161,608 | `a5dc19ba2cc5c6969b8071783680b96aedc13492114d525081ee9053164daf67` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24037.csv | 2026-11-28T09:01:44Z | 173,463 | `27c046fad99ae5eea7ee6d06ad52fb63a280941949708bf54f65a9cfe31c92a0` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24039.csv | 2026-11-28T09:01:44Z | 87,050 | `f6d1bf8b81772445f57698836b8b1b9854f0a25c9e978ef40ec3ece87a3e5cd2` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24041.csv | 2026-11-28T09:01:45Z | 165,687 | `2393addba848d318a5f72cbb8f21a24998f0082a5b844cd3adbce5aebf011481` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24043.csv | 2026-11-28T09:01:45Z | 227,524 | `bf1d9b9174b4e2d275d05fc9a69060ad2727772721a9bdd6dd19f1c4f1494bfc` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24045.csv | 2026-11-28T09:01:46Z | 193,376 | `46e75ee87c0ef6a41f27aa81b4e1165958a4aa0992587ffef0253bb342aa7a0b` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24047.csv | 2026-11-28T09:01:46Z | 179,833 | `d503ca455a1222da538569c452b1bbf40e4ec5e3e337ca88b46e3764ba2ec45e` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24510.csv | 2026-11-28T09:01:47Z | 322,219 | `f5bbd9af2ea5af8b5a4befaa34541758e940e9f38279dc072bfcef94aaacfc24` |
+| https://data.bls.gov/cew/data/api/2025/2/area/24999.csv | 2026-11-28T09:01:49Z | 356,340 | `53a775993b199903320b34c77ea7543daae9f33574e8df9a9c9cb4b85d3eda56` |
+| https://data.bls.gov/cew/data/api/2025/2/area/C1258.csv | 2026-11-28T09:01:49Z | 267,382 | `88a3136d0fd471b36b2e9a4faa586f8e80172ee3ac7f37818faa3b0e2f01322f` |
+| https://data.bls.gov/cew/data/api/2025/2/area/C2010.csv | 2026-11-28T09:01:50Z | 176,339 | `0b4aa1637c609b74a3c18c85eca9566f8109092afe1d0fa874211ca32715c3a2` |
+| https://data.bls.gov/cew/data/api/2025/2/area/C2518.csv | 2026-11-28T09:01:51Z | 202,435 | `9b836dbdaa5f4a8fdbf148b835eed4867833726073049fcc0c6e4ed6a285f754` |
+| https://data.bls.gov/cew/data/api/2025/2/area/C3050.csv | 2026-11-28T09:01:51Z | 169,452 | `ce434ea32eecadfda7bd64933c42a90fd84938bfec822752b2b5a6c83eebb511` |
+| https://data.bls.gov/cew/data/api/2025/2/area/C3798.csv | 2026-11-28T09:01:52Z | 261,311 | `53f5bf7a60ac4a2ca432ac1f28a67199285cf877d4580d9b41a8a9035504cc69` |
+| https://data.bls.gov/cew/data/api/2025/2/area/C4154.csv | 2026-11-28T09:01:52Z | 164,585 | `9b734c340c31c5d7e51b808017a59c1c11d54161e68db2b53766bbfe456ddb1b` |
+| https://data.bls.gov/cew/data/api/2025/2/area/C4790.csv | 2026-11-28T09:01:53Z | 247,623 | `82244084f1b607005acfb1dc053fb891ea456a17b8845409507a6b65ce3caa19` |
+| https://data.bls.gov/cew/data/api/2025/2/area/C1570.csv | 2026-11-28T09:01:53Z | 1,108 | `0eb15ae32e0be344baef8ed31decbda7498501a337e7ee111adf589e7b918f34` |
+| https://data.bls.gov/cew/data/api/2025/2/area/C1906.csv | 2026-11-28T09:01:54Z | 1,117 | `49d655da80f8b7d735e32da1041bade22fad2a63b51df8fb0596384d177d1cd9` |
+| https://data.bls.gov/cew/data/api/2025/2/area/C2066.csv | 2026-11-28T09:01:54Z | 1,114 | `be79e5a839ecdc43b48cbbad3f2d0a2f7867a8f1606e0391905c26dcdcb09aee` |
+| https://data.bls.gov/cew/data/api/2025/2/area/C3618.csv | 2026-11-28T09:01:55Z | 1,117 | `e455bd5c85ae48917a9b81200063308a7b62ec95e5f95904f3f9bfc1dc917916` |
+| https://data.bls.gov/cew/data/api/2025/2/area/C4258.csv | 2026-11-28T09:01:55Z | 1,123 | `3a91bc01106cb6ea3df45947bc5651d8d73ed494f52b462a651bc081c1a04930` |
+| https://data.bls.gov/cew/data/api/2025/3/area/US000.csv | 2026-11-28T09:01:56Z | 910,517 | `f5a489f67d25aa31621e7c62c922cb2a5dbf0ec426d05afe484e5cafa56f0720` |
+| https://data.bls.gov/cew/data/api/2025/3/area/10000.csv | 2026-11-28T09:01:56Z | 362,150 | `3789e8f920b2046ab883b8b084fb7ea8d0b5e6caa2154f73dbd6c8ed206a5a72` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24000.csv | 2026-11-28T09:01:57Z | 512,021 | `f6b6a58351c3c5696901d63dde26570ac035e904d52724f97cf45ffadc2150bf` |
+| https://data.bls.gov/cew/data/api/2025/3/area/10001.csv | 2026-11-28T09:01:57Z | 214,202 | `847347c4252144f47840347c7e2f4f185a5d2a510448c9140182f1c90169f9dd` |
+| https://data.bls.gov/cew/data/api/2025/3/area/10003.csv | 2026-11-28T09:01:58Z | 284,135 | `6b1ed8b753bdcff915e9054f7c33cb0927b4c19cb922a2a06563ed5155f045c5` |
+| https://data.bls.gov/cew/data/api/2025/3/area/10005.csv | 2026-11-28T09:01:58Z | 225,037 | `226a5d291716e8173abe93cad2d69f86e826a2935d256b9d157c4ae385834d41` |
+| https://data.bls.gov/cew/data/api/2025/3/area/10999.csv | 2026-11-28T09:02:00Z | 126,393 | `3c5265d59fd570644f2bce97b37bb7b4e8be16dccbca0dce9fccd43f849f9608` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24001.csv | 2026-11-28T09:02:00Z | 165,123 | `8347a78516a277a4905d55eb2b33ba24f0a3def85ef6f90a2539691fbdb0b70d` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24003.csv | 2026-11-28T09:02:01Z | 322,365 | `5d2f97ba0871604cb6a2235410a5b0285c49f04b7e5bde1d76666d3eebe87a5c` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24005.csv | 2026-11-28T09:02:01Z | 330,035 | `b6ef47c6dfa109e820fb8cdd82658441e73b11614956c257d7cd29aed59ac91f` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24009.csv | 2026-11-28T09:02:02Z | 166,383 | `eb6713730551ff924225f87e15528eafd8866a883691b014ecb4a2d319100af3` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24011.csv | 2026-11-28T09:02:02Z | 116,933 | `8e319d27c442531addd129f4b2e3fe72ae56b2b37e56bf370d5558d953f85adf` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24013.csv | 2026-11-28T09:02:03Z | 219,234 | `787d97fa3a2b4c3ad2b6ab5101c7c55d0b1caab5ba88da7b09c8ea8f07301f14` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24015.csv | 2026-11-28T09:02:03Z | 183,243 | `897ada939bc1d2b4db87d92f3ce977ea0a73bc8aab703f9363eccd04fb540694` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24017.csv | 2026-11-28T09:02:04Z | 193,776 | `6fdfe3a73ff1c1d7211cb97942ef0b9f1f8acea6c7d218e03d9722d63b6f4c60` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24019.csv | 2026-11-28T09:02:04Z | 124,883 | `a880992be438811ab35cf75dae369e294ffe450c5272c446f9903c45558ab012` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24021.csv | 2026-11-28T09:02:05Z | 265,379 | `41d43a3312d3b7cac86485562c0c69e6331a10db7a302a500b078353ba523f01` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24023.csv | 2026-11-28T09:02:05Z | 145,303 | `6457c69053fc38a6df2a557d47ae94c713aa001882effbbea8df114f7e7bf4ca` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24025.csv | 2026-11-28T09:02:06Z | 256,267 | `04fde0ebd2d62fedb769abb86ede91bda3a259d88b38b88f3f64b307dc71abcd` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24027.csv | 2026-11-28T09:02:07Z | 277,187 | `5aa6aa9736f5078a7dd62cb5e5c5899f1635e483211dd13c7d3d77c5da358fc3` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24029.csv | 2026-11-28T09:02:07Z | 122,923 | `307f4e371942e94f9d4e7c636610215e81699a73ce2240018e6810f2626f9512` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24031.csv | 2026-11-28T09:02:08Z | 324,857 | `74fbaa6787575e270b812c6353b55c50d47ccc703ed7c75ff2aab932f58f71ed` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24033.csv | 2026-11-28T09:02:08Z | 316,136 | `c4a30bfde0d0f89c6c4cb843d90a511e8dc057dd3b2410311d7003f93d933b16` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24035.csv | 2026-11-28T09:02:09Z | 163,288 | `d310477a99c0468e103a9cce7159e8ce9c4bce3fa8037c26a640807fdd360ad6` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24037.csv | 2026-11-28T09:02:09Z | 173,605 | `e032af4c62d37f931c5a0619b857243ae8b6fbba15f656ab0bb8b2237950cf51` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24039.csv | 2026-11-28T09:02:10Z | 87,323 | `0ab5e2927a3c51286853bca0a0d8a0497057f926e78d30e8ba8162f3183e158c` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24041.csv | 2026-11-28T09:02:10Z | 165,034 | `95bf06e2dcc81c68182574337f41185ad32663cd019cf770acb612000a72681c` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24043.csv | 2026-11-28T09:02:10Z | 226,772 | `df335a7024fb258e41dbb310f3739f83c4261e151fa66cf7919814870454ffa2` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24045.csv | 2026-11-28T09:02:11Z | 194,056 | `e50edb4172b93396bf56686a33d40fd3a68634465f4454aed1e94ed65a4c711c` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24047.csv | 2026-11-28T09:02:11Z | 178,766 | `a30c0999d14e762af7566967b9fa971d896fb835edfc09404be18d0b49fba3ea` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24510.csv | 2026-11-28T09:02:12Z | 321,795 | `cc6060d1eebde0749284cb1bdb8c082804b6eb03317443e5f7f080009b55d7a7` |
+| https://data.bls.gov/cew/data/api/2025/3/area/24999.csv | 2026-11-28T09:02:14Z | 357,274 | `c775973cb4b7cb951814d9a22cc52607eb4e85c11796777bf2ef555aab9cff25` |
+| https://data.bls.gov/cew/data/api/2025/3/area/C1258.csv | 2026-11-28T09:02:14Z | 249,590 | `6c906aa2ace7f53ac6c18b2918efa31c29c322ffcf071b706c35b25c755d28c2` |
+| https://data.bls.gov/cew/data/api/2025/3/area/C2010.csv | 2026-11-28T09:02:15Z | 163,834 | `f7d081a978b733d4b58bfd62af9faf4ca4f2c79e4b6ba63fce0fa351f7bf34a5` |
+| https://data.bls.gov/cew/data/api/2025/3/area/C2518.csv | 2026-11-28T09:02:16Z | 192,850 | `b1c705bca0baadaa045040c74c1f96fdba7b12f8bd83c69d2c0d94a034d8d4b4` |
+| https://data.bls.gov/cew/data/api/2025/3/area/C3050.csv | 2026-11-28T09:02:16Z | 155,826 | `aac04699625c57eec28124ff64846b6e920d08a93a24496449904c226cdb0786` |
+| https://data.bls.gov/cew/data/api/2025/3/area/C3798.csv | 2026-11-28T09:02:17Z | 256,252 | `64022f88a768b4f1dc41c17d36ae1795b964030a3bfb22699dbedba5c52b3ae5` |
+| https://data.bls.gov/cew/data/api/2025/3/area/C4154.csv | 2026-11-28T09:02:17Z | 154,583 | `5109e40340f2813d0fcec8bf27b3d558143fa8c5ab98898af8a2be405135518c` |
+| https://data.bls.gov/cew/data/api/2025/3/area/C4790.csv | 2026-11-28T09:02:18Z | 250,649 | `adb9f23d0304abde5190c23a894aab773201d0bf6d4a7b4f7c7e36c1400e513d` |
+| https://data.bls.gov/cew/data/api/2025/3/area/C1570.csv | 2026-11-28T09:02:18Z | 1,111 | `d8746fc4df63b0a978e05496d7d35b60a5538544fb5f2e9195910ad90e328b90` |
+| https://data.bls.gov/cew/data/api/2025/3/area/C1906.csv | 2026-11-28T09:02:19Z | 1,122 | `a79d68dc48d8a112a3eddaed43284232ff108185e9730d2974c126abee2f0dbe` |
+| https://data.bls.gov/cew/data/api/2025/3/area/C2066.csv | 2026-11-28T09:02:19Z | 1,112 | `c4223bc8b37c99a65b9364fae10368f5bc607b9e0738f3ac3f58a3c18f25a354` |
+| https://data.bls.gov/cew/data/api/2025/3/area/C3618.csv | 2026-11-28T09:02:20Z | 1,121 | `865f79e0388c775447fbe753d12c0f5c21b151585fb24f9298312b1bcb4faafe` |
+| https://data.bls.gov/cew/data/api/2025/3/area/C4258.csv | 2026-11-28T09:02:20Z | 1,125 | `8a9e8f990ea590655221485d48d29d3e48496b23680d0a94d618e0f9a6600832` |
+| https://data.bls.gov/cew/data/api/2025/4/area/US000.csv | 2026-11-28T09:02:21Z | 910,900 | `d9520a38b22eba43ff4a36d60440526ab8e21c3a295432ed726e953f78ae528e` |
+| https://data.bls.gov/cew/data/api/2025/4/area/10000.csv | 2026-11-28T09:02:21Z | 364,842 | `0142dcff0610f860dff2f544dea8f5949dcbfdad2be867be386b9c9dd97c437f` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24000.csv | 2026-11-28T09:02:22Z | 510,987 | `0f0695e3bf0a4fe85e9a61b0ca84a0397ea84b4b01edec17e915d8d9aaf6a17a` |
+| https://data.bls.gov/cew/data/api/2025/4/area/10001.csv | 2026-11-28T09:02:22Z | 213,537 | `ec184bbffe098beb0ce783745abb67f62fc65ad35ac8d538e538374573c8e7af` |
+| https://data.bls.gov/cew/data/api/2025/4/area/10003.csv | 2026-11-28T09:02:23Z | 284,199 | `44d95e2e2596731f4063b745df0df2d54b829b49e31803437d3adb940efb7734` |
+| https://data.bls.gov/cew/data/api/2025/4/area/10005.csv | 2026-11-28T09:02:23Z | 224,026 | `027a9f09965624f8df7305661db49e852627df5339aa65fde5ae8f8aae65e490` |
+| https://data.bls.gov/cew/data/api/2025/4/area/10999.csv | 2026-11-28T09:02:25Z | 126,167 | `efb9745089355a2027c5b9675e469f487b07a31a27a572395770155c956cbcae` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24001.csv | 2026-11-28T09:02:25Z | 165,352 | `79f89f41f7b826f0edf7e99f6350eca6ec45a199bcd9b22c1f2a4e5a6242f779` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24003.csv | 2026-11-28T09:02:26Z | 322,324 | `92a3709b4c181b95bc8fa4b3b51f461d3ed8e254a84d23f657b97275eeb6a7cc` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24005.csv | 2026-11-28T09:02:26Z | 330,560 | `625ffac686d5aca9754354aa08f720adfa39bfdfb9871d7f8e5886286d185bb6` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24009.csv | 2026-11-28T09:02:27Z | 165,573 | `4abe74e607fd1df1f61ce9662a8bd52ff9f2c7e9faf0d3b5845a6bd702c90f46` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24011.csv | 2026-11-28T09:02:27Z | 116,947 | `0c606e508f2e49f192e589d0848d7525b68b54dc6143dffa1dc1bff4c9fc179b` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24013.csv | 2026-11-28T09:02:28Z | 218,832 | `0ac2c01976c27ae203c48d402473dbaf763e69b63f94de904d91655ad0b95fc0` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24015.csv | 2026-11-28T09:02:28Z | 182,792 | `c02b245f629776ff02de59d00f5eafcffacb5a06b9789bfa9d1dc219639ba5cf` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24017.csv | 2026-11-28T09:02:29Z | 193,237 | `6ad11008bc7002fe307f27430b29cb66e7256bf93249bdd6543596af0eed8160` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24019.csv | 2026-11-28T09:02:29Z | 126,381 | `e632ab27a44779572ed47f1e107bc65769f3e0805bf3afd267de5eb7429e0eb2` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24021.csv | 2026-11-28T09:02:30Z | 265,110 | `75bea485d49c55f377a069dcdfbf118829b04f3eb2e959e7db4facc06ddfa9f8` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24023.csv | 2026-11-28T09:02:30Z | 145,033 | `e803523335fa1d210a8a6d8bcb8b6e518bacfa25987cb55793b60a720e0c7c70` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24025.csv | 2026-11-28T09:02:31Z | 255,872 | `bb49446f58fc9536c9b8c1edae339b81ebf5dc405e7a928ac3021e3048174b49` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24027.csv | 2026-11-28T09:02:31Z | 276,284 | `0986d5774ee124320d699513aa7f9e66ea022f7626e7fd6b3a5ade1b36ae401c` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24029.csv | 2026-11-28T09:02:32Z | 122,714 | `a12afdd8ee856ffa579e1ed653c8307589789c267a7b8f139ea430eb60eaa662` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24031.csv | 2026-11-28T09:02:32Z | 326,087 | `d55d8908c3fb558ccd82a3eaa8d254be66784268c5cc539f0015e759750b80e2` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24033.csv | 2026-11-28T09:02:33Z | 316,954 | `dbc4e4af7e44aa62e725a6e731251cda23a3c4f856fc1d0fd335051ff62b67b0` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24035.csv | 2026-11-28T09:02:33Z | 162,281 | `767c70f247f986b3f8403488c846e52a1178af6ec2d2bdce73872bd0dc18dab1` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24037.csv | 2026-11-28T09:02:34Z | 173,269 | `0f937e7cfecdd0932d3dadb1f339fc0ac197da02908eec8463d9ab7c6d754944` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24039.csv | 2026-11-28T09:02:34Z | 87,357 | `dd82ccea82e2f3b7908ae1ad22e011d30ca1ff38999dbb776a022128132015de` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24041.csv | 2026-11-28T09:02:35Z | 165,948 | `8be40acf5e5aee3ec5d9f005eb84c3dc78b9f0e1d5c968077e0829401abcb870` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24043.csv | 2026-11-28T09:02:35Z | 227,058 | `136e135f10d6f8ab83896da950d8ac4668dbe2c48b0978b1d7c450abcb922c66` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24045.csv | 2026-11-28T09:02:36Z | 195,188 | `4452ac31639058a51024190f91606e3fb9d84cfb807f9321a20c174d59b0ef48` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24047.csv | 2026-11-28T09:02:36Z | 178,877 | `3891a2dfa3762b54b477de241f9ea5a75d5f874ca4d398c050b4de580eb97aea` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24510.csv | 2026-11-28T09:02:37Z | 322,813 | `e06c3c8213c805846336de54a7545e687470a4aea3e1cab3e0d23b7de7dead54` |
+| https://data.bls.gov/cew/data/api/2025/4/area/24999.csv | 2026-11-28T09:02:39Z | 355,374 | `78d77cf7efd7c3b3223745b15e0a3b3d46f51c42762ae7ba4bf3ac477ca7183f` |
+| https://data.bls.gov/cew/data/api/2025/4/area/C1258.csv | 2026-11-28T09:02:39Z | 249,595 | `668a3ad000ff3eeb4d6eaab6a7da35efea0ac2ed9176e7825591f7256578b119` |
+| https://data.bls.gov/cew/data/api/2025/4/area/C2010.csv | 2026-11-28T09:02:40Z | 163,843 | `a47c41659b0f4ade66080d7d98ec4d6ea545974f91506b93b5c2b3186a8ce666` |
+| https://data.bls.gov/cew/data/api/2025/4/area/C2518.csv | 2026-11-28T09:02:41Z | 192,865 | `deea5a1b359a69b91958319f1783b7e55bb59848703935e7ac77ff42d8421277` |
+| https://data.bls.gov/cew/data/api/2025/4/area/C3050.csv | 2026-11-28T09:02:41Z | 155,826 | `8dc8d2743241271fd9731ef3c2629f68bbcb05d52d750c7c299c6d8cf785c4e8` |
+| https://data.bls.gov/cew/data/api/2025/4/area/C3798.csv | 2026-11-28T09:02:42Z | 256,231 | `6ebe4fc0c3caafe8f613cc2c911a92c0b390c3bc310e4416b04fac6c3dbdc12a` |
+| https://data.bls.gov/cew/data/api/2025/4/area/C4154.csv | 2026-11-28T09:02:42Z | 154,585 | `ba8cb2facf2840103d33697655e95c133da72ea6fbc0d609928e40a88d60a1fb` |
+| https://data.bls.gov/cew/data/api/2025/4/area/C4790.csv | 2026-11-28T09:02:43Z | 250,642 | `f84571a0ff29c48983b806fec24954b5ca306815a6c88194c7782cbd1be64390` |
+| https://data.bls.gov/cew/data/api/2025/4/area/C1570.csv | 2026-11-28T09:02:43Z | 1,112 | `7e17acf477ef9e16cd05062bf4f6a0ead69b43f7158f8d17894f488854e7701d` |
+| https://data.bls.gov/cew/data/api/2025/4/area/C1906.csv | 2026-11-28T09:02:44Z | 1,120 | `3992bb070ec38beaf868257abe2d079cc3f18f356d92a98942b7b867a3942f43` |
+| https://data.bls.gov/cew/data/api/2025/4/area/C2066.csv | 2026-11-28T09:02:44Z | 1,111 | `e8ddc90d46d4151c271505db24b522fbd652388221afd48b3dc532c5293c8b5d` |
+| https://data.bls.gov/cew/data/api/2025/4/area/C3618.csv | 2026-11-28T09:02:44Z | 1,112 | `76c9e559ff773d61b9771b483770b961e8cac2de7fc76e442935ba2188bdc857` |
+| https://data.bls.gov/cew/data/api/2025/4/area/C4258.csv | 2026-11-28T09:02:45Z | 1,120 | `44290f1b66995c08ce1210c2841dfe97aa3c9834a573eb33780a952c171e69b0` |

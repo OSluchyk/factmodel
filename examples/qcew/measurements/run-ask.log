@@ -1,0 +1,5 @@
+request:   measure employment_month3, area 10000, industry 10, ownership 5, year 2025, qtr 1
+sql:       SELECT (SELECT SUM(qtrly.month3_emplvl) FROM qtrly WHERE qtrly.area_fips = '10000' AND qtrly.industry_code = '10' AND qtrly.own_code = '5' AND qtrly.year = '2025' AND qtrly.qtr = '1' AND qtrly.agglvl_code = '51' AND qtrly.disclosure_code IS NULL) AS value, (SELECT SUM(CASE WHEN qtrly.disclosure_code = 'N' THEN 1 ELSE 0 END) FROM qtrly WHERE qtrly.area_fips = '10000' AND qtrly.industry_code = '10' AND qtrly.own_code = '5' AND qtrly.year = '2025' AND qtrly.qtr = '1' AND qtrly.agglvl_code = '51') AS suppressed_cells
+answer:    [(405199, 0)]
+reference: [(405199, 0)]
+same:      yes

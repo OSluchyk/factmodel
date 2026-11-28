@@ -126,6 +126,8 @@ class Session:
     dialect: str
     queries: int = 0
     failed: list[str] = field(default_factory=list)
+    # targets propose_joins could not use: (table, column, non-null rows, distinct values)
+    not_unique: list[tuple[str, str, int, int]] = field(default_factory=list)
 
     def one(self, query_id: str, query: exp.Select) -> dict[str, float] | None:
         sql = query.sql(dialect=self.dialect, identify=True)
@@ -321,6 +323,18 @@ def propose_joins(
         if not s
     ]
     pairs = unique_pairs(snap, keys or {})
+    # A table without a unique column and without a unique pair cannot be referenced. Its
+    # columns that come close to a key (not unique, at most two rows a value on average) are
+    # named, so a missing join is explained by the measurement and not left to the reader.
+    # No query is added for this. A table a pair can reference is left alone: a long text
+    # column of it, such as a comment, comes close to a key and is no one's target.
+    for name, columns in stats.items():
+        if columns and not any(c.unique for c in columns.values()) and not pairs.get(name):
+            session.not_unique += [
+                (name, c.field, c.non_null, c.distinct)
+                for c in columns.values()
+                if c.distinct < c.non_null <= 2 * c.distinct
+            ]
     candidates: list[JoinCandidate] = []
     cache: dict[tuple[str, str, str, str], tuple[int, int] | None] = {}
 
@@ -408,6 +422,76 @@ def propose_joins(
     return candidates, skipped
 
 
+# Named keys (D-024) -----------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class NamedKey:
+    """A column list a person named, measured as it is: no search, no minimality."""
+
+    object: str
+    fields: tuple[str, ...]
+    row_count: int
+    non_null: int
+    distinct: int
+
+    @property
+    def unique(self) -> bool:
+        """Never null and no combination twice: fit to be a primary key."""
+        return self.row_count > 0 and self.non_null == self.distinct == self.row_count
+
+    @property
+    def duplicate_rows(self) -> int:
+        """Rows beyond the first of each combination, among the rows without a null."""
+        return self.non_null - self.distinct
+
+
+def parse_named_key(text: str) -> tuple[str, tuple[str, ...]]:
+    """``<table>:<column>,<column>,...`` as (table, columns)."""
+    table, sep, columns = text.partition(":")
+    fields = tuple(c.strip() for c in columns.split(",") if c.strip())
+    if not sep or not table.strip() or not fields:
+        raise ValueError(f"--key {text!r}: write <table>:<column>,<column>,...")
+    if len(set(fields)) != len(fields):
+        raise ValueError(f"--key {text!r}: a column is named twice")
+    return table.strip(), fields
+
+
+def measure_named_keys(
+    snap: Snapshot, session: Session, named: Sequence[tuple[str, Sequence[str]]]
+) -> list[NamedKey]:
+    """Row count, rows without a null and distinct combinations of every named column list.
+
+    Two queries per list, whatever its length. The table and every column must be in the
+    snapshot; a type class that cannot carry a key is not refused, because the person named it.
+    """
+    tables = {o.name: o for o in _tables(snap)}
+    out: list[NamedKey] = []
+    for table, fields in named:
+        obj = tables.get(table)
+        if obj is None:
+            raise ValueError(f"--key: no table {table!r} in the snapshot")
+        known = {f.name for f in obj.fields if f.path is None}
+        missing = [f for f in fields if f not in known]
+        if missing:
+            raise ValueError(f"--key: {table} has no column {', '.join(missing)}")
+        key_id = "-".join(slug(f) for f in fields)
+        rows = session.one(f"rows-{slug(table)}", build.row_count(obj.name))
+        got = session.one(f"named-{slug(table)}-{key_id}", pair_stats(obj.name, list(fields)))
+        if rows is None or got is None:
+            continue
+        out.append(
+            NamedKey(
+                table,
+                tuple(fields),
+                int(rows["row_count"]),
+                int(got["non_null"]),
+                int(got["distinct"]),
+            )
+        )
+    return out
+
+
 # Documents -------------------------------------------------------------------------------------
 
 
@@ -447,9 +531,45 @@ def keys_document(
     day: str,
     meta: Mapping[str, str],
     max_columns: int,
+    named: Sequence[NamedKey] = (),
 ) -> dict[str, Any]:
     objects: dict[str, dict[str, Any]] = {}
     records: list[dict[str, Any]] = []
+    named_items: list[dict[str, Any]] = []
+    for key in named:
+        entity = slug(key.object)
+        record_id = _evidence_id("named-key", entity, *(slug(f) for f in key.fields))
+        named_items.append(
+            {
+                "object": key.object,
+                "entity": entity,
+                "fields": list(key.fields),
+                "unique": key.unique,
+                "row_count": key.row_count,
+                "duplicate_rows": key.duplicate_rows,
+                "status": "inferred",
+                "evidence": [record_id],
+            }
+        )
+        verdict = "unique and never null" if key.unique else "not a key"
+        records.append(
+            _record(
+                record_id,
+                snap,
+                pin,
+                day,
+                meta,
+                {
+                    "row_count": key.row_count,
+                    "non_null": key.non_null,
+                    "null_count": key.row_count - key.non_null,
+                    "distinct": key.distinct,
+                    "duplicate_rows": key.duplicate_rows,
+                },
+                f"fact propose keys --key: a named column list, {verdict} on this data; "
+                "measured, not found",
+            )
+        )
     for c in candidates:
         entity = slug(c.object)
         item = objects.setdefault(
@@ -487,6 +607,7 @@ def keys_document(
         "queries": session.queries,
         "skipped": list(skipped) + [f"query failed: {q}" for q in session.failed],
         "objects": list(objects.values()),
+        **({"named": named_items} if named_items else {}),
         "records": records,
     }
 
@@ -563,6 +684,22 @@ def joins_document(
         "threshold": threshold,
         "queries": session.queries,
         "skipped": list(skipped) + [f"query failed: {q}" for q in session.failed],
+        **(
+            {
+                "targets_not_unique": [
+                    {
+                        "object": table,
+                        "field": column,
+                        "non_null": non_null,
+                        "distinct": distinct,
+                        "duplicate_rows": non_null - distinct,
+                    }
+                    for table, column, non_null, distinct in session.not_unique
+                ]
+            }
+            if session.not_unique
+            else {}
+        ),
         "candidates": items,
         "records": records,
     }

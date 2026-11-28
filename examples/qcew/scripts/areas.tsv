@@ -1,0 +1,52 @@
+# area_fips	group	area_title (from sources/codelists/area_titles.csv)
+US000	nation	U.S. TOTAL
+10000	state	Delaware -- Statewide
+24000	state	Maryland -- Statewide
+10001	county	Kent County, Delaware
+10003	county	New Castle County, Delaware
+10005	county	Sussex County, Delaware
+10996	county	Overseas Locations -- Delaware
+10997	county	Multicounty, Not Statewide -- Delaware
+10998	county	Out-of-State, Delaware
+10999	county	Unknown Or Undefined, Delaware
+24001	county	Allegany County, Maryland
+24003	county	Anne Arundel County, Maryland
+24005	county	Baltimore County, Maryland
+24009	county	Calvert County, Maryland
+24011	county	Caroline County, Maryland
+24013	county	Carroll County, Maryland
+24015	county	Cecil County, Maryland
+24017	county	Charles County, Maryland
+24019	county	Dorchester County, Maryland
+24021	county	Frederick County, Maryland
+24023	county	Garrett County, Maryland
+24025	county	Harford County, Maryland
+24027	county	Howard County, Maryland
+24029	county	Kent County, Maryland
+24031	county	Montgomery County, Maryland
+24033	county	Prince George's County, Maryland
+24035	county	Queen Anne's County, Maryland
+24037	county	St. Mary's County, Maryland
+24039	county	Somerset County, Maryland
+24041	county	Talbot County, Maryland
+24043	county	Washington County, Maryland
+24045	county	Wicomico County, Maryland
+24047	county	Worcester County, Maryland
+24510	county	Baltimore City, Maryland
+24996	county	Overseas Locations -- Maryland
+24997	county	Multicounty, Not Statewide -- Maryland
+24998	county	Out-of-State, Maryland
+24999	county	Unknown Or Undefined, Maryland
+C1258	msa	Baltimore-Columbia-Towson, MD MSA
+C1568	msa	California-Lexington Park, MD MSA
+C2010	msa	Dover, DE MSA
+C2518	msa	Hagerstown-Martinsburg, MD-WV MSA
+C3050	msa	Lexington Park, MD MSA
+C3798	msa	Philadelphia-Camden-Wilmington, PA-NJ-DE-MD MSA
+C4154	msa	Salisbury, MD MSA
+C4790	msa	Washington-Arlington-Alexandria, DC-VA-MD-WV MSA
+C1570	micro	Cambridge, MD MicroSA
+C1906	micro	Cumberland, MD-WV MicroSA
+C2066	micro	Easton, MD MicroSA
+C3618	micro	Ocean Pines, MD MicroSA
+C4258	micro	Seaford, DE MicroSA

@@ -1,0 +1,4 @@
+# fetched by scripts/fetch.sh and built by scripts/load.sh; never committed
+data/
+qcew.duckdb
+qcew.duckdb.wal

@@ -7,7 +7,7 @@ fact: annual.to-industry
 expected:
   orphans_left:
     max: 0
-dialect: sqlite
+dialect: duckdb
 sql: SELECT (SELECT COUNT(*) FROM "annual" AS "s" WHERE NOT "s"."industry_code" 
   IS NULL) AS "source_rows", (SELECT COUNT(*) FROM "annual" AS "s" WHERE NOT 
   "s"."industry_code" IS NULL AND NOT EXISTS(SELECT 1 FROM "industry_titles" AS 

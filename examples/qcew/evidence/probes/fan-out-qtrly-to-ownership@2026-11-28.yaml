@@ -1,0 +1,12 @@
+kind: evidence
+records:
+- id: ev-fan-out-qtrly-to-ownership-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    max_fan_out: 1
+  status: confirmed
+  read_on: '2026-11-28'
+  probe: fan-out-qtrly-to-ownership
+  environment: local
+  data_quality: representative

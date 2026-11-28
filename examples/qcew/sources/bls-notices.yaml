@@ -1,0 +1,15 @@
+kind: source
+id: bls-notices
+title: BLS QCEW notices and method pages
+source_kind: document
+access_mode: agent_read
+location: https://www.bls.gov/cew/notices/2025/change-in-the-presentation-of-metropolitan-statistical-area-data-in-qcew.htm
+access: >-
+  Pages of www.bls.gov read by the agent through web search and web fetch on 2026-11-28, not
+  opened by the owner: the notice on the presentation of MSA data (the location above), the
+  QCEW overview https://www.bls.gov/cew/overview.htm, the Handbook of Methods page
+  https://www.bls.gov/opub/hom/cew/presentation.htm, the news release notes
+  https://www.bls.gov/cew/about-data/news-release-notes.htm and the page on state and local
+  government data
+  https://www.bls.gov/cew/additional-resources/improved-usability-of-state-and-local-government-data.htm.
+current_pin: BLS QCEW notices and method pages@2026-11-28

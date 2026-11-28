@@ -1,0 +1,3 @@
+fetch: 0 requests, 0 slices (0 bytes), 0 not published, 510 kept from the last run, 1 s
+fetch: wrote data/raw/MANIFEST.tsv (in examples/qcew unless FACT_QCEW_RAW is set)
+fetch: against checksums.sha256: 440 same, 0 changed, 0 new, 0 missing

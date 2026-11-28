@@ -170,3 +170,31 @@ records:
   quote: industry titles embed the code ("NAICS 31-33 Manufacturing", "1011 Natural resources and mining").
   status: confirmed
   read_on: '2026-10-23'
+- id: ev-doc-crosswalk
+  source: bls-crosswalk
+  pin: BLS QCEW County-MSA-CSA Crosswalk xlsx sha256:9180c5a1784a@2026-11-28
+  quote: 'C3798 Philadelphia-Camden-Wilmington, PA-NJ-DE-MD MSA: 10003 New Castle County, Delaware; 24015 Cecil County, Maryland; 34005 Burlington, 34007 Camden, 34015 Gloucester, 34033 Salem County, New Jersey; 42017 Bucks, 42029 Chester, 42045 Delaware, 42091 Montgomery, 42101 Philadelphia County, Pennsylvania.'
+  status: confirmed
+  read_on: '2026-11-28'
+  note: 'The eleven rows of this MSA in the sheet Jul. 2023 Crosswalk of the spreadsheet the owner saved, read by scripts/crosswalk.py (measurements/crosswalk-c3798.txt). The record was inferred while it rested on a transcription of the BLS page; the file gives the same eleven counties.'
+- id: ev-doc-crosswalk-baltimore
+  source: bls-crosswalk
+  pin: BLS QCEW County-MSA-CSA Crosswalk xlsx sha256:9180c5a1784a@2026-11-28
+  quote: 'C1258 Baltimore-Columbia-Towson, MD MSA: 24003 Anne Arundel, 24005 Baltimore, 24013 Carroll, 24025 Harford, 24027 Howard, 24035 Queen Anne''s County and 24510 Baltimore City, Maryland.'
+  status: confirmed
+  read_on: '2026-11-28'
+  note: 'The seven rows of this MSA in the same sheet. The record was inferred while it rested on a transcription; the file gives the same seven counties, and their rows sum to the published MSA row in every quarter that has one (ev-measure-msa-from-counties-2026-11-28).'
+- id: ev-doc-msa-totals-only
+  source: bls-notices
+  pin: BLS QCEW notices and method pages@2026-11-28
+  quote: at only the total covered employment for the area
+  status: inferred
+  read_on: '2026-11-28'
+  note: 'From the notice Change in the presentation of Metropolitan Statistical Area (MSA) data in QCEW, last modified December 30, 2025: beginning with third quarter 2025 data, released on March 10, 2026, an MSA is published for its total only, and detail by industry can be rebuilt from county rows with the crosswalk. The QCEW overview page, last modified January 28, 2026, names the second quarter of 2025 instead; the rows agree with the notice (measurements/padding-by-quarter.txt). Inferred: read by the agent, not opened by the owner.'
+- id: ev-doc-confidentiality
+  source: bls-notices
+  pin: BLS QCEW notices and method pages@2026-11-28
+  quote: Details regarding the methods used to protect the data are not shared
+  status: inferred
+  read_on: '2026-11-28'
+  note: 'From the Handbook of Methods, QCEW, Presentation. No BLS page found on the day of the read states a change of the disclosure rules for state or county rows in 2025: the news release notes of 2025 name a shutdown delay, one dropped county and the move to one data release; the notices of 2025 and 2026 name the MSA change, an erratum and pending corrections to first quarter 2025 files; the page on state and local government data lists Delaware and Maryland as sensitive since 2022-1 and was last modified November 11, 2022. Inferred: read by the agent, not opened by the owner.'

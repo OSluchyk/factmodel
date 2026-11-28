@@ -7,6 +7,7 @@ request:
   ownership: '0'
   year: '2025'
   qtr: '1'
-reference: SELECT SUM(month3_emplvl) AS value FROM qtrly WHERE area_fips IN ('10000', '24000') AND industry_code = '10' AND own_code = '0' AND year = '2025' AND qtr = '1'
+reference: SELECT SUM(CASE WHEN disclosure_code IS NULL THEN month3_emplvl END) AS value FROM qtrly WHERE area_fips = 'US000' AND industry_code = '10' AND own_code = '0' AND year = '2025' AND qtr = '1' AND agglvl_code = '10'
 mode: same_rows
-known_gap: US000 excludes Puerto Rico and the Virgin Islands (H2); a rollup across the geography lattice needs the coverage of each national code (F-0009).
+note: "Published BLS row: slice 2025/1/area/US000.csv, own_code 0, industry_code 10, agglvl_code 10, disclosure_code blank; month3_emplvl 154686369."
+known_gap: The consumer answers one area code or the counties of one state; it has no nation built from states. BLS publishes the national row as US000, which excludes Puerto Rico and the Virgin Islands (H2), so a rollup across the geography lattice needs the coverage of each national code (F-0009).

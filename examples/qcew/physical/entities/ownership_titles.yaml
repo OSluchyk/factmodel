@@ -1,7 +1,7 @@
 kind: entity
 id: ownership_titles
 physical_name: ownership_titles
-source: qcew-sqlite
+source: qcew-duckdb-real
 grain: One row per ownership code.
 class: reference
 status: draft
@@ -15,19 +15,21 @@ evidence:
 - ev-doc-title-files
 - ev-key-duplicates-ownership-titles-2026-10-27
 - ev-row-count-ownership-titles-2026-10-27
+- ev-key-duplicates-ownership-titles-2026-11-28
+- ev-row-count-ownership-titles-2026-11-28
 fields:
 - name: own_code
-  type: TEXT
+  type: VARCHAR
   nullable: true
   meaning: Ownership code.
 - name: own_title
-  type: TEXT
+  type: VARCHAR
   nullable: true
   meaning: Ownership name.
 records:
 - id: ev-ownership_titles-catalog
-  source: qcew-sqlite
-  pin: sqlite:qcew@2026-10-27
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
   quote: table ownership_titles in qcew
   status: confirmed
-  read_on: '2026-10-27'
+  read_on: '2026-11-28'

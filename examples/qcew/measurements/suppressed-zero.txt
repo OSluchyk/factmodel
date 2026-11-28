@@ -1,0 +1,5 @@
+disclosure_code | row_count | rows_with_null | employment_and_wages_zero | establishments_filled
+----------------+-----------+----------------+---------------------------+----------------------
+-               |     27924 |              0 |                     27924 |                     0
+N               |    250155 |              0 |                    250155 |                250155
+blank           |    208021 |              0 |                       890 |                207991

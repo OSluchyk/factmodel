@@ -1,0 +1,14 @@
+kind: evidence
+records:
+- id: ev-null-rate-qtrly-month1-emplvl-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 486100
+    non_null: 486100
+    null_rate: 0.0
+  status: confirmed
+  read_on: '2026-11-28'
+  probe: null-rate-qtrly-month1-emplvl
+  environment: local
+  data_quality: representative

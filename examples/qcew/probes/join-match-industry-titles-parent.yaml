@@ -6,8 +6,8 @@ entity: industry_titles
 fact: industry_titles.parent
 expected:
   orphans_left:
-    max: 0
-dialect: sqlite
+    max: 53
+dialect: duckdb
 sql: SELECT (SELECT COUNT(*) FROM "industry_titles" AS "s" WHERE NOT 
   "s"."industry_code" IS NULL AND LENGTH("s"."industry_code") > 2) AS 
   "source_rows", (SELECT COUNT(*) FROM "industry_titles" AS "s" WHERE (NOT 

@@ -35,6 +35,16 @@ properties:
         oneOf:
           - {$ref: "#/$defs/text"}
           - {type: "null"}
+      expected:
+        description: >-
+          A bound that is not zero for the key_duplicates probe: the number of keys known to
+          occur more than once, and why (D-025).
+        type: object
+        additionalProperties: false
+        required: [duplicate_keys, reason]
+        properties:
+          duplicate_keys: {type: integer, minimum: 1}
+          reason: {$ref: "#/$defs/text"}
   anchor_reference:
     description: The field that holds the anchor's key; makes the entity direct (D-007).
     type: object
@@ -124,6 +134,22 @@ $defs:
         $ref: "#/$defs/text"
       hazards: {$ref: "#/$defs/hazard_refs"}
       evidence: {$ref: "#/$defs/evidence_refs"}
+      expected:
+        description: >-
+          A bound that is not zero for the join_match probe of this relationship: the number of
+          source rows known to have no target row, and why (D-025).
+        type: object
+        additionalProperties: false
+        required: [orphans_left, reason]
+        properties:
+          orphans_left: {type: integer, minimum: 1}
+          reason: {$ref: "#/$defs/text"}
+      first_period:
+        description: >-
+          For a self-reference to the row one period earlier: the field that holds the period.
+          Rows of the first period in the source have no earlier row there and are left out of
+          the probes (D-026).
+        $ref: "#/$defs/field_name"
     allOf:
       - if:
           required: [to]

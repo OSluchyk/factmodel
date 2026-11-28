@@ -1,0 +1,13 @@
+kind: source
+id: bls-crosswalk
+title: BLS QCEW County-MSA-CSA Crosswalk
+source_kind: document
+access_mode: owner_read
+location: https://www.bls.gov/cew/classifications/areas/qcew-county-msa-csa-crosswalk.xlsx
+access: >-
+  The spreadsheet as BLS serves it, saved by the owner from a browser on 2026-11-28 (www.bls.gov
+  refuses command-line requests) and committed unchanged as
+  sources/codelists/qcew-county-msa-csa-crosswalk.xlsx (D-016). scripts/crosswalk.py reads its
+  sheet "Jul. 2023 Crosswalk", the delineations QCEW uses for data from 2024 on. The file is a
+  code list in the repository; it is not yet an entity of the model (F-0009).
+current_pin: BLS QCEW County-MSA-CSA Crosswalk xlsx sha256:9180c5a1784a@2026-11-28

@@ -1,0 +1,27 @@
+kind: finding
+id: F-0011
+title: qtrly.prior-year finds no prior row for 247,496 rows
+status: resolved
+opened_on: '2026-11-28'
+about:
+- qtrly.prior-year
+description: >-
+  join_match on qtrly.prior-year measured 247,496 of 486,100 source rows without a row one year earlier;
+  the probe expects none. The causes are those of F-0010: the join's NULL test never excludes a published
+  row, because the over-the-year fields hold 0 with oty_disclosure_code N instead of NULL, so every
+  2024 row is a source row while 2023 is not in the slice, and some 2025 keys did not exist in 2024.
+  Open with F-0010.
+extensions:
+  probe: join-match-qtrly-prior-year
+evidence:
+- ev-join-match-qtrly-prior-year-2026-11-28
+- ev-measure-prior-year-2026-11-28
+- ev-measure-prior-year-split-2026-11-28
+closed_on: '2026-11-28'
+resolution: >-
+  The relationship was wrong, not the data. Its join now compares only rows that carry an over-the-year
+  value (a blank oty_disclosure_code) and leaves out the first year in the source, which the probe
+  reads from the data (first_period, D-026); in these slices that is 2024. Measured again on the same
+  rows: 92,967 source rows, none without a prior row. The 247,496 were the 242,652 rows of 2024, whose
+  prior year is not loaded, and 4,844 rows of 2025 that claim no over-the-year value (oty_disclosure_code
+  N). No 2025 row that claims one lacks its 2024 row (measurements/prior-year-split.txt).

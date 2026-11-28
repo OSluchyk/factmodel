@@ -1,0 +1,14 @@
+kind: evidence
+records:
+- id: ev-null-rate-annual-annual-avg-emplvl-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    row_count: 110366
+    non_null: 110366
+    null_rate: 0.0
+  status: confirmed
+  read_on: '2026-11-28'
+  probe: null-rate-annual-annual-avg-emplvl
+  environment: local
+  data_quality: representative

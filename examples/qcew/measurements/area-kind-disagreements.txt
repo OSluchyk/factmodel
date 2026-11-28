@@ -1,0 +1,11 @@
+area_fips | area_title                | own_code | industry_code | agglvl_code | agglvl_title               | month3_emplvl
+----------+---------------------------+----------+---------------+-------------+----------------------------+--------------
+10000     | Delaware -- Statewide     | 8        | 10            | 96          | Total Government, by State |         69609
+24000     | Maryland -- Statewide     | 8        | 10            | 96          | Total Government, by State |        538081
+C1570     | Cambridge, MD MicroSA     | 0        | 10            | 80          | MicroSA, Total Covered     |         11689
+C1906     | Cumberland, MD-WV MicroSA | 0        | 10            | 80          | MicroSA, Total Covered     |         35440
+C2066     | Easton, MD MicroSA        | 0        | 10            | 80          | MicroSA, Total Covered     |         18108
+C3618     | Ocean Pines, MD MicroSA   | 0        | 10            | 80          | MicroSA, Total Covered     |         23418
+C4258     | Seaford, DE MicroSA       | 0        | 10            | 80          | MicroSA, Total Covered     |         91407
+US000     | U.S. TOTAL                | 8        | 10            | 95          | Total Government (U.S.)    |      22933857
+US000     | U.S. TOTAL                | 9        | 10            | 94          | Total U.I. Covered (U.S.)  |     151702540

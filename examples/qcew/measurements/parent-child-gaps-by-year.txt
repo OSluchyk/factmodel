@@ -1,0 +1,14 @@
+hierarchy             | measure                 | year | parents | exact | mismatch_withheld_child | mismatch_no_withheld_child | gap_pct_median | gap_pct_p90 | gap_pct_max
+----------------------+-------------------------+------+---------+-------+-------------------------+----------------------------+----------------+-------------+------------
+NAICS child to parent | employment, third month | 2024 |   67393 | 51651 |                   15742 |                          0 |           97.3 |         100 |         100
+NAICS child to parent | employment, third month | 2025 |   63606 | 49422 |                   14184 |                          0 |           96.9 |         100 |         100
+NAICS child to parent | total wages             | 2024 |   67393 | 51646 |                   15747 |                          0 |           97.7 |         100 |         100
+NAICS child to parent | total wages             | 2025 |   63606 | 49415 |                   14191 |                          0 |           97.1 |         100 |         100
+NAICS child to parent | establishments          | 2024 |   67393 | 67393 |                       0 |                          0 |           NULL |        NULL |        NULL
+NAICS child to parent | establishments          | 2025 |   63606 | 63606 |                       0 |                          0 |           NULL |        NULL |        NULL
+county to state       | employment, third month | 2024 |   13985 |  3064 |                   10921 |                          0 |           34.9 |         100 |         100
+county to state       | employment, third month | 2025 |   13713 |  2854 |                   10859 |                          0 |           43.1 |         100 |         100
+county to state       | total wages             | 2024 |   13985 |  3064 |                   10921 |                          0 |           33.8 |         100 |         100
+county to state       | total wages             | 2025 |   13713 |  2849 |                   10864 |                          0 |           41.3 |         100 |         100
+county to state       | establishments          | 2024 |   13985 | 13985 |                       0 |                          0 |           NULL |        NULL |        NULL
+county to state       | establishments          | 2025 |   13713 | 13713 |                       0 |                          0 |           NULL |        NULL |        NULL

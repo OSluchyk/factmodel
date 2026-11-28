@@ -1,0 +1,9 @@
+key_fields                                               | row_count | distinct_keys | rows_over
+---------------------------------------------------------+-----------+---------------+----------
+area_fips, own_code, industry_code, size_code, year, qtr |    486100 |        486100 |         0
+without size_code                                        |    486100 |        486100 |         0
+without qtr                                              |    486100 |        121525 |    364575
+without year                                             |    486100 |        247496 |    238604
+without industry_code                                    |    486100 |          1624 |    484476
+without own_code                                         |    486100 |        436180 |     49920
+without area_fips                                        |    486100 |         36080 |    450020

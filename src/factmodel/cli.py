@@ -713,23 +713,36 @@ def propose_keys_command(
     max_columns: Annotated[
         int, typer.Option("--max-columns", min=1, max=2, help="Try single columns, or pairs too.")
     ] = 2,
+    named: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--key",
+            help="Also measure a named key, <table>:<column>,<column>,... Repeatable.",
+        ),
+    ] = None,
     environment: EnvironmentOption = "prod",
     data_quality: DataQualityOption = "unknown",
     date: DateOption = None,
     root: RootOption = Path("."),
 ) -> None:
     """Measure which columns and column pairs are unique and never null in every table
-    without a primary key; write the candidates to drafts/<source>/keys.yaml."""
+    without a primary key; write the candidates to drafts/<source>/keys.yaml.
+
+    The search stops at pairs. A longer key is measured when it is named with --key: the
+    command says whether the column list is unique, with its duplicate and row counts (D-024).
+    """
     snap, session, pin, day = _propose_setup(root, source_id, snapshot, date, data_quality)
     start = time.perf_counter()
     try:
+        wanted = [propose_module.parse_named_key(text) for text in named or []]
         candidates, skipped = propose_module.propose_keys(snap, session, max_columns)
+        measured = propose_module.measure_named_keys(snap, session, wanted)
     except ValueError as error:
         typer.echo(str(error), err=True)
         raise typer.Exit(2) from error
     meta = {"environment": environment, "data_quality": data_quality}
     doc = propose_module.keys_document(
-        snap, candidates, skipped, session, pin, day, meta, max_columns
+        snap, candidates, skipped, session, pin, day, meta, max_columns, measured
     )
     tables = len([o for o in snap.objects if o.object_type == "table"])
     note = _write_proposal(root, source_id, propose_module.KEYS_FILE, doc)
@@ -739,6 +752,14 @@ def propose_keys_command(
     )
     for item in skipped:
         typer.echo(f"  skipped {item}")
+    for key in measured:
+        verdict = "unique" if key.unique else "not unique"
+        nulls = key.row_count - key.non_null
+        typer.echo(
+            f"  named key {key.object} ({', '.join(key.fields)}): {verdict}, "
+            f"{key.duplicate_rows} duplicate rows, {key.row_count} rows"
+            + (f", {nulls} rows with a null" if nulls else "")
+        )
 
 
 @propose_app.command("joins")
@@ -777,3 +798,8 @@ def propose_joins_command(
     )
     for item in skipped:
         typer.echo(f"  skipped {item}")
+    for table, column, non_null, distinct in session.not_unique:
+        typer.echo(
+            f"  skipped target {table}.{column}: not unique, {non_null - distinct} duplicate "
+            f"rows of {non_null}; no join to it is proposed"
+        )

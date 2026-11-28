@@ -1,0 +1,15 @@
+kind: evidence
+records:
+- id: ev-join-match-area-titles-in-state-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    source_rows: 6785
+    orphans_left: 0
+    orphans_right: 9352
+    match_rate: 1.0
+  status: confirmed
+  read_on: '2026-11-28'
+  probe: join-match-area-titles-in-state
+  environment: local
+  data_quality: representative

@@ -1,0 +1,30 @@
+kind: finding
+id: F-0010
+title: annual.prior-year finds no prior row for 61,759 rows
+status: resolved
+opened_on: '2026-11-28'
+about:
+- annual.prior-year
+description: >-
+  join_match on annual.prior-year measured 61,759 of 110,366 source rows without a row one year earlier;
+  the probe expects none. Two causes (measurements/prior-year-orphans.txt). First, the join leaves
+  out rows whose over-the-year change is NULL, which fitted the seeded fixture, where the first year
+  has no over-the-year value. In the published rows no over-the-year field is ever NULL: a row without
+  a comparison holds 0 and oty_disclosure_code N. So all 60,663 rows of 2024 are source rows, and
+  2023 is not in the slice. Second, 1,096 rows of 2025 have no 2024 row; every one of them has oty_disclosure_code
+  N. Open until the owner decides how the relationship is bounded: by oty_disclosure_code, by loading
+  the year before the first, or both.
+extensions:
+  probe: join-match-annual-prior-year
+evidence:
+- ev-join-match-annual-prior-year-2026-11-28
+- ev-measure-prior-year-2026-11-28
+- ev-measure-prior-year-split-2026-11-28
+closed_on: '2026-11-28'
+resolution: >-
+  The relationship was wrong, not the data. Its join now compares only rows that carry an over-the-year
+  value (a blank oty_disclosure_code) and leaves out the first year in the source, which the probe
+  reads from the data (first_period, D-026); in these slices that is 2024. Measured again on the same
+  rows: 20,993 source rows, none without a prior row. The 61,759 were the 60,663 rows of 2024, whose
+  prior year is not loaded, and 1,096 rows of 2025 that claim no over-the-year value (oty_disclosure_code
+  N). No 2025 row that claims one lacks its 2024 row (measurements/prior-year-split.txt).

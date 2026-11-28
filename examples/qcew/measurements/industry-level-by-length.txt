@@ -1,0 +1,12 @@
+shape                               | level_from_length | level_from_agglvl | verdict  | row_count
+------------------------------------+-------------------+-------------------+----------+----------
+1 total (10)                        | 4                 | 0                 | disagree |       352
+1 total (10)                        | 4                 | 1                 | disagree |      1240
+2 domain (101, 102)                 | 5                 | 2                 | disagree |      1596
+3 supersector (10xx)                | 6                 | 3                 | disagree |      6628
+4 sector written as a range (nn-nn) | 7                 | 4                 | disagree |      1504
+5 NAICS, 2 digits                   | 4                 | 4                 | agree    |      8572
+5 NAICS, 3 digits                   | 5                 | 5                 | agree    |     33480
+5 NAICS, 4 digits                   | 6                 | 6                 | agree    |     84140
+5 NAICS, 5 digits                   | 7                 | 7                 | agree    |    152868
+5 NAICS, 6 digits                   | 8                 | 8                 | agree    |    195688

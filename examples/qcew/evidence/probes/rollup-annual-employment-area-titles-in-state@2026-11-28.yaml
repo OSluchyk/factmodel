@@ -1,0 +1,17 @@
+kind: evidence
+records:
+- id: ev-rollup-annual-employment-area-titles-in-state-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    parents_compared: 1362
+    exact: 984
+    within_rounding: 378
+    beyond: 0
+    parents_with_suppressed_child: 8366
+    suppressed_parents_disclosed_children: 258
+  status: confirmed
+  read_on: '2026-11-28'
+  probe: rollup-annual-employment-area-titles-in-state
+  environment: local
+  data_quality: representative

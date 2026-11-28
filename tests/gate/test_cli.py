@@ -55,7 +55,7 @@ def test_init_writes_the_layout(tmp_path: Path) -> None:
         "kind": "model-config",
         "id": "shop-model",
         "framework_version": __version__,
-        "schema_version": "2.3.0",
+        "schema_version": "2.4.0",
         "profile": "retail",
         "anchor_entity": "customer",
         "treat_synthetic_as_representative": False,

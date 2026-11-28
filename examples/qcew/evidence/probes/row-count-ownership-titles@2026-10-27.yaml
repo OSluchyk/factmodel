@@ -5,7 +5,7 @@ records:
   pin: sqlite:qcew@2026-10-27
   measurement:
     row_count: 8
-  status: confirmed
+  status: inferred
   read_on: '2026-10-27'
   probe: row-count-ownership-titles
   environment: local

@@ -1,0 +1,15 @@
+kind: source
+id: qcew-duckdb-real
+title: QCEW open data slices on a local DuckDB file
+source_kind: warehouse
+access_mode: agent_read
+adapter: sql
+engine: duckdb
+location: qcew
+dsn_env: FACT_DSN_QCEW_REAL
+access: >-
+  A local DuckDB file built by scripts/load.sh from the BLS QCEW open data area slices that
+  scripts/fetch.sh downloads (sources/SOURCES.md lists every URL with its checksum) and from
+  the committed code lists. The rows are the published BLS rows, unfiltered. Set
+  FACT_DSN_QCEW_REAL to duckdb:///<path to the file>. Needs the extra [duckdb].
+current_pin: duckdb:qcew@2026-11-28

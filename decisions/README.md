@@ -47,5 +47,8 @@ The records were curated once, for the first public release; the development his
 | [D-021](D-021-equivalence-threshold.md) | Equivalence threshold | accepted | 2026-10-27 |
 | [D-022](D-022-examples-keep-agent-files.md) | Example models keep their agent files in the public tree | accepted | 2026-11-02 |
 | [D-023](D-023-untested-layer-elements.md) | Untested layer elements carry a recorded reason | accepted | 2026-11-22 |
+| [D-024](D-024-named-key.md) | A named key is measured, never discovered | accepted | 2026-11-28 |
+| [D-025](D-025-probe-bounds.md) | A bound that is not zero carries its reason | accepted | 2026-11-28 |
+| [D-026](D-026-first-period.md) | A self-reference by period names its period field | accepted | 2026-11-28 |
 
 D-003 and D-008 were withdrawn before the first release.

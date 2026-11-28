@@ -1,0 +1,17 @@
+kind: evidence
+records:
+- id: ev-rollup-employment-month3-industry-titles-parent-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    parents_compared: 116277
+    exact: 116277
+    within_rounding: 0
+    beyond: 0
+    parents_with_suppressed_child: 165451
+    suppressed_parents_disclosed_children: 7203
+  status: confirmed
+  read_on: '2026-11-28'
+  probe: rollup-employment-month3-industry-titles-parent
+  environment: local
+  data_quality: representative

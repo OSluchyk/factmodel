@@ -7,7 +7,7 @@ fact: qtrly.to-agglevel
 expected:
   orphans_left:
     max: 0
-dialect: sqlite
+dialect: duckdb
 sql: SELECT (SELECT COUNT(*) FROM "qtrly" AS "s" WHERE NOT "s"."agglvl_code" IS 
   NULL) AS "source_rows", (SELECT COUNT(*) FROM "qtrly" AS "s" WHERE NOT 
   "s"."agglvl_code" IS NULL AND NOT EXISTS(SELECT 1 FROM "agglevel_titles" AS 

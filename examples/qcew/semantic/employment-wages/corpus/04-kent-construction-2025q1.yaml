@@ -8,6 +8,6 @@ request:
   qtr: '1'
 reference: WITH sel AS (SELECT * FROM qtrly WHERE area_fips = '10001' AND industry_code = '23' AND own_code = '5' AND year = '2025' AND qtr = '1' AND agglvl_code = '74') SELECT SUM(CASE WHEN disclosure_code IS NULL THEN month3_emplvl END) AS value, SUM(CASE WHEN disclosure_code = 'N' THEN 1 ELSE 0 END) AS suppressed_cells FROM sel
 mode: same_rows
-note: "Naive SQL: SELECT SUM(month3_emplvl) FROM qtrly WHERE area_fips = '10001' AND industry_code = '23' AND own_code = '5' AND year = '2025' AND qtr = '1' Why it differs: the cell is suppressed (N) and stored as 0, so the naive answer is 0 employees; the correct answer is no value and one suppressed cell (F-0003)."
+note: "Naive SQL: SELECT SUM(month3_emplvl) FROM qtrly WHERE area_fips = '10001' AND industry_code = '23' AND own_code = '5' AND year = '2025' AND qtr = '1' Why it differs: the cell is suppressed (N) and stored as 0, so the naive answer is 0 employees; the correct answer is no value and one suppressed cell (F-0003). Published BLS row: slice 2025/1/area/10001.csv, own_code 5, industry_code 23, agglvl_code 74, disclosure_code N. BLS withholds the cell and the file holds 0, so the answer is no value and 1 suppressed cell."
 tags:
 - naive

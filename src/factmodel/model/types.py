@@ -192,10 +192,25 @@ class Source(Strict):
 # Entities ---------------------------------------------------------------------------------
 
 
+class KeyBound(Strict):
+    """D-025: duplicates of the primary key that are known and explained."""
+
+    duplicate_keys: Annotated[int, Field(ge=1)]
+    reason: Text
+
+
+class OrphanBound(Strict):
+    """D-025: source rows of a relationship known to have no target row, and why."""
+
+    orphans_left: Annotated[int, Field(ge=1)]
+    reason: Text
+
+
 class Keys(Strict):
     primary: Annotated[list[FieldName], Unique]
     unique: list[Annotated[list[FieldName], Field(min_length=1), Unique]] | None = None
     current_row_rule: Text | None = None
+    expected: KeyBound | None = None
 
 
 class AnchorReference(Strict):
@@ -239,6 +254,8 @@ class Relationship(Strict):
     missing: Text | None = None
     hazards: HazardRefs | None = None
     evidence: EvidenceRefs | None = None
+    expected: OrphanBound | None = None
+    first_period: FieldName | None = None
 
     @model_validator(mode="after")
     def _rules(self) -> Self:

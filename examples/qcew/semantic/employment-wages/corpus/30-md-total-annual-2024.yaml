@@ -7,3 +7,4 @@ request:
   year: '2024'
 reference: WITH sel AS (SELECT * FROM annual WHERE area_fips = '24000' AND industry_code = '10' AND own_code = '0' AND year = '2024' AND agglvl_code = '50') SELECT MAX(CASE WHEN disclosure_code IS NULL THEN annual_avg_emplvl END) AS value, SUM(CASE WHEN disclosure_code = 'N' THEN 1 ELSE 0 END) AS suppressed_cells FROM sel
 mode: same_rows
+note: "Published BLS row: slice 2024/a/area/24000.csv, own_code 0, industry_code 10, agglvl_code 50, disclosure_code blank; annual_avg_emplvl 2768546."

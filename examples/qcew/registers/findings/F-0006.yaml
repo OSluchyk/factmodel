@@ -6,12 +6,20 @@ opened_on: '2026-10-27'
 about:
 - qtrly
 description: >-
-  Every key of the quarterly file appears in all four quarters; a quarter without a record gets
-  a row with disclosure_code '-' and every measure 0 (profile.md G2, Q07, Q08: each 2025 quarter
-  has exactly 3,659,997 rows). The seed reproduces it on the MSA detail key in 2025 Q3 and Q4,
-  after BLS stopped publishing MSA detail. Counting keys or averaging over quarters without
-  filtering these rows is wrong. The meaning of '-' is inferred, not documented (F-0002).
+  Every key of the quarterly file appears in all four quarters of its year; a quarter without a record
+  gets a row with disclosure_code '-' and every measure 0 (profile.md G2, Q07, Q08). On the published
+  slices every quarter of a year has the same number of rows, 60,663 in 2024 and 60,862 in 2025, and
+  the 486,100 rows hold 121,525 keys once the quarter is left out, exactly four rows each (measurements/key-documented.txt,
+  measurements/padding-by-quarter.txt). 27,924 rows are padding. In 2025 Q3 and Q4, 11,159 of the
+  11,166 rows at the MSA levels are padding; the 7 rows left are the MSA totals (agglvl_code 40).
+  BLS announced this: from third quarter 2025 data on, an MSA is published for the area total only
+  (ev-doc-msa-totals-only). Counting keys or averaging over quarters without filtering these rows
+  is wrong. The meaning of '-' is inferred, not documented (F-0002).
 evidence:
 - ev-doc-padding
 - ev-doc-dash
 - ev-value-set-qtrly-disclosure-code-2026-10-27
+- ev-value-set-qtrly-disclosure-code-2026-11-28
+- ev-measure-padding-2026-11-28
+- ev-measure-key-2026-11-28
+- ev-doc-msa-totals-only

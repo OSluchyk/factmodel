@@ -1,0 +1,4 @@
+level_filter     | row_count | employment
+-----------------+-----------+-----------
+agglvl_code = 51 |         1 |    2209592
+none             |      2039 |   17288738

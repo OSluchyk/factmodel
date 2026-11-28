@@ -59,7 +59,7 @@ def _pairs(join: str, source: str, target: str) -> list[tuple[str, str]] | None:
 
 
 def _expression_queries(
-    join: str, source: str, target: Entity, physical: str
+    join: str, source: str, target: Entity, physical: str, first_period: str | None = None
 ) -> tuple[exp.Select, exp.Select | None]:
     """``join_match`` and ``fan_out`` for an expression join (D-017).
 
@@ -69,7 +69,15 @@ def _expression_queries(
     """
     on = joins.condition(join, source, target.id, "s", "t")
     split = joins.parts(join, source, target.id)
-    source_filters = joins.aliased(split.source_filters, "s")
+    source_filters = list(joins.aliased(split.source_filters, "s"))
+    if first_period is not None and source == target.id:
+        # D-026: rows of the first period in the source have no earlier row there
+        first = exp.select(exp.Min(this=build.column("m", first_period))).from_(
+            build.table(physical, "m")
+        )
+        source_filters.append(
+            exp.NEQ(this=build.column("s", first_period), expression=first.subquery())
+        )
     target_filters = joins.aliased(split.target_filters, "t")
     # source columns that take part in the comparison must not be null for a row to count
     sides = [left for left, _ in split.pairs]
@@ -166,7 +174,13 @@ def generate(
                     entity_id,
                     build.key_duplicates(name, entity.keys.primary),
                     dialect,
-                    {"duplicate_keys": {"max": 0}},
+                    {
+                        "duplicate_keys": {
+                            "max": entity.keys.expected.duplicate_keys
+                            if entity.keys.expected
+                            else 0
+                        }
+                    },
                     False,
                 )
             )
@@ -239,7 +253,9 @@ def generate(
             parsed = joins.parse(rel.join)
             if parsed.expression:
                 try:
-                    match, fan = _expression_queries(rel.join, entity_id, target, name)
+                    match, fan = _expression_queries(
+                        rel.join, entity_id, target, name, rel.first_period
+                    )
                 except joins.JoinError as error:
                     skipped.append(Skipped(ref, str(error)))
                     continue
@@ -263,7 +279,7 @@ def generate(
                     ref,
                     match,
                     dialect,
-                    {"orphans_left": {"max": 0}},
+                    {"orphans_left": {"max": rel.expected.orphans_left if rel.expected else 0}},
                     nested,
                 )
             )

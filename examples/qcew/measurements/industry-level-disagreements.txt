@@ -1,0 +1,6 @@
+area_fips | own_code | industry_code | agglvl_code | agglvl_title               | level_from_code | level_from_agglvl | month3_emplvl
+----------+----------+---------------+-------------+----------------------------+-----------------+-------------------+--------------
+10000     | 8        | 10            | 96          | Total Government, by State | 1               | 6                 |         69609
+24000     | 8        | 10            | 96          | Total Government, by State | 1               | 6                 |        538081
+US000     | 8        | 10            | 95          | Total Government (U.S.)    | 1               | 5                 |      22933857
+US000     | 9        | 10            | 94          | Total U.I. Covered (U.S.)  | 1               | 4                 |     151702540

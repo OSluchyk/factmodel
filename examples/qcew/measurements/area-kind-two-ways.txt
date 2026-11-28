@@ -1,0 +1,9 @@
+kind_from_code   | kind_from_agglvl | verdict  | row_count
+-----------------+------------------+----------+----------
+1 nation (US...) | 1                | agree    |     36064
+1 nation (US...) | 9                | disagree |        16
+4 MSA (C....)    | 4                | agree    |     89324
+4 MSA (C....)    | 8                | disagree |        40
+5 state (nn000)  | 5                | agree    |     38912
+5 state (nn000)  | 9                | disagree |        16
+7 county (nnnnn) | 7                | agree    |    321728

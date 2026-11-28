@@ -1,0 +1,5 @@
+n | what                                                          | avg_weekly_wage
+--+---------------------------------------------------------------+----------------
+1 | published state row (agglvl_code 51)                          |            1586
+2 | formula over the summed county rows                           |            1586
+3 | average of avg_wkly_wage over the 25 county rows (0 withheld) |            1274

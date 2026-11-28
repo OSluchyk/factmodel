@@ -6,11 +6,13 @@ opened_on: '2026-10-27'
 about:
 - annual
 description: >-
-  The annual layout page names field 14 annual_avg_estabs_count; the 2024 and 2025 file headers
-  say annual_avg_estabs (profile.md A2). Two document records disagree, and ranks decide: the
-  owner's header check (owner-profile, rank 20) outranks the layout page (bls-layout-annual,
-  rank 40), so the model's field is annual_avg_estabs. Open until BLS corrects the page or says
-  which name is meant.
+  The annual layout page names field 14 annual_avg_estabs_count; the 2024 and 2025 file headers say
+  annual_avg_estabs (profile.md A2). Two document records disagree, and ranks decide: the owner's
+  header check (owner-profile, rank 20) outranks the layout page (bls-layout-annual, rank 40), so
+  the model's field is annual_avg_estabs. The open data area slices agree with the header: every annual
+  slice read on 2026-11-28 names the field annual_avg_estabs, and scripts/load.sql, which matches
+  columns by name, loads them into that column (snapshot qcew-duckdb-real@2026-11-28). Open until
+  BLS corrects the page or says which name is meant.
 evidence:
 - ev-doc-field14-header
 - ev-doc-field14-layout

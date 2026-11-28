@@ -7,7 +7,7 @@ fact: qtrly.to-industry
 expected:
   max_fan_out:
     max: 1
-dialect: sqlite
+dialect: duckdb
 sql: SELECT COALESCE(MAX("f"."n"), 0) AS "max_fan_out" FROM (SELECT COUNT(*) AS 
   "n" FROM "industry_titles" AS "t" WHERE NOT "t"."industry_code" IS NULL GROUP 
   BY "t"."industry_code") AS "f"

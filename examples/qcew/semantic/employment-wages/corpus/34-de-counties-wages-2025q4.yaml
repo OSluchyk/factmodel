@@ -10,3 +10,4 @@ request:
   qtr: '4'
 reference: SELECT t.area_fips, t.area_title, SUM(CASE WHEN q.disclosure_code IS NULL THEN q.total_qtrly_wages END) AS value, SUM(CASE WHEN q.disclosure_code = 'N' THEN 1 ELSE 0 END) AS suppressed_cells FROM qtrly AS q JOIN (SELECT area_fips, MIN(area_title) AS area_title FROM area_titles GROUP BY area_fips) AS t ON q.area_fips = t.area_fips WHERE q.area_fips LIKE '10%' AND q.area_fips NOT LIKE '__000' AND q.industry_code = '10' AND q.own_code = '0' AND q.year = '2025' AND q.qtr = '4' AND q.agglvl_code = '70' GROUP BY t.area_fips, t.area_title
 mode: same_rows
+note: "Published BLS rows: the 4 county slices 2025/4/area/10*.csv, own_code 0, industry_code 10, agglvl_code 70; total_qtrly_wages 10001 1135052038, 10003 6599856707, 10005 1456706406, 10999 226711196; none withheld."

@@ -1,0 +1,8 @@
+industry_code | industry_title                                                                                    | agglvl_code | disclosure_code | month3_emplvl
+--------------+---------------------------------------------------------------------------------------------------+-------------+-----------------+--------------
+52            | NAICS 52 Finance and insurance                                                                    | 54          |                 |         43773
+521           | NAICS 521 Monetary authorities-central bank                                                       | 55          | N               |             0
+522           | NAICS 522 Credit intermediation and related activities                                            | 55          |                 |         26399
+523           | NAICS 523 Securities, commodity contracts, and other financial investments and related activities | 55          |                 |         10852
+524           | NAICS 524 Insurance carriers and related activities                                               | 55          |                 |          6424
+525           | NAICS 525 Funds, trusts, and other financial vehicles                                             | 55          | N               |             0

@@ -1,0 +1,8 @@
+hierarchy             | measure                 | parents |  exact | mismatch_withheld_child | mismatch_no_withheld_child | gap_pct_median | gap_pct_p90 | gap_pct_max
+----------------------+-------------------------+---------+--------+-------------------------+----------------------------+----------------+-------------+------------
+NAICS child to parent | employment, third month |  130999 | 101073 |                   29926 |                          0 |           97.2 |         100 |         100
+NAICS child to parent | total wages             |  130999 | 101061 |                   29938 |                          0 |           97.4 |         100 |         100
+NAICS child to parent | establishments          |  130999 | 130999 |                       0 |                          0 |           NULL |        NULL |        NULL
+county to state       | employment, third month |   27698 |   5918 |                   21780 |                          0 |           38.7 |         100 |         100
+county to state       | total wages             |   27698 |   5913 |                   21785 |                          0 |           37.1 |         100 |         100
+county to state       | establishments          |   27698 |  27698 |                       0 |                          0 |           NULL |        NULL |        NULL

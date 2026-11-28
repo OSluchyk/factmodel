@@ -71,6 +71,11 @@ recs["padding"] = (
         "rows_per_quarter_2025": pq[4]["row_count"],
         "msa_rows_2025q3": q3["msa_rows"],
         "msa_dash_rows_2025q3": q3["msa_dash_rows"],
+        "msa_dash_rows_2025q3_and_q4": S(
+            pq, "msa_dash_rows", lambda r: (r["year"], r["qtr"]) in ((2025, 3), (2025, 4))
+        ),
+        "records_2025q2": pq[5]["records"],
+        "records_2025q3": q3["records"],
     },
 )
 for name in ("rollup-county-state", "rollup-naics-parent"):
@@ -215,6 +220,40 @@ recs["load-check"] = (
         "loaded_withheld_rows": S(lc, "loaded_n"),
         "raw_padding_rows": S(lc, "raw_dash"),
         "loaded_padding_rows": S(lc, "loaded_dash"),
+    },
+)
+ml = [r for r in rows("msa-levels-by-quarter") if r["agglvl_code"] != 40]
+QUARTERS = [f"{y}q{q}" for y in (2024, 2025) for q in (1, 2, 3, 4)]
+recs["msa-levels"] = (
+    ["msa-levels-by-quarter"],
+    {
+        **{f"rows_levels_41_to_48_{q}": S(ml, q, lambda r: r["what"] == "rows") for q in QUARTERS},
+        **{
+            f"records_levels_41_to_48_{q}": S(ml, q, lambda r: r["what"] == "records")
+            for q in QUARTERS
+        },
+        "annual_rows_levels_41_to_48_2024": S(ml, "annual_2024", lambda r: r["what"] == "rows"),
+        "annual_rows_levels_41_to_48_2025": S(ml, "annual_2025", lambda r: r["what"] == "rows"),
+    },
+)
+rp = {slug[r["hierarchy"]]: r for r in rows("rollup-padding-parents")}
+recs["rollup-padding"] = (
+    ["rollup-padding-parents"],
+    {
+        f"{h}_{key}": rp[h][key]
+        for h in ("county_state", "naics_parent")
+        for key in ("parents_compared", "records", "padding_rows", "msa_padding_2025_q3_q4")
+    },
+)
+pm = rows("parent-child-msa-by-quarter")
+recs["parent-child-msa"] = (
+    ["parent-child-msa-by-quarter"],
+    {
+        "parents_2024": S(pm, "parents", lambda r: r["year"] == 2024),
+        "mismatch_2024": S(pm, "mismatch", lambda r: r["year"] == 2024),
+        "parents_2025": S(pm, "parents", lambda r: r["year"] == 2025),
+        "mismatch_2025": S(pm, "mismatch", lambda r: r["year"] == 2025),
+        "quarters_of_2025_with_a_pair": sum(r["year"] == 2025 for r in pm),
     },
 )
 NOTES = {

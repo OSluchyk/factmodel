@@ -14,11 +14,17 @@ description: >-
   on the published rows, third-month employment. County to state: 6,081 parents with nothing withheld,
   all exact (M5); 32,831 parents with a withheld child; 1,698 withheld parents with disclosed children.
   NAICS child to parent: 116,277 parents with nothing withheld, all exact; 165,451 parents with a
-  withheld child; 7,203 withheld parents with disclosed children. One case of each (measurements/rollup-county-state.txt,
-  measurements/rollup-naics-parent.txt), Delaware, private, March 2025: health care and social assistance
-  is 81,306 for the state and 69,379 over the disclosed counties, a gap of 11,927 with 2 of 4 county
-  rows withheld; finance and insurance is 43,773 for the sector and 43,675 over its disclosed 3-digit
-  industries, a gap of 98 with 2 of 5 withheld. The size of the gap depends on the year (measurements/parent-child-gaps-by-year.txt,
+  withheld child; 7,203 withheld parents with disclosed children. The rollup probes know withheld
+  rows only, so a padding row counts as a parent with the value 0. Of the 116,277 NAICS parents with
+  nothing withheld, 101,044 are records and 15,233 are padding rows, 12,278 of them the MSA rows of
+  2025 Q3 and Q4 (F-0012); of the 6,081 county to state parents, 5,901 are records (measurements/rollup-padding-parents.txt).
+  No verdict changes, since no parent is beyond rounding, but the counts of exact parents include
+  rows that are not records. The rollup declaration has no way to name the rows that are records;
+  that is open for the core. One case of each (measurements/rollup-county-state.txt, measurements/rollup-naics-parent.txt),
+  Delaware, private, March 2025: health care and social assistance is 81,306 for the state and 69,379
+  over the disclosed counties, a gap of 11,927 with 2 of 4 county rows withheld; finance and insurance
+  is 43,773 for the sector and 43,675 over its disclosed 3-digit industries, a gap of 98 with 2 of
+  5 withheld. The size of the gap depends on the year (measurements/parent-child-gaps-by-year.txt,
   measurements/parent-child-gaps.txt). County to state: 10,921 of 13,985 disclosed parents differ
   from the sum of their disclosed counties in 2024, with a median gap of 34.9 percent of the parent,
   and 10,859 of 13,713 in 2025, with a median of 43.1; over both years 21,780 of 27,698, median 38.7.
@@ -36,3 +42,4 @@ evidence:
 - ev-measure-rollup-naics-parent-2026-11-28
 - ev-measure-parent-child-2026-11-28
 - ev-measure-parent-child-by-year-2026-11-28
+- ev-measure-rollup-padding-2026-11-28

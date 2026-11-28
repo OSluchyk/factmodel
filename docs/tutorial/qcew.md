@@ -45,7 +45,7 @@ area_titles          9,458
 industry_titles      2,678
 ownership_titles         8
 size_titles             10
-load: 1.7 s
+load: 1.6 s
 ```
 
 ## 3. Snapshot

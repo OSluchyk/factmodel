@@ -2,6 +2,14 @@
 
 Newest first. Every entry says what changed and why.
 
+## Unreleased
+
+After the 0.3.0 tag. The QCEW example, its documentation and its tests only; the framework and the schemas are unchanged.
+
+- QCEW finding F-0012: the MSA levels 41 to 48 hold no record after 2025 Q2. BLS publishes an MSA for its total only from third quarter 2025 data on; the quarterly rows at these levels are padding in 2025 Q3 and Q4 and the annual file of 2025 has none (`measurements/msa-levels-by-quarter.txt`). The `level_matrix` concept of the layer gains the column `records_through`, and F-0002, F-0003, F-0006 and F-0007 say how much of their counts are these rows. Found on the way and recorded in F-0007: the rollup probes know withheld rows only and count a padding row as a parent with the value 0 (15,233 of the 116,277 NAICS parents with nothing withheld). No verdict changes; a way to name the rows that are records in a rollup declaration is open for the core.
+- `examples/qcew/measurements/` holds 41 queries: `msa-levels-by-quarter`, `rollup-padding-parents` and `parent-child-msa-by-quarter` are new; `suppression-by-geography` gains the withheld share of the rows that are not padding (86.6 percent for the MSA rows, against 64.7 percent of all rows), and `padding-by-quarter` the rows that are not padding per quarter.
+- `docs/article-support-part3.md`: section 5 shows the MSA levels per quarter, rows and records, with the annual file beside them.
+
 ## 0.3.0 - 2026-11-28
 
 Schemas 2.4.0: three optional keys on an entity (D-025, D-026). The CLI gains one flag and one kind of output line (D-024).

@@ -13,17 +13,18 @@ description: >-
   are withheld: all of them hold 0 in the three monthly levels and in total wages, and all of them
   carry an establishment count (measurements/suppressed-zero.txt). Withheld rows are 13.3 percent
   of the national rows, 28.4 percent of the state rows, 54.9 percent of the county rows and 64.7 percent
-  of the MSA rows (measurements/suppression-by-geography.txt). The share is not steady over time (measurements/withheld-by-quarter.txt).
-  In Delaware it is higher in every quarter of 2025 than in the same quarter of 2024 at every level
-  that has withheld rows: at level 73, 24.1 percent in each quarter of 2024 and 48.9 in the first
-  quarter of 2025. In Maryland the county levels 73 and 74 are higher in every quarter of 2025, and
-  the levels 75 to 78 move by less than 3 points. The rise starts in the first quarter of 2025. The
-  load is not the cause: rows, withheld rows and padding rows are equal in the raw slices and in the
-  loaded tables in all 12 groups of table, year and state (measurements/load-check.txt). No BLS page
-  read on 2026-11-28 states a change of the disclosure rules for 2025 (ev-doc-confidentiality), so
-  the cause is not known. A sum or average over these fields counts withheld cells as zero; a consumer
-  must filter on disclosure_code first. Open: the platform behaves this way by design, and the semantic
-  layer encodes the filter.
+  of the MSA rows (measurements/suppression-by-geography.txt). The MSA share is 86.6 percent of the
+  rows that are not padding: 22,318 MSA rows of 2025 Q3 and Q4 are padding (F-0012), and they are
+  in the first count. The share is not steady over time (measurements/withheld-by-quarter.txt). In
+  Delaware it is higher in every quarter of 2025 than in the same quarter of 2024 at every level that
+  has withheld rows: at level 73, 24.1 percent in each quarter of 2024 and 48.9 in the first quarter
+  of 2025. In Maryland the county levels 73 and 74 are higher in every quarter of 2025, and the levels
+  75 to 78 move by less than 3 points. The rise starts in the first quarter of 2025. The load is not
+  the cause: rows, withheld rows and padding rows are equal in the raw slices and in the loaded tables
+  in all 12 groups of table, year and state (measurements/load-check.txt). No BLS page read on 2026-11-28
+  states a change of the disclosure rules for 2025 (ev-doc-confidentiality), so the cause is not known.
+  A sum or average over these fields counts withheld cells as zero; a consumer must filter on disclosure_code
+  first. Open: the platform behaves this way by design, and the semantic layer encodes the filter.
 evidence:
 - ev-doc-suppressed-zero
 - ev-null-rate-qtrly-month1-emplvl-2026-10-27

@@ -50,7 +50,7 @@ area_titles          9,458
 industry_titles      2,678
 ownership_titles         8
 size_titles             10
-load: 1.7 s
+load: 1.6 s
 unchanged sources/snapshots/qcew-duckdb-real@2026-11-28.yaml (7 objects)
 ```
 
@@ -149,7 +149,7 @@ python3 examples/qcew/scripts/summary.py examples/qcew
 ```
 
 ```text
-7 tables, 8 key candidates, 307 queries, 7.2 s: unchanged drafts/qcew-duckdb-real/keys.yaml
+7 tables, 8 key candidates, 307 queries, 6.4 s: unchanged drafts/qcew-duckdb-real/keys.yaml
   named key annual (area_fips, own_code, industry_code, size_code, year, qtr): unique, 0 duplicate rows, 110366 rows
   named key qtrly (area_fips, own_code, industry_code, size_code, year, qtr): unique, 0 duplicate rows, 486100 rows
 keys: 8 candidates over 7 tables, 307 queries,
@@ -394,7 +394,40 @@ qtr | msa_disclosure_code | msa_row | sum_of_counties | county_rows | suppressed
 4   | -                   |       0 |         1125681 |           7 |               0
 ```
 
-From: `examples/qcew/measurements/industry-code-shapes.txt`, `examples/qcew/measurements/crosswalk-c3798.sql`, `examples/qcew/measurements/crosswalk-c3798.txt`, `examples/qcew/measurements/crosswalk-coverage.txt`, `examples/qcew/measurements/msa-double-count.sql`, `examples/qcew/measurements/msa-double-count.txt`, `examples/qcew/measurements/msa-from-counties.txt`.
+The MSA levels: rows and records (rows that are not padding) per quarter, and the rows of the annual file:
+
+```bash
+uv run python examples/qcew/scripts/measure.py msa-levels-by-quarter
+```
+
+```text
+agglvl_code | what    | 2024q1 | 2024q2 | 2024q3 | 2024q4 | 2025q1 | 2025q2 | 2025q3 | 2025q4 | annual_2024 | annual_2025
+------------+---------+--------+--------+--------+--------+--------+--------+--------+--------+-------------+------------
+40          | rows    |      7 |      7 |      7 |      7 |      7 |      7 |      7 |      7 |           7 |           7
+40          | records |      7 |      7 |      7 |      7 |      7 |      7 |      7 |      7 |           7 |           7
+41          | rows    |     28 |     28 |     28 |     28 |     28 |     28 |     28 |     28 |          28 |           0
+41          | records |     28 |     28 |     28 |     28 |     28 |     28 |      0 |      0 |          28 |           0
+42          | rows    |     14 |     14 |     14 |     14 |     14 |     14 |     14 |     14 |          14 |           0
+42          | records |     14 |     14 |     14 |     14 |     14 |     14 |      0 |      0 |          14 |           0
+43          | rows    |     75 |     75 |     75 |     75 |     76 |     76 |     76 |     76 |          75 |           0
+43          | records |     75 |     75 |     75 |     75 |     76 |     76 |      0 |      0 |          75 |           0
+44          | rows    |    138 |    138 |    138 |    138 |    139 |    139 |    139 |    139 |         138 |           0
+44          | records |    138 |    138 |    138 |    138 |    139 |    139 |      0 |      0 |         138 |           0
+45          | rows    |    594 |    594 |    594 |    594 |    591 |    591 |    591 |    591 |         594 |           0
+45          | records |    592 |    591 |    592 |    592 |    591 |    590 |      0 |      0 |         594 |           0
+46          | rows    |   1829 |   1829 |   1829 |   1829 |   1828 |   1828 |   1828 |   1828 |        1829 |           0
+46          | records |   1820 |   1819 |   1822 |   1818 |   1828 |   1826 |      0 |      0 |        1829 |           0
+47          | rows    |   3582 |   3582 |   3582 |   3582 |   3581 |   3581 |   3581 |   3581 |        3582 |           0
+47          | records |   3551 |   3557 |   3560 |   3557 |   3581 |   3574 |      0 |      0 |        3582 |           0
+48          | rows    |   4898 |   4898 |   4898 |   4898 |   4902 |   4902 |   4902 |   4902 |        4898 |           0
+48          | records |   4842 |   4851 |   4860 |   4854 |   4902 |   4891 |      0 |      0 |        4898 |           0
+```
+
+The levels 41 to 48 hold their last records in 2025 Q2: in 2025 Q3 and Q4 every row at these
+levels is padding and the annual file of 2025 has none, as BLS announced for third quarter 2025
+data (F-0012).
+
+From: `examples/qcew/measurements/industry-code-shapes.txt`, `examples/qcew/measurements/crosswalk-c3798.sql`, `examples/qcew/measurements/crosswalk-c3798.txt`, `examples/qcew/measurements/crosswalk-coverage.txt`, `examples/qcew/measurements/msa-double-count.sql`, `examples/qcew/measurements/msa-double-count.txt`, `examples/qcew/measurements/msa-from-counties.txt`, `examples/qcew/measurements/msa-levels-by-quarter.txt`.
 
 ## 6. Two representations of one thing
 

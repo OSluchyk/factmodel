@@ -198,3 +198,10 @@ records:
   status: inferred
   read_on: '2026-11-28'
   note: 'From the Handbook of Methods, QCEW, Presentation. No BLS page found on the day of the read states a change of the disclosure rules for state or county rows in 2025: the news release notes of 2025 name a shutdown delay, one dropped county and the move to one data release; the notices of 2025 and 2026 name the MSA change, an erratum and pending corrections to first quarter 2025 files; the page on state and local government data lists Delaware and Maryland as sensitive since 2022-1 and was last modified November 11, 2022. Inferred: read by the agent, not opened by the owner.'
+- id: ev-doc-msa-totals-overview
+  source: bls-notices
+  pin: BLS QCEW notices and method pages@2026-11-28
+  quote: QCEW changed publication of all MSA data to totals only
+  status: inferred
+  read_on: '2026-11-28'
+  note: 'From the QCEW overview page, section Data Available, last modified January 28, 2026. The sentence opens with the second quarter of 2025 as the start and links to the notice, which names the third quarter (ev-doc-msa-totals-only). The rows agree with the notice: the levels 41 to 48 hold records in 2025 Q2 and none in 2025 Q3 (measurements/msa-levels-by-quarter.txt). Inferred: read by the agent, not opened by the owner.'

@@ -141,7 +141,7 @@ def test_measurement_commands_run_on_the_seeded_tables(tmp_path: Path) -> None:
     tool = _module("qcew_measure_page", EXAMPLE / "scripts" / "measure.py")
     seed.load_duckdb(tmp_path / "seeded.duckdb")
     names = [c.removeprefix(MEASURE) for c in _commands() if c.startswith(MEASURE)]
-    assert len(names) == len(set(names)) >= 18
+    assert len(names) == len(set(names)) >= 19
     conn = tool.connect(str(tmp_path / "seeded.duckdb"))
     try:
         for name in names:

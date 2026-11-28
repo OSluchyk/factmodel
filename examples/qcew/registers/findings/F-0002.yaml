@@ -8,7 +8,8 @@ about:
 description: >-
   The layouts document two values of disclosure_code, blank and N. value_set on the published quarterly
   rows found one value outside that domain, '-', on 27,924 of 486,100 rows; the annual rows hold none
-  (110,366 rows). Every measure on a '-' row is 0, the establishment count included (measurements/suppressed-zero.txt).
+  (110,366 rows). 22,318 of the 27,924 are the MSA rows of 2025 Q3 and Q4, which BLS no longer publishes
+  below the total (F-0012). Every measure on a '-' row is 0, the establishment count included (measurements/suppressed-zero.txt).
   The seeded fixture reproduces it on 2 rows (profile.md V1, Q07). Open until BLS documents the value;
   a consumer must treat '-' as "no record in this quarter" (F-0006), not as disclosed.
 evidence:
@@ -17,6 +18,7 @@ evidence:
 - ev-doc-disclosure
 - ev-value-set-qtrly-disclosure-code-2026-11-28
 - ev-measure-suppressed-zero-2026-11-28
+- ev-measure-padding-2026-11-28
 extensions:
   probe: value-set-qtrly-disclosure-code
   fact: qtrly.disclosure_code

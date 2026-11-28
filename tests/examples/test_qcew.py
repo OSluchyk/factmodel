@@ -101,7 +101,7 @@ def test_expected_shape() -> None:
 
 def test_eleven_findings_and_two_hazards_have_evidence() -> None:
     model = load_model(QCEW)
-    assert sorted(model.findings) == [f"F-{n:04d}" for n in range(1, 12)]
+    assert sorted(model.findings) == [f"F-{n:04d}" for n in range(1, 13)]
     for finding in model.findings.values():
         assert finding.evidence, finding.id
         assert all(ref in model.evidence for ref in finding.evidence), finding.id

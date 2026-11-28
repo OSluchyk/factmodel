@@ -1,0 +1,34 @@
+kind: finding
+id: F-0012
+title: The MSA levels 41 to 48 hold no record after 2025 Q2
+status: open
+opened_on: '2026-11-28'
+about:
+- qtrly
+- annual
+- agglevel_titles
+description: >-
+  The aggregation level list names nine levels for an MSA, 40 to 48 (agglevel_titles). On the published
+  rows the levels 41 to 48 hold records in every quarter from 2024 Q1 to 2025 Q2, 11,138 in the last
+  of them, and none after. In 2025 Q3 and Q4 all 11,159 rows at these levels are padding, kept because
+  the quarterly file pads a key to the four quarters of its year. The annual file of 2025 holds no
+  row at these levels, against 11,158 in 2024. Level 40, the total, keeps its 7 rows throughout (measurements/msa-levels-by-quarter.txt).
+  BLS announced the change: by its notice an MSA is published for its total only from third quarter
+  2025 data on (ev-doc-msa-totals-only). The QCEW overview page names the second quarter of 2025 instead
+  (ev-doc-msa-totals-overview); the rows agree with the notice. What it touches in the model. The
+  level_matrix concept lists the eight levels; it now says that their records end at 2025q2. A request
+  by MSA and ownership or industry for a later quarter still compiles to one of these levels, finds
+  padding or nothing, and returns no value and no withheld cell (corpus item msa-private-2025q3).
+  The detail must be summed from counties with the BLS crosswalk, which the model cannot do yet (known
+  gap msa-detail-from-counties-2025q3, F-0009). 22,318 of the 27,924 padding rows are these rows (F-0002,
+  F-0006), which lowers the withheld share of the MSA rows from 86.6 percent of the records to 64.7
+  percent of all rows (F-0003), and 12,278 of the parents the NAICS rollup probe counts as exact are
+  these rows (F-0007). The NAICS child to parent pairs at these levels end with 2025 Q2 as well (measurements/parent-child-msa-by-quarter.txt).
+  Open until the model can build an MSA from its counties.
+evidence:
+- ev-measure-msa-levels-2026-11-28
+- ev-doc-msa-totals-only
+- ev-doc-msa-totals-overview
+- ev-doc-agglvl
+- ev-measure-padding-2026-11-28
+- ev-measure-rollup-padding-2026-11-28

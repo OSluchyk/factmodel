@@ -13,8 +13,10 @@ description: >-
   measurements/padding-by-quarter.txt). 27,924 rows are padding. In 2025 Q3 and Q4, 11,159 of the
   11,166 rows at the MSA levels are padding; the 7 rows left are the MSA totals (agglvl_code 40).
   BLS announced this: from third quarter 2025 data on, an MSA is published for the area total only
-  (ev-doc-msa-totals-only). Counting keys or averaging over quarters without filtering these rows
-  is wrong. The meaning of '-' is inferred, not documented (F-0002).
+  (ev-doc-msa-totals-only, F-0012). The row count of a quarter does not show it, because of the padding;
+  the records do: 60,314 rows are not padding in 2025 Q2 and 49,140 in 2025 Q3. Counting keys or averaging
+  over quarters without filtering these rows is wrong. The meaning of '-' is inferred, not documented
+  (F-0002).
 evidence:
 - ev-doc-padding
 - ev-doc-dash

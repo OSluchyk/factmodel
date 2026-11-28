@@ -7,7 +7,7 @@ area_titles          9,458
 industry_titles      2,678
 ownership_titles         8
 size_titles             10
-load: 1.7 s
+load: 1.6 s
 
 $ python3 examples/qcew/scripts/check_load.py
 source_table | year | areas | raw_rows | loaded_rows | raw_n | loaded_n | raw_dash | loaded_dash | verdict
@@ -29,7 +29,7 @@ $ fact snapshot --root examples/qcew --source qcew-duckdb-real --date 2026-11-28
 unchanged sources/snapshots/qcew-duckdb-real@2026-11-28.yaml (7 objects)
 
 $ fact propose keys --root examples/qcew --source qcew-duckdb-real --environment local --data-quality representative --date 2026-11-28 --key annual:area_fips,own_code,industry_code,size_code,year,qtr --key qtrly:area_fips,own_code,industry_code,size_code,year,qtr
-7 tables, 8 key candidates, 307 queries, 7.2 s: unchanged drafts/qcew-duckdb-real/keys.yaml
+7 tables, 8 key candidates, 307 queries, 6.4 s: unchanged drafts/qcew-duckdb-real/keys.yaml
   named key annual (area_fips, own_code, industry_code, size_code, year, qtr): unique, 0 duplicate rows, 110366 rows
   named key qtrly (area_fips, own_code, industry_code, size_code, year, qtr): unique, 0 duplicate rows, 486100 rows
 
@@ -125,16 +125,19 @@ wrote measurements/industry-level-two-ways.txt
 wrote measurements/key-documented.txt
 wrote measurements/msa-double-count.txt
 wrote measurements/msa-from-counties.txt
+wrote measurements/msa-levels-by-quarter.txt
 wrote measurements/padding-by-quarter.txt
 wrote measurements/parent-child-examples.txt
 wrote measurements/parent-child-gaps.txt
 wrote measurements/parent-child-gaps-by-year.txt
+wrote measurements/parent-child-msa-by-quarter.txt
 wrote measurements/prior-year-orphans.txt
 wrote measurements/prior-year-split.txt
 wrote measurements/rollup-county-state.txt
 wrote measurements/rollup-county-state-rows.txt
 wrote measurements/rollup-naics-parent.txt
 wrote measurements/rollup-naics-parent-rows.txt
+wrote measurements/rollup-padding-parents.txt
 wrote measurements/row-counts.txt
 wrote measurements/suppressed-zero.txt
 wrote measurements/suppression-by-geography.txt
@@ -145,7 +148,7 @@ wrote measurements/withheld-by-quarter.txt
 wrote measurements/withheld-by-state-year.txt
 
 $ python3 examples/qcew/scripts/measurement_evidence.py
-19 records
+22 records
 
 $ fact equivalence run --root examples/qcew --layer employment-wages --source qcew-sqlite --date 2026-11-22
 employment-wages: 36 pass, 0 fail, 2 error of 38

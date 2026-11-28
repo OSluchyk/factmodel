@@ -2,6 +2,13 @@
 
 Newest first. Every entry says why, not only what.
 
+## 2026-11-28 - The MSA levels after 2025 Q2
+
+**Why.** BLS publishes an MSA for its total only from third quarter 2025 data on, and the model listed the eight levels below the total as if they held records in every quarter.
+
+- New finding F-0012: the MSA levels 41 to 48 hold no record after 2025 Q2 (`measurements/msa-levels-by-quarter.txt`; BLS notice and overview page in `evidence/documents.yaml`). `level_matrix` gains the column `records_through`. The notes of `msa-private-2025q3` and `msa-detail-from-counties-2025q3` name the cause. F-0002, F-0003, F-0006 and F-0007 say how much of their counts are these rows; F-0007 records that the rollup probes count padding rows as parents (`measurements/rollup-padding-parents.txt`).
+- `measurements/` holds 41 queries; `suppression-by-geography.txt` and `padding-by-quarter.txt` gain a column each for the rows that are not padding.
+
 ## 2026-11-28 - Built on the published BLS rows
 
 **Why.** Synthetic rows never confirm a fact (D-014), and the article needs real keys and real dates.

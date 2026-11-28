@@ -1,0 +1,4 @@
+hierarchy             | parents_compared | records | padding_rows | msa_padding_2025_q3_q4
+----------------------+------------------+---------+--------------+-----------------------
+NAICS child to parent |           116277 |  101044 |        15233 |                  12278
+county to state       |             6081 |    5901 |          180 |                      0

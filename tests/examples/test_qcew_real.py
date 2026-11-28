@@ -265,7 +265,7 @@ def test_measurement_queries_run_on_the_seeded_tables(tmp_path: Path) -> None:
     ).is_file()
     try:
         names = tool.names()
-        assert len(names) == 38
+        assert len(names) == 41
         for name in names:
             if tool.needs_crosswalk(name) and not has_crosswalk:
                 continue

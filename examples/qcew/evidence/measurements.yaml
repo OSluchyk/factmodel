@@ -50,6 +50,9 @@ records:
     rows_per_quarter_2025: 60862
     msa_rows_2025q3: 11166
     msa_dash_rows_2025q3: 11159
+    msa_dash_rows_2025q3_and_q4: 22318
+    records_2025q2: 60314
+    records_2025q3: 49140
   status: inferred
   read_on: '2026-11-28'
   environment: local
@@ -311,3 +314,61 @@ records:
   environment: local
   data_quality: representative
   note: 'Measured with scripts/check_load.py: every slice under data/raw counted with the csv module, against the loaded tables; the output is measurements/load-check.txt.'
+- id: ev-measure-msa-levels-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    rows_levels_41_to_48_2024q1: 11158
+    rows_levels_41_to_48_2024q2: 11158
+    rows_levels_41_to_48_2024q3: 11158
+    rows_levels_41_to_48_2024q4: 11158
+    rows_levels_41_to_48_2025q1: 11159
+    rows_levels_41_to_48_2025q2: 11159
+    rows_levels_41_to_48_2025q3: 11159
+    rows_levels_41_to_48_2025q4: 11159
+    records_levels_41_to_48_2024q1: 11060
+    records_levels_41_to_48_2024q2: 11073
+    records_levels_41_to_48_2024q3: 11089
+    records_levels_41_to_48_2024q4: 11076
+    records_levels_41_to_48_2025q1: 11159
+    records_levels_41_to_48_2025q2: 11138
+    records_levels_41_to_48_2025q3: 0
+    records_levels_41_to_48_2025q4: 0
+    annual_rows_levels_41_to_48_2024: 11158
+    annual_rows_levels_41_to_48_2025: 0
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/msa-levels-by-quarter.sql; each output is the .txt file beside its query.'
+- id: ev-measure-rollup-padding-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    county_state_parents_compared: 6081
+    county_state_records: 5901
+    county_state_padding_rows: 180
+    county_state_msa_padding_2025_q3_q4: 0
+    naics_parent_parents_compared: 116277
+    naics_parent_records: 101044
+    naics_parent_padding_rows: 15233
+    naics_parent_msa_padding_2025_q3_q4: 12278
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/rollup-padding-parents.sql; each output is the .txt file beside its query.'
+- id: ev-measure-parent-child-msa-2026-11-28
+  source: qcew-duckdb-real
+  pin: duckdb:qcew@2026-11-28
+  measurement:
+    parents_2024: 4281
+    mismatch_2024: 2037
+    parents_2025: 1822
+    mismatch_2025: 916
+    quarters_of_2025_with_a_pair: 2
+  status: inferred
+  read_on: '2026-11-28'
+  environment: local
+  data_quality: representative
+  note: 'Measured with scripts/measure.py, not by a generated probe: measurements/parent-child-msa-by-quarter.sql; each output is the .txt file beside its query.'
